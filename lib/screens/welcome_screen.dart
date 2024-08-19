@@ -6,8 +6,40 @@ class WelcomeScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const CustomScaffold(
-      child: Text('welcome'),
+    return CustomScaffold(
+      child: Column(
+        children: [
+          Flexible(
+              child: Container(
+            padding: const EdgeInsets.symmetric(
+              vertical: 0,
+              horizontal: 40.0,
+            ),
+            child: Center(
+                child: RichText(
+              textAlign: TextAlign.center,
+              text: const TextSpan(
+                children: [
+                  TextSpan(
+                      text: 'Cryptotel \n',
+                      style: TextStyle(
+                        fontSize: 50.0,
+                        fontWeight: FontWeight.w600,
+                      )),
+                  TextSpan(
+                      text: 'where crypto meets comfort',
+                      style: TextStyle(
+                        fontSize: 20.0,
+                      )),
+                ],
+              ),
+            )),
+          )),
+          Flexible(
+            child: Text('Welcome'),
+          ),
+        ],
+      ),
     );
   }
 }
