@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:hotel_flutter/screens/signin_screen.dart';
+import 'package:hotel_flutter/screens/signup_screen.dart';
 import 'package:hotel_flutter/widgets/custom_scaffold.dart';
 import 'package:hotel_flutter/widgets/welcome_button.dart';
 
@@ -43,8 +45,16 @@ class WelcomeScreen extends StatelessWidget {
               alignment: Alignment.bottomRight,
               child: Row(
                 children: [
-                  Expanded(child: WelcomeButton()),
-                  Expanded(child: WelcomeButton()),
+                  Expanded(
+                      child: WelcomeButton(
+                    buttonText: 'Sign in',
+                    onTap: SigninScreen(),
+                  )),
+                  Expanded(
+                      child: WelcomeButton(
+                    buttonText: 'Sign up',
+                    onTap: SignupScreen(),
+                  )),
                 ],
               ),
             ),
