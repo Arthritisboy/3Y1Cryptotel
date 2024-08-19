@@ -141,7 +141,7 @@ class _SigninScreenState extends State<SigninScreen> {
                         Align(
                           alignment: Alignment.centerRight,
                           child: GestureDetector(
-                            child: Text(
+                            child: const Text(
                               'Forgot password?',
                               style: TextStyle(
                                 fontWeight: FontWeight.bold,
