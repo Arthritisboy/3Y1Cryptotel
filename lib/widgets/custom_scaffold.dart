@@ -16,7 +16,7 @@ class CustomScaffold extends StatelessWidget {
       body: Stack(
         children: [
           Image.asset(
-            'assets/images/paul.jpg',
+            'assets/images/hotel.png',
             fit: BoxFit.cover,
             width: double.infinity,
             height: double.infinity,
