@@ -24,7 +24,7 @@ class _SignUpScreenState extends State<SignupScreen> {
             ),
           ),
           Expanded(
-            flex: 2,
+            flex: 7,
             child: Container(
               padding: const EdgeInsets.fromLTRB(25.0, 50.0, 25.0, 20.0),
               decoration: const BoxDecoration(

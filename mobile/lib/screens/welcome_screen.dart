@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:hotel_flutter/screens/signin_screen.dart';
+import 'package:hotel_flutter/screens/login_screen.dart';
+//import 'package:hotel_flutter/screens/signin_screen.dart';
 import 'package:hotel_flutter/screens/signup_screen.dart';
 import 'package:hotel_flutter/widgets/custom_scaffold.dart';
 import 'package:hotel_flutter/widgets/welcome_button.dart';
@@ -50,7 +51,7 @@ class WelcomeScreen extends StatelessWidget {
                     buttonText: 'Sign in',
                     color: Colors.transparent,
                     textColor: Colors.white,
-                    onTap: SigninScreen(),
+                    onTap: LoginScreen(),
                   )),
                   Expanded(
                       child: WelcomeButton(
