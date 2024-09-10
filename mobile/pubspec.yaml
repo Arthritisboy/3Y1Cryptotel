@@ -37,6 +37,7 @@ dependencies:
   icons_plus: ^5.0.0
   bloc: ^8.1.4
   flutter_bloc: ^8.1.6
+  transparent_image: ^2.0.1
 
 dev_dependencies:
   flutter_test:
@@ -59,6 +60,7 @@ flutter:
     - assets/images/others/hotel.png
     - assets/images/others/Vinna.jpg
     - assets/images/others/logowhite.png
+    - assets/images/others/homepage.jpg
 
   # The following line ensures that the Material Icons font is
   # included with your application, so that you can use the icons in
