@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:hotel_flutter/screens/signin_screen.dart';
-import 'package:hotel_flutter/widgets/custom_scaffold.dart';
+import 'package:hotel_flutter/presentation/screens/signin_screen.dart';
+import 'package:hotel_flutter/presentation/widgets/custom_scaffold.dart';
 
 class SignupScreen extends StatefulWidget {
   const SignupScreen({super.key});

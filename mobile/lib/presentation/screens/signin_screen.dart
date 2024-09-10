@@ -1,82 +1,31 @@
 import 'package:flutter/material.dart';
+import 'package:hotel_flutter/presentation/widgets/custom_scaffold.dart';
 
-class LoginScreen extends StatefulWidget {
-  const LoginScreen({super.key});
+class SigninScreen extends StatefulWidget {
+  const SigninScreen({super.key});
 
   @override
-  State<LoginScreen> createState() => _LoginScreenState();
+  State<SigninScreen> createState() => _SigninScreenState();
 }
 
-class _LoginScreenState extends State<LoginScreen> {
+class _SigninScreenState extends State<SigninScreen> {
   final _formSignInKey = GlobalKey<FormState>();
   bool rememberPassword = true;
-
   @override
   Widget build(BuildContext context) {
-    double screenHeight = MediaQuery.of(context).size.height;
-    double screenWidth = MediaQuery.of(context).size.width;
-
-    return Scaffold(
-      body: Stack(
+    return CustomScaffold(
+      child: Column(
         children: [
-          Container(
-            color: Colors.black,
+          const Expanded(
+            flex: 1,
+            child: SizedBox(
+              height: 10,
+            ),
           ),
-          Column(
-            children: [
-              Stack(
-                children: [
-                  Container(
-                    width: double.infinity,
-                    height: screenHeight * 0.5,
-                    child: ColorFiltered(
-                      colorFilter: ColorFilter.mode(
-                        Colors.black.withOpacity(0.5),
-                        BlendMode.darken,
-                      ),
-                      child: Image.asset(
-                        'assets/images/others/hotel.png',
-                        fit: BoxFit.cover,
-                      ),
-                    ),
-                  ),
-                  Positioned(
-                    top: screenHeight * 0.09,
-                    left: screenWidth * 0.09,
-                    child: Row(
-                      children: [
-                        Image.asset(
-                          'assets/images/others/logowhite.png',
-                          height: screenHeight * 0.20,
-                          fit: BoxFit.contain,
-                        ),
-                        SizedBox(width: screenWidth * 0.03),
-                        Text(
-                          'Cryptotel',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: screenHeight * 0.03,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-              const Expanded(child: SizedBox()),
-            ],
-          ),
-          Align(
-            alignment: Alignment.bottomCenter,
+          Expanded(
+            flex: 2,
             child: Container(
-              padding: EdgeInsets.fromLTRB(
-                screenWidth * 0.05,
-                screenHeight * 0.05,
-                screenWidth * 0.05,
-                screenHeight * 0.02,
-              ),
-              height: screenHeight * 0.6,
+              padding: const EdgeInsets.fromLTRB(25.0, 50.0, 25.0, 20.0),
               decoration: const BoxDecoration(
                 color: Colors.white,
                 borderRadius: BorderRadius.only(
@@ -89,17 +38,17 @@ class _LoginScreenState extends State<LoginScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    Text(
+                    const Text(
                       'Login',
                       style: TextStyle(
-                        fontSize: screenHeight * 0.04,
+                        fontSize: 30.0,
                         fontWeight: FontWeight.w900,
                         color: Colors.black,
                       ),
                     ),
-                    SizedBox(height: screenHeight * 0.03),
+                    const SizedBox(height: 25.0),
                     SizedBox(
-                      width: screenWidth * 0.8,
+                      width: 300,
                       child: TextFormField(
                         validator: (value) {
                           if (value == null || value.isEmpty) {
@@ -128,9 +77,9 @@ class _LoginScreenState extends State<LoginScreen> {
                         ),
                       ),
                     ),
-                    SizedBox(height: screenHeight * 0.03),
+                    const SizedBox(height: 25.0),
                     SizedBox(
-                      width: screenWidth * 0.8,
+                      width: 300,
                       child: TextFormField(
                         obscureText: true,
                         obscuringCharacter: '*',
@@ -161,11 +110,34 @@ class _LoginScreenState extends State<LoginScreen> {
                         ),
                       ),
                     ),
-                    SizedBox(height: screenHeight * 0.03),
+                    const SizedBox(
+                      height: 25.0,
+                    ),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        const SizedBox(width: 10),
+                        // Row(
+                        //   children: [
+                        //     Checkbox(
+                        //       value: rememberPassword,
+                        //       onChanged: (bool? value) {
+                        //         setState(() {
+                        //           rememberPassword = value!;
+                        //         });
+                        //       },
+                        //       activeColor: Colors.blue,
+                        //     ),
+                        //     const Text(
+                        //       'Remember me',
+                        //       style: TextStyle(
+                        //         color: Colors.black45,
+                        //       ),
+                        //     ),
+                        //   ],
+                        // ),
+                        const SizedBox(
+                          width: 10,
+                        ),
                         Align(
                           alignment: Alignment.centerRight,
                           child: GestureDetector(
@@ -180,10 +152,12 @@ class _LoginScreenState extends State<LoginScreen> {
                         ),
                       ],
                     ),
-                    SizedBox(height: screenHeight * 0.03),
+                    const SizedBox(
+                      height: 25.0,
+                    ),
                     SizedBox(
-                      width: screenWidth * 0.8,
-                      height: screenHeight * 0.07,
+                      width: 300,
+                      height: 60,
                       child: ElevatedButton(
                         onPressed: () {
                           if (_formSignInKey.currentState!.validate() &&
@@ -204,7 +178,41 @@ class _LoginScreenState extends State<LoginScreen> {
                         child: const Text('Sign up'),
                       ),
                     ),
-                    SizedBox(height: screenHeight * 0.03),
+                    const SizedBox(
+                      height: 25.0,
+                    ),
+                    // Row(
+                    //   mainAxisAlignment: MainAxisAlignment.center,
+                    //   children: [
+                    //     Expanded(
+                    //       child: Divider(
+                    //         thickness: 0.7,
+                    //         color: Colors.grey.withOpacity(0.5),
+                    //       ),
+                    //     ),
+                    //     const Padding(
+                    //       padding: EdgeInsets.symmetric(
+                    //         vertical: 0,
+                    //         horizontal: 10,
+                    //       ),
+                    //       child: Text(
+                    //         'Sign up with',
+                    //         style: TextStyle(
+                    //           color: Colors.black45,
+                    //         ),
+                    //       ),
+                    //     ),
+                    //     Expanded(
+                    //       child: Divider(
+                    //         thickness: 0.7,
+                    //         color: Colors.grey.withOpacity(0.5),
+                    //       ),
+                    //     ),
+                    //   ],
+                    // ),
+                    const SizedBox(
+                      height: 25.0,
+                    ),
                   ],
                 ),
               ),
