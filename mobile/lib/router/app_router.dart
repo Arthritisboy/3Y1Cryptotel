@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:hotel_flutter/presentation/screens/home_screen.dart';
 import 'package:hotel_flutter/presentation/screens/login_screen.dart';
 import 'package:hotel_flutter/presentation/screens/signup_screen.dart';
+import 'package:hotel_flutter/presentation/screens/tab_screen.dart';
 import 'package:hotel_flutter/presentation/screens/welcome_screen.dart';
 
 class AppRouter {
@@ -21,7 +22,7 @@ class AppRouter {
         );
       case '/homescreen':
         return MaterialPageRoute(
-          builder: (_) => const HomeScreen(),
+          builder: (_) => const TabScreen(),
         );
       default:
         return null;
