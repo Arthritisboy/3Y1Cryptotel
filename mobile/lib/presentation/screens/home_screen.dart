@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:transparent_image/transparent_image.dart';
-import 'package:hotel_flutter/presentation/widgets/circle_icon.dart';
+import 'package:hotel_flutter/presentation/widgets/image_with_text.dart';
+import 'package:hotel_flutter/presentation/widgets/bottom_home_icon_navigation.dart';
 import 'package:hotel_flutter/presentation/widgets/image_with_heart.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -64,7 +65,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             Text(
                               'Hotel and Restaurant',
                               style: TextStyle(
-                                fontSize: 15.0, // Adjust font size as needed
+                                fontSize: 15.0,
                                 fontWeight: FontWeight.w400,
                                 color: Colors.white,
                               ),
@@ -124,48 +125,88 @@ class _HomeScreenState extends State<HomeScreen> {
                         top: Radius.circular(30.0),
                       ),
                     ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Padding(
-                          padding: const EdgeInsets.all(16.0),
-                          child: Text(
-                            'Popular Rooms',
-                            style: TextStyle(
-                              fontSize: 24.0,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.black,
+                    child: SingleChildScrollView(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.all(16.0),
+                            child: Text(
+                              'Popular Rooms',
+                              style: TextStyle(
+                                fontSize: 24.0,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.black,
+                              ),
                             ),
                           ),
-                        ),
-                        Container(
-                          height: 200.0, // Adjust height to fit content
-                          child: SingleChildScrollView(
-                            scrollDirection: Axis.horizontal,
-                            child: Row(
-                              children: [
-                                _buildImageWithHeart(
-                                    'assets/images/others/hotelroom_1.png'),
-                                SizedBox(width: 10.0),
-                                _buildImageWithHeart(
-                                    'assets/images/others/hotelroom_2.png'),
-                                SizedBox(width: 10.0),
-                                _buildImageWithHeart(
-                                    'assets/images/others/hotelroom_1.png'),
-                              ],
+                          Container(
+                            height: 200.0,
+                            child: SingleChildScrollView(
+                              scrollDirection: Axis.horizontal,
+                              child: Row(
+                                children: [
+                                  _buildImageWithHeart(
+                                      'assets/images/others/hotelroom_1.png',
+                                      'Deluxe Room',
+                                      'King Size Bed'),
+                                  SizedBox(width: 10.0),
+                                  _buildImageWithHeart(
+                                      'assets/images/others/hotelroom_2.png',
+                                      'Suite Room',
+                                      'Queen Size Bed'),
+                                  SizedBox(width: 10.0),
+                                  _buildImageWithHeart(
+                                      'assets/images/others/hotelroom_1.png',
+                                      'Deluxe Room',
+                                      'King Size Bed'),
+                                ],
+                              ),
                             ),
                           ),
-                        ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceAround,
-                          children: [
-                            CircleIcon(iconData: Icons.home),
-                            CircleIcon(iconData: Icons.favorite),
-                            CircleIcon(iconData: Icons.search),
-                            CircleIcon(iconData: Icons.person),
-                          ],
-                        ),
-                      ],
+                          BottomHomeIconNavigation(),
+                          Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              Container(
+                                width: 380,
+                                child: ImageWithText(
+                                  imagePath: 'assets/images/others/food.png',
+                                  text: 'List of Foods',
+                                  height: 129.0,
+                                  width: 380.0,
+                                ),
+                              ),
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Container(
+                                    width: 150.0,
+                                    child: ImageWithText(
+                                      imagePath:
+                                          'assets/images/others/special_food.png',
+                                      text: 'Special Food',
+                                      height: 116.0,
+                                      width: 150.0,
+                                    ),
+                                  ),
+                                  Container(
+                                    width: 230,
+                                    child: ImageWithText(
+                                      imagePath:
+                                          'assets/images/others/service_food.png',
+                                      text: 'Service Food',
+                                      height: 116.0,
+                                      width: 230.0,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                 ),
@@ -177,7 +218,8 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  Widget _buildImageWithHeart(String imagePath) {
+  Widget _buildImageWithHeart(
+      String imagePath, String roomName, String typeOfRoom) {
     return ImageWithHeart(
       imagePath: imagePath,
       isHeartFilled: _heartStatus[imagePath] ?? false,
@@ -186,6 +228,8 @@ class _HomeScreenState extends State<HomeScreen> {
           _heartStatus[imagePath] = isFilled;
         });
       },
+      roomName: roomName,
+      typeOfRoom: typeOfRoom,
     );
   }
 }

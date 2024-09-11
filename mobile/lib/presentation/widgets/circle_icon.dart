@@ -9,16 +9,16 @@ class CircleIcon extends StatelessWidget {
   const CircleIcon({
     Key? key,
     required this.iconData,
-    this.size = 50.0, // Default size
-    this.backgroundColor = Colors.brown, // Default background color
-    this.iconColor = Colors.white, // Default icon color
+    this.size = 50.0,
+    this.backgroundColor = const Color.fromARGB(255, 52, 46, 46),
+    this.iconColor = Colors.white,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: size, // Set width of the circle
-      height: size, // Set height of the circle
+      width: size,
+      height: size,
       decoration: BoxDecoration(
         color: backgroundColor, // Background color (brown by default)
         shape: BoxShape.circle, // Circular shape
