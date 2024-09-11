@@ -4,12 +4,16 @@ class ImageWithHeart extends StatefulWidget {
   final String imagePath;
   final bool isHeartFilled;
   final Function(bool) onHeartPressed;
+  final String roomName;
+  final String typeOfRoom;
 
   const ImageWithHeart({
     Key? key,
     required this.imagePath,
     required this.isHeartFilled,
     required this.onHeartPressed,
+    required this.roomName,
+    required this.typeOfRoom,
   }) : super(key: key);
 
   @override
@@ -42,6 +46,32 @@ class _ImageWithHeartState extends State<ImageWithHeart> {
             onPressed: () {
               widget.onHeartPressed(!widget.isHeartFilled);
             },
+          ),
+        ),
+        Positioned(
+          bottom: 10.0,
+          left: 10.0,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                widget.roomName,
+                style: TextStyle(
+                  fontSize: 16.0,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white,
+                ),
+              ),
+              SizedBox(height: 4.0),
+              Text(
+                widget.typeOfRoom,
+                style: TextStyle(
+                  fontSize: 14.0,
+                  fontWeight: FontWeight.w400,
+                  color: Colors.white,
+                ),
+              ),
+            ],
           ),
         ),
       ],
