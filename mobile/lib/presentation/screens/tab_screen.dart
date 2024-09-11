@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:hotel_flutter/presentation/screens/home_screen.dart';
 import 'package:hotel_flutter/presentation/widgets/main_drawer.dart';
-import 'package:transparent_image/transparent_image.dart';
 import 'package:hotel_flutter/presentation/screens/favorite_screen.dart';
 import 'package:hotel_flutter/presentation/screens/profile_screen.dart';
 
@@ -22,9 +21,7 @@ class _TabScreenState extends State<TabScreen> {
   }
 
   void _setScreen(String identifier) {
-    if (identifier == "homescreen") {
-      // Handle navigation or screen selection logic here
-    }
+    if (identifier == "homescreen") {}
   }
 
   @override
@@ -57,7 +54,7 @@ class _TabScreenState extends State<TabScreen> {
             label: 'Home',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.star),
+            icon: Icon(Icons.favorite_border),
             label: 'Favorites',
           ),
           BottomNavigationBarItem(
@@ -77,7 +74,7 @@ class _TabScreenState extends State<TabScreen> {
                 return IconButton(
                   icon: Icon(Icons.menu, color: Colors.white, size: 30),
                   onPressed: () {
-                    Scaffold.of(context).openEndDrawer(); // Open the end drawer
+                    Scaffold.of(context).openEndDrawer();
                   },
                 );
               },

@@ -62,7 +62,8 @@ flutter:
     - assets/images/others/Vinna.jpg
     - assets/images/others/logowhite.png
     - assets/images/others/homepage.jpg
-
+    - assets/images/others/hotelroom_1.png
+    - assets/images/others/hotelroom_2.png
   # The following line ensures that the Material Icons font is
   # included with your application, so that you can use the icons in
   # the material Icons class.
