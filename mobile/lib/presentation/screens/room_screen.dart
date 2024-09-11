@@ -23,7 +23,6 @@ class RoomScreen extends StatefulWidget {
 }
 
 class _RoomScreen extends State<RoomScreen> {
-  // Method to generate star rating icons
   List<Widget> _buildStarRating(double rating) {
     const int maxStars = 5;
     List<Widget> stars = [];
