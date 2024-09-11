@@ -7,18 +7,10 @@ class BackgroundRoomImage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Positioned.fill(
-      child: ColorFiltered(
-        colorFilter: ColorFilter.mode(
-          Colors.black.withOpacity(0.5),
-          BlendMode.darken,
-        ),
-        child: FadeInImage(
-          placeholder: MemoryImage(kTransparentImage),
-          image: AssetImage(image),
-          fit: BoxFit.cover,
-        ),
-      ),
+    return FadeInImage(
+      placeholder: MemoryImage(kTransparentImage),
+      image: AssetImage(image),
+      fit: BoxFit.cover,
     );
   }
 }
