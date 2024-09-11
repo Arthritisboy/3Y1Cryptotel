@@ -31,7 +31,7 @@ class _RoomScreen extends State<RoomScreen> {
       stars.add(
         Icon(
           i <= rating ? Icons.star : Icons.star_border,
-          color: Colors.yellow,
+          color: const Color.fromARGB(255, 229, 160, 0),
           size: 20.0,
         ),
       );
@@ -61,7 +61,7 @@ class _RoomScreen extends State<RoomScreen> {
             bottom: 0,
             left: 0,
             right: 0,
-            height: MediaQuery.of(context).size.height * 0.6,
+            height: MediaQuery.of(context).size.height * 0.65,
             child: Container(
               decoration: BoxDecoration(
                 color: Colors.white,
