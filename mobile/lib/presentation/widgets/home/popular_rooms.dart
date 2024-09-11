@@ -69,7 +69,6 @@ class PopularRooms extends StatelessWidget {
             onHeartPressed: (isFilled) => onHeartPressed(imagePath, isFilled),
             roomName: roomName,
             typeOfRoom: typeOfRoom,
-            // price is not included in ImageWithHeart
           ),
         ),
       );
