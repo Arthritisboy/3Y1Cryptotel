@@ -6,10 +6,16 @@ class BackgroundImage extends StatelessWidget {
   const BackgroundImage({super.key, required this.image});
   @override
   Widget build(BuildContext context) {
-    return FadeInImage(
-      placeholder: MemoryImage(kTransparentImage),
-      image: AssetImage(image),
-      fit: BoxFit.cover,
+    return ColorFiltered(
+      colorFilter: ColorFilter.mode(
+        Colors.black.withOpacity(0.3),
+        BlendMode.darken,
+      ),
+      child: FadeInImage(
+        placeholder: MemoryImage(kTransparentImage),
+        image: AssetImage(image),
+        fit: BoxFit.cover,
+      ),
     );
   }
 }

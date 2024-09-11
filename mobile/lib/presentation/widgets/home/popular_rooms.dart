@@ -41,11 +41,11 @@ class PopularRooms extends StatelessWidget {
 
   List<Widget> _buildRoomList(BuildContext context) {
     return roomData.map((room) {
-      // Explicitly cast types to avoid errors
       final imagePath = room['imagePath'] as String;
       final roomName = room['roomName'] as String;
       final typeOfRoom = room['typeOfRoom'] as String;
       final star = room['star'] as double;
+      final price = room['price'] as int; // Assuming price is an integer
 
       return Padding(
         padding: const EdgeInsets.only(right: 10.0),
@@ -57,7 +57,8 @@ class PopularRooms extends StatelessWidget {
                 builder: (context) => RoomScreen(
                   backgroundImage: imagePath,
                   roomName: roomName,
-                  rating: star,
+                  rating: star, // Pass the rating to RoomScreen
+                  price: price, // Pass the price to RoomScreen
                 ),
               ),
             );
@@ -68,6 +69,7 @@ class PopularRooms extends StatelessWidget {
             onHeartPressed: (isFilled) => onHeartPressed(imagePath, isFilled),
             roomName: roomName,
             typeOfRoom: typeOfRoom,
+            // price is not included in ImageWithHeart
           ),
         ),
       );
