@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
-import 'image_with_heart.dart'; // Update with the correct path if necessary
+import 'package:hotel_flutter/presentation/widgets/home/image_with_heart.dart'; // Update with the correct path if necessary
+import 'package:hotel_flutter/presentation/screens/room_screen.dart'; // Update with the correct path
+import 'package:hotel_flutter/data/dummydata/room_data.dart';
 
 class PopularRooms extends StatelessWidget {
   final Map<String, bool> heartStatus;
@@ -28,7 +30,7 @@ class PopularRooms extends StatelessWidget {
             child: SingleChildScrollView(
               scrollDirection: Axis.horizontal,
               child: Row(
-                children: _buildRoomList(),
+                children: _buildRoomList(context),
               ),
             ),
           ),
@@ -37,30 +39,36 @@ class PopularRooms extends StatelessWidget {
     );
   }
 
-  List<Widget> _buildRoomList() {
-    const roomData = [
-      {
-        'imagePath': 'assets/images/others/hotelroom_1.png',
-        'roomName': 'Deluxe Room',
-        'typeOfRoom': 'King Size Bed',
-      },
-      {
-        'imagePath': 'assets/images/others/hotelroom_2.png',
-        'roomName': 'Suite Room',
-        'typeOfRoom': 'Queen Size Bed',
-      },
-    ];
-
+  List<Widget> _buildRoomList(BuildContext context) {
     return roomData.map((room) {
+      // Explicitly cast types to avoid errors
+      final imagePath = room['imagePath'] as String;
+      final roomName = room['roomName'] as String;
+      final typeOfRoom = room['typeOfRoom'] as String;
+      final star = room['star'] as double;
+
       return Padding(
         padding: const EdgeInsets.only(right: 10.0),
-        child: ImageWithHeart(
-          imagePath: room['imagePath']!,
-          isHeartFilled: heartStatus[room['imagePath']!] ?? false,
-          onHeartPressed: (isFilled) =>
-              onHeartPressed(room['imagePath']!, isFilled),
-          roomName: room['roomName']!,
-          typeOfRoom: room['typeOfRoom']!,
+        child: InkWell(
+          onTap: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => RoomScreen(
+                  backgroundImage: imagePath,
+                  roomName: roomName,
+                  rating: star,
+                ),
+              ),
+            );
+          },
+          child: ImageWithHeart(
+            imagePath: imagePath,
+            isHeartFilled: heartStatus[imagePath] ?? false,
+            onHeartPressed: (isFilled) => onHeartPressed(imagePath, isFilled),
+            roomName: roomName,
+            typeOfRoom: typeOfRoom,
+          ),
         ),
       );
     }).toList();

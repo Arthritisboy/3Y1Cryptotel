@@ -66,6 +66,7 @@ flutter:
     - assets/images/others/hotelroom_2.png
     - assets/images/others/food.png
     - assets/images/others/service_food.png
+    - assets/images/others/hotelroom_3.jpg
     - assets/images/others/special_food.png
 
   # The following line ensures that the Material Icons font is

@@ -29,7 +29,6 @@ class FoodSection extends StatelessWidget {
                 width: 150.0,
               ),
             ),
-            SizedBox(width: 10.0),
             Container(
               width: 230,
               child: ImageWithText(
