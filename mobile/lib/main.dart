@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:hotel_flutter/presentation/screens/splash_screen.dart';
 import 'package:hotel_flutter/router/app_router.dart';
 
@@ -19,7 +20,8 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primaryColor: Colors.white,
         colorScheme: ColorScheme.fromSeed(
-            seedColor: const Color.fromARGB(255, 255, 255, 255)),
+          seedColor: const Color.fromARGB(255, 255, 255, 255),
+        ),
         useMaterial3: true,
         listTileTheme: ListTileThemeData(
           textColor: Colors.white,
@@ -40,6 +42,11 @@ class MyApp extends StatelessWidget {
         scaffoldBackgroundColor: Colors.white,
         appBarTheme: AppBarTheme(
           backgroundColor: Colors.white,
+        ),
+        textTheme: GoogleFonts.inderTextTheme(
+          Theme.of(context)
+              .textTheme
+              .apply(bodyColor: Colors.black, displayColor: Colors.black),
         ),
       ),
       home: const SplashScreen(),
