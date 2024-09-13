@@ -13,7 +13,7 @@ class MealCardWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return SizedBox(
       width: 200,
       height: 250,
       child: Card(
@@ -27,9 +27,9 @@ class MealCardWidget extends StatelessWidget {
             ClipRRect(
               borderRadius:
                   const BorderRadius.vertical(top: Radius.circular(15)),
-              child: Container(
+              child: SizedBox(
                 width: double.infinity,
-                height: 130, // Set the height of the image
+                height: 130,
                 child: Image.asset(
                   foodItem.imagePath,
                   width: double.infinity,

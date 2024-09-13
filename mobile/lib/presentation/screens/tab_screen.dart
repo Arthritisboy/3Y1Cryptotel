@@ -23,7 +23,7 @@ class _TabScreenState extends State<TabScreen> {
   void _setScreen(String identifier) {
     if (identifier == "homescreen") {
       if (identifier == "homescreen") {
-        Navigator.of(context).pushNamed('/homescreen');
+        const HomeScreen();
       }
     }
   }

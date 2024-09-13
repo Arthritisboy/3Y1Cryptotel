@@ -28,6 +28,12 @@ class _MenuScreenState extends State<MenuScreen> {
     final List<FoodItem> breakFastItems = foodData.where((item) {
       return item.categories.contains(FoodCategory.breakFast);
     }).toList();
+    final List<FoodItem> lunchItems = foodData.where((item) {
+      return item.categories.contains(FoodCategory.lunch);
+    }).toList();
+    final List<FoodItem> dinnerItems = foodData.where((item) {
+      return item.categories.contains(FoodCategory.dinner);
+    }).toList();
 
     return Scaffold(
       endDrawer: MainDrawer(onSelectScreen: _setScreen),
@@ -105,7 +111,7 @@ class _MenuScreenState extends State<MenuScreen> {
                               bottom: 10,
                               left: 10,
                               child: Container(
-                                padding: EdgeInsets.all(8),
+                                padding: const EdgeInsets.all(8),
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
@@ -174,6 +180,56 @@ class _MenuScreenState extends State<MenuScreen> {
                           itemCount: breakFastItems.length,
                           itemBuilder: (context, index) {
                             final item = breakFastItems[index];
+                            return Padding(
+                              padding: const EdgeInsets.only(right: 12.0),
+                              child: MealCardWidget(
+                                foodItem: item,
+                                onButtonPressed: () {
+                                  // Implement order functionality here
+                                },
+                              ),
+                            );
+                          },
+                        ),
+                      ),
+                      const Text(
+                        'Lunch',
+                        style: TextStyle(
+                            fontSize: 25, fontWeight: FontWeight.w400),
+                      ),
+                      const SizedBox(height: 10),
+                      SizedBox(
+                        height: 250,
+                        child: ListView.builder(
+                          scrollDirection: Axis.horizontal,
+                          itemCount: lunchItems.length,
+                          itemBuilder: (context, index) {
+                            final item = lunchItems[index];
+                            return Padding(
+                              padding: const EdgeInsets.only(right: 12.0),
+                              child: MealCardWidget(
+                                foodItem: item,
+                                onButtonPressed: () {
+                                  // Implement order functionality here
+                                },
+                              ),
+                            );
+                          },
+                        ),
+                      ),
+                      const Text(
+                        'Dinner',
+                        style: TextStyle(
+                            fontSize: 25, fontWeight: FontWeight.w400),
+                      ),
+                      const SizedBox(height: 10),
+                      SizedBox(
+                        height: 250,
+                        child: ListView.builder(
+                          scrollDirection: Axis.horizontal,
+                          itemCount: dinnerItems.length,
+                          itemBuilder: (context, index) {
+                            final item = dinnerItems[index];
                             return Padding(
                               padding: const EdgeInsets.only(right: 12.0),
                               child: MealCardWidget(

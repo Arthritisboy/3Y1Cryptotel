@@ -51,7 +51,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             },
                           ),
                           const BottomHomeIconNavigation(),
-                          FoodSection(),
+                          const FoodSection(),
                         ],
                       ),
                     ),
