@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:hotel_flutter/presentation/widgets/home/background_image.dart';
 import 'package:hotel_flutter/presentation/widgets/home/header.dart';
 import 'package:hotel_flutter/presentation/widgets/main_drawer.dart';
+import 'package:hotel_flutter/presentation/widgets/room/meal_card.dart';
+import 'package:hotel_flutter/data/model/food_item.dart';
+import 'package:hotel_flutter/data/dummydata/food_data.dart';
 
 class MenuScreen extends StatefulWidget {
   const MenuScreen({super.key});
@@ -19,6 +22,13 @@ class _MenuScreenState extends State<MenuScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final List<FoodItem> mostPopularItems = foodData.where((item) {
+      return item.categories.contains(FoodCategory.mostPopular);
+    }).toList();
+    final List<FoodItem> breakFastItems = foodData.where((item) {
+      return item.categories.contains(FoodCategory.breakFast);
+    }).toList();
+
     return Scaffold(
       endDrawer: MainDrawer(onSelectScreen: _setScreen),
       body: Stack(
@@ -85,8 +95,8 @@ class _MenuScreenState extends State<MenuScreen> {
                                 BlendMode.darken,
                               ),
                               child: Image.asset(
-                                'assets/images/others/food.png',
-                                fit: BoxFit.cover, // Adjust as needed
+                                'assets/images/foods/food.png',
+                                fit: BoxFit.cover,
                                 width: MediaQuery.of(context).size.width,
                                 height: 170,
                               ),
@@ -130,8 +140,52 @@ class _MenuScreenState extends State<MenuScreen> {
                         'Most Popular',
                         style: TextStyle(
                             fontSize: 25, fontWeight: FontWeight.w400),
-                      )
-                      // Row(children: [MenuScreen()],)
+                      ),
+                      const SizedBox(height: 10),
+                      SizedBox(
+                        height: 250,
+                        child: ListView.builder(
+                          scrollDirection: Axis.horizontal,
+                          itemCount: mostPopularItems.length,
+                          itemBuilder: (context, index) {
+                            final item = mostPopularItems[index];
+                            return Padding(
+                              padding: const EdgeInsets.only(right: 12.0),
+                              child: MealCardWidget(
+                                foodItem: item,
+                                onButtonPressed: () {
+                                  // Implement order functionality here
+                                },
+                              ),
+                            );
+                          },
+                        ),
+                      ),
+                      const Text(
+                        'Breakfast',
+                        style: TextStyle(
+                            fontSize: 25, fontWeight: FontWeight.w400),
+                      ),
+                      const SizedBox(height: 10),
+                      SizedBox(
+                        height: 250,
+                        child: ListView.builder(
+                          scrollDirection: Axis.horizontal,
+                          itemCount: breakFastItems.length,
+                          itemBuilder: (context, index) {
+                            final item = breakFastItems[index];
+                            return Padding(
+                              padding: const EdgeInsets.only(right: 12.0),
+                              child: MealCardWidget(
+                                foodItem: item,
+                                onButtonPressed: () {
+                                  // Implement order functionality here
+                                },
+                              ),
+                            );
+                          },
+                        ),
+                      ),
                     ],
                   ),
                 ),

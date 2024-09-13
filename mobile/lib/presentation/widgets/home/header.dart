@@ -30,7 +30,7 @@ class Header extends StatelessWidget {
   }
 
   Widget _buildTitleSection() {
-    return Column(
+    return const Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
@@ -56,31 +56,32 @@ class Header extends StatelessWidget {
   Widget _buildSearchField() {
     return TextField(
       decoration: InputDecoration(
-        prefixIcon: Icon(Icons.search, color: Colors.white),
+        prefixIcon: const Icon(Icons.search, color: Colors.white),
         hintText: 'Search...',
-        hintStyle: TextStyle(color: Colors.white),
+        hintStyle: const TextStyle(color: Colors.white),
         filled: true,
         fillColor: Colors.transparent,
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(30.0),
-          borderSide: BorderSide(color: Colors.white, width: 1.0),
+          borderSide: const BorderSide(color: Colors.white, width: 1.0),
         ),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(30.0),
-          borderSide: BorderSide(color: Colors.white, width: 1.0),
+          borderSide: const BorderSide(color: Colors.white, width: 1.0),
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(30.0),
-          borderSide: BorderSide(color: Colors.white, width: 1.0),
+          borderSide: const BorderSide(color: Colors.white, width: 1.0),
         ),
         focusedErrorBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(30.0),
-          borderSide: BorderSide(color: Colors.white, width: 1.0),
+          borderSide: const BorderSide(color: Colors.white, width: 1.0),
         ),
         errorBorder: InputBorder.none,
-        contentPadding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+        contentPadding:
+            const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
       ),
-      style: TextStyle(color: Colors.black),
+      style: const TextStyle(color: Colors.black),
       cursorColor: Colors.black,
     );
   }

@@ -8,13 +8,13 @@ class ImageWithText extends StatelessWidget {
   final double height;
 
   const ImageWithText({
-    Key? key,
+    super.key,
     required this.imagePath,
     required this.text,
     required this.width,
     required this.height,
     this.borderRadius = 20.0,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -32,18 +32,18 @@ class ImageWithText extends StatelessWidget {
               child: Image.asset(
                 imagePath,
                 fit: BoxFit.cover,
-                width: this.width,
-                height: this.height,
+                width: width,
+                height: height,
               ),
             ),
             Positioned(
               top: 5.0,
               left: 10.0,
               child: Container(
-                padding: EdgeInsets.all(8.0),
+                padding: const EdgeInsets.all(8.0),
                 child: Text(
                   text,
-                  style: TextStyle(
+                  style: const TextStyle(
                     color: Colors.white,
                     fontWeight: FontWeight.w400,
                     fontSize: 16.0,

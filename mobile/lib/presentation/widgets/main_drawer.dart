@@ -12,14 +12,14 @@ class MainDrawer extends StatelessWidget {
         children: [
           DrawerHeader(
             padding: const EdgeInsets.all(20),
-            decoration: BoxDecoration(
+            decoration: const BoxDecoration(
               color: Color.fromARGB(255, 73, 66, 66),
             ),
             child: Row(
               children: [
                 Column(
                   children: [
-                    Icon(
+                    const Icon(
                       Icons.person,
                       size: 60,
                       color: Colors.white,
@@ -43,7 +43,7 @@ class MainDrawer extends StatelessWidget {
             ),
           ),
           ListTile(
-            leading: Icon(
+            leading: const Icon(
               Icons.home,
               size: 26,
               color: Colors.white,
@@ -60,7 +60,7 @@ class MainDrawer extends StatelessWidget {
             },
           ),
           ListTile(
-            leading: Icon(
+            leading: const Icon(
               Icons.person,
               size: 26,
               color: Colors.white,
@@ -77,7 +77,7 @@ class MainDrawer extends StatelessWidget {
             },
           ),
           ListTile(
-            leading: Icon(
+            leading: const Icon(
               Icons.settings,
               size: 26,
               color: Colors.white,
@@ -94,7 +94,7 @@ class MainDrawer extends StatelessWidget {
             },
           ),
           ListTile(
-            leading: Icon(
+            leading: const Icon(
               Icons.logout,
               size: 26,
               color: Colors.white,

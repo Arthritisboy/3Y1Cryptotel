@@ -81,8 +81,8 @@ class _RoomScreen extends State<RoomScreen> {
                           color: Colors.black,
                         ),
                       ),
-                      SizedBox(height: 5),
-                      Row(
+                      const SizedBox(height: 5),
+                      const Row(
                         children: [
                           Icon(
                             Icons.location_on_outlined,
@@ -99,24 +99,24 @@ class _RoomScreen extends State<RoomScreen> {
                           ),
                         ],
                       ),
-                      SizedBox(height: 5),
+                      const SizedBox(height: 5),
                       Row(
                         children: [
                           Row(children: _buildStarRating(widget.rating)),
-                          SizedBox(width: 8.0),
+                          const SizedBox(width: 8.0),
                           Text('| ${widget.rating} Stars'),
-                          Spacer(),
+                          const Spacer(),
                           Text(
                             '\$${widget.price}', // Display price
-                            style: TextStyle(
+                            style: const TextStyle(
                               fontSize: 25.0,
                               fontWeight: FontWeight.bold,
                             ),
                           ),
                         ],
                       ),
-                      SizedBox(height: 5),
-                      Row(
+                      const SizedBox(height: 5),
+                      const Row(
                         children: [
                           Expanded(
                             child: Text(
@@ -140,25 +140,25 @@ class _RoomScreen extends State<RoomScreen> {
                           ),
                         ],
                       ),
-                      SizedBox(height: 10),
-                      Text(
+                      const SizedBox(height: 10),
+                      const Text(
                         'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.',
                         style: TextStyle(
                           color: const Color.fromARGB(255, 142, 142, 147),
                           fontSize: 16,
                         ),
                       ),
-                      SizedBox(height: 10),
-                      Text(
+                      const SizedBox(height: 10),
+                      const Text(
                         'FACILITY',
                         style: TextStyle(
                           fontWeight: FontWeight.w400,
                           fontSize: 30,
                         ),
                       ),
-                      SizedBox(height: 10),
-                      FacilityIcon(),
-                      SizedBox(height: 20),
+                      const SizedBox(height: 10),
+                      const FacilityIcon(),
+                      const SizedBox(height: 20),
                       Row(
                         children: [
                           Expanded(
@@ -169,10 +169,10 @@ class _RoomScreen extends State<RoomScreen> {
                               style: ElevatedButton.styleFrom(
                                 backgroundColor: const Color.fromARGB(
                                     255, 52, 46, 46), // Background color
-                                padding: EdgeInsets.symmetric(
+                                padding: const EdgeInsets.symmetric(
                                     vertical: 15, horizontal: 30),
                               ),
-                              child: Text(
+                              child: const Text(
                                 'Choose Room',
                                 style: TextStyle(
                                   color: Colors.white, // Text color
@@ -181,7 +181,7 @@ class _RoomScreen extends State<RoomScreen> {
                               ),
                             ),
                           ),
-                          SizedBox(width: 10),
+                          const SizedBox(width: 10),
                           Container(
                             decoration: BoxDecoration(
                               border: Border.all(
@@ -193,7 +193,7 @@ class _RoomScreen extends State<RoomScreen> {
                                   BorderRadius.circular(12), // Rounded corners
                             ),
                             child: IconButton(
-                              icon: Icon(Icons.favorite_outline),
+                              icon: const Icon(Icons.favorite_outline),
                               color: const Color.fromARGB(
                                   255, 52, 46, 46), // Icon color
                               onPressed: () {

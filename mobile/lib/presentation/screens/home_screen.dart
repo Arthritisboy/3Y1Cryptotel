@@ -23,7 +23,7 @@ class _HomeScreenState extends State<HomeScreen> {
     return Scaffold(
       body: Stack(
         children: [
-          BackgroundImage(
+          const BackgroundImage(
             image: 'assets/images/others/homepage.jpg',
           ),
           Column(
@@ -33,7 +33,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 child: Align(
                   alignment: Alignment.bottomCenter,
                   child: Container(
-                    decoration: BoxDecoration(
+                    decoration: const BoxDecoration(
                       color: Colors.white,
                       borderRadius:
                           BorderRadius.vertical(top: Radius.circular(30.0)),
@@ -50,7 +50,7 @@ class _HomeScreenState extends State<HomeScreen> {
                               });
                             },
                           ),
-                          BottomHomeIconNavigation(),
+                          const BottomHomeIconNavigation(),
                           FoodSection(),
                         ],
                       ),

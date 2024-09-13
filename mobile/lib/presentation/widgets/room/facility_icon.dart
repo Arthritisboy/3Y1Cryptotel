@@ -6,7 +6,7 @@ class FacilityIcon extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Row(
+    return const Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         CircleIcon(iconData: Icons.home, size: 60),
