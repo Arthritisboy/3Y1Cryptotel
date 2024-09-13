@@ -1,27 +1,63 @@
 import 'package:flutter/material.dart';
+import 'package:hotel_flutter/presentation/widgets/home/background_image.dart';
+import 'package:hotel_flutter/presentation/widgets/home/header.dart';
+import 'package:hotel_flutter/presentation/widgets/home/popular_rooms.dart';
+import 'package:hotel_flutter/presentation/widgets/home/food_section.dart';
+import 'package:hotel_flutter/presentation/widgets/home/bottom_home_icon_navigation.dart';
 
-class HomeScreen extends StatelessWidget {
+class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
+
+  @override
+  State<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
+  final Map<String, bool> _heartStatus = {
+    'assets/images/others/hotelroom_1.png': false,
+    'assets/images/others/hotelroom_2.png': false,
+  };
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text("HomeScreen"),
-      ),
-      bottomNavigationBar: BottomNavigationBar(
-        onTap: (index) {},
-        items: const [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home),
-            label: 'Home',
+      body: Stack(
+        children: [
+          const BackgroundImage(
+            image: 'assets/images/others/homepage.jpg',
           ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.star),
-            label: "Favorites",
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.person),
-            label: "Profile",
+          Column(
+            children: [
+              Header(),
+              Expanded(
+                child: Align(
+                  alignment: Alignment.bottomCenter,
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: const BorderRadius.vertical(top: Radius.circular(30.0)),
+                    ),
+                    child: SingleChildScrollView(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          PopularRooms(
+                            heartStatus: _heartStatus,
+                            onHeartPressed: (imagePath, isFilled) {
+                              setState(() {
+                                _heartStatus[imagePath] = isFilled;
+                              });
+                            },
+                          ),
+                          const BottomHomeIconNavigation(),
+                          const FoodSection(),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ],
           ),
         ],
       ),
