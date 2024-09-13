@@ -8,15 +8,16 @@ class ImageWithHeart extends StatefulWidget {
   final String typeOfRoom;
 
   const ImageWithHeart({
-    Key? key,
+    super.key,
     required this.imagePath,
     required this.isHeartFilled,
     required this.onHeartPressed,
     required this.roomName,
     required this.typeOfRoom,
-  }) : super(key: key);
+  });
 
   @override
+  // ignore: library_private_types_in_public_api
   _ImageWithHeartState createState() => _ImageWithHeartState();
 }
 
@@ -56,16 +57,16 @@ class _ImageWithHeartState extends State<ImageWithHeart> {
             children: [
               Text(
                 widget.roomName,
-                style: TextStyle(
+                style: const TextStyle(
                   fontSize: 16.0,
                   fontWeight: FontWeight.bold,
                   color: Colors.white,
                 ),
               ),
-              SizedBox(height: 4.0),
+              const SizedBox(height: 4.0),
               Text(
                 widget.typeOfRoom,
-                style: TextStyle(
+                style: const TextStyle(
                   fontSize: 14.0,
                   fontWeight: FontWeight.w400,
                   color: Colors.white,

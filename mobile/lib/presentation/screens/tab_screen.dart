@@ -76,7 +76,7 @@ class _TabScreenState extends State<TabScreen> {
             child: Builder(
               builder: (context) {
                 return IconButton(
-                  icon: Icon(Icons.menu, color: Colors.white, size: 30),
+                  icon: const Icon(Icons.menu, color: Colors.white, size: 30),
                   onPressed: () {
                     Scaffold.of(context).openEndDrawer();
                   },

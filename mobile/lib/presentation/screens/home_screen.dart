@@ -23,7 +23,7 @@ class _HomeScreenState extends State<HomeScreen> {
     return Scaffold(
       body: Stack(
         children: [
-          BackgroundImage(
+          const BackgroundImage(
             image: 'assets/images/others/homepage.jpg',
           ),
           Column(

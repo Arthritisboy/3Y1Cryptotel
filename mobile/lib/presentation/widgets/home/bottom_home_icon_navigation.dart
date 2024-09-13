@@ -3,7 +3,7 @@ import 'circle_icon.dart';
 import 'package:hotel_flutter/presentation/screens/menu_screens.dart';
 
 class BottomHomeIconNavigation extends StatelessWidget {
-  const BottomHomeIconNavigation({Key? key}) : super(key: key);
+  const BottomHomeIconNavigation({super.key});
 
   void _navigateToMenuScreen(BuildContext context) {
     Navigator.of(context).pushNamed('/menuscreen');
@@ -16,19 +16,19 @@ class BottomHomeIconNavigation extends StatelessWidget {
       children: [
         GestureDetector(
           onTap: () {},
-          child: CircleIcon(iconData: Icons.favorite),
+          child: const CircleIcon(iconData: Icons.favorite),
         ),
         GestureDetector(
           onTap: () => _navigateToMenuScreen(context),
-          child: CircleIcon(iconData: Icons.restaurant),
+          child: const CircleIcon(iconData: Icons.restaurant),
         ),
         GestureDetector(
           onTap: () {},
-          child: CircleIcon(iconData: Icons.room),
+          child: const CircleIcon(iconData: Icons.room),
         ),
         GestureDetector(
           onTap: () {},
-          child: CircleIcon(iconData: Icons.person),
+          child: const CircleIcon(iconData: Icons.person),
         ),
       ],
     );

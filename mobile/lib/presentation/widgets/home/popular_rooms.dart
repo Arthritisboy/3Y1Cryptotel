@@ -7,7 +7,8 @@ class PopularRooms extends StatelessWidget {
   final Map<String, bool> heartStatus;
   final Function(String, bool) onHeartPressed;
 
-  PopularRooms({required this.heartStatus, required this.onHeartPressed});
+  const PopularRooms(
+      {super.key, required this.heartStatus, required this.onHeartPressed});
 
   @override
   Widget build(BuildContext context) {
@@ -25,7 +26,7 @@ class PopularRooms extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 10.0),
-          Container(
+          SizedBox(
             height: 200.0,
             child: SingleChildScrollView(
               scrollDirection: Axis.horizontal,
