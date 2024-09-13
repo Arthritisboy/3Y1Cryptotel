@@ -1,4 +1,4 @@
-enum FoodCategory { mostPopular, Breakfast, Drinks, Lunch, Dinner }
+enum FoodCategory { mostPopular, breakFast, drinks, lunch, dinner }
 
 class FoodItem {
   final String imagePath;

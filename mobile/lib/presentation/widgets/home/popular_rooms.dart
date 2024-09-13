@@ -16,7 +16,7 @@ class PopularRooms extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
+          const Text(
             'Popular Rooms',
             style: TextStyle(
               fontSize: 24.0,
@@ -24,7 +24,7 @@ class PopularRooms extends StatelessWidget {
               color: Colors.black,
             ),
           ),
-          SizedBox(height: 10.0),
+          const SizedBox(height: 10.0),
           Container(
             height: 200.0,
             child: SingleChildScrollView(
