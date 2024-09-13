@@ -58,6 +58,7 @@ dev_dependencies:
 flutter:
   assets:
     - assets/images/
+    - assets/images/foods/
     - assets/images/others/hotel.png
     - assets/images/others/Vinna.jpg
     - assets/images/others/logowhite.png
@@ -73,6 +74,13 @@ flutter:
     - assets/images/foods/shrimp_pasta.png
     - assets/images/foods/spanish_latte.png
     - assets/images/foods/avocado.png
+    - assets/images/foods/eggbreakfast.png
+    - assets/images/foods/hamegg.png
+    - assets/images/foods/pancake2.png
+    - assets/images/foods/steak2.png
+    - assets/images/foods/pasta.png
+    - assets/images/foods/salad.png
+    # - assets/images/foods/cordon_blue.png
 
   # The following line ensures that the Material Icons font is
   # included with your application, so that you can use the icons in
