@@ -62,12 +62,16 @@ flutter:
     - assets/images/others/Vinna.jpg
     - assets/images/others/logowhite.png
     - assets/images/others/homepage.jpg
-    - assets/images/others/hotelroom_1.png
-    - assets/images/others/hotelroom_2.png
-    - assets/images/others/food.png
-    - assets/images/others/service_food.png
-    - assets/images/others/hotelroom_3.jpg
-    - assets/images/others/special_food.png
+    - assets/images/rooms/hotelroom_1.png
+    - assets/images/rooms/hotelroom_2.png
+    - assets/images/foods/food.png
+    - assets/images/foods/service_food.png
+    - assets/images/rooms/hotelroom_3.jpg
+    - assets/images/foods/special_food.png
+    - assets/images/foods/pancake.png
+    - assets/images/foods/steak.png
+    - assets/images/foods/shrimp_pasta.png
+    - assets/images/foods/spanish_latte.png
 
   # The following line ensures that the Material Icons font is
   # included with your application, so that you can use the icons in

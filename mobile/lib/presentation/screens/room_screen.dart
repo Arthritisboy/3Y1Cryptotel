@@ -63,7 +63,7 @@ class _RoomScreen extends State<RoomScreen> {
             right: 0,
             height: MediaQuery.of(context).size.height * 0.65,
             child: Container(
-              decoration: BoxDecoration(
+              decoration: const BoxDecoration(
                 color: Colors.white,
                 borderRadius: BorderRadius.vertical(top: Radius.circular(30.0)),
               ),
@@ -75,7 +75,7 @@ class _RoomScreen extends State<RoomScreen> {
                     children: [
                       Text(
                         widget.roomName,
-                        style: TextStyle(
+                        style: const TextStyle(
                           fontSize: 30.0,
                           fontWeight: FontWeight.bold,
                           color: Colors.black,

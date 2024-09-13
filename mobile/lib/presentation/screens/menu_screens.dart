@@ -28,7 +28,7 @@ class _MenuScreenState extends State<MenuScreen> {
             left: 0,
             right: 0,
             height: MediaQuery.of(context).size.height * 0.3,
-            child: BackgroundImage(
+            child: const BackgroundImage(
               image: 'assets/images/others/homepage.jpg',
             ),
           ),
@@ -39,7 +39,7 @@ class _MenuScreenState extends State<MenuScreen> {
             child: Builder(
               builder: (BuildContext context) {
                 return IconButton(
-                  icon: Icon(Icons.menu, color: Colors.white, size: 30),
+                  icon: const Icon(Icons.menu, color: Colors.white, size: 30),
                   onPressed: () {
                     Scaffold.of(context).openEndDrawer();
                   },
@@ -53,17 +53,17 @@ class _MenuScreenState extends State<MenuScreen> {
             right: 0,
             height: MediaQuery.of(context).size.height * 0.75,
             child: Container(
-              decoration: BoxDecoration(
+              decoration: const BoxDecoration(
                 color: Colors.white,
                 borderRadius: BorderRadius.vertical(top: Radius.circular(30.0)),
               ),
               child: SingleChildScrollView(
                 child: Padding(
-                  padding: EdgeInsets.all(16),
+                  padding: const EdgeInsets.all(16),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Row(
+                      const Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Text(
@@ -74,7 +74,7 @@ class _MenuScreenState extends State<MenuScreen> {
                           ),
                         ],
                       ),
-                      SizedBox(height: 20),
+                      const SizedBox(height: 10),
                       ClipRRect(
                         borderRadius: BorderRadius.circular(30.0),
                         child: Stack(
@@ -99,7 +99,7 @@ class _MenuScreenState extends State<MenuScreen> {
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    Text(
+                                    const Text(
                                       'Asparagus and Steak',
                                       style: TextStyle(
                                         fontSize: 18,
@@ -107,13 +107,13 @@ class _MenuScreenState extends State<MenuScreen> {
                                         color: Colors.white,
                                       ),
                                     ),
-                                    SizedBox(height: 5),
+                                    const SizedBox(height: 5),
                                     Row(
                                       children: List.generate(5, (index) {
-                                        return Icon(
+                                        return const Icon(
                                           Icons.star,
-                                          color: const Color.fromARGB(
-                                              255, 229, 160, 0),
+                                          color:
+                                              Color.fromARGB(255, 229, 160, 0),
                                           size: 20,
                                         );
                                       }),
@@ -125,6 +125,13 @@ class _MenuScreenState extends State<MenuScreen> {
                           ],
                         ),
                       ),
+                      const SizedBox(height: 8),
+                      const Text(
+                        'Most Popular',
+                        style: TextStyle(
+                            fontSize: 25, fontWeight: FontWeight.w400),
+                      )
+                      // Row(children: [MenuScreen()],)
                     ],
                   ),
                 ),
