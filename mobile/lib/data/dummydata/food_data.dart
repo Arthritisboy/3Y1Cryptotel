@@ -1,4 +1,4 @@
-import 'package:hotel_flutter/data/model/food_item.dart';
+import 'package:hotel_flutter/data/model/food_model.dart';
 
 final List<FoodItem> foodData = [
   FoodItem(
@@ -34,7 +34,11 @@ final List<FoodItem> foodData = [
     title: 'Steak',
     shortDescription: 'Lorem ipsum dolor sit amet, consectetur...',
     price: 15.0,
-    categories: [FoodCategory.lunch, FoodCategory.mostPopular],
+    categories: [
+      FoodCategory.lunch,
+      FoodCategory.mostPopular,
+      FoodCategory.dinner
+    ],
   ),
   FoodItem(
     imagePath: 'assets/images/foods/salad.png',

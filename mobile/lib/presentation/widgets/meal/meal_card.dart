@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:hotel_flutter/data/model/food_item.dart';
+import 'package:hotel_flutter/data/model/food_model.dart';
 
 class MealCardWidget extends StatelessWidget {
   final FoodItem foodItem;
-  final VoidCallback onButtonPressed;
+  final Function(FoodItem) onButtonPressed; // Function to handle button press
 
   const MealCardWidget({
     super.key,
@@ -49,7 +49,7 @@ class MealCardWidget extends StatelessWidget {
                       Text(
                         foodItem.title,
                         style: const TextStyle(
-                          fontSize: 14, // Adjust text size for smaller card
+                          fontSize: 14,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
@@ -62,7 +62,9 @@ class MealCardWidget extends StatelessWidget {
                         ),
                         child: IconButton(
                           icon: const Icon(Icons.add),
-                          onPressed: onButtonPressed,
+                          onPressed: () {
+                            onButtonPressed(foodItem); // Call the callback
+                          },
                           color: Colors.grey,
                           iconSize: 20,
                           padding: EdgeInsets.zero,

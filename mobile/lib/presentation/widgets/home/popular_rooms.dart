@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:hotel_flutter/presentation/widgets/home/image_with_heart.dart'; // Update with the correct path if necessary
-import 'package:hotel_flutter/presentation/screens/room_screen.dart'; // Update with the correct path
+import 'package:hotel_flutter/presentation/widgets/home/image_with_heart.dart';
+import 'package:hotel_flutter/presentation/screens/room_screen.dart';
 import 'package:hotel_flutter/data/dummydata/room_data.dart';
+import 'package:hotel_flutter/data/model/room_model.dart';
 
 class PopularRooms extends StatelessWidget {
   final Map<String, bool> heartStatus;
@@ -41,13 +42,7 @@ class PopularRooms extends StatelessWidget {
   }
 
   List<Widget> _buildRoomList(BuildContext context) {
-    return roomData.map((room) {
-      final imagePath = room['imagePath'] as String;
-      final roomName = room['roomName'] as String;
-      final typeOfRoom = room['typeOfRoom'] as String;
-      final star = room['star'] as double;
-      final price = room['price'] as int; // Assuming price is an integer
-
+    return roomData.map((Room room) {
       return Padding(
         padding: const EdgeInsets.only(right: 10.0),
         child: InkWell(
@@ -56,20 +51,21 @@ class PopularRooms extends StatelessWidget {
               context,
               MaterialPageRoute(
                 builder: (context) => RoomScreen(
-                  backgroundImage: imagePath,
-                  roomName: roomName,
-                  rating: star, // Pass the rating to RoomScreen
-                  price: price, // Pass the price to RoomScreen
+                  backgroundImage: room.imagePath,
+                  roomName: room.roomName,
+                  rating: room.star,
+                  price: room.price,
                 ),
               ),
             );
           },
           child: ImageWithHeart(
-            imagePath: imagePath,
-            isHeartFilled: heartStatus[imagePath] ?? false,
-            onHeartPressed: (isFilled) => onHeartPressed(imagePath, isFilled),
-            roomName: roomName,
-            typeOfRoom: typeOfRoom,
+            imagePath: room.imagePath,
+            isHeartFilled: heartStatus[room.imagePath] ?? false,
+            onHeartPressed: (isFilled) =>
+                onHeartPressed(room.imagePath, isFilled),
+            roomName: room.roomName,
+            typeOfRoom: room.typeOfRoom,
           ),
         ),
       );
