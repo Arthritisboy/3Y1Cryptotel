@@ -8,7 +8,7 @@ class Header extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          SizedBox(height: 25.0),
+          const SizedBox(height: 25.0),
           Row(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
@@ -18,11 +18,11 @@ class Header extends StatelessWidget {
                 height: 107.0,
                 fit: BoxFit.cover,
               ),
-              SizedBox(width: 10.0),
+              const SizedBox(width: 10.0),
               _buildTitleSection(),
             ],
           ),
-          SizedBox(height: 5.0),
+          const SizedBox(height: 5.0),
           _buildSearchField(),
         ],
       ),
