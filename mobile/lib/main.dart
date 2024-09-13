@@ -1,5 +1,8 @@
+
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:hotel_flutter/presentation/screens/forgot_password_screen.dart';
+import 'package:hotel_flutter/presentation/screens/home_screen.dart';
 import 'package:hotel_flutter/presentation/screens/splash_screen.dart';
 import 'package:hotel_flutter/router/app_router.dart';
 
@@ -17,6 +20,9 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: 'Cryptotel',
       onGenerateRoute: _appRouter.onGenerateRoute,
+      routes: {
+        '/forgotpassword': (context) => const ForgotPassword(),
+      },
       theme: ThemeData(
         primaryColor: Colors.white,
         colorScheme: ColorScheme.fromSeed(

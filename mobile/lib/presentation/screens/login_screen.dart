@@ -169,6 +169,9 @@ class _LoginScreenState extends State<LoginScreen> {
                         Align(
                           alignment: Alignment.centerRight,
                           child: GestureDetector(
+                            onTap: () {
+                              Navigator.of(context).pushNamed('/forgotpassword');
+                            },
                             child: const Text(
                               'Forgot password?',
                               style: TextStyle(
@@ -199,6 +202,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           //     const SnackBar(
                           //         content: Text(
                           //             'Please agree to the processing of personal data')),
+
                           //   );
                           // }
                         },
