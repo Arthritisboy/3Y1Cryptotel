@@ -84,6 +84,10 @@ flutter:
     # - assets/images/foods/salad.png
     # - assets/images/foods/cordon_blue.png
 
+  fonts:
+    - family: HammerSmith
+      fonts:
+        - asset: custom_fonts/HammersmithOne.ttf
   # The following line ensures that the Material Icons font is
   # included with your application, so that you can use the icons in
   # the material Icons class.
