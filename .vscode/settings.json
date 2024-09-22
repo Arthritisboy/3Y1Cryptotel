@@ -8,5 +8,6 @@
     "LTRB",
     "menuscreen",
     "signup"
-  ]
+  ],
+  "cmake.ignoreCMakeListsMissing": true
 }
