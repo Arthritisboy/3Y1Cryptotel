@@ -8,5 +8,6 @@
     "LTRB",
     "menuscreen",
     "signup"
-  ]
+  ],
+  "cmake.sourceDirectory": "D:/HackathonRepository/3Y1Cryptotel/mobile/windows/flutter"
 }
