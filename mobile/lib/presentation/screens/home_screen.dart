@@ -4,11 +4,10 @@ import 'package:hotel_flutter/presentation/screens/add_cart_screen.dart';
 import 'package:hotel_flutter/presentation/widgets/home/background_image.dart';
 import 'package:hotel_flutter/presentation/widgets/home/home_header.dart';
 import 'package:hotel_flutter/presentation/widgets/home/popular_rooms.dart';
-import 'package:hotel_flutter/presentation/widgets/home/food_section.dart';
 import 'package:hotel_flutter/presentation/widgets/home/bottom_home_icon_navigation.dart';
 
 class HomeScreen extends StatefulWidget {
-  const HomeScreen({Key? key}) : super(key: key);
+  const HomeScreen({super.key});
 
   @override
   State<HomeScreen> createState() => _HomeScreenState();
@@ -43,9 +42,6 @@ class _HomeScreenState extends State<HomeScreen> {
     return Scaffold(
       body: Stack(
         children: [
-          const BackgroundImage(
-            image: 'assets/images/others/homepage.jpg',
-          ),
           Column(
             children: [
               Header(),
@@ -71,7 +67,6 @@ class _HomeScreenState extends State<HomeScreen> {
                             },
                           ),
                           const BottomHomeIconNavigation(),
-                          const FoodSection(),
                         ],
                       ),
                     ),

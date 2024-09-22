@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 
-class CircleIcon extends StatelessWidget {
+class SquareIcon extends StatelessWidget {
   final IconData iconData;
   final double size;
   final Color backgroundColor;
   final Color iconColor;
 
-  const CircleIcon({
+  const SquareIcon({
     super.key,
     required this.iconData,
     this.size = 50.0,
@@ -21,7 +21,7 @@ class CircleIcon extends StatelessWidget {
       height: size,
       decoration: BoxDecoration(
         color: backgroundColor,
-        shape: BoxShape.circle,
+        borderRadius: const BorderRadius.all(Radius.circular(12)),
       ),
       child: Icon(
         iconData,

@@ -13,43 +13,20 @@ class Header extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               Image.asset(
-                'assets/images/others/logowhite.png',
-                width: 72.0,
-                height: 107.0,
+                'assets/images/others/cryptotelLogo.png',
+                width: 56.0,
+                height: 53.0,
                 fit: BoxFit.cover,
               ),
               const SizedBox(width: 10.0),
-              _buildTitleSection(),
             ],
           ),
           const SizedBox(height: 5.0),
+          const Text("Where Would you"),
+          const Text("Like to Travel, Kawu"),
           _buildSearchField(),
         ],
       ),
-    );
-  }
-
-  Widget _buildTitleSection() {
-    return const Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          'Cryptotel',
-          style: TextStyle(
-            fontSize: 28.0,
-            fontWeight: FontWeight.bold,
-            color: Colors.white,
-          ),
-        ),
-        Text(
-          'Hotel and Restaurant',
-          style: TextStyle(
-            fontSize: 15.0,
-            fontWeight: FontWeight.w400,
-            color: Colors.white,
-          ),
-        ),
-      ],
     );
   }
 

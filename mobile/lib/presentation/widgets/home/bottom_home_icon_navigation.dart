@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'circle_icon.dart';
+import 'square_icon.dart';
 
 class BottomHomeIconNavigation extends StatelessWidget {
   const BottomHomeIconNavigation({super.key});
@@ -15,19 +15,19 @@ class BottomHomeIconNavigation extends StatelessWidget {
       children: [
         GestureDetector(
           onTap: () {},
-          child: const CircleIcon(iconData: Icons.favorite),
+          child: const SquareIcon(iconData: Icons.favorite),
         ),
         GestureDetector(
           onTap: () => _navigateToMenuScreen(context),
-          child: const CircleIcon(iconData: Icons.restaurant),
+          child: const SquareIcon(iconData: Icons.restaurant),
         ),
         GestureDetector(
           onTap: () {},
-          child: const CircleIcon(iconData: Icons.room),
+          child: const SquareIcon(iconData: Icons.room),
         ),
         GestureDetector(
           onTap: () {},
-          child: const CircleIcon(iconData: Icons.person),
+          child: const SquareIcon(iconData: Icons.person),
         ),
       ],
     );
