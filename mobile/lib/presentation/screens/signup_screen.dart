@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:hotel_flutter/presentation/widgets/custom_scaffold.dart';
 import 'package:hotel_flutter/presentation/screens/login_screen.dart';
 
 class SignupScreen extends StatefulWidget {
@@ -81,7 +80,7 @@ class _SignUpScreenState extends State<SignupScreen> {
                         color: Colors.black,
                       ),
                     ),
-                    SizedBox(height: screenHeight * 0.02),
+                    SizedBox(height: screenHeight * 0.01),
                     Text(
                       'SIGN UP',
                       style: TextStyle(
@@ -90,7 +89,7 @@ class _SignUpScreenState extends State<SignupScreen> {
                         color: Colors.black,
                       ),
                     ),
-                    SizedBox(height: screenHeight * 0.03),
+                    SizedBox(height: screenHeight * 0.01),
                     SizedBox(
                       width: screenWidth * 0.7,
                       height: screenWidth * 0.1,
@@ -120,7 +119,7 @@ class _SignUpScreenState extends State<SignupScreen> {
                         ),
                       ),
                     ),
-                    SizedBox(height: screenHeight * 0.03),
+                    SizedBox(height: screenHeight * 0.01),
                     SizedBox(
                       width: screenWidth * 0.7,
                       height: screenWidth * 0.1,
@@ -150,7 +149,7 @@ class _SignUpScreenState extends State<SignupScreen> {
                         ),
                       ),
                     ),
-                    SizedBox(height: screenHeight * 0.03),
+                    SizedBox(height: screenHeight * 0.01),
                     SizedBox(
                       width: screenWidth * 0.7,
                       height: screenWidth * 0.1,
@@ -182,7 +181,7 @@ class _SignUpScreenState extends State<SignupScreen> {
                         ),
                       ),
                     ),
-                    SizedBox(height: screenHeight * 0.03),
+                    SizedBox(height: screenHeight * 0.01),
                     SizedBox(
                       width: screenWidth * 0.7,
                       height: screenWidth * 0.1,
@@ -214,65 +213,46 @@ class _SignUpScreenState extends State<SignupScreen> {
                         ),
                       ),
                     ),
-                    SizedBox(height: screenHeight * 0.04),
+                    SizedBox(height: screenHeight * 0.03),
                     SizedBox(
-                      width: screenWidth * 0.4,
-                      height: screenHeight * 0.05,
+                      width: screenWidth * 0.5,
+                      height: screenHeight * 0.04,
                       child: ElevatedButton(
                         style: ButtonStyle(
                           backgroundColor:
                               MaterialStateProperty.all(Color(0xFF1C3473)),
                         ),
                         onPressed: () {
-                          if (_formSignupKey.currentState!.validate() &&
-                              agreePersonalData) {
-                            Navigator.of(context).pushNamed('/homescreen');
-                          }
+                          //if (_formSignupKey.currentState!.validate() &&
+                          //agreePersonalData) {
+                          Navigator.of(context).pushNamed('/homescreen');
+                          //}
                         },
                         child: const Text('SIGN UP'),
                       ),
                     ),
-                    SizedBox(height: screenHeight * 0.02),
-                    Row(
-                      children: [
-                        Expanded(
-                          child: Divider(
-                            color: Colors.black,
-                            thickness: 1,
-                          ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                          child: Text('OR'),
-                        ),
-                        Expanded(
-                          child: Divider(
-                            color: Colors.black,
-                            thickness: 1,
-                          ),
-                        ),
-                      ],
-                    ),
-                    SizedBox(height: screenHeight * 0.02),
+                    SizedBox(height: screenHeight * 0.01),
                     SizedBox(
-                      width: screenWidth * 0.4,
-                      height: screenHeight * 0.05,
-                      child: ElevatedButton(
-                        style: ButtonStyle(
-                          backgroundColor:
-                              MaterialStateProperty.all(Color(0xFF1C3473)),
-                        ),
-                        onPressed: () {
-                          Navigator.of(context).push(
-                            MaterialPageRoute(
-                                builder: (context) => const LoginScreen()),
-                          );
-                        },
-                        child: const Text('LOGIN'),
+                      width: screenWidth * 0.7,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          const Text('Already have an account?'),
+                          TextButton(
+                            onPressed: () {
+                              Navigator.of(context).pushNamed('/login');
+                            },
+                            child: const Text(
+                              'Login',
+                              style: TextStyle(
+                                color: Color(0xFF1C3473), // Color for the link
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
                     ),
-                    const Spacer(),
-                    const SizedBox(height: 20.0),
                   ],
                 ),
               ),

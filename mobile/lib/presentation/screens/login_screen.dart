@@ -28,9 +28,10 @@ class _LoginScreenState extends State<LoginScreen> {
                 alignment: Alignment.centerLeft,
                 child: Padding(
                   padding: EdgeInsets.only(
-                      top: screenHeight * 0.02,
-                      left: screenWidth * 0.05,
-                      bottom: screenHeight * 0.05),
+                    top: screenHeight * 0.02,
+                    left: screenWidth * 0.05,
+                    bottom: screenHeight * 0.05,
+                  ),
                   child: Text(
                     'CRYPTOTEL',
                     style: TextStyle(
@@ -155,49 +156,37 @@ class _LoginScreenState extends State<LoginScreen> {
                       height: screenHeight * 0.05,
                       child: ElevatedButton(
                         style: ButtonStyle(
-                            backgroundColor:
-                                WidgetStateProperty.all(Color(0xFF1C3473))),
+                          backgroundColor:
+                              WidgetStateProperty.all(Color(0xFF1C3473)),
+                        ),
                         onPressed: () {
-                          if (_formSignInKey.currentState!.validate()) {
-                            Navigator.of(context).pushNamed('/homescreen');
-                          }
+                          //if (_formSignInKey.currentState!.validate()) {
+                          Navigator.of(context).pushNamed('/homescreen');
+                          // }
                         },
                         child: const Text('LOGIN'),
                       ),
                     ),
                     SizedBox(height: screenHeight * 0.02),
-                    Row(
-                      children: [
-                        Expanded(
-                          child: Divider(
-                            color: Colors.black,
-                            thickness: 1,
-                          ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                          child: Text('OR'),
-                        ),
-                        Expanded(
-                          child: Divider(
-                            color: Colors.black,
-                            thickness: 1,
-                          ),
-                        ),
-                      ],
-                    ),
-                    SizedBox(height: screenHeight * 0.02),
                     SizedBox(
-                      width: screenWidth * 0.4,
-                      height: screenHeight * 0.05,
-                      child: ElevatedButton(
-                        style: ButtonStyle(
-                            backgroundColor:
-                                WidgetStateProperty.all(Color(0xFF1C3473))),
-                        onPressed: () {
-                          Navigator.of(context).pushNamed('/signup');
-                        },
-                        child: const Text('SIGN UP'),
+                      width: screenWidth * 0.7,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          const Text("Don't have an account?"),
+                          TextButton(
+                            onPressed: () {
+                              Navigator.of(context).pushNamed('/signup');
+                            },
+                            child: const Text(
+                              'Sign up',
+                              style: TextStyle(
+                                color: Color(0xFF1C3473), // Color for the link
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
                     ),
                   ],
