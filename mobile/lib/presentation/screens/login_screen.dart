@@ -28,8 +28,8 @@ class _LoginScreenState extends State<LoginScreen> {
                 alignment: Alignment.centerLeft,
                 child: Padding(
                   padding: EdgeInsets.only(
-                      top: screenHeight * 0.02, // Space above
-                      left: screenWidth * 0.05, // Space on the left
+                      top: screenHeight * 0.02,
+                      left: screenWidth * 0.05,
                       bottom: screenHeight * 0.05),
                   child: Text(
                     'CRYPTOTEL',
@@ -166,8 +166,6 @@ class _LoginScreenState extends State<LoginScreen> {
                       ),
                     ),
                     SizedBox(height: screenHeight * 0.02),
-
-                    // Divider with Sign Up Button
                     Row(
                       children: [
                         Expanded(
@@ -189,7 +187,6 @@ class _LoginScreenState extends State<LoginScreen> {
                       ],
                     ),
                     SizedBox(height: screenHeight * 0.02),
-
                     SizedBox(
                       width: screenWidth * 0.4,
                       height: screenHeight * 0.05,
