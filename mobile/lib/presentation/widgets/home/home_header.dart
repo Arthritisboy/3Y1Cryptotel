@@ -22,8 +22,17 @@ class Header extends StatelessWidget {
             ],
           ),
           const SizedBox(height: 5.0),
-          const Text("Where Would you"),
-          const Text("Like to Travel, Kawu"),
+          const Text(
+            "Where Would you",
+            style: TextStyle(fontSize: 25, fontWeight: FontWeight.w400),
+          ),
+          const Text(
+            "Like to Travel, Kawu",
+            style: TextStyle(fontSize: 25, fontWeight: FontWeight.w400),
+          ),
+          const SizedBox(
+            height: 10,
+          ),
           _buildSearchField(),
         ],
       ),
@@ -31,35 +40,48 @@ class Header extends StatelessWidget {
   }
 
   Widget _buildSearchField() {
-    return TextField(
-      decoration: InputDecoration(
-        prefixIcon: const Icon(Icons.search, color: Colors.white),
-        hintText: 'Search...',
-        hintStyle: const TextStyle(color: Colors.white),
-        filled: true,
-        fillColor: Colors.transparent,
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(30.0),
-          borderSide: const BorderSide(color: Colors.white, width: 1.0),
-        ),
-        enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(30.0),
-          borderSide: const BorderSide(color: Colors.white, width: 1.0),
-        ),
-        focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(30.0),
-          borderSide: const BorderSide(color: Colors.white, width: 1.0),
-        ),
-        focusedErrorBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(30.0),
-          borderSide: const BorderSide(color: Colors.white, width: 1.0),
-        ),
-        errorBorder: InputBorder.none,
-        contentPadding:
-            const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+    return Container(
+      decoration: BoxDecoration(
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.5),
+            spreadRadius: 1,
+            blurRadius: 8,
+            offset: const Offset(0, 4),
+          ),
+        ],
+        borderRadius: BorderRadius.circular(30.0),
       ),
-      style: const TextStyle(color: Colors.black),
-      cursorColor: Colors.black,
+      child: TextField(
+        decoration: InputDecoration(
+          prefixIcon: const Icon(Icons.search, color: Colors.black),
+          hintText: 'Search',
+          hintStyle: const TextStyle(color: Colors.grey),
+          filled: true,
+          fillColor: Colors.white,
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(30.0),
+            borderSide: const BorderSide(color: Colors.grey, width: 1.0),
+          ),
+          enabledBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(30.0),
+            borderSide: const BorderSide(color: Colors.grey, width: 1.0),
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(30.0),
+            borderSide: const BorderSide(color: Colors.grey, width: 1.0),
+          ),
+          focusedErrorBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(30.0),
+            borderSide: const BorderSide(color: Colors.grey, width: 1.0),
+          ),
+          errorBorder: InputBorder.none,
+          contentPadding:
+              const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+        ),
+        style: const TextStyle(color: Colors.black),
+        cursorColor: Colors.black,
+      ),
     );
   }
 }

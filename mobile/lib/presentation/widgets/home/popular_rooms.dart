@@ -1,15 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:hotel_flutter/presentation/widgets/home/image_with_heart.dart';
+import 'package:hotel_flutter/presentation/widgets/home/room_widget.dart';
 import 'package:hotel_flutter/presentation/screens/room_screen.dart';
 import 'package:hotel_flutter/data/dummydata/room_data.dart';
 import 'package:hotel_flutter/data/model/room_model.dart';
 
 class PopularRooms extends StatelessWidget {
-  final Map<String, bool> heartStatus;
-  final Function(String, bool) onHeartPressed;
-
-  const PopularRooms(
-      {super.key, required this.heartStatus, required this.onHeartPressed});
+  const PopularRooms({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -19,10 +15,10 @@ class PopularRooms extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           const Text(
-            'Popular Rooms',
+            'Top Rated Hotels',
             style: TextStyle(
               fontSize: 24.0,
-              fontWeight: FontWeight.bold,
+              // fontWeight: FontWeight.bold,
               color: Colors.black,
             ),
           ),
@@ -53,19 +49,17 @@ class PopularRooms extends StatelessWidget {
                 builder: (context) => RoomScreen(
                   backgroundImage: room.imagePath,
                   roomName: room.roomName,
-                  rating: room.star,
+                  rating: room.rating,
                   price: room.price,
                 ),
               ),
             );
           },
-          child: ImageWithHeart(
+          child: RoomWidget(
             imagePath: room.imagePath,
-            isHeartFilled: heartStatus[room.imagePath] ?? false,
-            onHeartPressed: (isFilled) =>
-                onHeartPressed(room.imagePath, isFilled),
             roomName: room.roomName,
-            typeOfRoom: room.typeOfRoom,
+            location: room.location,
+            rating: room.rating,
           ),
         ),
       );

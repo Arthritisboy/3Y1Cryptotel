@@ -10,15 +10,15 @@ class SquareIcon extends StatelessWidget {
     super.key,
     required this.iconData,
     this.size = 50.0,
-    this.backgroundColor = const Color.fromARGB(255, 52, 46, 46),
-    this.iconColor = Colors.white,
+    this.backgroundColor = const Color.fromARGB(255, 232, 232, 232),
+    this.iconColor = Colors.grey,
   });
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: size,
-      height: size,
+      width: 72,
+      height: 62,
       decoration: BoxDecoration(
         color: backgroundColor,
         borderRadius: const BorderRadius.all(Radius.circular(12)),
@@ -26,7 +26,7 @@ class SquareIcon extends StatelessWidget {
       child: Icon(
         iconData,
         color: iconColor,
-        size: size / 2,
+        size: 32,
       ),
     );
   }
