@@ -11,13 +11,33 @@ class SplashScreen extends StatefulWidget {
 
 class _SplashScreenState extends State<SplashScreen>
     with SingleTickerProviderStateMixin {
+  late AnimationController _controller;
+  late Animation<double> _animation;
+
   @override
   void initState() {
     super.initState();
+    
+    // Set immersive mode
     SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersive);
 
+    // Initialize the animation controller and animation
+    _controller = AnimationController(
+      vsync: this,
+      duration: const Duration(seconds: 2),
+    );
+    _animation = Tween<double>(begin: 0.0, end: 1.0).animate(
+      CurvedAnimation(
+        parent: _controller,
+        curve: Curves.easeOut,
+      ),
+    );
+
+    // Start the animation
+    _controller.forward();
+
+    // Navigate to the login screen after the animation completes
     Future.delayed(const Duration(seconds: 2), () {
-      // ignore: use_build_context_synchronously
       Navigator.of(context).pushReplacement(MaterialPageRoute(
         builder: (_) => const LoginScreen(),
       ));
@@ -26,6 +46,10 @@ class _SplashScreenState extends State<SplashScreen>
 
   @override
   void dispose() {
+    // Dispose of the animation controller
+    _controller.dispose();
+    
+    // Reset the system UI
     SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual,
         overlays: SystemUiOverlay.values);
     super.dispose();
@@ -36,28 +60,22 @@ class _SplashScreenState extends State<SplashScreen>
     return Scaffold(
       body: Stack(
         children: [
-          // Black background
           Container(
-            color: Colors.black,
+            color: Colors.white,
           ),
-          // Background image with opacity
-          Opacity(
-            opacity: 0.4,
-            child: Container(
-              decoration: const BoxDecoration(
-                image: DecorationImage(
-                  image: AssetImage('assets/images/others/hotel.png'),
-                  fit: BoxFit.cover,
-                ),
-              ),
-            ),
-          ),
-          // Centered logo image
           Center(
-            child: Image.asset(
-              'assets/images/others/logowhite.png', // Replace with your logo image path
-              width: 450, // Set width as needed
-              height: 450, // Set height as needed
+            child: AnimatedBuilder(
+              animation: _animation,
+              builder: (context, child) {
+                return Transform.scale(
+                  scale: _animation.value,
+                  child: Image.asset(
+                    'assets/images/others/cryptotelLogo.png',
+                    width: 200,
+                    height: 200,
+                  ),
+                );
+              },
             ),
           ),
         ],
