@@ -60,6 +60,7 @@ flutter:
     - assets/images/
     - assets/images/foods/
     - assets/images/rooms/
+    - assets/images/others/
     # - assets/images/others/hotel.png
     # - assets/images/others/Vinna.jpg
     # - assets/images/others/logowhite.png

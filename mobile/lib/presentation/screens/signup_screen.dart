@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:hotel_flutter/presentation/screens/signin_screen.dart';
 import 'package:hotel_flutter/presentation/widgets/custom_scaffold.dart';
+import 'package:hotel_flutter/presentation/screens/login_screen.dart';
 
 class SignupScreen extends StatefulWidget {
   const SignupScreen({super.key});
@@ -294,7 +294,7 @@ class _SignUpScreenState extends State<SignupScreen> {
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                  builder: (e) => const SigninScreen(),
+                                  builder: (e) => const LoginScreen(),
                                 ),
                               );
                             },

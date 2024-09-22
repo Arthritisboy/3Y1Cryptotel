@@ -3,14 +3,13 @@ import 'package:hotel_flutter/presentation/screens/menu_screens.dart';
 import 'package:hotel_flutter/presentation/screens/tab_screen.dart';
 import 'package:hotel_flutter/presentation/screens/login_screen.dart';
 import 'package:hotel_flutter/presentation/screens/signup_screen.dart';
-import 'package:hotel_flutter/presentation/screens/welcome_screen.dart';
 
 class AppRouter {
   Route<dynamic>? onGenerateRoute(RouteSettings routeSettings) {
     switch (routeSettings.name) {
       case '/':
         return MaterialPageRoute(
-          builder: (_) => const WelcomeScreen(),
+          builder: (_) => const LoginScreen(),
         );
       case '/login':
         return MaterialPageRoute(
