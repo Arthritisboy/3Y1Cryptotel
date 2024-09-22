@@ -61,6 +61,9 @@ flutter:
     - assets/images/foods/
     - assets/images/rooms/
     - assets/images/others/
+    - assets/images/restaurant/
+    - assets/images/rooms/monarchHotel.jpg
+    - assets/images/rooms/starPlaza.jpg
     # - assets/images/others/hotel.png
     # - assets/images/others/Vinna.jpg
     # - assets/images/others/logowhite.png

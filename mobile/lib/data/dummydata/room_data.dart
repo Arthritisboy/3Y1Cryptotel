@@ -3,7 +3,7 @@ import 'package:hotel_flutter/data/model/room_model.dart';
 final List<Room> roomData = [
   Room(
     imagePath: 'assets/images/rooms/monarchHotel.jpg',
-    roomName: 'Deluxe Room',
+    roomName: 'The Monarch Hotel',
     typeOfRoom: 'King Size Bed',
     rating: 5.0,
     price: 30,
@@ -11,7 +11,7 @@ final List<Room> roomData = [
   ),
   Room(
     imagePath: 'assets/images/rooms/starPlaza.jpg',
-    roomName: 'Suite Room',
+    roomName: 'Star Plaza Hotel',
     typeOfRoom: 'Queen Size Bed',
     rating: 4.5,
     price: 50,

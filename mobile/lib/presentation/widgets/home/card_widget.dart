@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 
-class RoomWidget extends StatelessWidget {
+class CardWidget extends StatelessWidget {
   final String imagePath;
   final String roomName;
   final String location;
   final double rating;
 
-  const RoomWidget({
+  const CardWidget({
     super.key,
     required this.imagePath,
     required this.roomName,

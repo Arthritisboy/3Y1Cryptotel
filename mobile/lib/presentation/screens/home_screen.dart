@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:hotel_flutter/data/model/food_model.dart';
 import 'package:hotel_flutter/presentation/screens/add_cart_screen.dart';
+import 'package:hotel_flutter/presentation/screens/menu_screens.dart';
 import 'package:hotel_flutter/presentation/widgets/home/bottom_home_icon_navigation.dart';
 import 'package:hotel_flutter/presentation/widgets/home/home_header.dart';
+import 'package:hotel_flutter/presentation/widgets/home/popular_restaurant.dart';
 import 'package:hotel_flutter/presentation/widgets/home/popular_rooms.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -19,6 +21,7 @@ class _HomeScreenState extends State<HomeScreen> {
   };
 
   List<FoodItem> selectedMeals = [];
+  int _selectedIndex = 0; // Track the selected index
 
   @override
   void initState() {
@@ -26,11 +29,18 @@ class _HomeScreenState extends State<HomeScreen> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final args =
           ModalRoute.of(context)?.settings.arguments as List<FoodItem>?;
+
       if (args != null) {
         setState(() {
           selectedMeals.addAll(args);
         });
       }
+    });
+  }
+
+  void _onIconTapped(int index) {
+    setState(() {
+      _selectedIndex = index; // Update the selected index
     });
   }
 
@@ -43,7 +53,10 @@ class _HomeScreenState extends State<HomeScreen> {
             children: [
               Header(),
               const SizedBox(height: 10),
-              const BottomHomeIconNavigation(),
+              BottomHomeIconNavigation(
+                selectedIndex: _selectedIndex,
+                onIconTapped: _onIconTapped, // Pass the callback
+              ),
               Expanded(
                 child: Container(
                   decoration: const BoxDecoration(
@@ -51,11 +64,16 @@ class _HomeScreenState extends State<HomeScreen> {
                     borderRadius:
                         BorderRadius.vertical(top: Radius.circular(30.0)),
                   ),
-                  child: const SingleChildScrollView(
+                  child: SingleChildScrollView(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        PopularRooms(),
+                        // Conditional rendering based on selected index
+                        if (_selectedIndex == 0) ...[
+                          PopularRooms(),
+                          PopularRestaurant()
+                        ],
+                        if (_selectedIndex == 1) PopularRestaurant(),
                       ],
                     ),
                   ),

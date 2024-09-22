@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:hotel_flutter/presentation/widgets/home/room_widget.dart';
+import 'package:hotel_flutter/presentation/widgets/home/card_widget.dart';
 import 'package:hotel_flutter/presentation/screens/room_screen.dart';
 import 'package:hotel_flutter/data/dummydata/room_data.dart';
 import 'package:hotel_flutter/data/model/room_model.dart';
@@ -18,7 +18,6 @@ class PopularRooms extends StatelessWidget {
             'Top Rated Hotels',
             style: TextStyle(
               fontSize: 24.0,
-              // fontWeight: FontWeight.bold,
               color: Colors.black,
             ),
           ),
@@ -55,7 +54,7 @@ class PopularRooms extends StatelessWidget {
               ),
             );
           },
-          child: RoomWidget(
+          child: CardWidget(
             imagePath: room.imagePath,
             roomName: room.roomName,
             location: room.location,
