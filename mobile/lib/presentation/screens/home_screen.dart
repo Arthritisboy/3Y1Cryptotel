@@ -53,10 +53,9 @@ class _HomeScreenState extends State<HomeScreen> {
                 child: Align(
                   alignment: Alignment.bottomCenter,
                   child: Container(
-                    decoration: const BoxDecoration(
+                    decoration: BoxDecoration(
                       color: Colors.white,
-                      borderRadius:
-                          BorderRadius.vertical(top: Radius.circular(30.0)),
+                      borderRadius: const BorderRadius.vertical(top: Radius.circular(30.0)),
                     ),
                     child: SingleChildScrollView(
                       child: Column(
