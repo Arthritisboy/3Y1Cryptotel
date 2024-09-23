@@ -61,15 +61,14 @@ class CardWidget extends StatelessWidget {
                       const Icon(Icons.place, color: Colors.grey),
                       const SizedBox(width: 4.0),
                       Expanded(
-                        // Use Expanded instead of Flexible
                         child: Text(
                           location,
                           style: const TextStyle(
                             color: Color.fromARGB(255, 142, 142, 147),
                             fontSize: 10,
                           ),
-                          overflow: TextOverflow.ellipsis, // Ensure text wraps
-                          maxLines: 1, // Add maxLines to prevent overflow
+                          overflow: TextOverflow.ellipsis,
+                          maxLines: 1,
                         ),
                       ),
                       const Spacer(),
