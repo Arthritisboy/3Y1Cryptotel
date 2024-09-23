@@ -1,28 +1,31 @@
 import 'package:flutter/material.dart';
-import 'package:hotel_flutter/presentation/widgets/room/facility_icon.dart';
-import 'package:hotel_flutter/presentation/widgets/room/background_room_image.dart'; // Update with the correct path if necessary
+import 'package:hotel_flutter/presentation/widgets/room/background_room_image.dart';
 
 class RoomScreen extends StatefulWidget {
   final String backgroundImage;
   final String roomName;
-  final double rating; // Add rating as a parameter
-  final int price; // Add price as a parameter
+  final double rating;
+  final int price;
+  final String location;
+  final String time;
 
   const RoomScreen({
     super.key,
     required this.backgroundImage,
     required this.roomName,
-    required this.rating, // Initialize rating
-    required this.price, // Initialize price
+    required this.rating,
+    required this.price,
+    required this.location,
+    required this.time,
   });
 
   @override
   State<StatefulWidget> createState() {
-    return _RoomScreen();
+    return _RoomScreenState();
   }
 }
 
-class _RoomScreen extends State<RoomScreen> {
+class _RoomScreenState extends State<RoomScreen> {
   List<Widget> _buildStarRating(double rating) {
     const int maxStars = 5;
     List<Widget> stars = [];
@@ -44,172 +47,184 @@ class _RoomScreen extends State<RoomScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Room Details'),
+        title: const Text('Room Details'),
         backgroundColor: Colors.transparent,
         elevation: 0,
-      ),
-      body: Stack(
-        children: [
-          Positioned(
-            top: 0,
-            left: 0,
-            right: 0,
-            height: MediaQuery.of(context).size.height * 0.3,
-            child: BackgroundRoomImage(image: widget.backgroundImage),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.favorite_outline),
+            color: const Color.fromARGB(255, 52, 46, 46),
+            onPressed: () {
+              // Add favorite functionality here
+            },
           ),
-          Positioned(
-            bottom: 0,
-            left: 0,
-            right: 0,
-            height: MediaQuery.of(context).size.height * 0.65,
-            child: Container(
-              decoration: const BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.vertical(top: Radius.circular(30.0)),
-              ),
-              child: SingleChildScrollView(
-                child: Padding(
-                  padding: const EdgeInsets.only(left: 26, right: 16, top: 22),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+        ],
+      ),
+      body: SingleChildScrollView(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            SizedBox(
+              height: MediaQuery.of(context).size.height * 0.3,
+              width: double.infinity,
+              child: BackgroundRoomImage(image: widget.backgroundImage),
+            ),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(
                         widget.roomName,
                         style: const TextStyle(
-                          fontSize: 30.0,
+                          fontSize: 25.0,
                           fontWeight: FontWeight.bold,
                           color: Colors.black,
                         ),
                       ),
-                      const SizedBox(height: 5),
-                      const Row(
-                        children: [
-                          Icon(
-                            Icons.location_on_outlined,
-                            color: const Color.fromARGB(255, 142, 142, 147),
-                            size: 26,
-                          ),
-                          SizedBox(width: 8.0),
-                          Text(
-                            'Madrid, Madrid',
-                            style: TextStyle(
-                              color: const Color.fromARGB(255, 142, 142, 147),
-                              fontSize: 20,
-                            ),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 5),
-                      Row(
-                        children: [
-                          Row(children: _buildStarRating(widget.rating)),
-                          const SizedBox(width: 8.0),
-                          Text('| ${widget.rating} Stars'),
-                          const Spacer(),
-                          Text(
-                            '\$${widget.price}', // Display price
-                            style: const TextStyle(
-                              fontSize: 25.0,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 5),
-                      const Row(
-                        children: [
-                          Expanded(
-                            child: Text(
-                              'Description',
-                              style: TextStyle(
-                                fontSize: 30,
-                                fontWeight: FontWeight.w400,
-                              ),
-                            ),
-                          ),
-                          SizedBox(width: 5),
-                          Expanded(
-                            child: Text(
-                              'Valoraciones',
-                              style: TextStyle(
-                                fontSize: 25,
-                                color: const Color.fromARGB(255, 142, 142, 147),
-                                fontWeight: FontWeight.w400,
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 10),
-                      const Text(
-                        'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.',
-                        style: TextStyle(
-                          color: const Color.fromARGB(255, 142, 142, 147),
-                          fontSize: 16,
-                        ),
-                      ),
-                      const SizedBox(height: 10),
-                      const Text(
-                        'FACILITY',
-                        style: TextStyle(
-                          fontWeight: FontWeight.w400,
-                          fontSize: 30,
-                        ),
-                      ),
-                      const SizedBox(height: 10),
-                      const FacilityIcon(),
-                      const SizedBox(height: 20),
-                      Row(
-                        children: [
-                          Expanded(
-                            child: ElevatedButton(
-                              onPressed: () {
-                                // Add your onPressed functionality here
-                              },
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: const Color.fromARGB(
-                                    255, 52, 46, 46), // Background color
-                                padding: const EdgeInsets.symmetric(
-                                    vertical: 15, horizontal: 30),
-                              ),
-                              child: const Text(
-                                'Choose Room',
-                                style: TextStyle(
-                                  color: Colors.white, // Text color
-                                  fontSize: 16,
+                      const SizedBox(width: 10),
+                      ClipRRect(
+                        borderRadius: BorderRadius.circular(5.0),
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 4.0, vertical: 2.0),
+                          color: const Color.fromARGB(255, 29, 53, 115),
+                          child: Row(
+                            children: [
+                              Text(
+                                widget.rating.toString(),
+                                style: const TextStyle(
+                                  fontSize: 14.0,
+                                  fontWeight: FontWeight.w600,
+                                  color: Colors.white,
                                 ),
                               ),
-                            ),
+                              const SizedBox(width: 4.0),
+                              const Icon(Icons.star, color: Colors.amber),
+                            ],
                           ),
-                          const SizedBox(width: 10),
-                          Container(
-                            decoration: BoxDecoration(
-                              border: Border.all(
-                                color: const Color.fromARGB(
-                                    255, 52, 46, 46), // Border color
-                                width: 2.0,
-                              ),
-                              borderRadius:
-                                  BorderRadius.circular(12), // Rounded corners
-                            ),
-                            child: IconButton(
-                              icon: const Icon(Icons.favorite_outline),
-                              color: const Color.fromARGB(
-                                  255, 52, 46, 46), // Icon color
-                              onPressed: () {
-                                // Add your onPressed functionality here
-                              },
-                            ),
-                          ),
-                        ],
+                        ),
                       ),
                     ],
                   ),
-                ),
+                  const SizedBox(height: 5),
+                  Row(
+                    children: [
+                      const Icon(
+                        Icons.attach_money,
+                        color: Color.fromARGB(255, 142, 142, 147),
+                        size: 26,
+                      ),
+                      const SizedBox(width: 8.0),
+                      Flexible(
+                        child: Text(
+                          '₱${widget.price} and over',
+                          style: const TextStyle(
+                            fontSize: 15,
+                            fontWeight: FontWeight.w400,
+                            color: Color.fromARGB(255, 142, 142, 147),
+                          ),
+                          overflow: TextOverflow
+                              .ellipsis, // This will add an ellipsis if it overflows
+                        ),
+                      ),
+                      const SizedBox(width: 8.0),
+                    ],
+                  ),
+                  const SizedBox(
+                    height: 3,
+                  ),
+                  Row(
+                    children: [
+                      const Icon(
+                        Icons.access_time,
+                        color: Color.fromARGB(255, 142, 142, 147),
+                        size: 26,
+                      ),
+                      const SizedBox(width: 8.0),
+                      Flexible(
+                        child: Text(
+                          "Open Hours: ${widget.time}",
+                          style: const TextStyle(
+                            fontSize: 15,
+                            fontWeight: FontWeight.w400,
+                            color: Color.fromARGB(255, 142, 142, 147),
+                          ),
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 3),
+                  Row(
+                    children: [
+                      const Icon(
+                        Icons.location_on_outlined,
+                        color: Color.fromARGB(255, 142, 142, 147),
+                        size: 26,
+                      ),
+                      const SizedBox(width: 8.0),
+                      Flexible(
+                        child: Text(
+                          widget.location,
+                          style: const TextStyle(
+                            color: Color.fromARGB(255, 142, 142, 147),
+                            fontSize: 15,
+                          ),
+                          overflow: TextOverflow
+                              .visible, // This ensures the text wraps
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 20),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: ElevatedButton(
+                          onPressed: () {
+                            // Add your onPressed functionality here
+                          },
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor:
+                                const Color.fromARGB(255, 52, 46, 46),
+                            padding: const EdgeInsets.symmetric(
+                                vertical: 15, horizontal: 30),
+                          ),
+                          child: const Text(
+                            'Choose Room',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 16,
+                            ),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 10),
+                      Container(
+                        decoration: BoxDecoration(
+                          border: Border.all(
+                            color: const Color.fromARGB(255, 52, 46, 46),
+                            width: 2.0,
+                          ),
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: IconButton(
+                          icon: const Icon(Icons.favorite_outline),
+                          color: const Color.fromARGB(255, 52, 46, 46),
+                          onPressed: () {},
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

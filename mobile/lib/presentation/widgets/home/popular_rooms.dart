@@ -46,11 +46,12 @@ class PopularRooms extends StatelessWidget {
               context,
               MaterialPageRoute(
                 builder: (context) => RoomScreen(
-                  backgroundImage: room.imagePath,
-                  roomName: room.roomName,
-                  rating: room.rating,
-                  price: room.price,
-                ),
+                    backgroundImage: room.imagePath,
+                    roomName: room.roomName,
+                    rating: room.rating,
+                    price: room.price,
+                    location: room.location,
+                    time: room.time),
               ),
             );
           },

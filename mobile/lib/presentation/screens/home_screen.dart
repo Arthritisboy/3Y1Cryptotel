@@ -70,10 +70,10 @@ class _HomeScreenState extends State<HomeScreen> {
                       children: [
                         // Conditional rendering based on selected index
                         if (_selectedIndex == 0) ...[
-                          PopularRooms(),
-                          PopularRestaurant()
+                          const PopularRooms(),
+                          const PopularRestaurant()
                         ],
-                        if (_selectedIndex == 1) PopularRestaurant(),
+                        if (_selectedIndex == 1) const PopularRestaurant(),
                       ],
                     ),
                   ),

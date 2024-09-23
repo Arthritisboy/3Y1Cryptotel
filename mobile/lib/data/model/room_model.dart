@@ -5,15 +5,16 @@ class Room {
   final double rating;
   final int price;
   final String location;
+  final String time;
 
-  Room({
-    required this.imagePath,
-    required this.roomName,
-    required this.typeOfRoom,
-    required this.rating,
-    required this.price,
-    required this.location,
-  });
+  Room(
+      {required this.imagePath,
+      required this.roomName,
+      required this.typeOfRoom,
+      required this.rating,
+      required this.price,
+      required this.location,
+      required this.time});
 
   factory Room.fromMap(Map<String, dynamic> data) {
     return Room(
@@ -23,6 +24,7 @@ class Room {
       rating: data['rating'] as double,
       price: data['price'] as int,
       location: data['location'] as String,
+      time: data['time'] as String,
     );
   }
 
@@ -34,6 +36,7 @@ class Room {
       'rating': rating,
       'price': price,
       'location': location,
+      'time': time
     };
   }
 }

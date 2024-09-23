@@ -42,7 +42,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   ),
                 ),
               ),
-              Container(
+              SizedBox(
                 width: double.infinity,
                 height: screenHeight * 0.4,
                 child: Image.asset(
@@ -99,19 +99,19 @@ class _LoginScreenState extends State<LoginScreen> {
                           }
                           return null;
                         },
-                        decoration: InputDecoration(
-                          label: const Text('Email'),
+                        decoration: const InputDecoration(
+                          label: Text('Email'),
                           hintText: 'Enter Email',
-                          hintStyle: const TextStyle(
+                          hintStyle: TextStyle(
                             color: Colors.black,
                           ),
                           border: OutlineInputBorder(
-                            borderSide: const BorderSide(
+                            borderSide: BorderSide(
                               color: Colors.black,
                             ),
                           ),
                           enabledBorder: OutlineInputBorder(
-                            borderSide: const BorderSide(
+                            borderSide: BorderSide(
                               color: Colors.black,
                             ),
                           ),
@@ -131,19 +131,19 @@ class _LoginScreenState extends State<LoginScreen> {
                           }
                           return null;
                         },
-                        decoration: InputDecoration(
-                          label: const Text('Password'),
+                        decoration: const InputDecoration(
+                          label: Text('Password'),
                           hintText: 'Enter Password',
-                          hintStyle: const TextStyle(
+                          hintStyle: TextStyle(
                             color: Colors.black,
                           ),
                           border: OutlineInputBorder(
-                            borderSide: const BorderSide(
+                            borderSide: BorderSide(
                               color: Colors.black,
                             ),
                           ),
                           enabledBorder: OutlineInputBorder(
-                            borderSide: const BorderSide(
+                            borderSide: BorderSide(
                               color: Colors.black,
                             ),
                           ),
@@ -157,7 +157,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       child: ElevatedButton(
                         style: ButtonStyle(
                           backgroundColor:
-                              WidgetStateProperty.all(Color(0xFF1C3473)),
+                              WidgetStateProperty.all(const Color(0xFF1C3473)),
                         ),
                         onPressed: () {
                           //if (_formSignInKey.currentState!.validate()) {
