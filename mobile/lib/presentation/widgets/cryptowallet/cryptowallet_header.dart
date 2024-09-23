@@ -30,6 +30,13 @@ class CryptowalletHeader extends StatelessWidget {
                   color: Color(0xFF1C3473),
                 ),
               ),
+              const Spacer(),
+              IconButton(
+                icon: const Icon(Icons.menu, color: Color(0xFF1C3473)),
+                onPressed: () {
+                  Scaffold.of(context).openEndDrawer();
+                },
+              ),
             ],
           ),
           const SizedBox(height: 5.0),
@@ -37,25 +44,33 @@ class CryptowalletHeader extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               const Text(
-                "Philippine Peso",
+                "Current Balance",
                 style: TextStyle(
                   fontFamily: 'HammerSmith',
-                  fontSize: 30,
+                  fontSize: 20,
                   fontWeight: FontWeight.w400,
                 ),
               ),
               const Spacer(),
               Image.asset(
                 'assets/images/others/bitcoin.png',
-                width: 70.0, 
+                width: 70.0,
                 height: 70.0,
                 fit: BoxFit.cover,
               ),
             ],
           ),
-          const SizedBox(
-            height: 10,
+          const SizedBox(height: 2.0),
+          const Text(
+            "₱ 0",
+            style: TextStyle(
+              fontFamily: 'HammerSmith',
+              fontSize: 40,
+              fontWeight: FontWeight.w400,
+              color: Colors.black,
+            ),
           ),
+          const SizedBox(height: 10),
         ],
       ),
     );

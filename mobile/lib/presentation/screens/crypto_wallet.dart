@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:hotel_flutter/presentation/widgets/cryptowallet/cryptonotransaction.dart';
 import 'package:hotel_flutter/presentation/widgets/cryptowallet/cryptowallet_header.dart';
+import 'package:hotel_flutter/presentation/widgets/cryptowallet/cryptowallet_transactions.dart';
+import 'package:hotel_flutter/presentation/widgets/tab/main_drawer.dart'; // Import your MainDrawer
+
 class CryptoWallet extends StatefulWidget {
   const CryptoWallet({super.key});
 
@@ -8,14 +12,20 @@ class CryptoWallet extends StatefulWidget {
 }
 
 class _CryptoWalletState extends State<CryptoWallet> {
+  void _selectScreen(String identifier) {
+    Navigator.of(context).pop();
+    print('Selected screen: $identifier');
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      endDrawer: MainDrawer(onSelectScreen: _selectScreen),
       body: Column(
         children: [
-          CryptowalletHeader(),
-          const SizedBox(height: 20), 
-          const Placeholder(),
+          const CryptowalletHeader(),
+          const SizedBox(height: 20),
+          const CryptoWalletTransactions(),
         ],
       ),
     );
