@@ -18,7 +18,7 @@ class CardWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return SizedBox(
       width: 300.0,
-      height: 300.0,
+      height: 400.0,
       child: Card(
         elevation: 4.0,
         color: Colors.white,
@@ -60,16 +60,16 @@ class CardWidget extends StatelessWidget {
                     children: [
                       const Icon(Icons.place, color: Colors.grey),
                       const SizedBox(width: 4.0),
-                      SizedBox(
-                        width: 90.0,
+                      Expanded(
+                        // Use Expanded instead of Flexible
                         child: Text(
                           location,
                           style: const TextStyle(
-                            fontSize: 14.0,
-                            color: Colors.grey,
-                            overflow: TextOverflow.ellipsis,
+                            color: Color.fromARGB(255, 142, 142, 147),
+                            fontSize: 10,
                           ),
-                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis, // Ensure text wraps
+                          maxLines: 1, // Add maxLines to prevent overflow
                         ),
                       ),
                       const Spacer(),
