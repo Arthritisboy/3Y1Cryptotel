@@ -35,7 +35,7 @@ class MonthSelector extends StatelessWidget {
           return GestureDetector(
             onTap: () => onMonthTap(index),
             child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 8.0),
+              padding: const EdgeInsets.symmetric(horizontal: 16.0),
               child: Column(
                 children: [
                   Text(
