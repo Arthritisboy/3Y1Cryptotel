@@ -1,7 +1,6 @@
-
 import 'package:flutter/material.dart';
 import 'package:hotel_flutter/presentation/screens/home_screen.dart';
-import 'package:hotel_flutter/presentation/widgets/main_drawer.dart';
+import 'package:hotel_flutter/presentation/widgets/tab/main_drawer.dart';
 import 'package:hotel_flutter/presentation/screens/favorite_screen.dart';
 import 'package:hotel_flutter/presentation/screens/profile_screen.dart';
 
@@ -46,28 +45,6 @@ class _TabScreenState extends State<TabScreen> {
 
     return Scaffold(
       endDrawer: MainDrawer(onSelectScreen: _setScreen),
-      bottomNavigationBar: BottomNavigationBar(
-        backgroundColor: Colors.white,
-        iconSize: 30.0,
-        elevation: 0.0,
-        selectedItemColor: Colors.black,
-        onTap: _selectPage,
-        currentIndex: _selectedPageIndex,
-        items: const [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home),
-            label: 'Home',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.favorite_border),
-            label: 'Favorites',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.person),
-            label: 'Profile',
-          ),
-        ],
-      ),
       body: Stack(
         children: [
           activePage,
@@ -77,7 +54,7 @@ class _TabScreenState extends State<TabScreen> {
             child: Builder(
               builder: (context) {
                 return IconButton(
-                  icon: const Icon(Icons.menu, color: Colors.white, size: 30),
+                  icon: const Icon(Icons.menu, color: Colors.black, size: 30),
                   onPressed: () {
                     Scaffold.of(context).openEndDrawer();
                   },

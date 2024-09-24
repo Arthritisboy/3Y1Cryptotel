@@ -1,13 +1,15 @@
 import 'package:flutter/material.dart';
-import 'circle_icon.dart';
-import 'package:hotel_flutter/presentation/screens/menu_screens.dart';
+import 'square_icon.dart';
 
 class BottomHomeIconNavigation extends StatelessWidget {
-  const BottomHomeIconNavigation({super.key});
+  final int selectedIndex;
+  final ValueChanged<int> onIconTapped;
 
-  void _navigateToMenuScreen(BuildContext context) {
-    Navigator.of(context).pushNamed('/menuscreen');
-  }
+  const BottomHomeIconNavigation({
+    super.key,
+    required this.selectedIndex,
+    required this.onIconTapped,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -15,20 +17,32 @@ class BottomHomeIconNavigation extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.spaceAround,
       children: [
         GestureDetector(
-          onTap: () {},
-          child: const CircleIcon(iconData: Icons.favorite),
+          onTap: () => onIconTapped(0),
+          child: SquareIcon(
+            iconData: Icons.home,
+            isSelected: selectedIndex == 0,
+          ),
         ),
         GestureDetector(
-          onTap: () => _navigateToMenuScreen(context),
-          child: const CircleIcon(iconData: Icons.restaurant),
+          onTap: () => onIconTapped(1),
+          child: SquareIcon(
+            iconData: Icons.restaurant,
+            isSelected: selectedIndex == 1,
+          ),
         ),
         GestureDetector(
-          onTap: () {},
-          child: const CircleIcon(iconData: Icons.room),
+          onTap: () => onIconTapped(2),
+          child: SquareIcon(
+            iconData: Icons.hotel,
+            isSelected: selectedIndex == 2,
+          ),
         ),
         GestureDetector(
-          onTap: () {},
-          child: const CircleIcon(iconData: Icons.person),
+          onTap: () => onIconTapped(3),
+          child: SquareIcon(
+            iconData: Icons.emoji_transportation,
+            isSelected: selectedIndex == 3,
+          ),
         ),
       ],
     );

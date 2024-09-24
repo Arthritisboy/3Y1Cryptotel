@@ -1,6 +1,6 @@
-
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:hotel_flutter/presentation/screens/crypto_wallet.dart';
 import 'package:hotel_flutter/presentation/screens/forgot_password_screen.dart';
 import 'package:hotel_flutter/presentation/screens/home_screen.dart';
 import 'package:hotel_flutter/presentation/screens/splash_screen.dart';
@@ -29,12 +29,12 @@ class MyApp extends StatelessWidget {
           seedColor: const Color.fromARGB(255, 255, 255, 255),
         ),
         useMaterial3: true,
-        listTileTheme: ListTileThemeData(
+        listTileTheme: const ListTileThemeData(
           textColor: Colors.white,
           iconColor: Colors.white,
         ),
-        drawerTheme: DrawerThemeData(
-          backgroundColor: const Color.fromARGB(255, 52, 46, 46),
+        drawerTheme: const DrawerThemeData(
+          backgroundColor: Color.fromARGB(255, 29, 53, 115),
         ),
         elevatedButtonTheme: ElevatedButtonThemeData(
           style: ElevatedButton.styleFrom(
@@ -46,17 +46,16 @@ class MyApp extends StatelessWidget {
           ),
         ),
         scaffoldBackgroundColor: Colors.white,
-        appBarTheme: AppBarTheme(
+        appBarTheme: const AppBarTheme(
           backgroundColor: Colors.white,
         ),
-        textTheme: GoogleFonts.inderTextTheme(
+        textTheme: GoogleFonts.hammersmithOneTextTheme(
           Theme.of(context)
               .textTheme
               .apply(bodyColor: Colors.black, displayColor: Colors.black),
         ),
       ),
-      home: const SplashScreen(),
+      home: HomeScreen(),
     );
-    //CommentTEst
   }
 }

@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:hotel_flutter/presentation/widgets/home/background_image.dart';
-import 'package:hotel_flutter/presentation/widgets/home/header.dart';
-import 'package:hotel_flutter/presentation/widgets/main_drawer.dart';
-import 'package:hotel_flutter/presentation/widgets/room/meal_card.dart';
-import 'package:hotel_flutter/data/model/food_item.dart';
+import 'package:hotel_flutter/data/model/food_model.dart';
 import 'package:hotel_flutter/data/dummydata/food_data.dart';
+import 'package:hotel_flutter/presentation/widgets/meal/meal_section.dart';
+import 'package:hotel_flutter/presentation/widgets/meal/menu_header.dart';
+import 'package:hotel_flutter/presentation/widgets/meal/popular_section.dart';
+import 'package:hotel_flutter/presentation/widgets/tab/main_drawer.dart';
 
 class MenuScreen extends StatefulWidget {
   const MenuScreen({super.key});
@@ -18,6 +18,14 @@ class _MenuScreenState extends State<MenuScreen> {
     if (identifier == "homescreen") {
       Navigator.of(context).pushNamed('/homescreen');
     }
+  }
+
+  List<FoodItem> selectedMeals = []; // Track selected meals
+
+  void _addToCart(FoodItem foodItem) {
+    setState(() {
+      selectedMeals.add(foodItem);
+    });
   }
 
   @override
@@ -39,30 +47,7 @@ class _MenuScreenState extends State<MenuScreen> {
       endDrawer: MainDrawer(onSelectScreen: _setScreen),
       body: Stack(
         children: [
-          Positioned(
-            top: 0,
-            left: 0,
-            right: 0,
-            height: MediaQuery.of(context).size.height * 0.3,
-            child: const BackgroundImage(
-              image: 'assets/images/others/homepage.jpg',
-            ),
-          ),
-          Header(),
-          Positioned(
-            top: 40.0,
-            right: 10.0,
-            child: Builder(
-              builder: (BuildContext context) {
-                return IconButton(
-                  icon: const Icon(Icons.menu, color: Colors.white, size: 30),
-                  onPressed: () {
-                    Scaffold.of(context).openEndDrawer();
-                  },
-                );
-              },
-            ),
-          ),
+          MenuHeader(onDrawerSelected: _setScreen),
           Positioned(
             bottom: 0,
             left: 0,
@@ -86,161 +71,48 @@ class _MenuScreenState extends State<MenuScreen> {
                             'Menu',
                             textAlign: TextAlign.center,
                             style: TextStyle(
-                                fontSize: 25, fontWeight: FontWeight.w400),
+                              fontSize: 25,
+                              fontWeight: FontWeight.w400,
+                            ),
                           ),
                         ],
                       ),
                       const SizedBox(height: 10),
-                      ClipRRect(
-                        borderRadius: BorderRadius.circular(30.0),
-                        child: Stack(
-                          children: [
-                            ColorFiltered(
-                              colorFilter: ColorFilter.mode(
-                                Colors.black.withOpacity(0.1),
-                                BlendMode.darken,
-                              ),
-                              child: Image.asset(
-                                'assets/images/foods/food.png',
-                                fit: BoxFit.cover,
-                                width: MediaQuery.of(context).size.width,
-                                height: 170,
-                              ),
-                            ),
-                            Positioned(
-                              bottom: 10,
-                              left: 10,
-                              child: Container(
-                                padding: const EdgeInsets.all(8),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    const Text(
-                                      'Asparagus and Steak',
-                                      style: TextStyle(
-                                        fontSize: 18,
-                                        fontWeight: FontWeight.bold,
-                                        color: Colors.white,
-                                      ),
-                                    ),
-                                    const SizedBox(height: 5),
-                                    Row(
-                                      children: List.generate(5, (index) {
-                                        return const Icon(
-                                          Icons.star,
-                                          color:
-                                              Color.fromARGB(255, 229, 160, 0),
-                                          size: 20,
-                                        );
-                                      }),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
+                      const PopularImageSection(),
                       const SizedBox(height: 8),
-                      const Text(
-                        'Most Popular',
-                        style: TextStyle(
-                            fontSize: 25, fontWeight: FontWeight.w400),
+                      MealSection(
+                        title: 'Most Popular',
+                        foodItems: mostPopularItems,
+                        onMealSelected: (foodItem) {
+                          _addToCart(foodItem);
+                          // Pass selected meals back to HomeScreen
+                          Navigator.pop(context, selectedMeals);
+                        },
                       ),
-                      const SizedBox(height: 10),
-                      SizedBox(
-                        height: 250,
-                        child: ListView.builder(
-                          scrollDirection: Axis.horizontal,
-                          itemCount: mostPopularItems.length,
-                          itemBuilder: (context, index) {
-                            final item = mostPopularItems[index];
-                            return Padding(
-                              padding: const EdgeInsets.only(right: 12.0),
-                              child: MealCardWidget(
-                                foodItem: item,
-                                onButtonPressed: () {
-                                  // Implement order functionality here
-                                },
-                              ),
-                            );
-                          },
-                        ),
+                      MealSection(
+                        title: 'Breakfast',
+                        foodItems: breakFastItems,
+                        onMealSelected: (foodItem) {
+                          _addToCart(foodItem);
+                          // Pass selected meals back to HomeScreen
+                          Navigator.pop(context, selectedMeals);
+                        },
                       ),
-                      const Text(
-                        'Breakfast',
-                        style: TextStyle(
-                            fontSize: 25, fontWeight: FontWeight.w400),
+                      MealSection(
+                        title: 'Lunch',
+                        foodItems: lunchItems,
+                        onMealSelected: (foodItem) {
+                          _addToCart(foodItem);
+                          Navigator.pop(context, selectedMeals);
+                        },
                       ),
-                      const SizedBox(height: 10),
-                      SizedBox(
-                        height: 250,
-                        child: ListView.builder(
-                          scrollDirection: Axis.horizontal,
-                          itemCount: breakFastItems.length,
-                          itemBuilder: (context, index) {
-                            final item = breakFastItems[index];
-                            return Padding(
-                              padding: const EdgeInsets.only(right: 12.0),
-                              child: MealCardWidget(
-                                foodItem: item,
-                                onButtonPressed: () {
-                                  // Implement order functionality here
-                                },
-                              ),
-                            );
-                          },
-                        ),
-                      ),
-                      const Text(
-                        'Lunch',
-                        style: TextStyle(
-                            fontSize: 25, fontWeight: FontWeight.w400),
-                      ),
-                      const SizedBox(height: 10),
-                      SizedBox(
-                        height: 250,
-                        child: ListView.builder(
-                          scrollDirection: Axis.horizontal,
-                          itemCount: lunchItems.length,
-                          itemBuilder: (context, index) {
-                            final item = lunchItems[index];
-                            return Padding(
-                              padding: const EdgeInsets.only(right: 12.0),
-                              child: MealCardWidget(
-                                foodItem: item,
-                                onButtonPressed: () {
-                                  // Implement order functionality here
-                                },
-                              ),
-                            );
-                          },
-                        ),
-                      ),
-                      const Text(
-                        'Dinner',
-                        style: TextStyle(
-                            fontSize: 25, fontWeight: FontWeight.w400),
-                      ),
-                      const SizedBox(height: 10),
-                      SizedBox(
-                        height: 250,
-                        child: ListView.builder(
-                          scrollDirection: Axis.horizontal,
-                          itemCount: dinnerItems.length,
-                          itemBuilder: (context, index) {
-                            final item = dinnerItems[index];
-                            return Padding(
-                              padding: const EdgeInsets.only(right: 12.0),
-                              child: MealCardWidget(
-                                foodItem: item,
-                                onButtonPressed: () {
-                                  // Implement order functionality here
-                                },
-                              ),
-                            );
-                          },
-                        ),
+                      MealSection(
+                        title: 'Dinner',
+                        foodItems: dinnerItems,
+                        onMealSelected: (foodItem) {
+                          _addToCart(foodItem);
+                          Navigator.pop(context, selectedMeals);
+                        },
                       ),
                     ],
                   ),

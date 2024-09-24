@@ -1,14 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:hotel_flutter/presentation/widgets/home/image_with_heart.dart'; // Update with the correct path if necessary
-import 'package:hotel_flutter/presentation/screens/room_screen.dart'; // Update with the correct path
+import 'package:hotel_flutter/presentation/widgets/home/card_widget.dart';
+import 'package:hotel_flutter/presentation/screens/room_screen.dart';
 import 'package:hotel_flutter/data/dummydata/room_data.dart';
+import 'package:hotel_flutter/data/model/room_model.dart';
 
 class PopularRooms extends StatelessWidget {
-  final Map<String, bool> heartStatus;
-  final Function(String, bool) onHeartPressed;
-
-  const PopularRooms(
-      {super.key, required this.heartStatus, required this.onHeartPressed});
+  const PopularRooms({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -18,10 +15,9 @@ class PopularRooms extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           const Text(
-            'Popular Rooms',
+            'Top Rated Hotels',
             style: TextStyle(
               fontSize: 24.0,
-              fontWeight: FontWeight.bold,
               color: Colors.black,
             ),
           ),
@@ -41,13 +37,7 @@ class PopularRooms extends StatelessWidget {
   }
 
   List<Widget> _buildRoomList(BuildContext context) {
-    return roomData.map((room) {
-      final imagePath = room['imagePath'] as String;
-      final roomName = room['roomName'] as String;
-      final typeOfRoom = room['typeOfRoom'] as String;
-      final star = room['star'] as double;
-      final price = room['price'] as int; // Assuming price is an integer
-
+    return hotelData.map((Hotel hotel) {
       return Padding(
         padding: const EdgeInsets.only(right: 10.0),
         child: InkWell(
@@ -55,21 +45,21 @@ class PopularRooms extends StatelessWidget {
             Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (context) => RoomScreen(
-                  backgroundImage: imagePath,
-                  roomName: roomName,
-                  rating: star, // Pass the rating to RoomScreen
-                  price: price, // Pass the price to RoomScreen
-                ),
+                builder: (context) => HotelScreen(
+                    backgroundImage: hotel.imagePath,
+                    hotelName: hotel.hotelName,
+                    rating: hotel.rating,
+                    price: hotel.price,
+                    location: hotel.location,
+                    time: hotel.time),
               ),
             );
           },
-          child: ImageWithHeart(
-            imagePath: imagePath,
-            isHeartFilled: heartStatus[imagePath] ?? false,
-            onHeartPressed: (isFilled) => onHeartPressed(imagePath, isFilled),
-            roomName: roomName,
-            typeOfRoom: typeOfRoom,
+          child: CardWidget(
+            imagePath: hotel.imagePath,
+            hotelName: hotel.hotelName,
+            location: hotel.location,
+            rating: hotel.rating,
           ),
         ),
       );
