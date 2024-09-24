@@ -2,14 +2,14 @@ import 'package:flutter/material.dart';
 
 class CardWidget extends StatelessWidget {
   final String imagePath;
-  final String roomName;
+  final String hotelName;
   final String location;
   final double rating;
 
   const CardWidget({
     super.key,
     required this.imagePath,
-    required this.roomName,
+    required this.hotelName,
     required this.location,
     required this.rating,
   });
@@ -45,7 +45,7 @@ class CardWidget extends StatelessWidget {
                 children: [
                   SizedBox(
                     child: Text(
-                      roomName,
+                      hotelName,
                       style: const TextStyle(
                         fontSize: 16.0,
                         fontWeight: FontWeight.bold,
