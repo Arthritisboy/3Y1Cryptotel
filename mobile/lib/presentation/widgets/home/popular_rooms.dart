@@ -37,7 +37,7 @@ class PopularRooms extends StatelessWidget {
   }
 
   List<Widget> _buildRoomList(BuildContext context) {
-    return roomData.map((Room room) {
+    return hotelData.map((Hotel hotel) {
       return Padding(
         padding: const EdgeInsets.only(right: 10.0),
         child: InkWell(
@@ -45,21 +45,21 @@ class PopularRooms extends StatelessWidget {
             Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (context) => RoomScreen(
-                    backgroundImage: room.imagePath,
-                    roomName: room.roomName,
-                    rating: room.rating,
-                    price: room.price,
-                    location: room.location,
-                    time: room.time),
+                builder: (context) => HotelScreen(
+                    backgroundImage: hotel.imagePath,
+                    hotelName: hotel.hotelName,
+                    rating: hotel.rating,
+                    price: hotel.price,
+                    location: hotel.location,
+                    time: hotel.time),
               ),
             );
           },
           child: CardWidget(
-            imagePath: room.imagePath,
-            roomName: room.roomName,
-            location: room.location,
-            rating: room.rating,
+            imagePath: hotel.imagePath,
+            hotelName: hotel.hotelName,
+            location: hotel.location,
+            rating: hotel.rating,
           ),
         ),
       );

@@ -5,7 +5,7 @@ import 'month_selector.dart';
 import 'day_selector.dart';
 
 class Reservation extends StatefulWidget {
-  final String roomName;
+  final String hotelName;
   final double rating;
   final int price;
   final String location;
@@ -13,7 +13,7 @@ class Reservation extends StatefulWidget {
 
   const Reservation({
     super.key,
-    required this.roomName,
+    required this.hotelName,
     required this.rating,
     required this.price,
     required this.location,
@@ -58,7 +58,7 @@ class _ReservationState extends State<Reservation> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
-                      widget.roomName,
+                      widget.hotelName,
                       style: const TextStyle(
                         fontSize: 25.0,
                         fontWeight: FontWeight.bold,
