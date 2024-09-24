@@ -3,7 +3,7 @@ import 'package:hotel_flutter/presentation/widgets/room/navigation_row.dart';
 import 'package:hotel_flutter/presentation/widgets/room/reservation_booking.dart';
 
 class ReservationRoom extends StatefulWidget {
-  final String roomName;
+  final String hotelName;
   final double rating;
   final int price;
   final String location;
@@ -13,7 +13,7 @@ class ReservationRoom extends StatefulWidget {
 
   const ReservationRoom({
     super.key,
-    required this.roomName,
+    required this.hotelName,
     required this.rating,
     required this.price,
     required this.location,
@@ -38,7 +38,7 @@ class _ReservationRoomState extends State<ReservationRoom> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                widget.roomName,
+                widget.hotelName,
                 style: const TextStyle(
                   fontSize: 25.0,
                   fontWeight: FontWeight.bold,

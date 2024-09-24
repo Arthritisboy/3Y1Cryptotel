@@ -56,13 +56,8 @@ class _HotelScreenState extends State<HotelScreen> {
               width: double.infinity,
               child: BackgroundRoomImage(image: widget.backgroundImage),
             ),
-<<<<<<< HEAD
-            Reservation(
-              hotelName: widget.hotelName,
-=======
             ReservationRoom(
-              roomName: widget.roomName,
->>>>>>> 95b2a9928ed611e77a3ad156504ed2c4b07136cc
+              hotelName: widget.hotelName,
               rating: widget.rating,
               price: widget.price,
               location: widget.location,
