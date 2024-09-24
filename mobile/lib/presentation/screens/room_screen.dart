@@ -73,5 +73,5 @@ class _HotelScreenState extends State<HotelScreen> {
         ),
       ),
     );
-  }
+  }//itlog
 }
