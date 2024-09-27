@@ -1,27 +1,27 @@
-const express = require('express');
-const morgan = require('morgan');
-const dotenv = require('dotenv');
-const cors = require('cors');
-const { NotFoundError } = require('./errors');
-
+const express = require("express");
+const morgan = require("morgan");
+const dotenv = require("dotenv");
+const cors = require("cors");
+const { NotFoundError } = require("./errors");
 
 // connectDB
-const connectToDatabase = require('./database/connection');
+const connectToDatabase = require("./database/connection");
 
 // // Authentication
 // const authenticateUser = require('./middleware/userAuthentication');
 
-// Routers
-const authRouter = require('./routes/auth');
-const homeRouter = require('./routes/home');
+//! Routers
+const authRouter = require("./routes/authRoute");
+const homeRouter = require("./routes/homeRoute");
+const userRoute = require("./routes/userRoute");
 // const web3Router = require('./routes/web3');
 
 //Error Handler
-const notFoundMiddleware = require('./middleware/not-found');
-const errorHandlerMiddleware = require('./middleware/error-handler');
+const notFoundMiddleware = require("./middleware/not-found");
+const errorHandlerMiddleware = require("./middleware/error-handler");
 
 // Load environment variables from the config file
-dotenv.config({ path: './config.env' });
+dotenv.config({ path: "./config.env" });
 
 // Create the Express app
 const app = express();
@@ -29,11 +29,11 @@ const app = express();
 // Middlewares
 app.use(cors());
 app.use(express.json());
-app.use(morgan('dev'));
+app.use(morgan("dev"));
 
 // Custom middlewares to log requests and add request time
 app.use((req, res, next) => {
-  console.log('Hello from the server 👋');
+  console.log("Hello from the server 👋");
   next();
 });
 
@@ -43,12 +43,13 @@ app.use((req, res, next) => {
 });
 
 // Routes
-app.use('/api/v1/auth', authRouter);
-app.use('/api/v1/home', homeRouter);
+app.use("/api/v1/auth", authRouter);
+app.use("/api/v1/home", homeRouter);
+app.use("/api/v1/users", userRoute);
 // app.use('/api/v1/web3', web3Router);
 
 // Handle all undefined routes
-app.all('*', (req, res, next) => {
+app.all("*", (req, res, next) => {
   next(new NotFoundError(`Can't find ${req.originalUrl} on this server`, 404));
 });
 
