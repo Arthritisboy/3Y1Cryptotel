@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 
-const UserSchema = new mongoose.Schema(
+const userSchema = new mongoose.Schema(
   {
     userName: {
       type: String,
@@ -23,12 +23,23 @@ const UserSchema = new mongoose.Schema(
       type: String,
       required: [true, "Please provide password"],
       minlength: 8,
+      select: false,
+    },
+    confirmPassword: {
+      type: String,
+      required: [true, "Please confirm your password"],
+      validate: {
+        validator: function (val) {
+          return val === this.password;
+        },
+        message: `Password are not the same!`,
+      },
     },
   },
   { timestamps: true }
 );
 
-UserSchema.pre("save", async function () {
+userSchema.pre("save", async function () {
   //! Only run this function if password was actually modifed
   if (!this.isModified("password")) return next();
 
@@ -40,7 +51,7 @@ UserSchema.pre("save", async function () {
   next();
 });
 
-UserSchema.methods.createJWT = function () {
+userSchema.methods.createJWT = function () {
   return jwt.sign(
     { userId: this._id, name: this.Fname },
     process.env.JWT_SECRET,
@@ -48,9 +59,16 @@ UserSchema.methods.createJWT = function () {
   );
 };
 
-UserSchema.methods.comparePassword = async function (entryPassword) {
-  const isMatch = await bcrypt.compare(entryPassword, this.password);
-  return isMatch;
+// UserSchema.methods.comparePassword = async function (entryPassword) {
+//   const isMatch = await bcrypt.compare(entryPassword, this.password);
+//   return isMatch;
+// };
+
+userSchema.methods.correctPassword = async function (
+  candidatePassword,
+  userPassword
+) {
+  return await bcrypt.compare(candidatePassword, userPassword);
 };
 
-module.exports = mongoose.model("User", UserSchema);
+module.exports = mongoose.model("User", userSchema);
