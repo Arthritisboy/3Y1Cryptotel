@@ -42,7 +42,7 @@ const userSchema = new mongoose.Schema(
       },
     },
     passwordChangedAt: Date,
-    role: {
+    roles: {
       type: String,
       enum: ["user", "admin"],
       default: "user",
@@ -65,11 +65,9 @@ userSchema.pre("save", async function (next) {
 });
 
 userSchema.methods.createJWT = function () {
-  return jwt.sign(
-    { userId: this._id, name: this.Fname },
-    process.env.JWT_SECRET,
-    { expiresIn: process.env.JWT_LIFETIME }
-  );
+  return jwt.sign({ id: this._id }, process.env.JWT_SECRET, {
+    expiresIn: process.env.JWT_LIFETIME,
+  });
 };
 
 // UserSchema.methods.comparePassword = async function (entryPassword) {
