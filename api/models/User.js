@@ -4,7 +4,13 @@ const jwt = require("jsonwebtoken");
 
 const userSchema = new mongoose.Schema(
   {
-    userName: {
+    firstName: {
+      type: String,
+      required: [true, "Please provide first name"],
+      minLength: 3,
+      maxLength: 50,
+    },
+    lastName: {
       type: String,
       required: [true, "Please provide first name"],
       minLength: 3,
@@ -35,11 +41,18 @@ const userSchema = new mongoose.Schema(
         message: `Password are not the same!`,
       },
     },
+    passwordChangedAt: Date,
+    role: {
+      type: String,
+      enum: ["user", "admin"],
+      default: "user",
+    },
   },
+
   { timestamps: true }
 );
 
-userSchema.pre("save", async function () {
+userSchema.pre("save", async function (next) {
   //! Only run this function if password was actually modifed
   if (!this.isModified("password")) return next();
 

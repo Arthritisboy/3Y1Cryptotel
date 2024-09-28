@@ -1,26 +1,21 @@
 const User = require("../models/User");
 const { StatusCodes } = require("http-status-codes");
 const { BadRequestError, UnauthenticatedError } = require("../errors");
+const catchAsync = require("../utils/catchAsync");
+const AppError = require("../utils/appError");
+const { promisify } = require("util");
+const jwt = require("jsonwebtoken");
 
-//! Function
-const signToken = (id) => {
-  return jwt.sign({ id: id }, process.env.JWT_SECRET, {
-    expiresIn: process.env.JWT_EXPIRES_IN,
-  });
-};
-
-const register = async (req, res) => {
+exports.register = catchAsync(async (req, res) => {
   const newUser = await User.create({ ...req.body });
   //! Creation of token
-  const token = signToken(newUser.id);
+  const token = newUser.createJWT();
 
   //! Response
-  res
-    .status(StatusCodes.CREATED)
-    .json({ user: { name: newUser.userName }, token });
-};
+  res.status(StatusCodes.CREATED).json({ user: { user: newUser }, token });
+});
 
-const login = async (req, res) => {
+exports.login = async (req, res) => {
   const { email, password } = req.body;
 
   //! 1) Check if email and password exist
@@ -29,20 +24,17 @@ const login = async (req, res) => {
   }
 
   //! 2) Check if user exists && password is correct
-  const user = await User.findOne({ email });
+  const user = await User.findOne({ email: email }).select("+password");
 
-  if (!user || (await user.correctPassword(password, user.password))) {
+  if (!user || !(await user.correctPassword(password, user.password))) {
     throw new UnauthenticatedError("Incorrect email or password");
   }
 
   //! 3) If everything is ok, send the token to the client
-  const token = signToken(user._id);
-  res.status(StatusCodes.OK).json({ user: { name: user.userName }, token });
-};
-
-module.exports = {
-  register,
-  login,
+  const token = user.createJWT();
+  res
+    .status(StatusCodes.OK)
+    .json({ user: { firstName: user.firstName }, token });
 };
 
 exports.protect = catchAsync(async (req, res, next) => {
@@ -64,13 +56,14 @@ exports.protect = catchAsync(async (req, res, next) => {
   const decoded = await promisify(jwt.verify)(token, process.env.JWT_SECRET);
 
   //! 3) Check if user still exists
-  const currentUser = await User.findById(decoded.id);
+  const currentUser = await User.findById(decoded.userId);
 
   if (!currentUser) {
     return next(
       new AppError("The token belonging to this user is no longer exists", 401)
     );
   }
+
   //! 4) Check if user changed password after the JWT was issued
   if (currentUser.changedPasswordAfter(decoded.iat)) {
     return next(
@@ -82,3 +75,15 @@ exports.protect = catchAsync(async (req, res, next) => {
   req.user = currentUser;
   next();
 });
+
+exports.restrictTo = (...roles) => {
+  return (req, res, next) => {
+    console.log(req.user.roles);
+    if (!roles.includes(req.user.roles)) {
+      return next(
+        new AppError("You do not have permission to perform this action", 403)
+      );
+    }
+    next();
+  };
+};
