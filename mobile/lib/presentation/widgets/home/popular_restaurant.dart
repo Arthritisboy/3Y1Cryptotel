@@ -41,7 +41,7 @@ class PopularRestaurant extends StatelessWidget {
         padding: const EdgeInsets.only(right: 10.0),
         child: CardWidget(
           imagePath: restaurant.imagePath,
-          roomName: restaurant.restaurantName,
+          hotelName: restaurant.restaurantName,
           location: restaurant.location,
           rating: restaurant.rating,
         ),

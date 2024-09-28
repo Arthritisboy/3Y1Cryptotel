@@ -3,18 +3,18 @@ import 'package:hotel_flutter/presentation/widgets/room/background_room_image.da
 import 'package:hotel_flutter/presentation/widgets/room/reservation_room.dart';
 import 'package:hotel_flutter/presentation/widgets/room/reservation_booking.dart';
 
-class RoomScreen extends StatefulWidget {
+class HotelScreen extends StatefulWidget {
   final String backgroundImage;
-  final String roomName;
+  final String hotelName;
   final double rating;
   final int price;
   final String location;
   final String time;
 
-  const RoomScreen({
+  const HotelScreen({
     super.key,
     required this.backgroundImage,
-    required this.roomName,
+    required this.hotelName,
     required this.rating,
     required this.price,
     required this.location,
@@ -23,18 +23,18 @@ class RoomScreen extends StatefulWidget {
 
   @override
   State<StatefulWidget> createState() {
-    return _RoomScreenState();
+    return _HotelScreenState();
   }
 }
 
-class _RoomScreenState extends State<RoomScreen> {
+class _HotelScreenState extends State<HotelScreen> {
   int _activeIndex = 0;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.roomName),
+        title: Text(widget.hotelName),
         backgroundColor: Colors.transparent,
         elevation: 0,
         actions: [
@@ -57,7 +57,7 @@ class _RoomScreenState extends State<RoomScreen> {
               child: BackgroundRoomImage(image: widget.backgroundImage),
             ),
             ReservationRoom(
-              roomName: widget.roomName,
+              hotelName: widget.hotelName,
               rating: widget.rating,
               price: widget.price,
               location: widget.location,
@@ -73,5 +73,5 @@ class _RoomScreenState extends State<RoomScreen> {
         ),
       ),
     );
-  }
+  }//RoomReserve
 }

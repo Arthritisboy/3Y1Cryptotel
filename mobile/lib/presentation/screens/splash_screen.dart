@@ -18,10 +18,8 @@ class _SplashScreenState extends State<SplashScreen>
   void initState() {
     super.initState();
     
-    // Set immersive mode
     SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersive);
 
-    // Initialize the animation controller and animation
     _controller = AnimationController(
       vsync: this,
       duration: const Duration(seconds: 2),
@@ -33,10 +31,8 @@ class _SplashScreenState extends State<SplashScreen>
       ),
     );
 
-    // Start the animation
     _controller.forward();
 
-    // Navigate to the login screen after the animation completes
     Future.delayed(const Duration(seconds: 2), () {
       Navigator.of(context).pushReplacement(MaterialPageRoute(
         builder: (_) => const WelcomeScreen(),
@@ -46,10 +42,8 @@ class _SplashScreenState extends State<SplashScreen>
 
   @override
   void dispose() {
-    // Dispose of the animation controller
     _controller.dispose();
     
-    // Reset the system UI
     SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual,
         overlays: SystemUiOverlay.values);
     super.dispose();

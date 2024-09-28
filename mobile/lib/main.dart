@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:hotel_flutter/presentation/screens/crypto_wallet.dart';
 import 'package:hotel_flutter/presentation/screens/forgot_password_screen.dart';
+import 'package:hotel_flutter/presentation/screens/home_screen.dart';
 import 'package:hotel_flutter/presentation/screens/splash_screen.dart';
 import 'package:hotel_flutter/router/app_router.dart';
 
@@ -53,7 +55,7 @@ class MyApp extends StatelessWidget {
               .apply(bodyColor: Colors.black, displayColor: Colors.black),
         ),
       ),
-      home: const SplashScreen(),
+      home: HomeScreen(),
     );
   }
 }
