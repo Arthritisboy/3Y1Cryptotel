@@ -7,7 +7,7 @@ const cors = require('cors');
 const connectToDatabase = require('./database/connection');
 
 //! Security
-// const rateLimit = require('express-rate-limit');
+const rateLimit = require('express-rate-limit');
 // const helmet = require('helmet');
 // const mongoSanitize = require('express-mongo-sanitize');
 // const xss = require('xss-clean');
@@ -32,6 +32,16 @@ dotenv.config({ path: './config.env' });
 
 //! Create the Express app
 const app = express();
+
+//! Security Middlewares
+
+// ** It means 100 request per hour
+const limiter = rateLimit({
+  max: 100,
+  windowMs: 60 * 60 * 1000,
+  message: 'Too many request from this IP, please try again in an hour!',
+});
+app.use('/api', limiter);
 
 //! Middlewares
 app.use(cors());
