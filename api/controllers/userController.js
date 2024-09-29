@@ -22,6 +22,17 @@ exports.getAllUsers = catchAsync(async (req, res) => {
   });
 });
 
+exports.deleteUser = catchAsync(async (req, res, next) => {
+  const users = await User.findByIdAndDelete(req.params.id);
+  if (!users) {
+    return next(new AppError('No user has found with that ID', 404));
+  }
+  res.status(204).json({
+    status: 'success',
+    data: null,
+  });
+});
+
 exports.updateMe = catchAsync(async (req, res, next) => {
   //! 1) Create error if user POSTs password data
   if (req.body.password || req.body.confirmPassword) {
@@ -49,11 +60,9 @@ exports.updateMe = catchAsync(async (req, res, next) => {
   });
 });
 
-exports.deleteUser = catchAsync(async (req, res, next) => {
-  const users = await User.findByIdAndDelete(req.params.id);
-  if (!users) {
-    return next(new AppError('No user has found with that ID', 404));
-  }
+exports.deleteMe = catchAsync(async (req, res, next) => {
+  await User.findByIdAndUpdate(req.user.id, { active: false });
+
   res.status(204).json({
     status: 'success',
     data: null,
