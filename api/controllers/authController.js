@@ -15,27 +15,28 @@ exports.register = catchAsync(async (req, res) => {
   res.status(StatusCodes.CREATED).json({ data: { user: newUser }, token });
 });
 
-exports.login = async (req, res) => {
+exports.login = catchAsync(async (req, res, next) => {
   const { email, password } = req.body;
 
   //! 1) Check if email and password exist
   if (!email || !password) {
-    throw new BadRequestError('Please provide email and password');
+    return next(new AppError('Please provide email and password', 400));
   }
 
   //! 2) Check if user exists && password is correct
   const user = await User.findOne({ email: email }).select('+password');
 
   if (!user || !(await user.correctPassword(password, user.password))) {
-    throw new UnauthenticatedError('Incorrect email or password');
+    return next(new AppError('Incorrect email or password', 401));
   }
 
   //! 3) If everything is ok, send the token to the client
   const token = user.createJWT();
-  res
-    .status(StatusCodes.OK)
-    .json({ user: { firstName: user.firstName }, token });
-};
+  res.status(200).json({
+    status: 'success',
+    token,
+  });
+});
 
 exports.protect = catchAsync(async (req, res, next) => {
   //! 1) Getting token and check of it's there
@@ -66,7 +67,6 @@ exports.protect = catchAsync(async (req, res, next) => {
       ),
     );
   }
-  console.log(currentUser);
 
   //! 4) Check if user changed password after the JWT was issued
   if (currentUser.changedPasswordAfter(decoded.iat)) {
@@ -91,3 +91,15 @@ exports.restrictTo = (...roles) => {
     next();
   };
 };
+
+exports.forgotPassword = catchAsync(async (req, res, next) => {
+  //! 1) Get user based on Posted email
+  const user = await User.findOne({ email: req.body.email });
+  if (!user) next(new AppError('There is no user with email address'), 404);
+
+  //! 2) Generate the random reset token
+  const resetToken = user.createPasswordResetToken();
+  await user.save({ validateBeforeSave: false });
+  //! 3) Send it to user's email
+});
+exports.resetPassword = (req, res, next) => {};

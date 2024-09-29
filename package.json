@@ -1,5 +1,6 @@
 {
   "dependencies": {
+    "express-async-errors": "^3.1.1",
     "prettier": "^3.3.3"
   }
 }
