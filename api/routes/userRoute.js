@@ -6,6 +6,7 @@ const router = express.Router();
 
 router.route('/').get(authController.protect, userController.getAllUsers);
 router.patch('/updateMe', authController.protect, userController.updateMe);
+router.delete('/deleteMe', authController.protect, userController.deleteMe);
 
 router
   .route('/:id')
