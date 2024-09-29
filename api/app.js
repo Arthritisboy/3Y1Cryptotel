@@ -9,8 +9,8 @@ const connectToDatabase = require('./database/connection');
 //! Security
 const rateLimit = require('express-rate-limit');
 const helmet = require('helmet');
-// const mongoSanitize = require('express-mongo-sanitize');
-// const xss = require('xss-clean');
+const mongoSanitize = require('express-mongo-sanitize');
+const xss = require('xss-clean');
 
 // // Authentication
 // const authenticateUser = require('./middleware/userAuthentication');
@@ -35,6 +35,9 @@ const app = express();
 
 //! Security Middlewares
 
+// ** do a lot of things
+app.use(helmet());
+
 // ** It means 100 request per hour
 const limiter = rateLimit({
   max: 100,
@@ -42,7 +45,12 @@ const limiter = rateLimit({
   message: 'Too many request from this IP, please try again in an hour!',
 });
 app.use('/api', limiter);
-app.use(helmet());
+
+// ** Data sanitization against NoSQL query injection
+app.use(mongoSanitize());
+
+// ** Data sanitization against XSS
+app.use(xss());
 
 //! Middlewares
 app.use(cors());
