@@ -11,6 +11,7 @@ const rateLimit = require('express-rate-limit');
 const helmet = require('helmet');
 const mongoSanitize = require('express-mongo-sanitize');
 const xss = require('xss-clean');
+const hpp = require('hpp');
 
 // // Authentication
 // const authenticateUser = require('./middleware/userAuthentication');
@@ -51,6 +52,9 @@ app.use(mongoSanitize());
 
 // ** Data sanitization against XSS
 app.use(xss());
+
+// ** Prevent parameter pollution
+app.use(hpp());
 
 //! Middlewares
 app.use(cors());
