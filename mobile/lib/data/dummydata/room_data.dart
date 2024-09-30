@@ -4,20 +4,26 @@ List<RoomModel>roomList = [
   RoomModel(
     roomType: 'Deluxe Room',
     price: 3000,
-    availability: 'Available',
+    isAvailable: true,
+    numberofGuest: 2,
     imageUrl: 'assets/images/rooms/hotelroom_1.png',
+    hotelName: 'The Monarch Hotel',
   ),
     RoomModel(
     roomType: 'Executive Room',
     price: 2000,
-    availability: 'Available',
+    isAvailable: true,
+    numberofGuest: 2,
     imageUrl: 'assets/images/rooms/hotelroom_2.png',
+    hotelName: 'Star Plaza Hotel',
   ),
     RoomModel(
     roomType: 'Standard Room',
     price: 1000,
-    availability: 'Not Available',
+    isAvailable: false,
+    numberofGuest: 2,
     imageUrl: 'assets/images/rooms/hotelroom_1.png',
+    hotelName: 'Lenox Hotel',
   ),
 ];
 
