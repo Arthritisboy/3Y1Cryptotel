@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:hotel_flutter/presentation/widgets/room/navigation_row.dart';
 import 'package:hotel_flutter/presentation/widgets/room/roomSelection.dart';
 import 'package:hotel_flutter/data/model/room_model.dart';
+import 'package:hotel_flutter/data/dummydata/room_data.dart';
+
 
 class ReservationRoom extends StatefulWidget {
   final String hotelName;
@@ -28,29 +30,9 @@ class ReservationRoom extends StatefulWidget {
 }
 
 class _ReservationRoomState extends State<ReservationRoom> {
-  final List<RoomModel> roomList = [
-    RoomModel(
-      roomType: 'Deluxe Room',
-      price: 3000,
-      availability: 'Available',
-      imageUrl: 'assets/images/rooms/hotelroom_1.png',
-    ),
-    RoomModel(
-      roomType: 'Executive Room',
-      price: 2000,
-      availability: 'Available',
-      imageUrl: 'assets/images/rooms/hotelroom_2.png',
-    ),
-    RoomModel(
-      roomType: 'Standard Room',
-      price: 1000,
-      availability: 'Not Available',
-      imageUrl: 'assets/images/rooms/hotelroom_1.png',
-    ),
-  ];
-
   @override
   Widget build(BuildContext context) {
+    final List <RoomModel> filteredRoomList = roomList.where((room) => room.hotelName == widget.hotelName).toList();
     return Padding(
       padding: const EdgeInsets.only(left: 16, right: 16, top: 20),
       child: Column(
@@ -154,7 +136,7 @@ class _ReservationRoomState extends State<ReservationRoom> {
           const Divider(
               thickness: 2, color: Color.fromARGB(255, 142, 142, 147)),
           if (widget.activeIndex == 0)
-            RoomSelection(roomList: roomList),
+            RoomSelection(roomList: filteredRoomList),
         ],
       ),
     );
