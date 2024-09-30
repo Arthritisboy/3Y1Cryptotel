@@ -55,11 +55,13 @@ app.use((req, res, next) => {
 });
 
 // Routes
+
+app.use('/api/v1/auth', authRouter);
+app.use('/api/v1/users', userRoute);
+
 app.get('/', (req, res) => {
   res.redirect('/api/v1/auth');
 });
-app.use('/api/v1/auth', authRouter);
-app.use('/api/v1/users', userRoute);
 
 // Handle all undefined routes
 app.all('*', (req, res, next) => {
