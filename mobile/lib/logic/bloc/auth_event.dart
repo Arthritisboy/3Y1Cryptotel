@@ -15,12 +15,22 @@ class LoginEvent extends AuthEvent {
   LoginEvent({required this.email, required this.password});
 }
 
-class AuthLoadingEvent extends AuthEvent {}
+class ForgotPasswordEvent extends AuthEvent {
+  final String email;
 
-class AuthenticatedEvent extends AuthEvent {}
+  ForgotPasswordEvent(this.email);
+}
 
-class AuthErrorEvent extends AuthEvent {
-  final String error;
+class ResetPasswordEvent extends AuthEvent {
+  final String token;
+  final String newPassword;
+  final String confirmPassword;
 
-  AuthErrorEvent(this.error);
+  ResetPasswordEvent(this.token, this.newPassword, this.confirmPassword);
+}
+
+class ValidateTokenEvent extends AuthEvent {
+  final String token;
+
+  ValidateTokenEvent(this.token);
 }

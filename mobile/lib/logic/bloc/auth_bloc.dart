@@ -7,7 +7,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   final AuthRepository authRepository;
 
   AuthBloc(this.authRepository) : super(AuthInitial()) {
-    // Handle Sign Up Event
+    //! Handle Sign Up Event
     on<SignUpEvent>((event, emit) async {
       emit(AuthLoading());
       try {
@@ -18,14 +18,39 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       }
     });
 
-    // **Handle Login Event**
+    //! Handle Login Event
     on<LoginEvent>((event, emit) async {
-      emit(AuthLoading()); // emit loading state
+      emit(AuthLoading());
       try {
         final user = await authRepository.login(event.email, event.password);
-        emit(Authenticated(user)); // emit success state
+        emit(Authenticated(
+            user)); // Emit the authenticated state if login is successful
       } catch (e) {
-        emit(AuthError(e.toString())); // emit error state
+        emit(AuthError(e
+            .toString())); // This will now show the user-friendly error message
+      }
+    });
+
+    //! Handle Forgot Password Event
+    on<ForgotPasswordEvent>((event, emit) async {
+      emit(AuthLoading());
+      try {
+        await authRepository.forgotPassword(event.email);
+        emit(AuthSuccess('Reset link sent to your email'));
+      } catch (e) {
+        emit(AuthError(e.toString()));
+      }
+    });
+
+    //! Handle Reset Password Event
+    on<ResetPasswordEvent>((event, emit) async {
+      emit(AuthLoading());
+      try {
+        await authRepository.resetPassword(
+            event.token, event.newPassword, event.confirmPassword);
+        emit(AuthSuccess('Password reset successful'));
+      } catch (e) {
+        emit(AuthError(e.toString()));
       }
     });
   }

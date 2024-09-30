@@ -4,16 +4,19 @@ import 'package:hotel_flutter/logic/bloc/auth_bloc.dart';
 import 'package:hotel_flutter/logic/bloc/auth_event.dart';
 import 'package:hotel_flutter/logic/bloc/auth_state.dart';
 
-class ForgotPassword extends StatefulWidget {
-  const ForgotPassword({super.key});
+class ResetPassword extends StatefulWidget {
+  final String token; // Add a token parameter to the widget
+
+  const ResetPassword({Key? key, required this.token}) : super(key: key);
 
   @override
-  State<ForgotPassword> createState() => _ForgotPasswordState();
+  State<ResetPassword> createState() => ResetPasswordState();
 }
 
-class _ForgotPasswordState extends State<ForgotPassword> {
-  final _formForgotPasswordKey = GlobalKey<FormState>();
-  String? _email;
+class ResetPasswordState extends State<ResetPassword> {
+  final _formResetPasswordKey = GlobalKey<FormState>();
+  String? _password;
+  String? _confirmPassword;
   bool _isLoading = false; // Track loading state
 
   @override
@@ -29,28 +32,21 @@ class _ForgotPasswordState extends State<ForgotPassword> {
             child: BlocListener<AuthBloc, AuthState>(
               listener: (context, state) {
                 if (state is AuthLoading) {
-                  // Set loading state to true when the request is initiated
                   setState(() {
                     _isLoading = true;
                   });
                 } else if (state is AuthSuccess) {
-                  // Show success message
                   ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                        content: Text('Check your email for the reset link.')),
+                    const SnackBar(content: Text('Password reset successful!')),
                   );
-                  // Navigate to EmailResetTokenScreen
-                  Navigator.of(context).pushNamed('/emailResetToken');
-                  // Reset loading state after successful operation
+                  Navigator.of(context).pushNamed('/login');
                   setState(() {
                     _isLoading = false;
                   });
                 } else if (state is AuthError) {
-                  // Handle error
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(content: Text('Error: ${state.error}')),
                   );
-                  // Reset loading state on error
                   setState(() {
                     _isLoading = false;
                   });
@@ -73,7 +69,7 @@ class _ForgotPasswordState extends State<ForgotPassword> {
                     padding:
                         EdgeInsets.symmetric(horizontal: screenWidth * 0.1),
                     child: Text(
-                      'Please enter the email address associated with your account and we\'ll send you a link to reset your password.',
+                      'Please enter your new password.',
                       style: TextStyle(
                         color: Colors.black,
                         fontSize: screenHeight * 0.018,
@@ -84,7 +80,7 @@ class _ForgotPasswordState extends State<ForgotPassword> {
                   ),
                   SizedBox(height: screenHeight * 0.05),
                   Form(
-                    key: _formForgotPasswordKey,
+                    key: _formResetPasswordKey,
                     child: Column(
                       children: [
                         SizedBox(
@@ -92,16 +88,51 @@ class _ForgotPasswordState extends State<ForgotPassword> {
                           child: TextFormField(
                             validator: (value) {
                               if (value == null || value.isEmpty) {
-                                return 'Please enter your email';
+                                return 'Please enter your password';
                               }
                               return null;
                             },
                             onChanged: (value) {
-                              _email = value; // Store the email input
+                              _password = value; // Store the password input
                             },
+                            obscureText: true,
                             decoration: InputDecoration(
-                              label: const Text('Email'),
-                              hintText: 'Enter Email',
+                              label: const Text('New Password'),
+                              hintText: 'Enter New Password',
+                              hintStyle: const TextStyle(color: Colors.black26),
+                              border: OutlineInputBorder(
+                                borderSide:
+                                    const BorderSide(color: Colors.black12),
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                              enabledBorder: OutlineInputBorder(
+                                borderSide:
+                                    const BorderSide(color: Colors.black12),
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                            ),
+                          ),
+                        ),
+                        SizedBox(height: screenHeight * 0.03),
+                        SizedBox(
+                          width: screenWidth * 0.8,
+                          child: TextFormField(
+                            validator: (value) {
+                              if (value == null || value.isEmpty) {
+                                return 'Please confirm your password';
+                              } else if (value != _password) {
+                                return 'Passwords do not match';
+                              }
+                              return null;
+                            },
+                            onChanged: (value) {
+                              _confirmPassword =
+                                  value; // Store the confirm password input
+                            },
+                            obscureText: true,
+                            decoration: InputDecoration(
+                              label: const Text('Confirm Password'),
+                              hintText: 'Confirm Password',
                               hintStyle: const TextStyle(color: Colors.black26),
                               border: OutlineInputBorder(
                                 borderSide:
@@ -128,13 +159,14 @@ class _ForgotPasswordState extends State<ForgotPassword> {
                             onPressed: _isLoading
                                 ? null // Disable button while loading
                                 : () {
-                                    if (_formForgotPasswordKey.currentState!
+                                    if (_formResetPasswordKey.currentState!
                                         .validate()) {
-                                      _sendResetEmail(_email!);
+                                      _resetPassword(widget.token, _password!,
+                                          _confirmPassword!);
                                     }
                                   },
                             child: _isLoading
-                                ? SizedBox(
+                                ? const SizedBox(
                                     height: 20,
                                     width: 20,
                                     child: CircularProgressIndicator(
@@ -143,35 +175,10 @@ class _ForgotPasswordState extends State<ForgotPassword> {
                                     ),
                                   )
                                 : const Text(
-                                    'Continue',
+                                    'Reset Password',
                                     style: TextStyle(fontSize: 18),
                                   ),
                           ),
-                        ),
-                        SizedBox(height: screenHeight * 0.03),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            const Text(
-                              'Don\'t have an account? ',
-                              style: TextStyle(
-                                fontWeight: FontWeight.bold,
-                                color: Colors.black,
-                              ),
-                            ),
-                            GestureDetector(
-                              onTap: () {
-                                Navigator.of(context).pushNamed('/signup');
-                              },
-                              child: const Text(
-                                'Sign up',
-                                style: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  color: Color.fromARGB(255, 29, 53, 115),
-                                ),
-                              ),
-                            ),
-                          ],
                         ),
                       ],
                     ),
@@ -185,8 +192,11 @@ class _ForgotPasswordState extends State<ForgotPassword> {
     );
   }
 
-  void _sendResetEmail(String email) {
-    // Call the BLoC to trigger the ForgotPasswordEvent
-    context.read<AuthBloc>().add(ForgotPasswordEvent(email));
+  void _resetPassword(String token, String password, String confirmPassword) {
+    // Call the BLoC to trigger the ResetPasswordEvent
+
+    context
+        .read<AuthBloc>()
+        .add(ResetPasswordEvent(token, password, confirmPassword));
   }
 }
