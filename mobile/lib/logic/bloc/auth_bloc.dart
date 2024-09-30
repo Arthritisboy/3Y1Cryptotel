@@ -1,34 +1,20 @@
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:hotel_flutter/data/data_provider/auth_provider.dart';
-import 'auth_event.dart';
-import 'auth_state.dart';
-import 'package:hotel_flutter/data/model/user_model.dart';
+import 'package:bloc/bloc.dart';
+import 'package:hotel_flutter/data/respositories/auth_repository.dart';
+import 'package:hotel_flutter/logic/bloc/auth_event.dart';
+import 'package:hotel_flutter/logic/bloc/auth_state.dart';
 
 class AuthBloc extends Bloc<AuthEvent, AuthState> {
-  final AuthDataProvider authProvider;
+  final AuthRepository authRepository;
 
-  AuthBloc(this.authProvider) : super(AuthInitial());
-
-  @override
-  Stream<AuthState> mapEventToState(AuthEvent event) async* {
-    if (event is LoginEvent) {
-      yield AuthLoading();
+  AuthBloc(this.authRepository) : super(AuthInitial()) {
+    on<SignUpEvent>((event, emit) async {
+      emit(AuthLoading());
       try {
-        final data = await authProvider.login(event.email, event.password);
-        final user = UserModel.fromJson(data);
-        yield Authenticated(user);
+        final user = await authRepository.register(event.signUpModel);
+        emit(Authenticated(user));
       } catch (e) {
-        yield AuthError(e.toString());
+        emit(AuthError(e.toString()));
       }
-    } else if (event is RegisterEvent) {
-      yield AuthLoading();
-      try {
-        final data = await authProvider.register(event.email, event.password);
-        final user = UserModel.fromJson(data);
-        yield Authenticated(user);
-      } catch (e) {
-        yield AuthError(e.toString());
-      }
-    }
+    });
   }
 }

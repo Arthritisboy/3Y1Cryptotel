@@ -1,26 +1,19 @@
-import 'package:equatable/equatable.dart';
+import 'package:hotel_flutter/data/model/signup_model.dart';
 
-abstract class AuthEvent extends Equatable {
-  @override
-  List<Object> get props => [];
+abstract class AuthEvent {}
+
+class SignUpEvent extends AuthEvent {
+  final SignUpModel signUpModel;
+
+  SignUpEvent(this.signUpModel);
 }
 
-class LoginEvent extends AuthEvent {
-  final String email;
-  final String password;
+class AuthLoadingEvent extends AuthEvent {}
 
-  LoginEvent(this.email, this.password);
+class AuthenticatedEvent extends AuthEvent {}
 
-  @override
-  List<Object> get props => [email, password];
-}
+class AuthErrorEvent extends AuthEvent {
+  final String error;
 
-class RegisterEvent extends AuthEvent {
-  final String email;
-  final String password;
-
-  RegisterEvent(this.email, this.password);
-
-  @override
-  List<Object> get props => [email, password];
+  AuthErrorEvent(this.error);
 }

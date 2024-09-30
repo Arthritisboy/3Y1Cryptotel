@@ -2,6 +2,8 @@ import 'package:equatable/equatable.dart';
 import 'package:hotel_flutter/data/model/user_model.dart';
 
 abstract class AuthState extends Equatable {
+  const AuthState();
+
   @override
   List<Object> get props => [];
 }
@@ -13,7 +15,7 @@ class AuthLoading extends AuthState {}
 class Authenticated extends AuthState {
   final UserModel user;
 
-  Authenticated(this.user);
+  const Authenticated(this.user);
 
   @override
   List<Object> get props => [user];
@@ -22,7 +24,7 @@ class Authenticated extends AuthState {
 class AuthError extends AuthState {
   final String error;
 
-  AuthError(this.error);
+  const AuthError(this.error);
 
   @override
   List<Object> get props => [error];
