@@ -5,6 +5,8 @@ import 'package:hotel_flutter/presentation/screens/tab_screen.dart';
 import 'package:hotel_flutter/presentation/screens/login_screen.dart';
 import 'package:hotel_flutter/presentation/screens/signup_screen.dart';
 import 'package:hotel_flutter/presentation/screens/welcome_screen.dart';
+import 'package:hotel_flutter/presentation/screens/email_reset_token_screen.dart';
+import 'package:hotel_flutter/presentation/screens/reset_password.dart';
 
 class AppRouter {
   Route<dynamic>? onGenerateRoute(RouteSettings routeSettings) {
@@ -32,6 +34,17 @@ class AppRouter {
       case '/menuscreen':
         return MaterialPageRoute(
           builder: (_) => const MenuScreen(),
+        );
+      case '/emailResetToken':
+        return MaterialPageRoute(
+          builder: (_) => const EmailResetTokenScreen(),
+        );
+      case '/resetPassword':
+        final args = routeSettings.arguments as Map<String, dynamic>;
+        final token = args['token'] as String;
+
+        return MaterialPageRoute(
+          builder: (_) => ResetPassword(token: token),
         );
       default:
         return null;

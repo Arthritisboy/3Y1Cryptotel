@@ -29,3 +29,12 @@ class AuthError extends AuthState {
   @override
   List<Object> get props => [error];
 }
+
+class AuthSuccess extends AuthState {
+  final String message;
+
+  const AuthSuccess(this.message);
+
+  @override
+  List<Object> get props => [message];
+}
