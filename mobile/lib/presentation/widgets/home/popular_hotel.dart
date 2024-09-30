@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:hotel_flutter/presentation/widgets/home/card_widget.dart';
-import 'package:hotel_flutter/presentation/screens/room_screen.dart';
-import 'package:hotel_flutter/data/dummydata/room_data.dart';
-import 'package:hotel_flutter/data/model/room_model.dart';
+import 'package:hotel_flutter/presentation/screens/hotel_screen.dart';
+import 'package:hotel_flutter/data/dummydata/hotel_data.dart';
+import 'package:hotel_flutter/data/model/hotel_model.dart';
 
 class PopularRooms extends StatelessWidget {
   const PopularRooms({super.key});

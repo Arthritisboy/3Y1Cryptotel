@@ -5,7 +5,7 @@ import 'package:hotel_flutter/presentation/screens/menu_screens.dart';
 import 'package:hotel_flutter/presentation/widgets/home/bottom_home_icon_navigation.dart';
 import 'package:hotel_flutter/presentation/widgets/home/home_header.dart';
 import 'package:hotel_flutter/presentation/widgets/home/popular_restaurant.dart';
-import 'package:hotel_flutter/presentation/widgets/home/popular_rooms.dart';
+import 'package:hotel_flutter/presentation/widgets/home/popular_hotel.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
