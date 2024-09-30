@@ -37,7 +37,11 @@ class _SignupFormState extends State<SignupForm> {
           setState(() {
             _isLoading = false; // Stop loading
           });
-          Navigator.of(context).pushReplacementNamed('/home');
+
+          _showSuccessMessage();
+
+          // Navigate to the home screen after successful registration
+          Navigator.of(context).pushReplacementNamed('/login');
         } else if (state is AuthError) {
           setState(() {
             _isLoading = false; // Stop loading
@@ -208,6 +212,15 @@ class _SignupFormState extends State<SignupForm> {
             child: const Text('OK'),
           ),
         ],
+      ),
+    );
+  }
+
+  void _showSuccessMessage() {
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text('User successfully registered!'),
+        backgroundColor: Colors.green,
       ),
     );
   }

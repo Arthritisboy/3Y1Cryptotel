@@ -3,7 +3,7 @@ import 'dart:convert';
 import 'package:hotel_flutter/data/model/signup_model.dart';
 
 class AuthDataProvider {
-  final String baseUrl = 'http://127.0.0.1:3000/api/v1/auth';
+  final String baseUrl = 'https://3-y1-cryptotel.vercel.app/api/v1/auth';
 
   Future<Map<String, dynamic>> login(String email, String password) async {
     print('Calling login method...');
