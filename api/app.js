@@ -75,6 +75,9 @@ app.use((req, res, next) => {
 });
 
 //! Routes
+app.get('/', (req, res) => {
+  res.redirect('/api/v1/auth');
+});
 app.use('/api/v1/auth', authRouter);
 app.use('/api/v1/users', userRoute);
 // app.use('/api/v1/web3', web3Router);

@@ -1,10 +1,14 @@
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import 'package:hotel_flutter/data/model/signup_model.dart';
 
 class AuthDataProvider {
-  final String baseUrl = 'http://127.0.0.1:3000/api/v1/users';
+  final String baseUrl = 'http://127.0.0.1:3000/api/v1/auth';
 
   Future<Map<String, dynamic>> login(String email, String password) async {
+    print('Calling login method...');
+    print('Attempting to log in with URL: $baseUrl/login');
+
     final response = await http.post(
       Uri.parse('$baseUrl/login'),
       body: json.encode({
@@ -14,6 +18,9 @@ class AuthDataProvider {
       headers: {'Content-Type': 'application/json'},
     );
 
+    print('Response status: ${response.statusCode}');
+    print('Response body: ${response.body}');
+
     if (response.statusCode == 200) {
       return json.decode(response.body);
     } else {
@@ -21,20 +28,19 @@ class AuthDataProvider {
     }
   }
 
-  Future<Map<String, dynamic>> register(String email, String password) async {
+  Future<Map<String, dynamic>> register(SignUpModel signUpModel) async {
     final response = await http.post(
       Uri.parse('$baseUrl/signup'),
-      body: json.encode({
-        'email': email,
-        'password': password,
-      }),
+      body: json.encode(signUpModel.toJson()),
       headers: {'Content-Type': 'application/json'},
     );
 
     if (response.statusCode == 201) {
       return json.decode(response.body);
     } else {
-      throw Exception('Failed to register: ${response.body}');
+      final errorResponse = json.decode(response.body);
+      String errorMessage = errorResponse['message'] ?? 'An error occurred';
+      throw Exception('Failed to register: $errorMessage');
     }
   }
 }
