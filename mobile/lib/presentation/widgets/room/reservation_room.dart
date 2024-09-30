@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:hotel_flutter/presentation/widgets/room/navigation_row.dart';
-import 'package:hotel_flutter/presentation/widgets/room/reservation_booking.dart';
+import 'package:hotel_flutter/presentation/widgets/room/roomSelection.dart';
+import 'package:hotel_flutter/data/model/room_model.dart';
 
 class ReservationRoom extends StatefulWidget {
   final String hotelName;
@@ -27,6 +28,27 @@ class ReservationRoom extends StatefulWidget {
 }
 
 class _ReservationRoomState extends State<ReservationRoom> {
+  final List<RoomModel> roomList = [
+    RoomModel(
+      roomType: 'Deluxe Room',
+      price: 3000,
+      availability: 'Available',
+      imageUrl: 'assets/images/rooms/hotelroom_1.png',
+    ),
+    RoomModel(
+      roomType: 'Executive Room',
+      price: 2000,
+      availability: 'Available',
+      imageUrl: 'assets/images/rooms/hotelroom_2.png',
+    ),
+    RoomModel(
+      roomType: 'Standard Room',
+      price: 1000,
+      availability: 'Not Available',
+      imageUrl: 'assets/images/rooms/hotelroom_1.png',
+    ),
+  ];
+
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -125,15 +147,14 @@ class _ReservationRoomState extends State<ReservationRoom> {
               ),
             ],
           ),
-          // NavigationRow widget
           NavigationRow(
             activeIndex: widget.activeIndex,
             onTap: widget.onNavTap,
           ),
           const Divider(
               thickness: 2, color: Color.fromARGB(255, 142, 142, 147)),
-          // Conditionally rendering the ReservationRoom content
-          if (widget.activeIndex == 0) const ReservationBooking(),
+          if (widget.activeIndex == 0)
+            RoomSelection(roomList: roomList),
         ],
       ),
     );
