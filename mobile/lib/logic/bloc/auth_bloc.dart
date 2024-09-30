@@ -23,11 +23,9 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       emit(AuthLoading());
       try {
         final user = await authRepository.login(event.email, event.password);
-        emit(Authenticated(
-            user)); // Emit the authenticated state if login is successful
+        emit(Authenticated(user));
       } catch (e) {
-        emit(AuthError(e
-            .toString())); // This will now show the user-friendly error message
+        emit(AuthError(e.toString()));
       }
     });
 
