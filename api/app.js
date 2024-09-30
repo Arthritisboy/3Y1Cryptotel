@@ -81,6 +81,8 @@ const DB = process.env.MONGO_EMAIL.replace(
 
 mongoose
   .connect(DB, {
+    useNewUrlParser: true,
+
     useUnifiedTopology: true,
   })
   .then(() => console.log('DB connection successful!'));
