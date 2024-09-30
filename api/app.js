@@ -2,7 +2,9 @@ const express = require('express');
 const morgan = require('morgan');
 const dotenv = require('dotenv');
 const cors = require('cors');
-const connectToDatabase = require('./database/connection');
+const mongoose = require('mongoose');
+
+// const connectToDatabase = require('./database/connection');
 
 // Security
 const rateLimit = require('express-rate-limit');
@@ -71,21 +73,38 @@ app.all('*', (req, res, next) => {
 // Global error handling middleware
 app.use(globalErrorHandler);
 
-// Export the app for Vercel
+//Database connection
+const DB = process.env.MONGO_EMAIL.replace(
+  '<PASSWORD>',
+  process.env.MONGO_PASSWORD,
+);
+
+mongoose
+  .connect(DB, {
+    useUnifiedTopology: true,
+  })
+  .then(() => console.log('DB connection successful!'));
+
+// Start the server
+const port = process.env.PORT || 3000;
+app.listen(port, () => {
+  console.log(`App is running on port ${port}...`);
+});
+
 module.exports = app;
 
-// You can keep the start function for local testing if needed
-const port = process.env.PORT || 3000;
-if (process.env.NODE_ENV !== 'production') {
-  const start = async () => {
-    try {
-      await connectToDatabase();
-      app.listen(port, () => {
-        console.log(`Server is listening on port ${port}...`);
-      });
-    } catch (error) {
-      console.log(error);
-    }
-  };
-  start();
-}
+// // You can keep the start function for local testing if needed
+// const port = process.env.PORT || 3000;
+// if (process.env.NODE_ENV !== 'production') {
+//   const start = async () => {
+//     try {
+//       await connectToDatabase();
+//       app.listen(port, () => {
+//         console.log(`Server is listening on port ${port}...`);
+//       });
+//     } catch (error) {
+//       console.log(error);
+//     }
+//   };
+//   start();
+// }
