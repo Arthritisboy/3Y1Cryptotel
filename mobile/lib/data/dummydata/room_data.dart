@@ -1,31 +1,23 @@
 import 'package:hotel_flutter/data/model/room_model.dart';
 
-final List<Hotel> hotelData = [
-  Hotel(
-    imagePath: 'assets/images/rooms/monarchHotel.jpg',
-    hotelName: 'The Monarch Hotel',
-    typeOfRoom: 'King Size Bed',
-    rating: 5.0,
-    price: 30,
-    location: "29C6+83C, 2, Calasiao, 2418 Pangasinan",
-    time: "7:30am - 11:00pm",
+List<RoomModel>roomList = [
+  RoomModel(
+    roomType: 'Deluxe Room',
+    price: 3000,
+    availability: 'Available',
+    imageUrl: 'assets/images/rooms/hotelroom_1.png',
   ),
-  Hotel(
-    imagePath: 'assets/images/rooms/starPlaza.jpg',
-    hotelName: 'Star Plaza Hotel',
-    typeOfRoom: 'Queen Size Bed',
-    rating: 4.5,
-    price: 50,
-    location: "29C6+83C, 2, Calasiao, 2418 Pangasinan",
-    time: "7:30am - 11:00pm",
+    RoomModel(
+    roomType: 'Executive Room',
+    price: 2000,
+    availability: 'Available',
+    imageUrl: 'assets/images/rooms/hotelroom_2.png',
   ),
-  Hotel(
-    imagePath: 'assets/images/rooms/hotelroom_3.jpg',
-    hotelName: 'Luxury Room',
-    typeOfRoom: 'Queen Size Bed',
-    rating: .0,
-    price: 40,
-    location: "29C6+83C, 2, Calasiao, 2418 Pangasinan",
-    time: "7:30am - 11:00pm",
+    RoomModel(
+    roomType: 'Standard Room',
+    price: 1000,
+    availability: 'Not Available',
+    imageUrl: 'assets/images/rooms/hotelroom_1.png',
   ),
 ];
+

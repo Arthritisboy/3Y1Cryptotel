@@ -1,0 +1,51 @@
+[
+  {
+    "firstName": "Lance Kian",
+    "lastName": "Flores",
+    "course": "BSIT",
+    "year": "Fourth year",
+    "enrolled": true
+  },
+  {
+    "firstName": "Kian",
+    "lastName": "Flores",
+    "course": "BSIT",
+    "year": "Fourth year",
+    "enrolled": true
+  },
+  {
+    "firstName": "Christer Dale",
+    "lastName": "Reyes",
+    "course": "BSIT",
+    "year": "Second year",
+    "enrolled": true
+  },
+  {
+    "firstName": "Christer",
+    "lastName": "Reyes",
+    "course": "BSIT",
+    "year": "Second year",
+    "enrolled": true
+  },
+  {
+    "firstName": "Jaydee",
+    "lastName": "Ang",
+    "course": "BSIT",
+    "year": "Third year",
+    "enrolled": true
+  },
+  {
+    "firstName": "Jem",
+    "lastName": "Centino",
+    "course": "BSIT",
+    "year": "First year",
+    "enrolled": true
+  },
+  {
+    "firstName": "Janylle Borje",
+    "lastName": "Borje",
+    "course": "BSIT",
+    "year": "Third year",
+    "enrolled": true
+  }
+]
