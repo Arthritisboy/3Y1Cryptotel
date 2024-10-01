@@ -55,7 +55,7 @@ class _TabScreenState extends State<TabScreen> {
               const SizedBox(height: 10),
               BottomHomeIconNavigation(
                 selectedIndex: _selectedIndex,
-                onIconTapped: _onIconTapped, // Pass the callback
+                onIconTapped: _onIconTapped,
               ),
               Expanded(
                 child: Container(
@@ -68,7 +68,6 @@ class _TabScreenState extends State<TabScreen> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        // Conditional rendering based on selected index
                         if (_selectedIndex == 0) ...[
                           const HomeScreen(),
                           const RestaurantScreen()

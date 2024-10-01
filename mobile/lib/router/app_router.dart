@@ -1,13 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:hotel_flutter/presentation/screens/forgot_password_screen.dart';
 import 'package:hotel_flutter/presentation/screens/tab_screen.dart';
-import 'package:hotel_flutter/presentation/screens/tab_screen.dart';
 import 'package:hotel_flutter/presentation/screens/login_screen.dart';
 import 'package:hotel_flutter/presentation/screens/signup_screen.dart';
 import 'package:hotel_flutter/presentation/screens/welcome_screen.dart';
 import 'package:hotel_flutter/presentation/screens/email_reset_token_screen.dart';
 import 'package:hotel_flutter/presentation/screens/reset_password.dart';
-import 'package:hotel_flutter/presentation/widgets/cryptowallet/cryptowallet_transactions.dart';
 import 'package:hotel_flutter/presentation/screens/profile_screen.dart';
 
 class AppRouter {
@@ -35,10 +33,6 @@ class AppRouter {
       case '/forgotPassword':
         return MaterialPageRoute(
           builder: (_) => ForgotPassword(),
-        );
-      case '/menuscreen':
-        return MaterialPageRoute(
-          builder: (_) => const MenuScreen(),
         );
       case '/emailResetToken':
         return MaterialPageRoute(
