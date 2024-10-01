@@ -1,52 +1,41 @@
 import 'package:flutter/material.dart';
 import 'package:hotel_flutter/presentation/screens/forgot_password_screen.dart';
 import 'package:hotel_flutter/presentation/screens/tab_screen.dart';
+import 'package:hotel_flutter/presentation/screens/tab_screen.dart';
 import 'package:hotel_flutter/presentation/screens/login_screen.dart';
 import 'package:hotel_flutter/presentation/screens/signup_screen.dart';
 import 'package:hotel_flutter/presentation/screens/welcome_screen.dart';
 import 'package:hotel_flutter/presentation/screens/email_reset_token_screen.dart';
 import 'package:hotel_flutter/presentation/screens/reset_password.dart';
-import 'package:hotel_flutter/presentation/widgets/cryptowallet/cryptowallet_transactions.dart';
-import 'package:hotel_flutter/presentation/screens/profile_screen.dart';
 
 class AppRouter {
   Route<dynamic>? onGenerateRoute(RouteSettings routeSettings) {
     switch (routeSettings.name) {
       case '/':
         return MaterialPageRoute(
-          builder: (_) => WelcomeScreen(),
+          builder: (_) => const WelcomeScreen(),
         );
-
       case '/login':
         return MaterialPageRoute(
-          builder: (_) => LoginScreen(),
+          builder: (_) => const LoginScreen(),
         );
-
       case '/signup':
         return MaterialPageRoute(
-          builder: (_) => SignupScreen(),
+          builder: (_) => const SignupScreen(),
         );
-
-      case '/homescreen':
+      case '/tabscreen':
         return MaterialPageRoute(
-          builder: (_) => TabScreen(),
+          builder: (_) => const TabScreen(),
         );
-
       case '/forgotPassword':
         return MaterialPageRoute(
-          builder: (_) => ForgotPassword(),
-        );
-
-      case '/cryptoTransaction':
-        return MaterialPageRoute(
-          builder: (_) => CryptoWalletTransactions(),
+          builder: (_) => const ForgotPassword(),
         );
 
       case '/emailResetToken':
         return MaterialPageRoute(
-          builder: (_) => EmailResetTokenScreen(),
+          builder: (_) => const EmailResetTokenScreen(),
         );
-
       case '/resetPassword':
         final args = routeSettings.arguments as Map<String, dynamic>;
         final token = args['token'] as String;
@@ -54,12 +43,6 @@ class AppRouter {
         return MaterialPageRoute(
           builder: (_) => ResetPassword(token: token),
         );
-
-      case '/profile':
-        return MaterialPageRoute(
-          builder: (_) => ProfileScreen(),
-        );
-
       default:
         return null;
     }

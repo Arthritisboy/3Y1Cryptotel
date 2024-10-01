@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:hotel_flutter/presentation/screens/home_screen.dart';
+import 'package:hotel_flutter/presentation/widgets/home/bottom_home_icon_navigation.dart';
+import 'package:hotel_flutter/presentation/widgets/home/home_header.dart';
+import 'package:hotel_flutter/presentation/widgets/home/popular_restaurant.dart';
+import 'package:hotel_flutter/presentation/widgets/home/popular_hotel.dart';
 import 'package:hotel_flutter/presentation/widgets/tab/main_drawer.dart';
-import 'package:hotel_flutter/presentation/screens/favorite_screen.dart';
-import 'package:hotel_flutter/presentation/screens/profile_screen.dart';
 
 class TabScreen extends StatefulWidget {
   const TabScreen({super.key});
@@ -12,7 +13,14 @@ class TabScreen extends StatefulWidget {
 }
 
 class _TabScreenState extends State<TabScreen> {
+  int _selectedIndex = 0;
   int _selectedPageIndex = 0;
+
+  void _onIconTapped(int index) {
+    setState(() {
+      _selectedIndex = index;
+    });
+  }
 
   void _selectPage(int index) {
     setState(() {
@@ -23,7 +31,7 @@ class _TabScreenState extends State<TabScreen> {
   void _setScreen(String identifier) {
     if (identifier == "homescreen") {
       if (identifier == "homescreen") {
-        const HomeScreen();
+        const TabScreen();
       }
     }
   }
@@ -34,20 +42,45 @@ class _TabScreenState extends State<TabScreen> {
 
     switch (_selectedPageIndex) {
       case 1:
-        activePage = const FavoriteScreen();
+        activePage = const TabScreen();
         break;
-      case 2:
-        activePage = const ProfileScreen();
-        break;
-      default:
-        activePage = const HomeScreen();
     }
-
     return Scaffold(
       endDrawer: MainDrawer(onSelectScreen: _setScreen),
       body: Stack(
         children: [
-          activePage,
+          Column(
+            children: [
+              Header(),
+              const SizedBox(height: 10),
+              BottomHomeIconNavigation(
+                selectedIndex: _selectedIndex,
+                onIconTapped: _onIconTapped, // Pass the callback
+              ),
+              Expanded(
+                child: Container(
+                  decoration: const BoxDecoration(
+                    color: Colors.white,
+                    borderRadius:
+                        BorderRadius.vertical(top: Radius.circular(30.0)),
+                  ),
+                  child: SingleChildScrollView(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        // Conditional rendering based on selected index
+                        if (_selectedIndex == 0) ...[
+                          const PopularRooms(),
+                          const PopularRestaurant()
+                        ],
+                        if (_selectedIndex == 1) const PopularRestaurant(),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
           Positioned(
             top: 40.0,
             right: 10.0,

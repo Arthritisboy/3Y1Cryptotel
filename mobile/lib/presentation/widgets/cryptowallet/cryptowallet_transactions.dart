@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:hotel_flutter/presentation/screens/home_screen.dart';
+import 'package:hotel_flutter/presentation/screens/tab_screen.dart';
 import 'package:hotel_flutter/presentation/widgets/cryptowallet/cryptonotransaction.dart';
 import 'package:hotel_flutter/presentation/widgets/cryptowallet/cryptowithtransaction.dart';
 
@@ -18,7 +18,7 @@ class CryptoWalletTransactions extends StatelessWidget {
             decoration: BoxDecoration(
               color: Colors.white,
               borderRadius: const BorderRadius.only(
-                topLeft: Radius.circular(40.0),  // Only top-left corner
+                topLeft: Radius.circular(40.0), // Only top-left corner
                 topRight: Radius.circular(40.0), // Only top-right corner
               ),
               boxShadow: [
@@ -43,7 +43,7 @@ class CryptoWalletTransactions extends StatelessWidget {
               onPressed: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => const HomeScreen()),
+                  MaterialPageRoute(builder: (context) => const TabScreen()),
                 );
               },
             ),
