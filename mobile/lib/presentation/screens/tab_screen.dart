@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:hotel_flutter/presentation/widgets/home/bottom_home_icon_navigation.dart';
-import 'package:hotel_flutter/presentation/widgets/home/home_header.dart';
-import 'package:hotel_flutter/presentation/widgets/home/popular_restaurant.dart';
-import 'package:hotel_flutter/presentation/widgets/home/popular_hotel.dart';
-import 'package:hotel_flutter/presentation/widgets/tab/main_drawer.dart';
+import 'package:hotel_flutter/presentation/screens/home_screen.dart';
+import 'package:hotel_flutter/presentation/screens/restaurant_screen.dart';
+import 'package:hotel_flutter/presentation/widgets/tabscreen/bottom_home_icon_navigation.dart';
+import 'package:hotel_flutter/presentation/widgets/tabscreen/home_header.dart';
+import 'package:hotel_flutter/presentation/widgets/drawer/main_drawer.dart';
 
 class TabScreen extends StatefulWidget {
   const TabScreen({super.key});
@@ -70,10 +70,10 @@ class _TabScreenState extends State<TabScreen> {
                       children: [
                         // Conditional rendering based on selected index
                         if (_selectedIndex == 0) ...[
-                          const PopularRooms(),
-                          const PopularRestaurant()
+                          const HomeScreen(),
+                          const RestaurantScreen()
                         ],
-                        if (_selectedIndex == 1) const PopularRestaurant(),
+                        if (_selectedIndex == 1) const RestaurantScreen(),
                       ],
                     ),
                   ),
