@@ -26,7 +26,7 @@ class AuthDataProvider {
       final data = json.decode(response.body);
 
       String token = data['token'];
-      String userId = data['user']['id'];
+      String userId = data['userId'];
 
       await storage.write(key: 'jwt', value: token);
       await storage.write(key: 'userId', value: userId);
