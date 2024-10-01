@@ -40,12 +40,12 @@ const app = express();
 app.use(helmet());
 
 // ** It means 100 request per hour
-const limiter = rateLimit({
-  max: 100,
-  windowMs: 60 * 60 * 1000,
-  message: 'Too many request from this IP, please try again in an hour!',
-});
-app.use('/api', limiter);
+// const limiter = rateLimit({
+//   max: 100,
+//   windowMs: 60 * 60 * 1000,
+//   message: 'Too many request from this IP, please try again in an hour!',
+// });
+// app.use('/api', limiter);
 
 // ** Data sanitization against NoSQL query injection
 app.use(mongoSanitize());
