@@ -3,12 +3,8 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hotel_flutter/data/data_provider/auth/auth_data_provider.dart';
 import 'package:hotel_flutter/logic/bloc/auth_bloc.dart';
-import 'package:hotel_flutter/presentation/screens/profile_screen.dart';
-import 'package:hotel_flutter/presentation/screens/tab_screen.dart';
-import 'package:hotel_flutter/presentation/screens/reset_password.dart';
 import 'package:hotel_flutter/presentation/screens/splash_screen.dart';
 import 'package:hotel_flutter/presentation/screens/tab_screen.dart';
-import 'package:hotel_flutter/presentation/screens/test_screen.dart';
 import 'package:hotel_flutter/router/app_router.dart';
 import 'package:hotel_flutter/data/respositories/auth_repository.dart';
 
@@ -66,7 +62,7 @@ class MyApp extends StatelessWidget {
                 .apply(bodyColor: Colors.black, displayColor: Colors.black),
           ),
         ),
-        home: TabScreen(),
+        home: SplashScreen(),
       ),
     );
   }
