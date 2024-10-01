@@ -29,14 +29,10 @@ class ResetPasswordEvent extends AuthEvent {
   ResetPasswordEvent(this.token, this.newPassword, this.confirmPassword);
 }
 
-class ValidateTokenEvent extends AuthEvent {
-  final String token;
-
-  ValidateTokenEvent(this.token);
-}
-
 class GetUserEvent extends AuthEvent {
   final String userId;
 
   GetUserEvent(this.userId);
 }
+
+class LogoutEvent extends AuthEvent {}

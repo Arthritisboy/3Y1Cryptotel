@@ -7,40 +7,40 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   final AuthRepository authRepository;
 
   AuthBloc(this.authRepository) : super(AuthInitial()) {
-    //! Handle Sign Up Event
+    // Handle Sign Up Event
     on<SignUpEvent>((event, emit) async {
       emit(AuthLoading());
       try {
         final user = await authRepository.register(event.signUpModel);
         emit(Authenticated(user));
       } catch (e) {
-        emit(AuthError(e.toString()));
+        emit(AuthError('Registration failed: ${e.toString()}'));
       }
     });
 
-    //! Handle Login Event
+    // Handle Login Event
     on<LoginEvent>((event, emit) async {
       emit(AuthLoading());
       try {
         final user = await authRepository.login(event.email, event.password);
         emit(Authenticated(user));
       } catch (e) {
-        emit(AuthError(e.toString()));
+        emit(AuthError('Login failed: ${e.toString()}'));
       }
     });
 
-    //! Handle Forgot Password Event
+    // Handle Forgot Password Event
     on<ForgotPasswordEvent>((event, emit) async {
       emit(AuthLoading());
       try {
         await authRepository.forgotPassword(event.email);
         emit(AuthSuccess('Reset link sent to your email'));
       } catch (e) {
-        emit(AuthError(e.toString()));
+        emit(AuthError('Failed to send reset link: ${e.toString()}'));
       }
     });
 
-    //! Handle Reset Password Event
+    // Handle Reset Password Event
     on<ResetPasswordEvent>((event, emit) async {
       emit(AuthLoading());
       try {
@@ -48,17 +48,29 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
             event.token, event.newPassword, event.confirmPassword);
         emit(AuthSuccess('Password reset successful'));
       } catch (e) {
-        emit(AuthError(e.toString()));
+        emit(AuthError('Failed to reset password: ${e.toString()}'));
       }
     });
-    //! Handle Get User Event
+
+    // Handle Get User Event
     on<GetUserEvent>((event, emit) async {
       emit(AuthLoading());
       try {
         final user = await authRepository.getUser(event.userId);
         emit(Authenticated(user));
       } catch (e) {
-        emit(AuthError(e.toString()));
+        emit(AuthError('Failed to fetch user data: ${e.toString()}'));
+      }
+    });
+
+    // Handle Logout Event
+    on<LogoutEvent>((event, emit) async {
+      emit(AuthLoading());
+      try {
+        await authRepository.logout();
+        emit(AuthInitial());
+      } catch (e) {
+        emit(AuthError('Failed to logout: ${e.toString()}'));
       }
     });
   }

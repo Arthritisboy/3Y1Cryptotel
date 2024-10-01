@@ -1,6 +1,11 @@
 import 'package:flutter/material.dart';
 
-class Header extends StatelessWidget {
+class TabHeader extends StatelessWidget {
+  final String firstName;
+  final String lastName;
+
+  const TabHeader({super.key, required this.firstName, required this.lastName});
+
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -26,9 +31,9 @@ class Header extends StatelessWidget {
             "Where Would you",
             style: TextStyle(fontSize: 25, fontWeight: FontWeight.w400),
           ),
-          const Text(
-            "Like to Travel, Kawu",
-            style: TextStyle(fontSize: 25, fontWeight: FontWeight.w400),
+          Text(
+            "Like to Travel, $firstName", // Use the firstName variable here
+            style: const TextStyle(fontSize: 25, fontWeight: FontWeight.w400),
           ),
           const SizedBox(
             height: 10,

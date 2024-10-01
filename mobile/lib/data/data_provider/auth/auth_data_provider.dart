@@ -95,21 +95,31 @@ class AuthDataProvider {
     }
   }
 
-  //! Get User Data
+//! Fetch User
   Future<UserModel> getUser(String userId) async {
     final token = await storage.read(key: 'jwt');
+
+    final url = 'https://3-y1-cryptotel.vercel.app/api/v1/users/$userId';
+    print('Fetching user from URL: $url');
+    print('Token: $token');
+
     final response = await http.get(
-      Uri.parse('$baseUrl/users/$userId'),
+      Uri.parse(url),
       headers: {
         'Content-Type': 'application/json',
         if (token != null) 'Authorization': 'Bearer $token',
       },
     );
 
+    print('Response status: ${response.statusCode}');
+    print('Response body: ${response.body}');
+
     if (response.statusCode == 200) {
       final jsonResponse = json.decode(response.body);
       return UserModel.fromJson(jsonResponse['data']['user']);
     } else {
+      print(
+          'Error response body: ${response.body}'); // Print the full error response
       final errorResponse = json.decode(response.body);
       String errorMessage =
           errorResponse['message'] ?? 'Failed to fetch user data';
