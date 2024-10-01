@@ -14,7 +14,7 @@ class TabScreen extends StatefulWidget {
 
 class _TabScreenState extends State<TabScreen> {
   int _selectedIndex = 0;
-  int _selectedPageIndex = 0;
+  String _currentScreen = 'homescreen'; // Track the current screen
 
   void _onIconTapped(int index) {
     setState(() {
@@ -22,29 +22,30 @@ class _TabScreenState extends State<TabScreen> {
     });
   }
 
-  void _selectPage(int index) {
-    setState(() {
-      _selectedPageIndex = index;
-    });
-  }
-
   void _setScreen(String identifier) {
-    if (identifier == "homescreen") {
-      if (identifier == "homescreen") {
-        const TabScreen();
-      }
+    // Prevent navigating to the same screen
+    if (identifier == _currentScreen) {
+      Navigator.of(context)
+          .pop(); // Close the drawer if already on the same screen
+      return;
     }
+
+    setState(() {
+      _currentScreen = identifier; // Update the current screen identifier
+    });
+
+    if (identifier == 'homescreen') {
+      Navigator.of(context).pushReplacementNamed('/homescreen');
+    } else if (identifier == 'profile') {
+      Navigator.of(context).pushReplacementNamed('/profile');
+    } else if (identifier == '/cryptoTransaction') {
+      Navigator.of(context).pushReplacementNamed('/cryptoTransaction');
+    }
+    // You can add more routes here if needed
   }
 
   @override
   Widget build(BuildContext context) {
-    Widget activePage;
-
-    switch (_selectedPageIndex) {
-      case 1:
-        activePage = const TabScreen();
-        break;
-    }
     return Scaffold(
       endDrawer: MainDrawer(onSelectScreen: _setScreen),
       body: Stack(
