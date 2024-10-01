@@ -27,15 +27,17 @@ class _TabScreenState extends State<TabScreen> {
   @override
   void initState() {
     super.initState();
-    _getUserData();
+    _getUserData(); // Call fetching user data
   }
 
   Future<void> _getUserData() async {
-    // Retrieve the user ID from secure storage
     final userId = await _secureStorage.read(key: 'userId');
+    print('Fetched userId from storage: $userId');
     if (userId != null && !_userDataFetched) {
       context.read<AuthBloc>().add(GetUserEvent(userId));
-      _userDataFetched = true; // Mark as fetched
+      setState(() {
+        _userDataFetched = true;
+      });
     } else {
       print('User ID not found in secure storage or already fetched.');
     }
@@ -46,10 +48,15 @@ class _TabScreenState extends State<TabScreen> {
     return BlocListener<AuthBloc, AuthState>(
       listener: (context, state) {
         if (state is Authenticated) {
+          print(
+              'User authenticated: ${state.user.firstName} ${state.user.lastName}');
           setState(() {
             firstName = state.user.firstName ?? '';
             lastName = state.user.lastName ?? '';
+            _userDataFetched = true;
           });
+        } else if (state is AuthError) {
+          print('Error fetching user data: ${state.error}');
         }
       },
       child: Scaffold(
@@ -75,10 +82,7 @@ class _TabScreenState extends State<TabScreen> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          if (_selectedIndex == 0) ...[
-                            const HomeScreen(),
-                            const RestaurantScreen(), // chatgpt dont remove this
-                          ],
+                          if (_selectedIndex == 0) const HomeScreen(),
                           if (_selectedIndex == 1) const RestaurantScreen(),
                         ],
                       ),

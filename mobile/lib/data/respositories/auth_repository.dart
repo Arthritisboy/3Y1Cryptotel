@@ -42,8 +42,7 @@ class AuthRepository {
 
   Future<void> logout() async {
     try {
-      await dataProvider
-          .logout(); // Call the logout method in the data provider
+      await dataProvider.logout();
     } catch (e) {
       throw Exception('Failed to logout: $e');
     }

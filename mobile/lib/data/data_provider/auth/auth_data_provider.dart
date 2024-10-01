@@ -24,7 +24,6 @@ class AuthDataProvider {
 
     if (response.statusCode == 200) {
       final data = json.decode(response.body);
-
       String token = data['token'];
       String userId = data['userId'];
 
@@ -95,10 +94,9 @@ class AuthDataProvider {
     }
   }
 
-//! Fetch User
+  //! Fetch User
   Future<UserModel> getUser(String userId) async {
     final token = await storage.read(key: 'jwt');
-
     final url = 'https://3-y1-cryptotel.vercel.app/api/v1/users/$userId';
     print('Fetching user from URL: $url');
     print('Token: $token');
@@ -118,8 +116,7 @@ class AuthDataProvider {
       final jsonResponse = json.decode(response.body);
       return UserModel.fromJson(jsonResponse['data']['user']);
     } else {
-      print(
-          'Error response body: ${response.body}'); // Print the full error response
+      print('Error response body: ${response.body}');
       final errorResponse = json.decode(response.body);
       String errorMessage =
           errorResponse['message'] ?? 'Failed to fetch user data';
@@ -129,7 +126,6 @@ class AuthDataProvider {
 
   //! Logout
   Future<void> logout() async {
-    // Clear the stored token and userId
     await storage.delete(key: 'jwt');
     await storage.delete(key: 'userId');
   }

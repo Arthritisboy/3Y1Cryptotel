@@ -7,7 +7,6 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   final AuthRepository authRepository;
 
   AuthBloc(this.authRepository) : super(AuthInitial()) {
-    // Handle Sign Up Event
     on<SignUpEvent>((event, emit) async {
       emit(AuthLoading());
       try {
@@ -18,18 +17,16 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       }
     });
 
-    // Handle Login Event
     on<LoginEvent>((event, emit) async {
       emit(AuthLoading());
       try {
         final user = await authRepository.login(event.email, event.password);
-        emit(Authenticated(user));
+        emit(Authenticated(user)); // Emit authenticated state
       } catch (e) {
         emit(AuthError('Login failed: ${e.toString()}'));
       }
     });
 
-    // Handle Forgot Password Event
     on<ForgotPasswordEvent>((event, emit) async {
       emit(AuthLoading());
       try {
@@ -40,7 +37,6 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       }
     });
 
-    // Handle Reset Password Event
     on<ResetPasswordEvent>((event, emit) async {
       emit(AuthLoading());
       try {
@@ -52,18 +48,19 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       }
     });
 
-    // Handle Get User Event
     on<GetUserEvent>((event, emit) async {
-      emit(AuthLoading());
-      try {
-        final user = await authRepository.getUser(event.userId);
-        emit(Authenticated(user));
-      } catch (e) {
-        emit(AuthError('Failed to fetch user data: ${e.toString()}'));
+      print('Fetching user data for userId: ${event.userId}');
+      if (state is! Authenticated) {
+        emit(AuthLoading());
+        try {
+          final user = await authRepository.getUser(event.userId);
+          emit(Authenticated(user));
+        } catch (e) {
+          emit(AuthError('Failed to fetch user data: ${e.toString()}'));
+        }
       }
     });
 
-    // Handle Logout Event
     on<LogoutEvent>((event, emit) async {
       emit(AuthLoading());
       try {
