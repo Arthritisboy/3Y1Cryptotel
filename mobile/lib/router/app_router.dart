@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:hotel_flutter/presentation/screens/forgot_password_screen.dart';
-import 'package:hotel_flutter/presentation/screens/menu_screens.dart';
+import 'package:hotel_flutter/presentation/screens/tab_screen.dart';
 import 'package:hotel_flutter/presentation/screens/tab_screen.dart';
 import 'package:hotel_flutter/presentation/screens/login_screen.dart';
 import 'package:hotel_flutter/presentation/screens/signup_screen.dart';
@@ -23,7 +23,7 @@ class AppRouter {
         return MaterialPageRoute(
           builder: (_) => const SignupScreen(),
         );
-      case '/homescreen':
+      case '/tabscreen':
         return MaterialPageRoute(
           builder: (_) => const TabScreen(),
         );
@@ -31,10 +31,7 @@ class AppRouter {
         return MaterialPageRoute(
           builder: (_) => const ForgotPassword(),
         );
-      case '/menuscreen':
-        return MaterialPageRoute(
-          builder: (_) => const MenuScreen(),
-        );
+
       case '/emailResetToken':
         return MaterialPageRoute(
           builder: (_) => const EmailResetTokenScreen(),
