@@ -13,30 +13,30 @@ class AppRouter {
     switch (routeSettings.name) {
       case '/':
         return MaterialPageRoute(
-          builder: (_) => WelcomeScreen(),
+          builder: (_) => const WelcomeScreen(),
         );
 
       case '/login':
         return MaterialPageRoute(
-          builder: (_) => LoginScreen(),
+          builder: (_) => const LoginScreen(),
         );
 
       case '/signup':
         return MaterialPageRoute(
-          builder: (_) => SignupScreen(),
+          builder: (_) => const SignupScreen(),
         );
       case '/homescreen':
         return MaterialPageRoute(
-          builder: (_) => TabScreen(),
+          builder: (_) => const TabScreen(),
         );
 
       case '/forgotPassword':
         return MaterialPageRoute(
-          builder: (_) => ForgotPassword(),
+          builder: (_) => const ForgotPassword(),
         );
       case '/emailResetToken':
         return MaterialPageRoute(
-          builder: (_) => EmailResetTokenScreen(),
+          builder: (_) => const EmailResetTokenScreen(),
         );
 
       case '/resetPassword':
