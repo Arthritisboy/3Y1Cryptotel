@@ -10,6 +10,7 @@ router.delete('/deleteMe', authController.protect, userController.deleteMe);
 
 router
   .route('/:id')
+  .get(authController.protect, userController.getUser)
   .delete(
     authController.protect,
     authController.restrictTo('admin'),

@@ -22,6 +22,19 @@ exports.getAllUsers = catchAsync(async (req, res) => {
   });
 });
 
+exports.getUser = catchAsync(async (req, res, next) => {
+  const user = await User.findById(req.params.id);
+  if (!user) {
+    return next(new AppError('No student has found with that ID', 404));
+  }
+  res.status(200).json({
+    status: 'success',
+    data: {
+      user,
+    },
+  });
+});
+
 exports.deleteUser = catchAsync(async (req, res, next) => {
   const users = await User.findByIdAndDelete(req.params.id);
   if (!users) {

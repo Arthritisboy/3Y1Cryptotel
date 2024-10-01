@@ -33,20 +33,30 @@ exports.register = catchAsync(async (req, res) => {
 exports.login = catchAsync(async (req, res, next) => {
   const { email, password } = req.body;
 
-  //! 1) Check if email and password exist
+  // Check if email and password exist
   if (!email || !password) {
     return next(new AppError('Please provide email and password', 400));
   }
 
-  //! 2) Check if user exists && password is correct
+  // Check if user exists && password is correct
   const user = await User.findOne({ email: email }).select('+password');
 
   if (!user || !(await user.correctPassword(password, user.password))) {
     return next(new AppError('Incorrect email or password', 401));
   }
 
-  //! 3) If everything is ok, send the token to the client
-  createSendToken(user, 200, res);
+  // // Send the token and user data to the client
+  // createSendToken(user, 200, res);
+
+  // Alternatively, return user data in the response
+  res.status(200).json({
+    status: 'success',
+    token: user.createJWT(),
+    user: {
+      id: user._id,
+      email: user.email,
+    },
+  });
 });
 
 exports.protect = catchAsync(async (req, res, next) => {
