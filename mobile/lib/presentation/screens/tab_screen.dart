@@ -14,7 +14,7 @@ class TabScreen extends StatefulWidget {
 
 class _TabScreenState extends State<TabScreen> {
   int _selectedIndex = 0;
-  String _currentScreen = 'homescreen'; // Track the current screen
+  String _currentScreen = 'homescreen';
 
   void _onIconTapped(int index) {
     setState(() {
@@ -23,15 +23,13 @@ class _TabScreenState extends State<TabScreen> {
   }
 
   void _setScreen(String identifier) {
-    // Prevent navigating to the same screen
     if (identifier == _currentScreen) {
-      Navigator.of(context)
-          .pop(); // Close the drawer if already on the same screen
+      Navigator.of(context).pop();
       return;
     }
 
     setState(() {
-      _currentScreen = identifier; // Update the current screen identifier
+      _currentScreen = identifier;
     });
 
     if (identifier == 'homescreen') {
