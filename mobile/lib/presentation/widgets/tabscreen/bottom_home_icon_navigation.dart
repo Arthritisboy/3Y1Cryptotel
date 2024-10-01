@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'square_icon.dart';
+import '../home/square_icon.dart';
 
 class BottomHomeIconNavigation extends StatelessWidget {
   final int selectedIndex;
