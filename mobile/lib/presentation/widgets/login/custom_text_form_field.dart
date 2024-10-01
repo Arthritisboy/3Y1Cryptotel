@@ -5,6 +5,7 @@ class CustomTextFormField extends StatelessWidget {
   final String hint;
   final TextEditingController controller;
   final bool isObscure;
+  final String? Function(String?)? validator; // Add this line
 
   const CustomTextFormField({
     Key? key,
@@ -12,6 +13,7 @@ class CustomTextFormField extends StatelessWidget {
     required this.hint,
     required this.controller,
     this.isObscure = false,
+    this.validator, // Add this line
   }) : super(key: key);
 
   @override
@@ -24,12 +26,7 @@ class CustomTextFormField extends StatelessWidget {
         controller: controller,
         obscureText: isObscure,
         obscuringCharacter: '*',
-        validator: (value) {
-          if (value == null || value.isEmpty) {
-            return 'Please enter your $label';
-          }
-          return null;
-        },
+        validator: validator, // Use the validator here
         decoration: InputDecoration(
           label: Text(label),
           hintText: hint,

@@ -17,19 +17,16 @@ class AuthRepository {
       final data = await dataProvider.login(email, password);
       return UserModel.fromJson(data);
     } catch (e) {
-      // Rethrow the error with a custom message or handle it as needed
-      throw Exception('Incorrect email or password. Please try again!');
+      throw Exception(e.toString());
     }
   }
 
   Future<void> forgotPassword(String email) async {
     try {
-      // Attempt to send the forgot password request
       await dataProvider.forgotPassword(email);
     } catch (e) {
-      // Catch the exception and throw a user-friendly error message
       throw Exception(
-          'Did not find any email or an error occurred. Please try again.'); // Make sure to use Exception
+          'Did not find any email or an error occurred. Please try again.');
     }
   }
 
@@ -39,7 +36,16 @@ class AuthRepository {
         token, newPassword, confirmPassword);
   }
 
+  Future<UserModel> getUser(String userId) async {
+    return await dataProvider.getUser(userId);
+  }
+
   Future<void> logout() async {
-    // Implement logout logic if needed
+    try {
+      await dataProvider
+          .logout(); // Call the logout method in the data provider
+    } catch (e) {
+      throw Exception('Failed to logout: $e');
+    }
   }
 }
