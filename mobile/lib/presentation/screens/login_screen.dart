@@ -35,7 +35,7 @@ class _LoginScreenState extends State<LoginScreen> {
             setState(() {
               _isLoading = false;
             });
-            Navigator.of(context).pushReplacementNamed('/homescreen');
+            Navigator.of(context).pushNamed('/homescreen');
           } else if (state is AuthError) {
             setState(() {
               _isLoading = false;

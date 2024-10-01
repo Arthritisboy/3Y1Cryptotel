@@ -13,17 +13,14 @@ class MainDrawer extends StatelessWidget {
           DrawerHeader(
             padding: const EdgeInsets.all(20),
             decoration: const BoxDecoration(
-              color: Color.fromARGB(255, 29, 53, 115),
+              color: Color.fromARGB(42, 67, 131, 255),
             ),
             child: Row(
               children: [
                 Column(
                   children: [
-                    const Icon(
-                      Icons.person,
-                      size: 60,
-                      color: Colors.white,
-                    ),
+                    Image.asset('assets/images/icons/userwhite.png',
+                        height: 60, width: 60),
                     const SizedBox(width: 18),
                     Text(
                       'Lance Kian Flores',
@@ -43,33 +40,60 @@ class MainDrawer extends StatelessWidget {
             ),
           ),
           ListTile(
-            leading: const Icon(
-              Icons.home,
-              size: 26,
-              color: Colors.white,
+            leading: Image.asset(
+              'assets/images/icons/homewhite.png',
+              height: 30,
+              width: 30,
             ),
             title: Text(
               'Home',
               style: Theme.of(context).textTheme.titleSmall!.copyWith(
                     color: Colors.white,
-                    fontSize: 20,
+                    fontSize: 22,
                   ),
             ),
-            onTap: () {
-              onSelectScreen('homescreen');
-            },
+            onTap: () => onSelectScreen('homescreen'),
           ),
           ListTile(
-            leading: const Icon(
-              Icons.person,
-              size: 26,
-              color: Colors.white,
+            leading: Image.asset(
+              'assets/images/icons/userwhite.png',
+              height: 30,
+              width: 30,
             ),
             title: Text(
               'Profile',
               style: Theme.of(context).textTheme.titleSmall!.copyWith(
                     color: Colors.white,
-                    fontSize: 20,
+                    fontSize: 22,
+                  ),
+            ),
+            onTap: () => onSelectScreen('profile'),
+          ),
+          ListTile(
+              leading: Image.asset(
+                'assets/images/icons/history.png',
+                height: 30,
+                width: 30,
+              ),
+              title: Text(
+                'Transactions',
+                style: Theme.of(context).textTheme.titleSmall!.copyWith(
+                      color: Colors.white,
+                      fontSize: 22,
+                    ),
+              ),
+              onTap: () => onSelectScreen('/cryptoTransaction')),
+          ListTile(
+            leading: Image.asset(
+              'assets/images/icons/heart.png',
+              height: 30,
+              width: 30,
+            ),
+            title: Text(
+              'Favorites',
+              style: Theme.of(context).textTheme.titleSmall!.copyWith(
+                    color: Colors.white,
+                    fontSize: 22,
                   ),
             ),
             onTap: () {
@@ -77,16 +101,33 @@ class MainDrawer extends StatelessWidget {
             },
           ),
           ListTile(
-            leading: const Icon(
-              Icons.settings,
-              size: 26,
-              color: Colors.white,
+            leading: Image.asset(
+              'assets/images/icons/support.png',
+              height: 30,
+              width: 30,
+            ),
+            title: Text(
+              'Help & Support',
+              style: Theme.of(context).textTheme.titleSmall!.copyWith(
+                    color: Colors.white,
+                    fontSize: 22,
+                  ),
+            ),
+            onTap: () {
+              onSelectScreen('profile');
+            },
+          ),
+          ListTile(
+            leading: Image.asset(
+              'assets/images/icons/settings.png',
+              height: 30,
+              width: 30,
             ),
             title: Text(
               'Settings',
               style: Theme.of(context).textTheme.titleSmall!.copyWith(
                     color: Colors.white,
-                    fontSize: 20,
+                    fontSize: 22,
                   ),
             ),
             onTap: () {
@@ -94,16 +135,16 @@ class MainDrawer extends StatelessWidget {
             },
           ),
           ListTile(
-            leading: const Icon(
-              Icons.logout,
-              size: 26,
-              color: Colors.white,
+            leading: Image.asset(
+              'assets/images/icons/logout.png',
+              height: 30,
+              width: 30,
             ),
             title: Text(
               'Logout',
               style: Theme.of(context).textTheme.titleSmall!.copyWith(
                     color: Colors.white,
-                    fontSize: 20,
+                    fontSize: 22,
                   ),
             ),
             onTap: () {
