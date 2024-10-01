@@ -8,7 +8,7 @@ const jwt = require('jsonwebtoken');
 const sendEmail = require('../utils/email');
 const crypto = require('crypto');
 
-const createSendToken = (user, statusCode, res) => {
+const createSendToken = (user, statusCode, res, additionalData = {}) => {
   const token = user.createJWT();
   const cookieOptions = {
     expires: new Date(
@@ -18,12 +18,16 @@ const createSendToken = (user, statusCode, res) => {
     httpOnly: true,
   };
   if (process.env.NODE_ENV === 'production') cookieOptions.secure = true;
+
+  //! Send the token and additional data to the client
   res.cookie('jwt', token, cookieOptions);
   res.status(statusCode).json({
     status: 'success',
     token,
+    ...additionalData,
   });
 };
+
 exports.register = catchAsync(async (req, res) => {
   const newUser = await User.create({ ...req.body });
   //! Creation of token
@@ -38,25 +42,15 @@ exports.login = catchAsync(async (req, res, next) => {
     return next(new AppError('Please provide email and password', 400));
   }
 
-  // Check if user exists && password is correct
+  //! Check if user exists && password is correct
   const user = await User.findOne({ email: email }).select('+password');
 
   if (!user || !(await user.correctPassword(password, user.password))) {
     return next(new AppError('Incorrect email or password', 401));
   }
 
-  // // Send the token and user data to the client
-  // createSendToken(user, 200, res);
-
-  // Alternatively, return user data in the response
-  res.status(200).json({
-    status: 'success',
-    token: user.createJWT(),
-    user: {
-      id: user._id,
-      email: user.email,
-    },
-  });
+  //! Send the token and user id in the response only for login
+  createSendToken(user, 200, res, { userId: user._id });
 });
 
 exports.protect = catchAsync(async (req, res, next) => {

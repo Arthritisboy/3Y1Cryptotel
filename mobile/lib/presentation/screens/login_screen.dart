@@ -109,6 +109,12 @@ class _LoginScreenState extends State<LoginScreen> {
                         label: 'Email',
                         hint: 'Enter Email',
                         controller: _emailController,
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Please enter your email';
+                          }
+                          return null;
+                        },
                       ),
                       SizedBox(height: screenHeight * 0.03),
                       CustomTextFormField(
@@ -116,15 +122,19 @@ class _LoginScreenState extends State<LoginScreen> {
                         hint: 'Enter Password',
                         controller: _passwordController,
                         isObscure: true,
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Please enter your password';
+                          }
+                          return null;
+                        },
                       ),
                       SizedBox(height: screenHeight * 0.01),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.end,
                         children: [
                           Padding(
-                            padding: EdgeInsets.only(
-                                right: screenWidth *
-                                    0.10), // Adjust right padding as needed
+                            padding: EdgeInsets.only(right: screenWidth * 0.10),
                             child: GestureDetector(
                               onTap: () {
                                 Navigator.of(context)
@@ -152,9 +162,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         },
                         text: 'LOGIN',
                       ),
-                      SizedBox(
-                        height: screenHeight * 0.02,
-                      ),
+                      SizedBox(height: screenHeight * 0.02),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
@@ -188,6 +196,8 @@ class _LoginScreenState extends State<LoginScreen> {
   void _login() {
     final email = _emailController.text;
     final password = _passwordController.text;
+    print('Email: $email');
+    print('Password: $password');
 
     context.read<AuthBloc>().add(
           LoginEvent(email: email, password: password),

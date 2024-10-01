@@ -34,3 +34,9 @@ class ValidateTokenEvent extends AuthEvent {
 
   ValidateTokenEvent(this.token);
 }
+
+class GetUserEvent extends AuthEvent {
+  final String userId;
+
+  GetUserEvent(this.userId);
+}

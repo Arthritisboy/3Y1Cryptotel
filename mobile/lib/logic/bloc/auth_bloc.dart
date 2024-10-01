@@ -51,5 +51,15 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         emit(AuthError(e.toString()));
       }
     });
+    //! Handle Get User Event
+    on<GetUserEvent>((event, emit) async {
+      emit(AuthLoading());
+      try {
+        final user = await authRepository.getUser(event.userId);
+        emit(Authenticated(user));
+      } catch (e) {
+        emit(AuthError(e.toString()));
+      }
+    });
   }
 }
