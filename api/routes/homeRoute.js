@@ -1,5 +1,5 @@
-// const express = require("express");
-// const homeController = require("../controllers/home");
+    // const express = require("express");
+    // const homeController = require("../controllers/home");
 // const authenticateUser = require("../middleware/userAuthentication");
 
 // const router = express.Router();

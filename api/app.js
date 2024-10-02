@@ -14,6 +14,7 @@ const hpp = require('hpp');
 // Routers
 const authRouter = require('./routes/authRoute');
 const userRoute = require('./routes/userRoute');
+const testRoute = require('./routes/testRoute.js');
 
 // Error Handler
 const AppError = require('./utils/appError');
@@ -60,6 +61,7 @@ app.get('/', (req, res) => {
 });
 app.use('/api/v1/auth', authRouter);
 app.use('/api/v1/users', userRoute);
+app.use('/api/v1/test', testRoute);
 
 // Handle all undefined routes
 app.all('*', (req, res, next) => {
