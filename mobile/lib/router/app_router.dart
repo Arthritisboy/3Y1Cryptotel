@@ -4,6 +4,7 @@ import 'package:hotel_flutter/presentation/screens/forgot_password_screen.dart';
 import 'package:hotel_flutter/presentation/screens/tab_screen.dart';
 import 'package:hotel_flutter/presentation/screens/login_screen.dart';
 import 'package:hotel_flutter/presentation/screens/signup_screen.dart';
+import 'package:hotel_flutter/presentation/screens/update_password_screen.dart';
 import 'package:hotel_flutter/presentation/screens/welcome_screen.dart';
 import 'package:hotel_flutter/presentation/screens/email_reset_token_screen.dart';
 import 'package:hotel_flutter/presentation/screens/reset_password.dart';
@@ -72,6 +73,11 @@ class AppRouter {
       case '/cryptoTransaction':
         return MaterialPageRoute(
           builder: (_) => const CryptoWallet(),
+        );
+
+      case '/updatePassword':
+        return MaterialPageRoute(
+          builder: (_) => const UpdatePasswordScreen(),
         );
 
       default:
