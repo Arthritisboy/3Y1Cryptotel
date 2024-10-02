@@ -50,6 +50,12 @@ class _TabScreenState extends State<TabScreen> {
                       firstName: state.user.firstName ?? '',
                       lastName: state.user.lastName ?? '',
                     );
+                  } else if (state is AuthInitial) {
+                    WidgetsBinding.instance.addPostFrameCallback((_) {
+                      Navigator.of(context).pushReplacementNamed('/login');
+                    });
+                  } else if (state is AuthError) {
+                    return Center(child: Text('Error: ${state.error}'));
                   }
                   return Container();
                 },
@@ -118,11 +124,10 @@ class _TabScreenState extends State<TabScreen> {
         Navigator.of(context).pushNamed('/cryptoTransaction');
         break;
       case 'settings':
-        // Assuming you have a settings screen route
         Navigator.of(context).pushNamed('/settings');
         break;
       case 'logout':
-        print('Logging out...');
+        context.read<AuthBloc>().add(LogoutEvent());
         break;
       default:
         return null;
