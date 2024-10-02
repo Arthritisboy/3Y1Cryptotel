@@ -95,7 +95,7 @@ class _SignupFormState extends State<SignupForm> {
                 child: ElevatedButton(
                   style: ButtonStyle(
                     backgroundColor:
-                        WidgetStateProperty.all(const Color(0xFF1C3473)),
+                        MaterialStateProperty.all(const Color(0xFF1C3473)),
                   ),
                   onPressed: _isLoading
                       ? null
@@ -125,13 +125,24 @@ class _SignupFormState extends State<SignupForm> {
                             }
                           }
                         },
-                  child: const Text('SIGN UP'),
+                  child: _isLoading
+                      ? const Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: const [
+                            CircularProgressIndicator(
+                              valueColor:
+                                  AlwaysStoppedAnimation<Color>(Colors.white),
+                              strokeWidth: 2,
+                            ),
+                            SizedBox(width: 8),
+                            Text('SIGN UP'),
+                          ],
+                        )
+                      : const Text('SIGN UP'),
                 ),
               ),
               const SizedBox(height: 8),
               _buildLoginRedirect(),
-              if (_isLoading)
-                const CircularProgressIndicator(), // Show loading indicator
             ],
           ),
         ),
