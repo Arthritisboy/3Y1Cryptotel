@@ -118,6 +118,27 @@ class _TabScreenState extends State<TabScreen> {
   }
 
   void _setScreen(String screen) {
-    // Implement navigation or screen selection logic
+    Navigator.of(context).pop(); // Close the drawer
+
+    switch (screen) {
+      case 'homescreen':
+        Navigator.of(context).pushNamed('/homescreen');
+        break;
+      case 'profile':
+        Navigator.of(context).pushNamed('/profile');
+        break;
+      case '/cryptoTransaction':
+        Navigator.of(context).pushNamed('/cryptoTransaction');
+        break;
+      case 'settings':
+        // Assuming you have a settings screen route
+        Navigator.of(context).pushNamed('/settings');
+        break;
+      case 'logout':
+        print('Logging out...');
+        break;
+      default:
+        return null;
+    }
   }
 }

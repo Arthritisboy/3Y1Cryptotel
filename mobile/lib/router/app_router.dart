@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:hotel_flutter/presentation/screens/crypto_wallet.dart';
 import 'package:hotel_flutter/presentation/screens/forgot_password_screen.dart';
 import 'package:hotel_flutter/presentation/screens/tab_screen.dart';
 import 'package:hotel_flutter/presentation/screens/login_screen.dart';
@@ -7,6 +8,7 @@ import 'package:hotel_flutter/presentation/screens/welcome_screen.dart';
 import 'package:hotel_flutter/presentation/screens/email_reset_token_screen.dart';
 import 'package:hotel_flutter/presentation/screens/reset_password.dart';
 import 'package:hotel_flutter/presentation/screens/profile_screen.dart';
+import 'package:hotel_flutter/presentation/widgets/cryptowallet/cryptowallet_transactions.dart';
 
 class AppRouter {
   Route<dynamic>? onGenerateRoute(RouteSettings routeSettings) {
@@ -50,6 +52,11 @@ class AppRouter {
       case '/profile':
         return MaterialPageRoute(
           builder: (_) => ProfileScreen(),
+        );
+
+      case '/cryptoTransaction':
+        return MaterialPageRoute(
+          builder: (_) => CryptoWallet(),
         );
 
       default:
