@@ -10,7 +10,7 @@ class EmailResetTokenScreen extends StatefulWidget {
 class EmailResetTokenScreenState extends State<EmailResetTokenScreen> {
   final _formTokenKey = GlobalKey<FormState>();
   String? _token;
-  bool _isLoading = false;
+  final bool _isLoading = false;
 
   @override
   Widget build(BuildContext context) {

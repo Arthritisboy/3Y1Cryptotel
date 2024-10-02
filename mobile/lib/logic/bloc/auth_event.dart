@@ -1,4 +1,5 @@
 import 'package:hotel_flutter/data/model/signup_model.dart';
+import 'package:hotel_flutter/data/model/user_model.dart';
 
 abstract class AuthEvent {}
 
@@ -43,4 +44,10 @@ class ChangePasswordEvent extends AuthEvent {
   final String confirmPassword;
 
   ChangePasswordEvent(this.oldPassword, this.newPassword, this.confirmPassword);
+}
+
+class UpdateUserEvent extends AuthEvent {
+  final UserModel user;
+
+  UpdateUserEvent(this.user);
 }

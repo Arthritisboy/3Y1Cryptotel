@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:hotel_flutter/presentation/widgets/profile/blue_background_widget.dart';
 import 'package:hotel_flutter/presentation/widgets/profile/bottom_section.dart';
+import 'package:hotel_flutter/data/model/user_model.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:hotel_flutter/logic/bloc/auth_bloc.dart'; // Import your AuthBloc
 
 class ProfileScreen extends StatefulWidget {
   ProfileScreen({
@@ -53,6 +56,34 @@ class _ProfileScreenState extends State<ProfileScreen> {
     super.dispose();
   }
 
+  // Method to update user data
+  Future<void> updateUserData() async {
+    final authBloc = context.read<AuthBloc>();
+    final userModel = UserModel(
+      firstName: firstNameController.text,
+      lastName: lastNameController.text,
+      email: emailController.text,
+    );
+
+    try {
+      await authBloc.authRepository.updateUser(userModel);
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('User data updated successfully!'),
+          backgroundColor: Colors.green,
+        ),
+      );
+    } catch (error) {
+      print('Error updating user: $error'); // Add this line for debugging
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Failed to update user data: $error'),
+          backgroundColor: Colors.red,
+        ),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -79,6 +110,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
               usernameController: usernameController,
               emailController: emailController,
               addressController: addressController,
+              updateUserData: updateUserData,
               onGenderChanged: (selectedGender) {
                 setState(() {
                   gender = selectedGender;
