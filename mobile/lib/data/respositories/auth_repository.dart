@@ -57,11 +57,10 @@ class AuthRepository {
     }
   }
 
+  //! Update Password
   Future<void> updatePassword(String currentPassword, String newPassword,
       String confirmPassword) async {
-    final authDataProvider = AuthDataProvider();
-
-    final response = await authDataProvider.updatePassword(
+    final response = await dataProvider.updatePassword(
         currentPassword, newPassword, confirmPassword);
     return response;
   }
@@ -73,6 +72,20 @@ class AuthRepository {
       clearUserCache(); // Clear cache on logout
     } catch (e) {
       throw Exception('Failed to logout: $e');
+    }
+  }
+
+  //! Update user
+  Future<void> updateUser(UserModel user) async {
+    try {
+      await dataProvider.updateUserData(
+        firstName: user.firstName,
+        lastName: user.lastName,
+        email: user.email,
+      );
+      _cachedUser = user; // Update the cached user data
+    } catch (error) {
+      throw Exception('Failed to update user: $error');
     }
   }
 

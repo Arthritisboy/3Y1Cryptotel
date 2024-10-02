@@ -1,5 +1,4 @@
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-// ignore: depend_on_referenced_packages
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:hotel_flutter/data/model/user_model.dart';
@@ -22,7 +21,6 @@ class AuthDataProvider {
 
     if (response.statusCode == 200) {
       final data = json.decode(response.body);
-
       String token = data['token'];
       String userId = data['userId'];
 
@@ -31,9 +29,7 @@ class AuthDataProvider {
 
       return {
         'token': token,
-        'user': {
-          'id': userId,
-        },
+        'user': {'id': userId},
       };
     } else {
       final errorResponse = json.decode(response.body);
@@ -96,7 +92,6 @@ class AuthDataProvider {
   //! Fetch User
   Future<UserModel> getUser(String userId) async {
     final token = await storage.read(key: 'jwt');
-
     final url = 'https://3-y1-cryptotel.vercel.app/api/v1/users/$userId';
 
     final response = await http.get(
@@ -142,6 +137,46 @@ class AuthDataProvider {
       final errorResponse = json.decode(response.body);
       String errorMessage = errorResponse['message'] ?? 'An error occurred';
       throw Exception('Failed to update password: $errorMessage');
+    }
+  }
+
+//! Change User Profile Data
+  Future<void> updateUserData(
+      {String? firstName, String? lastName, String? email}) async {
+    final token = await storage.read(key: 'jwt');
+
+    // Create a map to hold the update data
+    final Map<String, dynamic> updateData = {};
+
+    // Only add the fields that are not null
+    if (firstName != null) {
+      updateData['firstName'] = firstName;
+    }
+    if (lastName != null) {
+      updateData['lastName'] = lastName;
+    }
+    if (email != null) {
+      updateData['email'] = email;
+    }
+
+    // If no data is provided, throw an error
+    if (updateData.isEmpty) {
+      throw Exception('No data provided for update.');
+    }
+
+    final response = await http.patch(
+      Uri.parse('https://3-y1-cryptotel.vercel.app/api/v1/users/updateMe'),
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token',
+      },
+      body: json.encode(updateData),
+    );
+
+    if (response.statusCode != 200) {
+      final errorResponse = json.decode(response.body);
+      String errorMessage = errorResponse['message'] ?? 'An error occurred';
+      throw Exception('Failed to update user data: $errorMessage');
     }
   }
 

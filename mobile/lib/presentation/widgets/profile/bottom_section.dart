@@ -11,6 +11,7 @@ class BottomSection extends StatelessWidget {
   final TextEditingController addressController;
   final String gender;
   final ValueChanged<String> onGenderChanged;
+  final VoidCallback updateUserData;
 
   const BottomSection({
     Key? key,
@@ -21,6 +22,7 @@ class BottomSection extends StatelessWidget {
     required this.addressController,
     required this.gender,
     required this.onGenderChanged,
+    required this.updateUserData,
   }) : super(key: key);
 
   @override
@@ -36,7 +38,6 @@ class BottomSection extends StatelessWidget {
           child: Column(
             children: [
               const SizedBox(height: 80), // Space for the avatar
-              // First Name and Last Name fields
               Row(
                 children: [
                   Expanded(
@@ -61,7 +62,6 @@ class BottomSection extends StatelessWidget {
                 ],
               ),
               const SizedBox(height: 10),
-              // Username field
               TextField(
                 controller: usernameController,
                 decoration: const InputDecoration(
@@ -70,7 +70,6 @@ class BottomSection extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 10),
-              // Email field
               TextField(
                 controller: emailController,
                 decoration: const InputDecoration(
@@ -79,13 +78,11 @@ class BottomSection extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 10),
-              // Gender selection with circles
               GenderSelection(
                 gender: gender,
                 onGenderChanged: onGenderChanged,
               ),
               const SizedBox(height: 10),
-              // Address field
               TextField(
                 controller: addressController,
                 decoration: const InputDecoration(
@@ -94,10 +91,11 @@ class BottomSection extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 20),
-              // Buttons for Change Password, Update Account, Logout
-              const ActionButtons(),
+              // Pass updateUserData to ActionButtons correctly
+              ActionButtons(
+                updateUserData: updateUserData,
+              ),
               const SizedBox(height: 20),
-              // Delete Account button with icon
               const DeleteAccountButton(),
             ],
           ),

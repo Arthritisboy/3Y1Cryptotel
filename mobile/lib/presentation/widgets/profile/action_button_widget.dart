@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 
 class ActionButtons extends StatelessWidget {
-  const ActionButtons({Key? key}) : super(key: key);
+  const ActionButtons({super.key, required this.updateUserData});
+
+  final VoidCallback updateUserData;
 
   @override
   Widget build(BuildContext context) {
@@ -21,7 +23,9 @@ class ActionButtons extends StatelessWidget {
           ),
         ),
         ElevatedButton.icon(
-          onPressed: () {},
+          onPressed: () {
+            updateUserData();
+          },
           icon: const Icon(Icons.update, color: Colors.white),
           label: const Text("Update Account"),
           style: ElevatedButton.styleFrom(

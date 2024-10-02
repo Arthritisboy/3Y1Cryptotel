@@ -57,3 +57,12 @@ class AuthPasswordChangeSuccess extends AuthState {
   @override
   List<Object> get props => [message];
 }
+
+class UserUpdated extends AuthState {
+  final UserModel user;
+
+  const UserUpdated(this.user);
+
+  @override
+  List<Object> get props => [user];
+}
