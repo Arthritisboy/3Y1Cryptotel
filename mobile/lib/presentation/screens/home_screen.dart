@@ -9,29 +9,31 @@ class HomeScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(16.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const Text(
-            'Top Rated Hotels',
-            style: TextStyle(
-              fontSize: 24.0,
-              color: Colors.black,
-            ),
-          ),
-          const SizedBox(height: 10.0),
-          SizedBox(
-            height: 200.0,
-            child: SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              child: Row(
-                children: _buildRoomList(context),
+    return SingleChildScrollView(
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text(
+              'Top Rated Hotels',
+              style: TextStyle(
+                fontSize: 24.0,
+                color: Colors.black,
               ),
             ),
-          ),
-        ],
+            const SizedBox(height: 10.0),
+            SizedBox(
+              height: 200.0,
+              child: SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                child: Row(
+                  children: _buildRoomList(context),
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

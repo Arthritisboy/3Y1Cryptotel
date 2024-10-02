@@ -23,8 +23,11 @@ class MyApp extends StatelessWidget {
     // Create an instance of AuthRepository
     final AuthRepository authRepository = AuthRepository(authDataProvider);
 
-    return BlocProvider(
-      create: (context) => AuthBloc(authRepository),
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider(
+            create: (context) => AuthBloc(AuthRepository(AuthDataProvider()))),
+      ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
         title: 'Cryptotel',
@@ -61,7 +64,7 @@ class MyApp extends StatelessWidget {
                 .apply(bodyColor: Colors.black, displayColor: Colors.black),
           ),
         ),
-        home: SplashScreen(),
+        home: const SplashScreen(),
       ),
     );
   }

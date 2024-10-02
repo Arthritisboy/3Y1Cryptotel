@@ -20,93 +20,86 @@ class TabScreen extends StatefulWidget {
 class _TabScreenState extends State<TabScreen> {
   final FlutterSecureStorage _secureStorage = const FlutterSecureStorage();
   int _selectedIndex = 0;
-  String firstName = '';
-  String lastName = '';
-  bool _userDataFetched = false; // Track if user data has been fetched
 
   @override
   void initState() {
     super.initState();
-    _getUserData(); // Call fetching user data
+    _getUserData(); // Fetch user data only once
   }
 
   Future<void> _getUserData() async {
     final userId = await _secureStorage.read(key: 'userId');
-    print('Fetched userId from storage: $userId');
-    if (userId != null && !_userDataFetched) {
+    if (userId != null) {
+      // ignore: use_build_context_synchronously
       context.read<AuthBloc>().add(GetUserEvent(userId));
-      setState(() {
-        _userDataFetched = true;
-      });
-    } else {
-      print('User ID not found in secure storage or already fetched.');
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    return BlocListener<AuthBloc, AuthState>(
-      listener: (context, state) {
-        if (state is Authenticated) {
-          print(
-              'User authenticated: ${state.user.firstName} ${state.user.lastName}');
-          setState(() {
-            firstName = state.user.firstName ?? '';
-            lastName = state.user.lastName ?? '';
-            _userDataFetched = true;
-          });
-        } else if (state is AuthError) {
-          print('Error fetching user data: ${state.error}');
-        }
-      },
-      child: Scaffold(
-        endDrawer: MainDrawer(onSelectScreen: _setScreen),
-        body: Stack(
-          children: [
-            Column(
-              children: [
-                TabHeader(firstName: firstName, lastName: lastName),
-                const SizedBox(height: 10),
-                BottomHomeIconNavigation(
-                  selectedIndex: _selectedIndex,
-                  onIconTapped: _onIconTapped,
-                ),
-                Expanded(
-                  child: Container(
-                    decoration: const BoxDecoration(
-                      color: Colors.white,
-                      borderRadius:
-                          BorderRadius.vertical(top: Radius.circular(30.0)),
-                    ),
-                    child: SingleChildScrollView(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          if (_selectedIndex == 0) const HomeScreen(),
-                          if (_selectedIndex == 1) const RestaurantScreen(),
-                        ],
-                      ),
+    return Scaffold(
+      endDrawer: MainDrawer(onSelectScreen: _setScreen),
+      body: Stack(
+        children: [
+          Column(
+            children: [
+              BlocBuilder<AuthBloc, AuthState>(
+                builder: (context, state) {
+                  if (state is Authenticated) {
+                    return TabHeader(
+                      firstName: state.user.firstName ?? '',
+                      lastName: state.user.lastName ?? '',
+                    );
+                  } else if (state is AuthInitial) {
+                    WidgetsBinding.instance.addPostFrameCallback((_) {
+                      Navigator.of(context).pushReplacementNamed('/login');
+                    });
+                  } else if (state is AuthError) {
+                    return Center(child: Text('Error: ${state.error}'));
+                  }
+                  return Container();
+                },
+              ),
+              const SizedBox(height: 10),
+              BottomHomeIconNavigation(
+                selectedIndex: _selectedIndex,
+                onIconTapped: _onIconTapped,
+              ),
+              Expanded(
+                child: Container(
+                  decoration: const BoxDecoration(
+                    color: Colors.white,
+                    borderRadius:
+                        BorderRadius.vertical(top: Radius.circular(30.0)),
+                  ),
+                  child: SingleChildScrollView(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        if (_selectedIndex == 0) const HomeScreen(),
+                        if (_selectedIndex == 1) const RestaurantScreen(),
+                      ],
                     ),
                   ),
                 ),
-              ],
-            ),
-            Positioned(
-              top: 40.0,
-              right: 10.0,
-              child: Builder(
-                builder: (context) {
-                  return IconButton(
-                    icon: const Icon(Icons.menu, color: Colors.black, size: 30),
-                    onPressed: () {
-                      Scaffold.of(context).openEndDrawer();
-                    },
-                  );
-                },
               ),
+            ],
+          ),
+          Positioned(
+            top: 40.0,
+            right: 10.0,
+            child: Builder(
+              builder: (context) {
+                return IconButton(
+                  icon: const Icon(Icons.menu, color: Colors.black),
+                  onPressed: () {
+                    Scaffold.of(context).openEndDrawer();
+                  },
+                );
+              },
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
@@ -131,11 +124,10 @@ class _TabScreenState extends State<TabScreen> {
         Navigator.of(context).pushNamed('/cryptoTransaction');
         break;
       case 'settings':
-        // Assuming you have a settings screen route
         Navigator.of(context).pushNamed('/settings');
         break;
       case 'logout':
-        print('Logging out...');
+        context.read<AuthBloc>().add(LogoutEvent());
         break;
       default:
         return null;
