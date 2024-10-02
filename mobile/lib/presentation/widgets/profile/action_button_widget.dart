@@ -10,31 +10,24 @@ class ActionButtons extends StatelessWidget {
       children: [
         ElevatedButton.icon(
           onPressed: () {
-            // Handle Change Password
+            Navigator.of(context).pushNamed('/updatePassword');
           },
-          icon: const Icon(Icons.lock, color: Colors.white), // Add lock icon
+          icon: const Icon(Icons.lock, color: Colors.white),
           label: const Text("Change Password"),
           style: ElevatedButton.styleFrom(
-            backgroundColor: const Color.fromARGB(
-                255, 29, 53, 115), // Button background color
-            foregroundColor: Colors.white, // Text and icon color
-            padding: const EdgeInsets.symmetric(
-                horizontal: 20, vertical: 12), // Button padding
+            backgroundColor: const Color.fromARGB(255, 29, 53, 115),
+            foregroundColor: Colors.white,
+            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
           ),
         ),
         ElevatedButton.icon(
-          onPressed: () {
-            // Handle Update Account
-          },
-          icon:
-              const Icon(Icons.update, color: Colors.white), // Add update icon
+          onPressed: () {},
+          icon: const Icon(Icons.update, color: Colors.white),
           label: const Text("Update Account"),
           style: ElevatedButton.styleFrom(
-            backgroundColor: const Color.fromARGB(
-                255, 29, 53, 115), // Button background color
-            foregroundColor: Colors.white, // Text and icon color
-            padding: const EdgeInsets.symmetric(
-                horizontal: 20, vertical: 12), // Button padding
+            backgroundColor: const Color.fromARGB(255, 29, 53, 115),
+            foregroundColor: Colors.white,
+            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
           ),
         ),
       ],
