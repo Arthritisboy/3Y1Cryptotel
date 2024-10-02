@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:hotel_flutter/logic/bloc/auth_bloc.dart';
 import 'package:hotel_flutter/logic/bloc/auth_event.dart';
 import 'package:hotel_flutter/logic/bloc/auth_state.dart';
@@ -18,6 +19,7 @@ class _UpdatePasswordScreenState extends State<UpdatePasswordScreen> {
   late TextEditingController currentPasswordController;
   late TextEditingController newPasswordController;
   late TextEditingController confirmPasswordController;
+  final storage = const FlutterSecureStorage();
 
   @override
   void initState() {
@@ -40,7 +42,6 @@ class _UpdatePasswordScreenState extends State<UpdatePasswordScreen> {
     final newPassword = newPasswordController.text;
     final confirmPassword = confirmPasswordController.text;
 
-    // Check if passwords match
     if (newPassword != confirmPassword) {
       // Display an error message if passwords do not match
       ScaffoldMessenger.of(context).showSnackBar(
@@ -49,7 +50,6 @@ class _UpdatePasswordScreenState extends State<UpdatePasswordScreen> {
       return;
     }
 
-    // Dispatch the ChangePasswordEvent with the provided passwords
     BlocProvider.of<AuthBloc>(context).add(
       ChangePasswordEvent(currentPassword, newPassword, confirmPassword),
     );
@@ -85,9 +85,7 @@ class _UpdatePasswordScreenState extends State<UpdatePasswordScreen> {
                       backgroundColor: Colors.green,
                     ),
                   );
-                  currentPasswordController.clear();
-                  newPasswordController.clear();
-                  confirmPasswordController.clear();
+                  storage.deleteAll();
                   Navigator.of(context).pushNamed('/login');
                 } else if (state is AuthError) {
                   ScaffoldMessenger.of(context).showSnackBar(
