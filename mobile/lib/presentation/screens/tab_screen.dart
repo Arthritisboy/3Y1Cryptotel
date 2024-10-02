@@ -20,6 +20,7 @@ class TabScreen extends StatefulWidget {
 class _TabScreenState extends State<TabScreen> {
   final FlutterSecureStorage _secureStorage = const FlutterSecureStorage();
   int _selectedIndex = 0;
+  bool _isLoading = true; // Loading state
 
   String? firstName;
   String? lastName;
@@ -40,95 +41,103 @@ class _TabScreenState extends State<TabScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      endDrawer: MainDrawer(
-        onSelectScreen: _setScreen,
-        firstName: firstName ?? '', // Pass firstName to MainDrawer
-        lastName: lastName ?? '', // Pass lastName to MainDrawer
-        email: email ?? '', // Pass email to MainDrawer
-      ),
-      body: Stack(
-        children: [
-          Column(
-            children: [
-              // BlocListener to update user data on authentication changes
-              BlocListener<AuthBloc, AuthState>(
-                listener: (context, state) {
-                  if (state is Authenticated) {
-                    setState(() {
-                      firstName = state.user.firstName ?? '';
-                      lastName = state.user.lastName ?? '';
-                      email = state.user.email ?? '';
-                    });
+    return BlocBuilder<AuthBloc, AuthState>(builder: (context, state) {
+      // Handle authentication states
+      if (state is Authenticated) {
+        // Update user data when authenticated
+        firstName = state.user.firstName ?? '';
+        lastName = state.user.lastName ?? '';
+        email = state.user.email ?? '';
+        _isLoading = false; // Loading finished
 
-                    // Write user data to secure storage after successful authentication
-                    _secureStorage.write(key: 'firstName', value: firstName);
-                    _secureStorage.write(key: 'lastName', value: lastName);
-                    _secureStorage.write(key: 'email', value: email);
-                  } else if (state is AuthInitial) {
-                    WidgetsBinding.instance.addPostFrameCallback((_) {
-                      Navigator.of(context).pushReplacementNamed('/login');
-                    });
-                  } else if (state is AuthError) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text('Error: ${state.error}')),
-                    );
-                  }
-                },
-                child: BlocBuilder<AuthBloc, AuthState>(
-                  builder: (context, state) {
-                    if (state is Authenticated) {
-                      return TabHeader(
-                        firstName: state.user.firstName ?? '',
-                        lastName: state.user.lastName ?? '',
-                      );
-                    }
-                    return Container();
-                  },
-                ),
-              ),
-              const SizedBox(height: 10),
-              BottomHomeIconNavigation(
-                selectedIndex: _selectedIndex,
-                onIconTapped: _onIconTapped,
-              ),
-              Expanded(
-                child: Container(
-                  decoration: const BoxDecoration(
-                    color: Colors.white,
-                    borderRadius:
-                        BorderRadius.vertical(top: Radius.circular(30.0)),
-                  ),
-                  child: SingleChildScrollView(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        if (_selectedIndex == 0) const HomeScreen(),
-                        if (_selectedIndex == 1) const RestaurantScreen(),
-                      ],
+        // Write user data to secure storage
+        _secureStorage.write(key: 'firstName', value: firstName);
+        _secureStorage.write(key: 'lastName', value: lastName);
+        _secureStorage.write(key: 'email', value: email);
+      } else if (state is AuthInitial) {
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          Navigator.of(context).pushReplacementNamed('/login');
+        });
+      } else if (state is AuthError) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Error: ${state.error}')),
+        );
+      }
+
+      return Scaffold(
+        endDrawer: MainDrawer(
+          onSelectScreen: _setScreen,
+          firstName: firstName ?? '',
+          lastName: lastName ?? '',
+          email: email ?? '',
+        ),
+        body: Stack(
+          children: [
+            Column(
+              children: [
+                // Show loading indicator while loading
+                if (_isLoading)
+                  const Expanded(
+                    child: Center(
+                      child:
+                          CircularProgressIndicator(), // Centered loading indicator
                     ),
-                  ),
-                ),
-              ),
-            ],
-          ),
-          Positioned(
-            top: 40.0,
-            right: 10.0,
-            child: Builder(
-              builder: (context) {
-                return IconButton(
-                  icon: const Icon(Icons.menu, color: Colors.black),
-                  onPressed: () {
-                    Scaffold.of(context).openEndDrawer();
-                  },
-                );
-              },
+                  )
+                else ...[
+                  // TabHeader for authenticated users
+                  if (state is Authenticated)
+                    TabHeader(
+                      firstName: firstName!,
+                      lastName: lastName!,
+                    ),
+                  const SizedBox(height: 10),
+
+                  // Build BottomHomeIconNavigation only if state is Authenticated
+                  if (state is Authenticated) ...[
+                    BottomHomeIconNavigation(
+                      selectedIndex: _selectedIndex,
+                      onIconTapped: _onIconTapped,
+                    ),
+                    Expanded(
+                      child: Container(
+                        decoration: const BoxDecoration(
+                          color: Colors.white,
+                          borderRadius:
+                              BorderRadius.vertical(top: Radius.circular(30.0)),
+                        ),
+                        child: SingleChildScrollView(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              if (_selectedIndex == 0) const HomeScreen(),
+                              if (_selectedIndex == 1) const RestaurantScreen(),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ],
+              ],
             ),
-          ),
-        ],
-      ),
-    );
+            Positioned(
+              top: 40.0,
+              right: 10.0,
+              child: Builder(
+                builder: (context) {
+                  return IconButton(
+                    icon: const Icon(Icons.menu, color: Colors.black),
+                    onPressed: () {
+                      Scaffold.of(context).openEndDrawer();
+                    },
+                  );
+                },
+              ),
+            ),
+          ],
+        ),
+      );
+    });
   }
 
   void _onIconTapped(int index) {
