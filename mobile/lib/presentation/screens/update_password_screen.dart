@@ -88,6 +88,7 @@ class _UpdatePasswordScreenState extends State<UpdatePasswordScreen> {
                   currentPasswordController.clear();
                   newPasswordController.clear();
                   confirmPasswordController.clear();
+                  Navigator.of(context).pushNamed('/login');
                 } else if (state is AuthError) {
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(content: Text(state.error)),
@@ -148,8 +149,7 @@ class BottomSection extends StatelessWidget {
         child: SingleChildScrollView(
           child: Column(
             children: [
-              const SizedBox(height: 80), // Space for the avatar
-              // Current Password field
+              const SizedBox(height: 80),
               TextField(
                 controller: currentPasswordController,
                 obscureText: true,
@@ -159,7 +159,6 @@ class BottomSection extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 10),
-              // New Password field
               TextField(
                 controller: newPasswordController,
                 obscureText: true,
@@ -169,7 +168,6 @@ class BottomSection extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 10),
-              // Confirm New Password field
               TextField(
                 controller: confirmPasswordController,
                 obscureText: true,
@@ -179,9 +177,8 @@ class BottomSection extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 20),
-              // Update Password button
               ActionButtons(
-                onPressed: onUpdatePassword, // Pass update function
+                onPressed: onUpdatePassword,
               ),
             ],
           ),
@@ -209,11 +206,9 @@ class ActionButtons extends StatelessWidget {
           icon: const Icon(Icons.lock, color: Colors.white),
           label: const Text("Update Password"),
           style: ElevatedButton.styleFrom(
-            backgroundColor: const Color.fromARGB(
-                255, 29, 53, 115), // Button background color
-            foregroundColor: Colors.white, // Text and icon color
-            padding: const EdgeInsets.symmetric(
-                horizontal: 20, vertical: 12), // Button padding
+            backgroundColor: const Color.fromARGB(255, 29, 53, 115),
+            foregroundColor: Colors.white,
+            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
           ),
         ),
       ],
