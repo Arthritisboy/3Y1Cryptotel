@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:hotel_flutter/data/model/user_model.dart';
+import 'package:hotel_flutter/logic/bloc/auth_bloc.dart';
+import 'package:hotel_flutter/logic/bloc/auth_event.dart';
+import 'package:hotel_flutter/logic/bloc/auth_state.dart';
 import 'package:hotel_flutter/presentation/widgets/profile/blue_background_widget.dart';
 import 'package:hotel_flutter/presentation/widgets/profile/bottom_section.dart';
-import 'package:hotel_flutter/data/model/user_model.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:hotel_flutter/logic/bloc/auth_bloc.dart'; // Import your AuthBloc
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 class ProfileScreen extends StatefulWidget {
   ProfileScreen({
@@ -37,7 +40,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
   @override
   void initState() {
     super.initState();
-    // Initialize controllers with widget properties
     firstNameController = TextEditingController(text: widget.firstName);
     lastNameController = TextEditingController(text: widget.lastName);
     usernameController = TextEditingController(text: username);
@@ -47,7 +49,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   @override
   void dispose() {
-    // Dispose controllers
     firstNameController.dispose();
     lastNameController.dispose();
     usernameController.dispose();
@@ -56,17 +57,22 @@ class _ProfileScreenState extends State<ProfileScreen> {
     super.dispose();
   }
 
-  // Method to update user data
+  // Update user data method
   Future<void> updateUserData() async {
-    final authBloc = context.read<AuthBloc>();
-    final userModel = UserModel(
+    final updatedUser = UserModel(
       firstName: firstNameController.text,
       lastName: lastNameController.text,
       email: emailController.text,
     );
 
     try {
-      await authBloc.authRepository.updateUser(userModel);
+      // Dispatch UpdateUserEvent
+      context.read<AuthBloc>().add(UpdateUserEvent(updatedUser));
+      // Fetch user ID from secure storage and request user details
+      final userId = await const FlutterSecureStorage().read(key: 'userId');
+      if (userId != null) {
+        context.read<AuthBloc>().add(GetUserEvent(userId));
+      }
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text('User data updated successfully!'),
@@ -74,7 +80,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
         ),
       );
     } catch (error) {
-      print('Error updating user: $error'); // Add this line for debugging
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text('Failed to update user data: $error'),
@@ -104,20 +109,25 @@ class _ProfileScreenState extends State<ProfileScreen> {
             left: 0,
             right: 0,
             bottom: 0,
-            child: BottomSection(
-              firstNameController: firstNameController,
-              lastNameController: lastNameController,
-              usernameController: usernameController,
-              emailController: emailController,
-              addressController: addressController,
-              updateUserData: updateUserData,
-              onGenderChanged: (selectedGender) {
-                setState(() {
-                  gender = selectedGender;
-                });
-              },
-              gender: gender,
-            ),
+            child: BlocBuilder<AuthBloc, AuthState>(builder: (context, state) {
+              if (state is Authenticated) {
+                return BottomSection(
+                  firstNameController: firstNameController,
+                  lastNameController: lastNameController,
+                  usernameController: usernameController,
+                  emailController: emailController,
+                  addressController: addressController,
+                  updateUserData: updateUserData,
+                  onGenderChanged: (selectedGender) {
+                    setState(() {
+                      gender = selectedGender;
+                    });
+                  },
+                  gender: gender,
+                );
+              }
+              return Container();
+            }),
           ),
           Positioned(
             top: MediaQuery.of(context).size.height * 0.01,

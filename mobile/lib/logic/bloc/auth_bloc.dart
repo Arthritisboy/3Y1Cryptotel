@@ -1,10 +1,12 @@
 import 'package:bloc/bloc.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:hotel_flutter/data/respositories/auth_repository.dart';
 import 'package:hotel_flutter/logic/bloc/auth_event.dart';
 import 'package:hotel_flutter/logic/bloc/auth_state.dart';
 
 class AuthBloc extends Bloc<AuthEvent, AuthState> {
   final AuthRepository authRepository;
+  final FlutterSecureStorage _secureStorage = const FlutterSecureStorage();
 
   AuthBloc(this.authRepository) : super(AuthInitial()) {
     on<SignUpEvent>((event, emit) async {
@@ -76,9 +78,9 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       emit(AuthLoading());
       try {
         await authRepository.updateUser(event.user);
-        emit(Authenticated(event.user)); // Emit the updated user state
-      } catch (e) {
-        emit(AuthError('Failed to update user: ${e.toString()}'));
+        emit(Authenticated(event.user));
+      } catch (error) {
+        emit(AuthError('Failed to update user: $error'));
       }
     });
 
