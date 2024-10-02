@@ -8,7 +8,6 @@ import 'package:hotel_flutter/presentation/screens/welcome_screen.dart';
 import 'package:hotel_flutter/presentation/screens/email_reset_token_screen.dart';
 import 'package:hotel_flutter/presentation/screens/reset_password.dart';
 import 'package:hotel_flutter/presentation/screens/profile_screen.dart';
-import 'package:hotel_flutter/presentation/widgets/cryptowallet/cryptowallet_transactions.dart';
 
 class AppRouter {
   Route<dynamic>? onGenerateRoute(RouteSettings routeSettings) {
