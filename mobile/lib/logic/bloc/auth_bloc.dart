@@ -42,7 +42,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       try {
         await authRepository.resetPassword(
             event.token, event.newPassword, event.confirmPassword);
-        emit(AuthSuccess('Password reset successful'));
+        emit(const AuthSuccess('Password reset successful'));
       } catch (e) {
         emit(AuthError('Failed to reset password: ${e.toString()}'));
       }
@@ -55,6 +55,20 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         emit(Authenticated(user));
       } catch (e) {
         emit(AuthError('Failed to fetch user data: ${e.toString()}'));
+      }
+    });
+
+    on<ChangePasswordEvent>((event, emit) async {
+      emit(AuthLoading());
+      try {
+        await authRepository.updatePassword(
+          event.oldPassword,
+          event.newPassword,
+          event.confirmPassword,
+        );
+        emit(const AuthSuccess('Password changed successfully'));
+      } catch (e) {
+        emit(AuthError('Failed to change password: ${e.toString()}'));
       }
     });
 

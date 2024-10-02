@@ -57,6 +57,15 @@ class AuthRepository {
     }
   }
 
+  Future<void> updatePassword(String currentPassword, String newPassword,
+      String confirmPassword) async {
+    final authDataProvider = AuthDataProvider();
+
+    final response = await authDataProvider.updatePassword(
+        currentPassword, newPassword, confirmPassword);
+    return response;
+  }
+
   //! Logout
   Future<void> logout() async {
     try {

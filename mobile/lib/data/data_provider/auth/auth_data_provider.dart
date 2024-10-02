@@ -1,4 +1,5 @@
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+// ignore: depend_on_referenced_packages
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:hotel_flutter/data/model/user_model.dart';
@@ -18,9 +19,6 @@ class AuthDataProvider {
       }),
       headers: {'Content-Type': 'application/json'},
     );
-
-    print('Response status: ${response.statusCode}');
-    print('Response body: ${response.body}');
 
     if (response.statusCode == 200) {
       final data = json.decode(response.body);
@@ -100,8 +98,6 @@ class AuthDataProvider {
     final token = await storage.read(key: 'jwt');
 
     final url = 'https://3-y1-cryptotel.vercel.app/api/v1/users/$userId';
-    print('Fetching user from URL: $url');
-    print('Token: $token');
 
     final response = await http.get(
       Uri.parse(url),
@@ -110,9 +106,6 @@ class AuthDataProvider {
         if (token != null) 'Authorization': 'Bearer $token',
       },
     );
-
-    print('Response status: ${response.statusCode}');
-    print('Response body: ${response.body}');
 
     if (response.statusCode == 200) {
       final jsonResponse = json.decode(response.body);
@@ -123,6 +116,32 @@ class AuthDataProvider {
       String errorMessage =
           errorResponse['message'] ?? 'Failed to fetch user data';
       throw Exception(errorMessage);
+    }
+  }
+
+  //! Change Password
+  Future<void> updatePassword(String currentPassword, String newPassword,
+      String confirmPassword) async {
+    final token = await storage.read(key: 'jwt');
+    print(token);
+
+    final response = await http.patch(
+      Uri.parse('$baseUrl/updateMyPassword'),
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token',
+      },
+      body: json.encode({
+        'passwordCurrent': currentPassword,
+        'password': newPassword,
+        'confirmPassword': confirmPassword,
+      }),
+    );
+
+    if (response.statusCode != 200) {
+      final errorResponse = json.decode(response.body);
+      String errorMessage = errorResponse['message'] ?? 'An error occurred';
+      throw Exception('Failed to update password: $errorMessage');
     }
   }
 

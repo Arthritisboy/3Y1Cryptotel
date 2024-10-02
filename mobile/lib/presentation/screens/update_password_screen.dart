@@ -1,4 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:hotel_flutter/logic/bloc/auth_bloc.dart';
+import 'package:hotel_flutter/logic/bloc/auth_event.dart';
+import 'package:hotel_flutter/logic/bloc/auth_state.dart';
 import 'package:hotel_flutter/presentation/widgets/profile/blue_background_widget.dart';
 
 class UpdatePasswordScreen extends StatefulWidget {
@@ -31,6 +35,26 @@ class _UpdatePasswordScreenState extends State<UpdatePasswordScreen> {
     super.dispose();
   }
 
+  void _updatePassword() {
+    final currentPassword = currentPasswordController.text;
+    final newPassword = newPasswordController.text;
+    final confirmPassword = confirmPasswordController.text;
+
+    // Check if passwords match
+    if (newPassword != confirmPassword) {
+      // Display an error message if passwords do not match
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("New passwords do not match.")),
+      );
+      return;
+    }
+
+    // Dispatch the ChangePasswordEvent with the provided passwords
+    BlocProvider.of<AuthBloc>(context).add(
+      ChangePasswordEvent(currentPassword, newPassword, confirmPassword),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -51,10 +75,31 @@ class _UpdatePasswordScreenState extends State<UpdatePasswordScreen> {
             left: 0,
             right: 0,
             bottom: 0,
-            child: BottomSection(
-              currentPasswordController: currentPasswordController,
-              newPasswordController: newPasswordController,
-              confirmPasswordController: confirmPasswordController,
+            child: BlocListener<AuthBloc, AuthState>(
+              listener: (context, state) {
+                if (state is AuthLoading) {
+                } else if (state is AuthSuccess) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text('Password updated successfully!'),
+                      backgroundColor: Colors.green,
+                    ),
+                  );
+                  currentPasswordController.clear();
+                  newPasswordController.clear();
+                  confirmPasswordController.clear();
+                } else if (state is AuthError) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text(state.error)),
+                  );
+                }
+              },
+              child: BottomSection(
+                currentPasswordController: currentPasswordController,
+                newPasswordController: newPasswordController,
+                confirmPasswordController: confirmPasswordController,
+                onUpdatePassword: _updatePassword,
+              ),
             ),
           ),
           Positioned(
@@ -81,13 +126,15 @@ class BottomSection extends StatelessWidget {
   final TextEditingController currentPasswordController;
   final TextEditingController newPasswordController;
   final TextEditingController confirmPasswordController;
+  final VoidCallback onUpdatePassword;
 
   const BottomSection({
-    Key? key,
+    super.key,
     required this.currentPasswordController,
     required this.newPasswordController,
     required this.confirmPasswordController,
-  }) : super(key: key);
+    required this.onUpdatePassword,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -133,7 +180,9 @@ class BottomSection extends StatelessWidget {
               ),
               const SizedBox(height: 20),
               // Update Password button
-              const ActionButtons(),
+              ActionButtons(
+                onPressed: onUpdatePassword, // Pass update function
+              ),
             ],
           ),
         ),
@@ -143,7 +192,12 @@ class BottomSection extends StatelessWidget {
 }
 
 class ActionButtons extends StatelessWidget {
-  const ActionButtons({Key? key}) : super(key: key);
+  final VoidCallback onPressed;
+
+  const ActionButtons({
+    super.key,
+    required this.onPressed,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -151,10 +205,8 @@ class ActionButtons extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.spaceAround,
       children: [
         ElevatedButton.icon(
-          onPressed: () {
-            // Handle Update Password
-          },
-          icon: const Icon(Icons.lock, color: Colors.white), // Add lock icon
+          onPressed: onPressed,
+          icon: const Icon(Icons.lock, color: Colors.white),
           label: const Text("Update Password"),
           style: ElevatedButton.styleFrom(
             backgroundColor: const Color.fromARGB(

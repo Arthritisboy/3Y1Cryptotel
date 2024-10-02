@@ -36,3 +36,11 @@ class GetUserEvent extends AuthEvent {
 }
 
 class LogoutEvent extends AuthEvent {}
+
+class ChangePasswordEvent extends AuthEvent {
+  final String oldPassword;
+  final String newPassword;
+  final String confirmPassword;
+
+  ChangePasswordEvent(this.oldPassword, this.newPassword, this.confirmPassword);
+}
