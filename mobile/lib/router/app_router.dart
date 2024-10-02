@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:hotel_flutter/presentation/screens/crypto_wallet.dart';
 import 'package:hotel_flutter/presentation/screens/forgot_password_screen.dart';
 import 'package:hotel_flutter/presentation/screens/tab_screen.dart';
 import 'package:hotel_flutter/presentation/screens/login_screen.dart';
@@ -50,6 +51,11 @@ class AppRouter {
       case '/profile':
         return MaterialPageRoute(
           builder: (_) => ProfileScreen(),
+        );
+
+      case '/cryptoTransaction':
+        return MaterialPageRoute(
+          builder: (_) => CryptoWallet(),
         );
 
       default:
