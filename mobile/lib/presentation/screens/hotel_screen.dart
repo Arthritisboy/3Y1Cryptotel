@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:hotel_flutter/presentation/widgets/room/background_room_image.dart';
-import 'package:hotel_flutter/presentation/widgets/room/reservation_room.dart';
+import 'package:hotel_flutter/presentation/hotel/room/background_room_image.dart';
+import 'package:hotel_flutter/presentation/hotel/room/hotelClicked.dart';
 
 class HotelScreen extends StatefulWidget {
   final String backgroundImage;
@@ -55,7 +55,7 @@ class _HotelScreenState extends State<HotelScreen> {
               width: double.infinity,
               child: BackgroundRoomImage(image: widget.backgroundImage),
             ),
-            ReservationRoom(
+            Hotelclicked(
               hotelName: widget.hotelName,
               rating: widget.rating,
               price: widget.price,

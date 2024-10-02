@@ -9,6 +9,22 @@ List<RoomModel>roomList = [
     imageUrl: 'assets/images/rooms/hotelroom_1.png',
     hotelName: 'The Monarch Hotel',
   ),
+  RoomModel(
+    roomType: 'Executive Room',
+    price: 2000,
+    isAvailable: true,
+    numberofGuest: 2,
+    imageUrl: 'assets/images/rooms/hotelroom_2.png',
+    hotelName: 'The Monarch Hotel',
+  ),
+  RoomModel(
+    roomType: 'Standard Room',
+    price: 1000,
+    isAvailable: true,
+    numberofGuest: 2,
+    imageUrl: 'assets/images/rooms/hotelroom_1.png',
+    hotelName: 'The Monarch Hotel',
+  ),
     RoomModel(
     roomType: 'Executive Room',
     price: 2000,
