@@ -18,11 +18,6 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Create an instance of AuthDataProvider
-    final AuthDataProvider authDataProvider = AuthDataProvider();
-    // Create an instance of AuthRepository
-    final AuthRepository authRepository = AuthRepository(authDataProvider);
-
     return MultiBlocProvider(
       providers: [
         BlocProvider(
