@@ -1,8 +1,8 @@
-import 'package:hotel_flutter/data/model/user_model.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import 'package:hotel_flutter/data/model/user_model.dart';
 import 'package:hotel_flutter/data/model/signup_model.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 class AuthDataProvider {
   final String baseUrl = 'https://3-y1-cryptotel.vercel.app/api/v1/auth';
@@ -24,6 +24,7 @@ class AuthDataProvider {
 
     if (response.statusCode == 200) {
       final data = json.decode(response.body);
+
       String token = data['token'];
       String userId = data['userId'];
 
@@ -97,6 +98,7 @@ class AuthDataProvider {
   //! Fetch User
   Future<UserModel> getUser(String userId) async {
     final token = await storage.read(key: 'jwt');
+
     final url = 'https://3-y1-cryptotel.vercel.app/api/v1/users/$userId';
     print('Fetching user from URL: $url');
     print('Token: $token');

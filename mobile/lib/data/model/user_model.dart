@@ -9,11 +9,11 @@ class UserModel {
 
   factory UserModel.fromJson(Map<String, dynamic> json) {
     return UserModel(
-      id: json['userId'],
-      token: json['token'],
+      id: json['id'],
       firstName: json['firstName'],
       lastName: json['lastName'],
       email: json['email'],
+      token: json['token'],
     );
   }
 }

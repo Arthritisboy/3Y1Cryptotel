@@ -31,7 +31,7 @@ class _LoginScreenState extends State<LoginScreen> {
             setState(() {
               _isLoading = true;
             });
-          } else if (state is Authenticated) {
+          } else if (state is AuthenticatedLogin) {
             setState(() {
               _isLoading = false;
             });

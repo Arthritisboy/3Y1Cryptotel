@@ -1,9 +1,11 @@
 import 'package:hotel_flutter/data/data_provider/auth/auth_data_provider.dart';
+import 'package:hotel_flutter/data/model/login_model.dart';
 import 'package:hotel_flutter/data/model/signup_model.dart';
 import 'package:hotel_flutter/data/model/user_model.dart';
 
 class AuthRepository {
   final AuthDataProvider dataProvider;
+  UserModel? _cachedUser; // Cached user data
 
   AuthRepository(this.dataProvider);
 
@@ -12,10 +14,10 @@ class AuthRepository {
     return UserModel.fromJson(data);
   }
 
-  Future<UserModel> login(String email, String password) async {
+  Future<LoginModel> login(String email, String password) async {
     try {
       final data = await dataProvider.login(email, password);
-      return UserModel.fromJson(data);
+      return LoginModel.fromJson(data);
     } catch (e) {
       throw Exception(e.toString());
     }
@@ -37,14 +39,30 @@ class AuthRepository {
   }
 
   Future<UserModel> getUser(String userId) async {
-    return await dataProvider.getUser(userId);
+    if (_cachedUser != null) {
+      return _cachedUser!;
+    }
+
+    try {
+      final data = await dataProvider.getUser(userId);
+      _cachedUser = data;
+      return _cachedUser!;
+    } catch (error) {
+      throw Exception('Failed to fetch user: $error');
+    }
   }
 
   Future<void> logout() async {
     try {
       await dataProvider.logout();
+      clearUserCache(); // Clear cache on logout
     } catch (e) {
       throw Exception('Failed to logout: $e');
     }
+  }
+
+  // Optionally, you can create a method to clear the cache
+  void clearUserCache() {
+    _cachedUser = null;
   }
 }

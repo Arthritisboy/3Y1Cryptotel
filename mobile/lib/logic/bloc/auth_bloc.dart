@@ -21,7 +21,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       emit(AuthLoading());
       try {
         final user = await authRepository.login(event.email, event.password);
-        emit(Authenticated(user)); // Emit authenticated state
+        emit(AuthenticatedLogin(user));
       } catch (e) {
         emit(AuthError('Login failed: ${e.toString()}'));
       }
@@ -49,15 +49,12 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     });
 
     on<GetUserEvent>((event, emit) async {
-      print('Fetching user data for userId: ${event.userId}');
-      if (state is! Authenticated) {
-        emit(AuthLoading());
-        try {
-          final user = await authRepository.getUser(event.userId);
-          emit(Authenticated(user));
-        } catch (e) {
-          emit(AuthError('Failed to fetch user data: ${e.toString()}'));
-        }
+      emit(AuthLoading());
+      try {
+        final user = await authRepository.getUser(event.userId);
+        emit(Authenticated(user));
+      } catch (e) {
+        emit(AuthError('Failed to fetch user data: ${e.toString()}'));
       }
     });
 
