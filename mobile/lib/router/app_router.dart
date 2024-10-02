@@ -49,13 +49,29 @@ class AppRouter {
         );
 
       case '/profile':
-        return MaterialPageRoute(
-          builder: (_) => ProfileScreen(),
-        );
+        final args = routeSettings.arguments
+            as Map<String, dynamic>?; // Make it nullable
+
+        if (args != null) {
+          final String firstName = args['firstName'];
+          final String lastName = args['lastName'];
+          final String email = args['email'];
+
+          return MaterialPageRoute(
+            builder: (_) => ProfileScreen(
+              firstName: firstName,
+              lastName: lastName,
+              email: email,
+            ),
+          );
+        } else {
+          print("No arguments were passed to the Profile screen.");
+          return null;
+        }
 
       case '/cryptoTransaction':
         return MaterialPageRoute(
-          builder: (_) => CryptoWallet(),
+          builder: (_) => const CryptoWallet(),
         );
 
       default:

@@ -3,6 +3,17 @@ import 'package:hotel_flutter/presentation/widgets/profile/blue_background_widge
 import 'package:hotel_flutter/presentation/widgets/profile/bottom_section.dart';
 
 class ProfileScreen extends StatefulWidget {
+  ProfileScreen({
+    super.key,
+    required this.firstName,
+    required this.lastName,
+    required this.email,
+  });
+
+  final String firstName;
+  final String lastName;
+  final String email;
+
   @override
   State<StatefulWidget> createState() {
     return _ProfileScreenState();
@@ -10,29 +21,24 @@ class ProfileScreen extends StatefulWidget {
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
-  // Variables to store user data
-  String firstName = "Barney";
-  String lastName = "Crocodile";
-  String username = "Barney Crocodile";
-  String email = "barneycrocodile@gmail.com";
-  String address = "";
-  String gender = "Male"; // Default gender
-
-  // Controllers for text fields
   late TextEditingController firstNameController;
   late TextEditingController lastNameController;
   late TextEditingController usernameController;
   late TextEditingController emailController;
   late TextEditingController addressController;
 
+  String username = "";
+  String address = "";
+  String gender = "Male";
+
   @override
   void initState() {
     super.initState();
-    // Initialize controllers
-    firstNameController = TextEditingController(text: firstName);
-    lastNameController = TextEditingController(text: lastName);
+    // Initialize controllers with widget properties
+    firstNameController = TextEditingController(text: widget.firstName);
+    lastNameController = TextEditingController(text: widget.lastName);
     usernameController = TextEditingController(text: username);
-    emailController = TextEditingController(text: email);
+    emailController = TextEditingController(text: widget.email);
     addressController = TextEditingController(text: address);
   }
 
@@ -82,20 +88,16 @@ class _ProfileScreenState extends State<ProfileScreen> {
             ),
           ),
           Positioned(
-            top: MediaQuery.of(context).size.height * 0.1 - 60,
-            left: MediaQuery.of(context).size.width * 0.5 - 60,
-            child: GestureDetector(
-              onTap: () {
-                print("Avatar clicked!");
-              },
-              child: const CircleAvatar(
-                radius: 60,
-                backgroundColor: Color.fromARGB(255, 173, 175, 210),
-                child: Icon(
-                  Icons.person,
-                  size: 80,
-                  color: Color.fromARGB(255, 29, 53, 115),
-                ),
+            top: MediaQuery.of(context).size.height * 0.01,
+            left: 0,
+            right: 0,
+            child: const CircleAvatar(
+              radius: 60,
+              backgroundColor: Color.fromARGB(255, 173, 175, 210),
+              child: Icon(
+                Icons.person,
+                size: 80,
+                color: Color.fromARGB(255, 29, 53, 115),
               ),
             ),
           ),

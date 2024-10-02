@@ -19,7 +19,7 @@ class _CryptoWalletState extends State<CryptoWallet> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      endDrawer: MainDrawer(onSelectScreen: _selectScreen),
+      // endDrawer: MainDrawer(onSelectScreen: _selectScreen),
       body: const Column(
         children: [
           const CryptowalletHeader(),

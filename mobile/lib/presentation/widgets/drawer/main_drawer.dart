@@ -1,9 +1,17 @@
 import 'package:flutter/material.dart';
 
 class MainDrawer extends StatelessWidget {
-  const MainDrawer({super.key, required this.onSelectScreen});
+  MainDrawer(
+      {super.key,
+      required this.onSelectScreen,
+      required this.firstName,
+      required this.lastName,
+      required this.email});
 
   final void Function(String identifier) onSelectScreen;
+  String firstName;
+  String lastName;
+  String email;
 
   @override
   Widget build(BuildContext context) {
@@ -23,13 +31,13 @@ class MainDrawer extends StatelessWidget {
                         height: 60, width: 60),
                     const SizedBox(width: 18),
                     Text(
-                      'Lance Kian Flores',
+                      '$firstName $lastName',
                       style: Theme.of(context).textTheme.titleLarge!.copyWith(
                             color: Colors.white,
                           ),
                     ),
                     Text(
-                      'lancekian12@gmail.com',
+                      email,
                       style: Theme.of(context).textTheme.titleLarge!.copyWith(
                             color: Colors.white,
                           ),

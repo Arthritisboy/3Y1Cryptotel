@@ -9,11 +9,13 @@ class AuthRepository {
 
   AuthRepository(this.dataProvider);
 
+  //! Register
   Future<UserModel> register(SignUpModel signUpModel) async {
     final data = await dataProvider.register(signUpModel);
     return UserModel.fromJson(data);
   }
 
+  //! Login
   Future<LoginModel> login(String email, String password) async {
     try {
       final data = await dataProvider.login(email, password);
@@ -23,6 +25,7 @@ class AuthRepository {
     }
   }
 
+  //! Forgot Password
   Future<void> forgotPassword(String email) async {
     try {
       await dataProvider.forgotPassword(email);
@@ -32,12 +35,14 @@ class AuthRepository {
     }
   }
 
+  //! Reset Password
   Future<void> resetPassword(
       String token, String newPassword, String confirmPassword) async {
     return await dataProvider.resetPassword(
         token, newPassword, confirmPassword);
   }
 
+  //! Get user
   Future<UserModel> getUser(String userId) async {
     if (_cachedUser != null) {
       return _cachedUser!;
@@ -52,6 +57,7 @@ class AuthRepository {
     }
   }
 
+  //! Logout
   Future<void> logout() async {
     try {
       await dataProvider.logout();
@@ -61,7 +67,7 @@ class AuthRepository {
     }
   }
 
-  // Optionally, you can create a method to clear the cache
+  //! Clearing Cache
   void clearUserCache() {
     _cachedUser = null;
   }
