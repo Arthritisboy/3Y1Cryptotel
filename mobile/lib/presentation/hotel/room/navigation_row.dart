@@ -16,8 +16,10 @@ class NavigationRow extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.start,
       children: [
         _buildNavItem('Room', 0),
-        const SizedBox(width: 20), // Space between items
+        const SizedBox(width: 20),
         _buildNavItem('Details', 1),
+        const SizedBox(width: 20),
+        _buildNavItem('Ratings', 2)
       ],
     );
   }

@@ -4,7 +4,7 @@ class RoomModel {
   final bool isAvailable;
   final String imageUrl;
   final String hotelName;
-  final int numberofGuest; // Non-nullable
+  final int numberofGuest;
 
   RoomModel({
     required this.roomType,
@@ -12,6 +12,6 @@ class RoomModel {
     required this.isAvailable,
     required this.imageUrl,
     required this.hotelName,
-    required this.numberofGuest, // Non-nullable
+    required this.numberofGuest,
   });
 }
