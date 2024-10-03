@@ -5,9 +5,10 @@ class CryptoWithTransaction extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
+    return const Column(
       crossAxisAlignment: CrossAxisAlignment.center, // Centers horizontally
-      children: const [ // Adds some space from the top of the screen
+      children: [
+        // Adds some space from the top of the screen
         Text(
           "Transaction History",
           style: TextStyle(

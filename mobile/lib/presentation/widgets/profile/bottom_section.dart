@@ -14,7 +14,7 @@ class BottomSection extends StatelessWidget {
   final VoidCallback updateUserData;
 
   const BottomSection({
-    Key? key,
+    super.key,
     required this.firstNameController,
     required this.lastNameController,
     required this.usernameController,
@@ -23,7 +23,7 @@ class BottomSection extends StatelessWidget {
     required this.gender,
     required this.onGenderChanged,
     required this.updateUserData,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

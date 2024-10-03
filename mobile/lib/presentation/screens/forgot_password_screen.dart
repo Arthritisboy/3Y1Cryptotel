@@ -134,7 +134,7 @@ class _ForgotPasswordState extends State<ForgotPassword> {
                                     }
                                   },
                             child: _isLoading
-                                ? SizedBox(
+                                ? const SizedBox(
                                     height: 20,
                                     width: 20,
                                     child: CircularProgressIndicator(

@@ -7,7 +7,7 @@ import 'package:hotel_flutter/logic/bloc/auth_state.dart';
 class ResetPassword extends StatefulWidget {
   final String token; // Add a token parameter to the widget
 
-  const ResetPassword({Key? key, required this.token}) : super(key: key);
+  const ResetPassword({super.key, required this.token});
 
   @override
   State<ResetPassword> createState() => ResetPasswordState();

@@ -44,7 +44,7 @@ class CryptoNoTransaction extends StatelessWidget {
               onPressed: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => TabScreen()),
+                  MaterialPageRoute(builder: (context) => const TabScreen()),
                 );
               },
               style: ElevatedButton.styleFrom(

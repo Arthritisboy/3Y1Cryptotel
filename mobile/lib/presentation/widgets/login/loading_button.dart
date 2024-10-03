@@ -6,11 +6,11 @@ class LoadingButton extends StatelessWidget {
   final String text;
 
   const LoadingButton({
-    Key? key,
+    super.key,
     required this.isLoading,
     required this.onPressed,
     required this.text,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

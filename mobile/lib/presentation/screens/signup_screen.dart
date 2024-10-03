@@ -4,7 +4,7 @@ import 'package:hotel_flutter/presentation/widgets/signup/image_widget.dart';
 import 'package:hotel_flutter/presentation/widgets/signup/signup_form_widget.dart';
 
 class SignupScreen extends StatelessWidget {
-  const SignupScreen({Key? key}) : super(key: key);
+  const SignupScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
