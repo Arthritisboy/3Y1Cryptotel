@@ -129,13 +129,13 @@ class _SignupFormState extends State<SignupForm> {
                       ? const Row(
                           mainAxisSize: MainAxisSize.min,
                           children: [
-                            const CircularProgressIndicator(
+                            CircularProgressIndicator(
                               valueColor:
                                   AlwaysStoppedAnimation<Color>(Colors.white),
                               strokeWidth: 2,
                             ),
-                            const SizedBox(width: 8),
-                            const Text('SIGN UP'),
+                            SizedBox(width: 8),
+                            Text('SIGN UP'),
                           ],
                         )
                       : const Text('SIGN UP'),
