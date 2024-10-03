@@ -174,7 +174,7 @@ class _TabScreenState extends State<TabScreen> {
         _showLogoutConfirmationDialog();
         break;
       default:
-        return null;
+        return;
     }
   }
 

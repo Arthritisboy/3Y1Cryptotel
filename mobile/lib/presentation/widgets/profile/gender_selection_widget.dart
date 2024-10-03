@@ -5,10 +5,10 @@ class GenderSelection extends StatelessWidget {
   final ValueChanged<String> onGenderChanged;
 
   const GenderSelection({
-    Key? key,
+    super.key,
     required this.gender,
     required this.onGenderChanged,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -43,10 +43,10 @@ class GenderOption extends StatelessWidget {
   final bool isSelected;
 
   const GenderOption({
-    Key? key,
+    super.key,
     required this.label,
     required this.isSelected,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

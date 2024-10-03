@@ -7,7 +7,7 @@ import 'package:hotel_flutter/logic/bloc/auth_state.dart';
 import 'package:hotel_flutter/presentation/widgets/login/custom_text_form_field.dart';
 
 class SignupForm extends StatefulWidget {
-  const SignupForm({Key? key}) : super(key: key);
+  const SignupForm({super.key});
 
   @override
   State<SignupForm> createState() => _SignupFormState();
@@ -140,7 +140,7 @@ class _SignupFormState extends State<SignupForm> {
                 child: ElevatedButton(
                   style: ButtonStyle(
                     backgroundColor:
-                        MaterialStateProperty.all(const Color(0xFF1C3473)),
+                        WidgetStateProperty.all(const Color(0xFF1C3473)),
                   ),
                   onPressed: _isLoading
                       ? null

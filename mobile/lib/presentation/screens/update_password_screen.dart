@@ -7,7 +7,7 @@ import 'package:hotel_flutter/logic/bloc/auth_state.dart';
 import 'package:hotel_flutter/presentation/widgets/profile/blue_background_widget.dart';
 
 class UpdatePasswordScreen extends StatefulWidget {
-  const UpdatePasswordScreen({Key? key}) : super(key: key);
+  const UpdatePasswordScreen({super.key});
 
   @override
   State<StatefulWidget> createState() {

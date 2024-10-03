@@ -5,10 +5,10 @@ class MonthSelector extends StatelessWidget {
   final int activeMonthIndex;
 
   const MonthSelector({
-    Key? key,
+    super.key,
     required this.onMonthTap,
     required this.activeMonthIndex,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -44,7 +44,7 @@ class MonthSelector extends StatelessWidget {
                       fontSize: 16,
                       color: activeMonthIndex == index
                           ? const Color.fromARGB(255, 29, 53, 115)
-                          : Color.fromARGB(255, 142, 142, 147),
+                          : const Color.fromARGB(255, 142, 142, 147),
                       fontWeight: activeMonthIndex == index
                           ? FontWeight.bold
                           : FontWeight.normal,

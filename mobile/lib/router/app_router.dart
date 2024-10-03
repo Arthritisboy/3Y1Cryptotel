@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:hotel_flutter/presentation/screens/crypto_wallet.dart';
 import 'package:hotel_flutter/presentation/screens/forgot_password_screen.dart';
+import 'package:hotel_flutter/presentation/screens/help_screen.dart';
 import 'package:hotel_flutter/presentation/screens/tab_screen.dart';
 import 'package:hotel_flutter/presentation/screens/login_screen.dart';
 import 'package:hotel_flutter/presentation/screens/signup_screen.dart';
@@ -10,6 +11,7 @@ import 'package:hotel_flutter/presentation/screens/welcome_screen.dart';
 import 'package:hotel_flutter/presentation/screens/email_reset_token_screen.dart';
 import 'package:hotel_flutter/presentation/screens/reset_password.dart';
 import 'package:hotel_flutter/presentation/screens/profile_screen.dart';
+import 'package:hotel_flutter/presentation/screens/favorite_screen.dart';
 
 class AppRouter {
   Route<dynamic>? onGenerateRoute(RouteSettings routeSettings) {
@@ -89,6 +91,16 @@ class AppRouter {
       case '/updatePassword':
         return MaterialPageRoute(
           builder: (_) => const UpdatePasswordScreen(),
+        );
+
+      case '/favorites':
+        return MaterialPageRoute(
+          builder: (_) => const FavoriteScreen(),
+        );
+
+      case '/help':
+        return MaterialPageRoute(
+          builder: (_) => const HelpScreen(),
         );
 
       default:

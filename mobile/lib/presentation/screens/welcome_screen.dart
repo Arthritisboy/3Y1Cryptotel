@@ -35,12 +35,12 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                     style: TextStyle(
                       fontFamily: 'HammerSmith',
                       fontSize: screenHeight * 0.03,
-                      color: Color(0xFF1C3473),
+                      color: const Color(0xFF1C3473),
                     ),
                   ),
                 ),
               ),
-              Container(
+              SizedBox(
                 width: double.infinity,
                 height: screenHeight * 0.4,
                 child: Image.asset(
@@ -96,7 +96,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                       child: ElevatedButton(
                         style: ButtonStyle(
                           backgroundColor:
-                              WidgetStateProperty.all(Color(0xFF1C3473)),
+                              WidgetStateProperty.all(const Color(0xFF1C3473)),
                         ),
                         onPressed: () {
                           Navigator.of(context).push(_createRoute('/login'));
@@ -105,13 +105,13 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                       ),
                     ),
                     SizedBox(height: screenHeight * 0.02),
-                    Row(
+                    const Row(
                       children: [
                         Expanded(
                           child: Divider(color: Colors.black, thickness: 1),
                         ),
                         Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                          padding: EdgeInsets.symmetric(horizontal: 8.0),
                           child: Text('OR'),
                         ),
                         Expanded(
@@ -126,7 +126,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                       child: ElevatedButton(
                         style: ButtonStyle(
                           backgroundColor:
-                              WidgetStateProperty.all(Color(0xFF1C3473)),
+                              WidgetStateProperty.all(const Color(0xFF1C3473)),
                         ),
                         onPressed: () {
                           Navigator.of(context).push(_createRoute('/signup'));
@@ -148,9 +148,9 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
     return PageRouteBuilder(
       pageBuilder: (context, animation, secondaryAnimation) {
         if (routeName == '/login') {
-          return LoginScreen();
+          return const LoginScreen();
         } else {
-          return SignupScreen();
+          return const SignupScreen();
         }
       },
       transitionsBuilder: (context, animation, secondaryAnimation, child) {
