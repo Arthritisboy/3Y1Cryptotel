@@ -173,7 +173,7 @@ class _TabScreenState extends State<TabScreen> {
         context.read<AuthBloc>().add(LogoutEvent());
         break;
       default:
-        return null;
+        return;
     }
   }
 }

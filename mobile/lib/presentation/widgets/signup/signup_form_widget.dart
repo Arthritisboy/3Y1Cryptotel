@@ -6,7 +6,7 @@ import 'package:hotel_flutter/logic/bloc/auth_event.dart';
 import 'package:hotel_flutter/logic/bloc/auth_state.dart';
 
 class SignupForm extends StatefulWidget {
-  const SignupForm({Key? key}) : super(key: key);
+  const SignupForm({super.key});
 
   @override
   State<SignupForm> createState() => _SignupFormState();
@@ -95,7 +95,7 @@ class _SignupFormState extends State<SignupForm> {
                 child: ElevatedButton(
                   style: ButtonStyle(
                     backgroundColor:
-                        MaterialStateProperty.all(const Color(0xFF1C3473)),
+                        WidgetStateProperty.all(const Color(0xFF1C3473)),
                   ),
                   onPressed: _isLoading
                       ? null
@@ -128,14 +128,14 @@ class _SignupFormState extends State<SignupForm> {
                   child: _isLoading
                       ? const Row(
                           mainAxisSize: MainAxisSize.min,
-                          children: const [
-                            CircularProgressIndicator(
+                          children: [
+                            const CircularProgressIndicator(
                               valueColor:
                                   AlwaysStoppedAnimation<Color>(Colors.white),
                               strokeWidth: 2,
                             ),
-                            SizedBox(width: 8),
-                            Text('SIGN UP'),
+                            const SizedBox(width: 8),
+                            const Text('SIGN UP'),
                           ],
                         )
                       : const Text('SIGN UP'),

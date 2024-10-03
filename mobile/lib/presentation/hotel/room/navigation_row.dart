@@ -5,10 +5,10 @@ class NavigationRow extends StatelessWidget {
   final ValueChanged<int> onTap;
 
   const NavigationRow({
-    Key? key,
+    super.key,
     required this.activeIndex,
     required this.onTap,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

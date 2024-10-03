@@ -4,7 +4,7 @@ import 'package:hotel_flutter/data/model/room_model.dart';
 class RoomSelection extends StatelessWidget {
   final List<RoomModel> roomList;
 
-  const RoomSelection({Key? key, required this.roomList}) : super(key: key);
+  const RoomSelection({super.key, required this.roomList});
 
   @override
   Widget build(BuildContext context) {
@@ -95,7 +95,9 @@ class RoomSelection extends StatelessWidget {
                               room.isAvailable ? 'Available' : 'Not Available',
                               style: TextStyle(
                                 fontSize: 16.0,
-                                color: room.isAvailable ? Colors.green : Colors.red,
+                                color: room.isAvailable
+                                    ? Colors.green
+                                    : Colors.red,
                               ),
                             ),
                           ],

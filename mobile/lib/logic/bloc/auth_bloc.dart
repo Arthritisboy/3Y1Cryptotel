@@ -33,7 +33,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       emit(AuthLoading());
       try {
         await authRepository.forgotPassword(event.email);
-        emit(AuthSuccess('Reset link sent to your email'));
+        emit(const AuthSuccess('Reset link sent to your email'));
       } catch (e) {
         emit(AuthError('Failed to send reset link: ${e.toString()}'));
       }
