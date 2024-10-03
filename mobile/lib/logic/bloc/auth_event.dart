@@ -51,3 +51,10 @@ class UpdateUserEvent extends AuthEvent {
 
   UpdateUserEvent(this.user);
 }
+
+class VerifyUserEvent extends AuthEvent {
+  final String email;
+  final String code;
+
+  VerifyUserEvent({required this.email, required this.code});
+}

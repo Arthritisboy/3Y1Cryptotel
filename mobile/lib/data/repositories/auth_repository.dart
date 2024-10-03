@@ -21,6 +21,7 @@ class AuthRepository {
       final data = await dataProvider.login(email, password);
       return LoginModel.fromJson(data);
     } catch (e) {
+      print(e);
       throw Exception(e.toString());
     }
   }
@@ -72,6 +73,15 @@ class AuthRepository {
       clearUserCache(); // Clear cache on logout
     } catch (e) {
       throw Exception('Failed to logout: $e');
+    }
+  }
+
+  //! Verify User
+  Future<void> verifyUser(String email, String code) async {
+    try {
+      await dataProvider.verifyUser(email, code);
+    } catch (e) {
+      throw Exception('Verification failed: ${e.toString()}');
     }
   }
 

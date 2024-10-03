@@ -66,3 +66,9 @@ class UserUpdated extends AuthState {
   @override
   List<Object> get props => [user];
 }
+
+class AuthSuccessVerification extends AuthState {
+  final String message;
+
+  const AuthSuccessVerification(this.message);
+}

@@ -1,10 +1,11 @@
 const express = require('express');
 const authController = require('../controllers/authController');
+const { upload } = require('../middleware/imageUpload');
 
 const router = express.Router();
 
 // ** Sign up route
-router.route('/signup').post(authController.register);
+router.route('/signup').post(upload.single('image'), authController.register);
 
 // ** Send verification route
 router.post('/sendVerificationCode', authController.sendVerificationCode);

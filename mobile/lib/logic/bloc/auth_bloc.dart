@@ -22,7 +22,11 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         final user = await authRepository.login(event.email, event.password);
         emit(AuthenticatedLogin(user));
       } catch (e) {
-        emit(AuthError('Login failed: ${e.toString()}'));
+        if (e.toString().contains('Invalid email or password')) {
+          emit(const AuthError('Invalid email or password. Please try again.'));
+        } else {
+          emit(AuthError('Login failed: ${e.toString()}'));
+        }
       }
     });
 
@@ -78,6 +82,16 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         emit(Authenticated(event.user));
       } catch (error) {
         emit(AuthError('Failed to update user: $error'));
+      }
+    });
+
+    on<VerifyUserEvent>((event, emit) async {
+      emit(AuthLoading());
+      try {
+        await authRepository.verifyUser(event.email, event.code);
+        emit(const AuthSuccessVerification('Verification successful!'));
+      } catch (e) {
+        emit(AuthError('Verification failed: ${e.toString()}'));
       }
     });
 

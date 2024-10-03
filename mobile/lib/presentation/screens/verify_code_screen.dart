@@ -4,20 +4,32 @@ import 'package:hotel_flutter/logic/bloc/auth_bloc.dart';
 import 'package:hotel_flutter/logic/bloc/auth_event.dart';
 import 'package:hotel_flutter/logic/bloc/auth_state.dart';
 
-class ResetPassword extends StatefulWidget {
-  final String token; // Add a token parameter to the widget
+class VerificationCodeScreen extends StatefulWidget {
+  final String email;
 
-  const ResetPassword({super.key, required this.token});
+  const VerificationCodeScreen({super.key, required this.email});
 
   @override
-  State<ResetPassword> createState() => ResetPasswordState();
+  State<VerificationCodeScreen> createState() => _VerificationCodeScreenState();
 }
 
-class ResetPasswordState extends State<ResetPassword> {
-  final _formResetPasswordKey = GlobalKey<FormState>();
-  String? _password;
-  String? _confirmPassword;
+class _VerificationCodeScreenState extends State<VerificationCodeScreen> {
+  final _formVerificationKey = GlobalKey<FormState>();
+  String? _verificationCode;
   bool _isLoading = false; // Track loading state
+
+  String _getFriendlyErrorMessage(String error) {
+    switch (error) {
+      case 'User not found':
+        return 'We couldn\'t find a user with that email. Please check and try again.';
+      case 'Invalid verification code':
+        return 'The verification code you entered is invalid. Please try again.';
+      case 'Network error':
+        return 'Please check your internet connection and try again.';
+      default:
+        return 'Something went wrong. Please try again later.';
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -35,18 +47,29 @@ class ResetPasswordState extends State<ResetPassword> {
                   setState(() {
                     _isLoading = true;
                   });
-                } else if (state is AuthSuccess) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('Password reset successful!')),
-                  );
-                  Navigator.of(context).pushReplacementNamed('/login');
+                } else if (state is AuthSuccessVerification) {
                   setState(() {
                     _isLoading = false;
                   });
-                } else if (state is AuthError) {
                   ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text('Error: ${state.error}')),
+                    const SnackBar(
+                      content: const Text('Verification successful!'),
+                      backgroundColor:
+                          Colors.green, // Set the background color to green
+                    ),
                   );
+                  Navigator.of(context).pushReplacementNamed('/login');
+                } else if (state is AuthError) {
+                  setState(() {
+                    _isLoading = false;
+                  });
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text(_getFriendlyErrorMessage(state.error)),
+                      backgroundColor: Colors.red,
+                    ),
+                  );
+                } else if (state is AuthInitial) {
                   setState(() {
                     _isLoading = false;
                   });
@@ -69,7 +92,7 @@ class ResetPasswordState extends State<ResetPassword> {
                     padding:
                         EdgeInsets.symmetric(horizontal: screenWidth * 0.1),
                     child: Text(
-                      'Please enter your new password.',
+                      'Please enter the verification code sent to your email address.',
                       style: TextStyle(
                         color: Colors.black,
                         fontSize: screenHeight * 0.018,
@@ -80,7 +103,7 @@ class ResetPasswordState extends State<ResetPassword> {
                   ),
                   SizedBox(height: screenHeight * 0.05),
                   Form(
-                    key: _formResetPasswordKey,
+                    key: _formVerificationKey,
                     child: Column(
                       children: [
                         SizedBox(
@@ -88,51 +111,17 @@ class ResetPasswordState extends State<ResetPassword> {
                           child: TextFormField(
                             validator: (value) {
                               if (value == null || value.isEmpty) {
-                                return 'Please enter your password';
+                                return 'Please enter your verification code';
                               }
                               return null;
                             },
                             onChanged: (value) {
-                              _password = value; // Store the password input
+                              _verificationCode =
+                                  value; // Store the verification code input
                             },
-                            obscureText: true,
                             decoration: InputDecoration(
-                              label: const Text('New Password'),
-                              hintText: 'Enter New Password',
-                              hintStyle: const TextStyle(color: Colors.black26),
-                              border: OutlineInputBorder(
-                                borderSide:
-                                    const BorderSide(color: Colors.black12),
-                                borderRadius: BorderRadius.circular(10),
-                              ),
-                              enabledBorder: OutlineInputBorder(
-                                borderSide:
-                                    const BorderSide(color: Colors.black12),
-                                borderRadius: BorderRadius.circular(10),
-                              ),
-                            ),
-                          ),
-                        ),
-                        SizedBox(height: screenHeight * 0.03),
-                        SizedBox(
-                          width: screenWidth * 0.8,
-                          child: TextFormField(
-                            validator: (value) {
-                              if (value == null || value.isEmpty) {
-                                return 'Please confirm your password';
-                              } else if (value != _password) {
-                                return 'Passwords do not match';
-                              }
-                              return null;
-                            },
-                            onChanged: (value) {
-                              _confirmPassword =
-                                  value; // Store the confirm password input
-                            },
-                            obscureText: true,
-                            decoration: InputDecoration(
-                              label: const Text('Confirm Password'),
-                              hintText: 'Confirm Password',
+                              label: const Text('Verification Code'),
+                              hintText: 'Enter Verification Code',
                               hintStyle: const TextStyle(color: Colors.black26),
                               border: OutlineInputBorder(
                                 borderSide:
@@ -159,14 +148,13 @@ class ResetPasswordState extends State<ResetPassword> {
                             onPressed: _isLoading
                                 ? null // Disable button while loading
                                 : () {
-                                    if (_formResetPasswordKey.currentState!
+                                    if (_formVerificationKey.currentState!
                                         .validate()) {
-                                      _resetPassword(widget.token, _password!,
-                                          _confirmPassword!);
+                                      _verifyCode(_verificationCode!);
                                     }
                                   },
                             child: _isLoading
-                                ? const SizedBox(
+                                ? SizedBox(
                                     height: 20,
                                     width: 20,
                                     child: CircularProgressIndicator(
@@ -175,10 +163,36 @@ class ResetPasswordState extends State<ResetPassword> {
                                     ),
                                   )
                                 : const Text(
-                                    'Reset Password',
+                                    'Verify',
                                     style: TextStyle(fontSize: 18),
                                   ),
                           ),
+                        ),
+                        SizedBox(height: screenHeight * 0.03),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            const Text(
+                              'Didn\'t receive the code? ',
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                color: Colors.black,
+                              ),
+                            ),
+                            GestureDetector(
+                              onTap: () {
+                                Navigator.of(context).pushNamed(
+                                    '/resendCode'); // Update with your resend code screen
+                              },
+                              child: const Text(
+                                'Resend Code',
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  color: Color.fromARGB(255, 29, 53, 115),
+                                ),
+                              ),
+                            ),
+                          ],
                         ),
                       ],
                     ),
@@ -192,11 +206,9 @@ class ResetPasswordState extends State<ResetPassword> {
     );
   }
 
-  void _resetPassword(String token, String password, String confirmPassword) {
-    // Call the BLoC to trigger the ResetPasswordEvent
-
+  void _verifyCode(String code) {
     context
         .read<AuthBloc>()
-        .add(ResetPasswordEvent(token, password, confirmPassword));
+        .add(VerifyUserEvent(email: widget.email, code: code));
   }
 }

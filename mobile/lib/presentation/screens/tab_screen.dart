@@ -21,8 +21,7 @@ class TabScreen extends StatefulWidget {
 class _TabScreenState extends State<TabScreen> {
   final FlutterSecureStorage _secureStorage = const FlutterSecureStorage();
   int _selectedIndex = 0;
-  bool _isLoading = true; // Loading state
-
+  bool _isLoading = true;
   String? firstName;
   String? lastName;
   String? email;
@@ -43,9 +42,7 @@ class _TabScreenState extends State<TabScreen> {
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<AuthBloc, AuthState>(builder: (context, state) {
-      // Handle authentication states
       if (state is Authenticated) {
-        // Update user data when authenticated
         firstName = state.user.firstName ?? '';
         lastName = state.user.lastName ?? '';
         email = state.user.email ?? '';
@@ -76,7 +73,6 @@ class _TabScreenState extends State<TabScreen> {
           children: [
             Column(
               children: [
-                // Show loading indicator while loading
                 if (_isLoading)
                   const Expanded(
                     child: Center(
@@ -92,8 +88,6 @@ class _TabScreenState extends State<TabScreen> {
                       lastName: lastName!,
                     ),
                   const SizedBox(height: 10),
-
-                  // Build BottomHomeIconNavigation only if state is Authenticated
                   if (state is Authenticated) ...[
                     BottomHomeIconNavigation(
                       selectedIndex: _selectedIndex,

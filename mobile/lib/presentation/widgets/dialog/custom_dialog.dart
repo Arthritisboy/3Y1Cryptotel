@@ -19,7 +19,7 @@ class CustomDialog extends StatelessWidget {
     required this.title,
     required this.description,
     this.buttonText = 'Close',
-    this.secondButtonText = 'No',
+    this.secondButtonText = '',
     required this.onButtonPressed,
     required this.onSecondButtonPressed,
   }) : super(key: key);
@@ -104,10 +104,11 @@ class CustomDialog extends StatelessWidget {
           left: Constants.padding,
           right: Constants.padding,
           child: CircleAvatar(
-            backgroundColor: Colors.transparent,
-            radius: Constants.avatarRadius,
-            child: Image.asset('assets/icons/logout_icon.png'), // Example icon
-          ),
+              backgroundColor: Colors.transparent,
+              radius: Constants.avatarRadius,
+              child: Image.asset(
+                'assets/images/others/cryptotel_removebg.png',
+              )),
         ),
       ],
     );

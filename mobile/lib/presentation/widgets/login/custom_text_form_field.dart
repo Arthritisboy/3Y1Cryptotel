@@ -6,6 +6,8 @@ class CustomTextFormField extends StatelessWidget {
   final TextEditingController controller;
   final bool isObscure;
   final String? Function(String?)? validator;
+  final bool showPassword; // Parameter to manage password visibility
+  final VoidCallback? toggleShowPassword; // Callback for toggling visibility
 
   const CustomTextFormField({
     super.key,
@@ -14,6 +16,8 @@ class CustomTextFormField extends StatelessWidget {
     required this.controller,
     this.isObscure = false,
     this.validator,
+    this.showPassword = false, // Default to false
+    this.toggleShowPassword, // Optional callback for toggling
   });
 
   @override
@@ -24,7 +28,8 @@ class CustomTextFormField extends StatelessWidget {
       height: screenWidth * 0.1,
       child: TextFormField(
         controller: controller,
-        obscureText: isObscure,
+        obscureText:
+            isObscure && !showPassword, // Show password based on the state
         obscuringCharacter: '*',
         validator: validator,
         decoration: InputDecoration(
@@ -37,6 +42,15 @@ class CustomTextFormField extends StatelessWidget {
           enabledBorder: const OutlineInputBorder(
             borderSide: BorderSide(color: Colors.black),
           ),
+          // Add the suffix icon only if it's a password field
+          suffixIcon: isObscure
+              ? IconButton(
+                  icon: Icon(
+                    showPassword ? Icons.visibility : Icons.visibility_off,
+                  ),
+                  onPressed: toggleShowPassword, // Use the callback to toggle
+                )
+              : null,
         ),
       ),
     );

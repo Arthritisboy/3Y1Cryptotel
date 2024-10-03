@@ -1,6 +1,5 @@
 const User = require('../models/User');
-const { StatusCodes } = require('http-status-codes');
-const { BadRequestError, UnauthenticatedError } = require('../errors');
+const { uploadProfileImage } = require('../middleware/imageUpload');
 const catchAsync = require('../utils/catchAsync');
 const AppError = require('../utils/appError');
 const { promisify } = require('util');
@@ -30,7 +29,33 @@ const createSendToken = (user, statusCode, res, additionalData = {}) => {
 
 // ** Register controller
 exports.register = catchAsync(async (req, res) => {
-  const newUser = await User.create({ ...req.body });
+  let profile = undefined;
+
+  if (req.file) {
+    try {
+      profile = await uploadProfileImage(req); 
+    } catch (uploadErr) {
+      return res.status(500).json({
+        status: 'error',
+        message: 'Image upload failed',
+        error: uploadErr
+      });
+    }
+  }
+
+  const newUser = await User.create({
+    firstName: req.body.firstName,
+    lastName: req.body.lastName,
+    email: req.body.email,
+    password: req.body.password,
+    confirmPassword: req.body.confirmPassword,
+    profile: profile || undefined  
+  });
+
+  console.warn("New user created:", newUser);
+
+  // Send a token and user data as a response
+  // createSendToken(newUser, 201, res);
 
   //! Send verification code after signup
   const verificationCode = newUser.createVerificationCode();
@@ -55,39 +80,6 @@ exports.register = catchAsync(async (req, res) => {
 
     return next(
       new AppError('Error sending verification code. Please try again.', 500),
-    );
-  }
-});
-
-// ** Send Verification Controller
-exports.sendVerificationCode = catchAsync(async (req, res, next) => {
-  const user = await User.findOne({ email: req.body.email });
-
-  if (!user) {
-    return next(new AppError('User not found with this email.', 404));
-  }
-
-  const verificationCode = user.createVerificationCode();
-  await user.save({ validateBeforeSave: false });
-
-  try {
-    await sendEmail({
-      email: user.email,
-      subject: 'Your Verification Code',
-      verificationCode: verificationCode,
-      type: 'verification',
-    });
-    res.status(200).json({
-      status: 'success',
-      message: 'Verification code sent to email!',
-    });
-  } catch (err) {
-    user.verificationCode = undefined;
-    user.codeExpires = undefined;
-    await user.save({ validateBeforeSave: false });
-
-    return next(
-      new AppError('Error sending verification code. Try again later.', 500),
     );
   }
 });
