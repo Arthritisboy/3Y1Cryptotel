@@ -106,7 +106,7 @@ class MainDrawer extends StatelessWidget {
                   ),
             ),
             onTap: () {
-              onSelectScreen('profile');
+              onSelectScreen('favorite');
             },
           ),
           ListTile(
@@ -123,7 +123,7 @@ class MainDrawer extends StatelessWidget {
                   ),
             ),
             onTap: () {
-              onSelectScreen('profile');
+              onSelectScreen('help');
             },
           ),
           ListTile(
