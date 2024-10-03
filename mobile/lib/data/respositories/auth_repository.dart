@@ -75,6 +75,15 @@ class AuthRepository {
     }
   }
 
+  //! Verify User
+  Future<void> verifyUser(String email, String code) async {
+    try {
+      await dataProvider.verifyUser(email, code);
+    } catch (e) {
+      throw Exception('Verification failed: ${e.toString()}');
+    }
+  }
+
   //! Update user
   Future<void> updateUser(UserModel user) async {
     try {

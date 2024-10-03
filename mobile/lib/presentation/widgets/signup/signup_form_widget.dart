@@ -40,8 +40,10 @@ class _SignupFormState extends State<SignupForm> {
 
           _showSuccessMessage();
 
-          // Navigate to the home screen after successful registration
-          Navigator.of(context).pushReplacementNamed('/login');
+          Navigator.of(context).pushReplacementNamed(
+            '/verifyCode',
+            arguments: {'email': _emailController.text},
+          );
         } else if (state is AuthError) {
           setState(() {
             _isLoading = false; // Stop loading
@@ -126,19 +128,16 @@ class _SignupFormState extends State<SignupForm> {
                           }
                         },
                   child: _isLoading
-                      ? const Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: const [
-                            CircularProgressIndicator(
-                              valueColor:
-                                  AlwaysStoppedAnimation<Color>(Colors.white),
-                              strokeWidth: 2,
-                            ),
-                            SizedBox(width: 8),
-                            Text('SIGN UP'),
-                          ],
-                        )
-                      : const Text('SIGN UP'),
+                      ? const SizedBox(
+                          width: 20,
+                          height: 20,
+                          child: CircularProgressIndicator(
+                            valueColor:
+                                AlwaysStoppedAnimation<Color>(Colors.white),
+                            strokeWidth: 2,
+                          ),
+                        ) // Loading indicator instead of text
+                      : const Text('SIGN UP'), // Original sign-up text
                 ),
               ),
               const SizedBox(height: 8),
@@ -186,8 +185,7 @@ class _SignupFormState extends State<SignupForm> {
         const Text('Already have an account?'),
         TextButton(
           onPressed: () {
-            Navigator.of(context)
-                .pushReplacementNamed('/login'); // Update to your login screen
+            Navigator.of(context).pushReplacementNamed('/login');
           },
           child: const Text('Log in'),
         ),

@@ -84,6 +84,16 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       }
     });
 
+    on<VerifyUserEvent>((event, emit) async {
+      emit(AuthLoading());
+      try {
+        await authRepository.verifyUser(event.email, event.code);
+        emit(const AuthSuccessVerification('Verification successful!'));
+      } catch (e) {
+        emit(AuthError('Verification failed: ${e.toString()}'));
+      }
+    });
+
     on<LogoutEvent>((event, emit) async {
       emit(AuthLoading());
       try {
