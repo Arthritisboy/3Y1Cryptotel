@@ -64,7 +64,10 @@ class _VerificationCodeScreenState extends State<VerificationCodeScreen> {
                     _isLoading = false;
                   });
                   ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text('Error: ${state.error}')),
+                    SnackBar(
+                      content: Text(_getFriendlyErrorMessage(state.error)),
+                      backgroundColor: Colors.red,
+                    ),
                   );
                 } else if (state is AuthInitial) {
                   setState(() {
