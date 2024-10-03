@@ -2,6 +2,7 @@ const express = require('express');
 const morgan = require('morgan');
 const dotenv = require('dotenv');
 const cors = require('cors');
+const bodyParser = require('body-parser');
 // const { NotFoundError } = require('./errors');
 //! connectDB
 const connectToDatabase = require('./database/connection');
@@ -18,8 +19,9 @@ const hpp = require('hpp');
 
 //! Routers
 const authRouter = require('./routes/authRoute');
-const homeRouter = require('./routes/homeRoute');
+// const homeRouter = require('./routes/homeRoute');
 const userRoute = require('./routes/userRoute');
+const profileRouter = require('./routes/profileRoute.js');
 // const web3Router = require('./routes/web3');
 
 //!Error Handler
@@ -59,6 +61,7 @@ app.use(hpp());
 //! Middlewares
 app.use(cors());
 app.use(express.json());
+app.use(bodyParser.urlencoded({ extended: true }));
 if (process.env.NODE_ENV === 'development') {
   app.use(morgan('dev'));
 }
@@ -77,6 +80,7 @@ app.use((req, res, next) => {
 //! Routes
 app.use('/api/v1/auth', authRouter);
 app.use('/api/v1/users', userRoute);
+app.use('/api/v1/test', profileRouter);
 // app.use('/api/v1/web3', web3Router);
 
 //! Handle all undefined routes
