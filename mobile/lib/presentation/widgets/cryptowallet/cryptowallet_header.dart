@@ -31,12 +31,6 @@ class CryptowalletHeader extends StatelessWidget {
                 ),
               ),
               const Spacer(),
-              IconButton(
-                icon: const Icon(Icons.menu, color: Color(0xFF1C3473)),
-                onPressed: () {
-                  Scaffold.of(context).openEndDrawer();
-                },
-              ),
             ],
           ),
           const SizedBox(height: 5.0),
