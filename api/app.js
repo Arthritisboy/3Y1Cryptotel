@@ -19,7 +19,7 @@ const hpp = require('hpp');
 
 //! Routers
 const authRouter = require('./routes/authRoute');
-const homeRouter = require('./routes/homeRoute');
+// const homeRouter = require('./routes/homeRoute');
 const userRoute = require('./routes/userRoute');
 const profileRouter = require('./routes/profileRoute.js');
 // const web3Router = require('./routes/web3');

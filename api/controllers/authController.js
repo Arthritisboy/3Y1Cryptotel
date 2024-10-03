@@ -29,18 +29,11 @@ const createSendToken = (user, statusCode, res, additionalData = {}) => {
 
 // ** Register controller
 exports.register = catchAsync(async (req, res) => {
-  console.warn("Register function called");
-
-  // Log form-data (req.body) and file data (req.file)
-  console.log('Request Body:', req.body);  // Should contain fields like firstName, lastName, etc.
-  console.log('Request File:', req.file);  // Should contain the uploaded image file
-
   let profile = undefined;
 
-  // Check if an image file was uploaded
   if (req.file) {
     try {
-      profile = await uploadProfileImage(req);  // Upload the image and get the Cloudinary URL
+      profile = await uploadProfileImage(req); 
     } catch (uploadErr) {
       return res.status(500).json({
         status: 'error',
@@ -50,21 +43,19 @@ exports.register = catchAsync(async (req, res) => {
     }
   }
 
-  // Create a new user, including the profile image if available
   const newUser = await User.create({
     firstName: req.body.firstName,
     lastName: req.body.lastName,
     email: req.body.email,
     password: req.body.password,
     confirmPassword: req.body.confirmPassword,
-    profile: profile || undefined  // Add profile image URL if it exists
+    profile: profile || undefined  
   });
 
   console.warn("New user created:", newUser);
 
   // Send a token and user data as a response
   // createSendToken(newUser, 201, res);
-  // const newUser = await User.create({ ...req.body });
 
   //! Send verification code after signup
   const verificationCode = newUser.createVerificationCode();
