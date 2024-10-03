@@ -70,13 +70,12 @@ exports.sendVerificationCode = catchAsync(async (req, res, next) => {
   const verificationCode = user.createVerificationCode();
   await user.save({ validateBeforeSave: false });
 
-  const message = `Your verification code is: ${verificationCode}. The code is valid for 10 minutes.`;
-
   try {
     await sendEmail({
       email: user.email,
       subject: 'Your Verification Code',
-      message,
+      verificationCode: verificationCode,
+      type: 'verification',
     });
     res.status(200).json({
       status: 'success',
@@ -218,16 +217,13 @@ exports.forgotPassword = catchAsync(async (req, res, next) => {
 
   // Node Emailer
   //! 3) Send it to the user's email
-  // const resetURL = `${req.protocol}://${req.get(
-  //   'host',
-  // )}/api/v1/users/resetPassword/${resetToken}`;
 
-  const message = `Forgot your password? Paste this ${resetToken}.\nIf you didn't forget your password, please ignore this email!`;
   try {
     await sendEmail({
       email: user.email,
       subject: 'Your password reset token (valid for 10min)',
-      message,
+      resetToken: resetToken,
+      type: 'reset',
     });
     res.status(200).json({
       status: 'success',
