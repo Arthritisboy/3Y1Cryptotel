@@ -1,6 +1,5 @@
 const User = require('../models/User');
-const { StatusCodes } = require('http-status-codes');
-const { BadRequestError, UnauthenticatedError } = require('../errors');
+const { uploadProfileImage } = require('../middleware/imageUpload');
 const catchAsync = require('../utils/catchAsync');
 const AppError = require('../utils/appError');
 const { promisify } = require('util');
@@ -30,7 +29,33 @@ const createSendToken = (user, statusCode, res, additionalData = {}) => {
 
 // ** Register controller
 exports.register = catchAsync(async (req, res) => {
-  const newUser = await User.create({ ...req.body });
+  let profile = undefined;
+
+  if (req.file) {
+    try {
+      profile = await uploadProfileImage(req); 
+    } catch (uploadErr) {
+      return res.status(500).json({
+        status: 'error',
+        message: 'Image upload failed',
+        error: uploadErr
+      });
+    }
+  }
+
+  const newUser = await User.create({
+    firstName: req.body.firstName,
+    lastName: req.body.lastName,
+    email: req.body.email,
+    password: req.body.password,
+    confirmPassword: req.body.confirmPassword,
+    profile: profile || undefined  
+  });
+
+  console.warn("New user created:", newUser);
+
+  // Send a token and user data as a response
+  // createSendToken(newUser, 201, res);
 
   //! Send verification code after signup
   const verificationCode = newUser.createVerificationCode();
