@@ -2,6 +2,7 @@ const express = require('express');
 const morgan = require('morgan');
 const dotenv = require('dotenv');
 const cors = require('cors');
+const bodyParser = require('body-parser');
 const connectToDatabase = require('./database/connection');
 
 // Security
@@ -14,7 +15,7 @@ const hpp = require('hpp');
 // Routers
 const authRouter = require('./routes/authRoute');
 const userRoute = require('./routes/userRoute');
-const testRoute = require('./routes/testRoute.js');
+const profileRouter = require('./routes/profileRoute.js');
 
 // Error Handler
 const AppError = require('./utils/appError');
@@ -41,6 +42,7 @@ app.use(xss());
 app.use(hpp());
 app.use(cors());
 app.use(express.json());
+app.use(bodyParser.urlencoded({ extended: true }));
 if (process.env.NODE_ENV === 'development') {
   app.use(morgan('dev'));
 }
@@ -61,7 +63,7 @@ app.get('/', (req, res) => {
 });
 app.use('/api/v1/auth', authRouter);
 app.use('/api/v1/users', userRoute);
-app.use('/api/v1/test', testRoute);
+app.use('/api/v1/test', profileRouter);
 
 // Handle all undefined routes
 app.all('*', (req, res, next) => {

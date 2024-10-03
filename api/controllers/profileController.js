@@ -40,9 +40,10 @@ const postProfile = (req, res) => {
                 {
                     width: 300, // Set the width to make the image square
                     height: 300, // Set the height to make the image square
-                    crop: 'fill',
+                    crop: 'auto',
                     gravity: 'auto',
-                    radius: 'max' // This makes the image circular
+                    radius: 'max', // This makes the image circular
+                    background: 'none'
                 }
             ]
         }, async (err, result) => {

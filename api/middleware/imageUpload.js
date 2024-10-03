@@ -20,8 +20,32 @@ const storage = multer.diskStorage({
 });
 const upload = multer({storage: storage});
 
+const uploadProfileImage = async (req) => {
+  return new Promise((resolve, reject) => {
+    cloudinary.uploader.upload(req.file.path, {
+      transformation: [
+        { fetch_format: 'auto', quality: 'auto' },
+        {
+          width: 300,
+          height: 300,
+          crop: 'fill',
+          gravity: 'auto',
+          radius: 'max',
+          background: 'none'
+        }
+      ]
+    }, (error, result) => {
+      if (error) {
+        console.error("Error uploading image:", error);
+        reject(error);
+      } else {
+        console.log("Uploaded image URL:", result.secure_url);
+        resolve(result.secure_url);  // Ensure secure_url is returned
+      }
+    });
+  });
+};
 
 
 
-
-module.exports = { upload, cloudinary, generateTestUrl };
+module.exports = { upload, cloudinary, generateTestUrl, uploadProfileImage };

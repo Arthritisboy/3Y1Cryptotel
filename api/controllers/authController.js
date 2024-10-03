@@ -1,6 +1,5 @@
 const User = require('../models/User');
-const { StatusCodes } = require('http-status-codes');
-const { BadRequestError, UnauthenticatedError } = require('../errors');
+const { uploadProfileImage } = require('../middleware/imageUpload');
 const catchAsync = require('../utils/catchAsync');
 const AppError = require('../utils/appError');
 const { promisify } = require('util');
@@ -25,10 +24,44 @@ const createSendToken = (user, statusCode, res) => {
   });
 };
 exports.register = catchAsync(async (req, res) => {
-  const newUser = await User.create({ ...req.body });
-  //! Creation of token
+  console.warn("Register function called");
+
+  // Log form-data (req.body) and file data (req.file)
+  console.log('Request Body:', req.body);  // Should contain fields like firstName, lastName, etc.
+  console.log('Request File:', req.file);  // Should contain the uploaded image file
+
+  let profile = undefined;
+
+  // Check if an image file was uploaded
+  if (req.file) {
+    try {
+      profile = await uploadProfileImage(req);  // Upload the image and get the Cloudinary URL
+    } catch (uploadErr) {
+      return res.status(500).json({
+        status: 'error',
+        message: 'Image upload failed',
+        error: uploadErr
+      });
+    }
+  }
+
+  // Create a new user, including the profile image if available
+  const newUser = await User.create({
+    firstName: req.body.firstName,
+    lastName: req.body.lastName,
+    email: req.body.email,
+    password: req.body.password,
+    confirmPassword: req.body.confirmPassword,
+    profile: profile || undefined  // Add profile image URL if it exists
+  });
+
+  console.warn("New user created:", newUser);
+
+  // Send a token and user data as a response
   createSendToken(newUser, 201, res);
 });
+
+
 
 exports.login = catchAsync(async (req, res, next) => {
   const { email, password } = req.body;
