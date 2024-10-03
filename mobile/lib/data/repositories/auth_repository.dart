@@ -21,6 +21,7 @@ class AuthRepository {
       final data = await dataProvider.login(email, password);
       return LoginModel.fromJson(data);
     } catch (e) {
+      print(e);
       throw Exception(e.toString());
     }
   }

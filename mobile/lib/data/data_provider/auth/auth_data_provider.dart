@@ -21,6 +21,8 @@ class AuthDataProvider {
 
     if (response.statusCode == 200) {
       final data = json.decode(response.body);
+      print('Response: $response'); // Log the response
+
       String token = data['token'];
       String userId = data['userId'];
 
@@ -31,9 +33,17 @@ class AuthDataProvider {
         'token': token,
         'user': {'id': userId},
       };
+    } else if (response.statusCode == 401) {
+      final errorResponse = json.decode(response.body);
+      String errorMessage = errorResponse['message'] ??
+          'Invalid email or password. Please try again.';
+      print(errorMessage);
+      throw Exception(errorMessage);
     } else {
       final errorResponse = json.decode(response.body);
-      String errorMessage = errorResponse['message'] ?? response.reasonPhrase;
+      String errorMessage = errorResponse['message'] ??
+          response.reasonPhrase ??
+          'An unexpected error occurred.';
       throw Exception('Failed to login: $errorMessage');
     }
   }
