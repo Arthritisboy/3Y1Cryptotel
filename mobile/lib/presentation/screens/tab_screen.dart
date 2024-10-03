@@ -5,6 +5,7 @@ import 'package:hotel_flutter/logic/bloc/auth_event.dart';
 import 'package:hotel_flutter/logic/bloc/auth_state.dart';
 import 'package:hotel_flutter/presentation/screens/home_screen.dart';
 import 'package:hotel_flutter/presentation/screens/restaurant_screen.dart';
+import 'package:hotel_flutter/presentation/widgets/dialog/custom_dialog.dart';
 import 'package:hotel_flutter/presentation/widgets/tabscreen/bottom_home_icon_navigation.dart';
 import 'package:hotel_flutter/presentation/widgets/tabscreen/tab_header.dart';
 import 'package:hotel_flutter/presentation/widgets/drawer/main_drawer.dart';
@@ -170,10 +171,31 @@ class _TabScreenState extends State<TabScreen> {
         Navigator.of(context).pushNamed('/settings');
         break;
       case 'logout':
-        context.read<AuthBloc>().add(LogoutEvent());
+        _showLogoutConfirmationDialog();
         break;
       default:
         return null;
     }
+  }
+
+  void _showLogoutConfirmationDialog() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return CustomDialog(
+          title: 'Logout Confirmation',
+          description: 'Are you sure you want to logout?',
+          buttonText: 'Yes',
+          onButtonPressed: () {
+            context.read<AuthBloc>().add(LogoutEvent());
+            Navigator.of(context).pop(); // Close dialog
+          },
+          secondButtonText: 'No',
+          onSecondButtonPressed: () {
+            Navigator.of(context).pop(); // Close dialog
+          },
+        );
+      },
+    );
   }
 }
