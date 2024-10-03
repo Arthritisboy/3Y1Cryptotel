@@ -55,6 +55,21 @@ class AuthDataProvider {
     }
   }
 
+  //! Verify Code
+  Future<void> verifyUser(String email, String code) async {
+    final response = await http.post(
+      Uri.parse('$baseUrl/verifyCode'),
+      body: json.encode({'email': email, 'code': code}),
+      headers: {'Content-Type': 'application/json'},
+    );
+
+    if (response.statusCode != 200) {
+      final errorResponse = json.decode(response.body);
+      String errorMessage = errorResponse['message'] ?? 'An error occurred';
+      throw Exception('Failed to verify code: $errorMessage');
+    }
+  }
+
   //! Forgot Password
   Future<void> forgotPassword(String email) async {
     final response = await http.post(

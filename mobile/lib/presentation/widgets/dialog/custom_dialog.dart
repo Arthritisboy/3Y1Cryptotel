@@ -104,10 +104,11 @@ class CustomDialog extends StatelessWidget {
           left: Constants.padding,
           right: Constants.padding,
           child: CircleAvatar(
-            backgroundColor: Colors.transparent,
-            radius: Constants.avatarRadius,
-            child: Image.asset('assets/icons/logout_icon.png'), // Example icon
-          ),
+              backgroundColor: Colors.transparent,
+              radius: Constants.avatarRadius,
+              child: Image.asset(
+                'assets/images/others/logo_removebg.png',
+              )),
         ),
       ],
     );

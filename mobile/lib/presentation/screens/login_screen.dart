@@ -18,6 +18,7 @@ class _LoginScreenState extends State<LoginScreen> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   bool _isLoading = false;
+  bool _isPasswordVisible = false; // New variable for password visibility
 
   @override
   Widget build(BuildContext context) {
@@ -105,6 +106,13 @@ class _LoginScreenState extends State<LoginScreen> {
                         ),
                       ),
                       SizedBox(height: screenHeight * 0.02),
+
+                      const Text('LOG IN',
+                          style: TextStyle(
+                              fontFamily: 'HammerSmith',
+                              fontSize: 20,
+                              color: Colors.black)),
+                      SizedBox(height: screenHeight * 0.02),
                       CustomTextFormField(
                         label: 'Email',
                         hint: 'Enter Email',
@@ -117,11 +125,20 @@ class _LoginScreenState extends State<LoginScreen> {
                         },
                       ),
                       SizedBox(height: screenHeight * 0.03),
+                      // Updated Password Field with suffixIcon
                       CustomTextFormField(
                         label: 'Password',
                         hint: 'Enter Password',
                         controller: _passwordController,
-                        isObscure: true,
+                        isObscure: true, // Set to true for password field
+                        showPassword:
+                            _isPasswordVisible, // Show password based on visibility
+                        toggleShowPassword: () {
+                          setState(() {
+                            _isPasswordVisible =
+                                !_isPasswordVisible; // Toggle password visibility
+                          });
+                        },
                         validator: (value) {
                           if (value == null || value.isEmpty) {
                             return 'Please enter your password';

@@ -140,12 +140,12 @@ userSchema.methods.createPasswordResetToken = function () {
 
 //! Generate Verification Code
 userSchema.methods.createVerificationCode = function () {
-  const verificationCode = crypto.randomBytes(3).toString('hex'); // Generates a 6-character code
+  const verificationCode = crypto.randomBytes(3).toString('hex');
   this.verificationCode = crypto
     .createHash('sha256')
     .update(verificationCode)
     .digest('hex');
-  this.codeExpires = Date.now() + 10 * 60 * 1000; // Code valid for 10 minutes
-  return verificationCode; // Return plain code to send via email
+  this.codeExpires = Date.now() + 10 * 60 * 1000;
+  return verificationCode;
 };
 module.exports = mongoose.model('User', userSchema);
