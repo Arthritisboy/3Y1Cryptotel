@@ -6,7 +6,7 @@ import 'package:hotel_flutter/logic/bloc/auth_event.dart';
 import 'package:hotel_flutter/logic/bloc/auth_state.dart';
 
 class SignupForm extends StatefulWidget {
-  const SignupForm({Key? key}) : super(key: key);
+  const SignupForm({super.key});
 
   @override
   State<SignupForm> createState() => _SignupFormState();
@@ -37,7 +37,11 @@ class _SignupFormState extends State<SignupForm> {
           setState(() {
             _isLoading = false; // Stop loading
           });
-          Navigator.of(context).pushReplacementNamed('/home');
+
+          _showSuccessMessage();
+
+          // Navigate to the home screen after successful registration
+          Navigator.of(context).pushReplacementNamed('/login');
         } else if (state is AuthError) {
           setState(() {
             _isLoading = false; // Stop loading
@@ -91,7 +95,7 @@ class _SignupFormState extends State<SignupForm> {
                 child: ElevatedButton(
                   style: ButtonStyle(
                     backgroundColor:
-                        MaterialStateProperty.all(const Color(0xFF1C3473)),
+                        WidgetStateProperty.all(const Color(0xFF1C3473)),
                   ),
                   onPressed: _isLoading
                       ? null
@@ -121,13 +125,24 @@ class _SignupFormState extends State<SignupForm> {
                             }
                           }
                         },
-                  child: const Text('SIGN UP'),
+                  child: _isLoading
+                      ? const Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            CircularProgressIndicator(
+                              valueColor:
+                                  AlwaysStoppedAnimation<Color>(Colors.white),
+                              strokeWidth: 2,
+                            ),
+                            SizedBox(width: 8),
+                            Text('SIGN UP'),
+                          ],
+                        )
+                      : const Text('SIGN UP'),
                 ),
               ),
               const SizedBox(height: 8),
               _buildLoginRedirect(),
-              if (_isLoading)
-                const CircularProgressIndicator(), // Show loading indicator
             ],
           ),
         ),
@@ -208,6 +223,15 @@ class _SignupFormState extends State<SignupForm> {
             child: const Text('OK'),
           ),
         ],
+      ),
+    );
+  }
+
+  void _showSuccessMessage() {
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text('User successfully registered!'),
+        backgroundColor: Colors.green,
       ),
     );
   }

@@ -1,4 +1,5 @@
 import 'package:equatable/equatable.dart';
+import 'package:hotel_flutter/data/model/login_model.dart';
 import 'package:hotel_flutter/data/model/user_model.dart';
 
 abstract class AuthState extends Equatable {
@@ -11,6 +12,15 @@ abstract class AuthState extends Equatable {
 class AuthInitial extends AuthState {}
 
 class AuthLoading extends AuthState {}
+
+class AuthenticatedLogin extends AuthState {
+  final LoginModel user;
+
+  const AuthenticatedLogin(this.user);
+
+  @override
+  List<Object> get props => [user];
+}
 
 class Authenticated extends AuthState {
   final UserModel user;
@@ -28,4 +38,31 @@ class AuthError extends AuthState {
 
   @override
   List<Object> get props => [error];
+}
+
+class AuthSuccess extends AuthState {
+  final String message;
+
+  const AuthSuccess(this.message);
+
+  @override
+  List<Object> get props => [message];
+}
+
+class AuthPasswordChangeSuccess extends AuthState {
+  final String message;
+
+  const AuthPasswordChangeSuccess(this.message);
+
+  @override
+  List<Object> get props => [message];
+}
+
+class UserUpdated extends AuthState {
+  final UserModel user;
+
+  const UserUpdated(this.user);
+
+  @override
+  List<Object> get props => [user];
 }

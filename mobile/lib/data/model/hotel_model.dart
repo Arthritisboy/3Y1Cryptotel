@@ -5,6 +5,8 @@ class Hotel {
   final int price;
   final String location;
   final String time;
+  final int contactNumber;
+  final String email;
 
   Hotel(
       {required this.imagePath,
@@ -12,7 +14,9 @@ class Hotel {
       required this.rating,
       required this.price,
       required this.location,
-      required this.time});
+      required this.time,
+      required this.contactNumber,
+      required this.email});
 
   factory Hotel.fromMap(Map<String, dynamic> data) {
     return Hotel(
@@ -22,6 +26,8 @@ class Hotel {
       price: data['price'] as int,
       location: data['location'] as String,
       time: data['time'] as String,
+      contactNumber: data['contactNumber'] as int,
+      email: data['email'] as String,
     );
   }
 
@@ -32,7 +38,8 @@ class Hotel {
       'rating': rating,
       'price': price,
       'location': location,
-      'time': time
+      'time': time,
+      'contactNumber': contactNumber,
     };
   }
 }

@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:hotel_flutter/presentation/widgets/cryptowallet/cryptonotransaction.dart';
 import 'package:hotel_flutter/presentation/widgets/cryptowallet/cryptowallet_header.dart';
 import 'package:hotel_flutter/presentation/widgets/cryptowallet/cryptowallet_transactions.dart';
-import 'package:hotel_flutter/presentation/widgets/tab/main_drawer.dart'; // Import your MainDrawer
 
 class CryptoWallet extends StatefulWidget {
   const CryptoWallet({super.key});
@@ -19,13 +17,12 @@ class _CryptoWalletState extends State<CryptoWallet> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      endDrawer: MainDrawer(onSelectScreen: _selectScreen),
+    return const Scaffold(
       body: Column(
         children: [
-          const CryptowalletHeader(),
-          const SizedBox(height: 20),
-          const CryptoWalletTransactions(),
+          CryptowalletHeader(),
+          SizedBox(height: 20),
+          CryptoWalletTransactions(),
         ],
       ),
     );

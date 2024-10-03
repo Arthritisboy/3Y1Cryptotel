@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:hotel_flutter/data/data_provider/auth/auth_dataprovider.dart';
+import 'package:hotel_flutter/data/data_provider/auth/auth_data_provider.dart';
 import 'package:hotel_flutter/logic/bloc/auth_bloc.dart';
 import 'package:hotel_flutter/presentation/screens/splash_screen.dart';
 import 'package:hotel_flutter/router/app_router.dart';
-import 'package:hotel_flutter/data/respositories/auth_repository.dart';
+import 'package:hotel_flutter/data/repositories/auth_repository.dart';
 
 void main() {
   runApp(MyApp());
@@ -18,13 +18,11 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Create an instance of AuthDataProvider
-    final AuthDataProvider authDataProvider = AuthDataProvider();
-    // Create an instance of AuthRepository
-    final AuthRepository authRepository = AuthRepository(authDataProvider);
-
-    return BlocProvider(
-      create: (context) => AuthBloc(authRepository),
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider(
+            create: (context) => AuthBloc(AuthRepository(AuthDataProvider()))),
+      ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
         title: 'Cryptotel',

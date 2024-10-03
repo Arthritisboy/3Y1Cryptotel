@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:hotel_flutter/presentation/screens/home_screen.dart';
+import 'package:hotel_flutter/presentation/screens/tab_screen.dart';
 
 class CryptoNoTransaction extends StatelessWidget {
   const CryptoNoTransaction({super.key});
@@ -12,15 +12,15 @@ class CryptoNoTransaction extends StatelessWidget {
         child: Column(
           children: [
             Opacity(
-              opacity: 0.7, 
+              opacity: 0.7,
               child: Image.asset(
-                'assets/images/others/wallet.jpg', 
+                'assets/images/others/wallet.jpg',
                 width: 250.0,
                 height: 250.0,
                 fit: BoxFit.contain,
               ),
             ),
-            const SizedBox(height: 15), 
+            const SizedBox(height: 15),
             const Text(
               "No transactions, Yet!",
               style: TextStyle(
@@ -44,12 +44,13 @@ class CryptoNoTransaction extends StatelessWidget {
               onPressed: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => HomeScreen()),
+                  MaterialPageRoute(builder: (context) => const TabScreen()),
                 );
               },
               style: ElevatedButton.styleFrom(
                 backgroundColor: const Color(0xFF1C3473),
-                padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
+                padding: const EdgeInsets.symmetric(
+                    horizontal: 20.0, vertical: 10.0),
                 textStyle: const TextStyle(
                   fontFamily: 'HammerSmith',
                   fontSize: 16,
