@@ -8,13 +8,13 @@ class HotelDetails extends StatelessWidget {
   final String time;
 
   const HotelDetails({
-    Key? key,
+    super.key,
     required this.hotelName,
     required this.rating,
     required this.price,
     required this.location,
     required this.time,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -32,7 +32,8 @@ class HotelDetails extends StatelessWidget {
         const SizedBox(height: 10),
         Row(
           children: [
-            const Icon(Icons.location_on, color: Color.fromARGB(255, 142, 142, 147), size: 26),
+            const Icon(Icons.location_on,
+                color: Color.fromARGB(255, 142, 142, 147), size: 26),
             const SizedBox(width: 8.0),
             Expanded(
               child: Text(
@@ -49,7 +50,8 @@ class HotelDetails extends StatelessWidget {
         const SizedBox(height: 10),
         Row(
           children: [
-            const Icon(Icons.money,  color: Color.fromARGB(255, 142, 142, 147), size: 26),
+            const Icon(Icons.money,
+                color: Color.fromARGB(255, 142, 142, 147), size: 26),
             const SizedBox(width: 8.0),
             Text(
               'Price: ₱$price and over',
@@ -64,7 +66,8 @@ class HotelDetails extends StatelessWidget {
         const SizedBox(height: 10),
         Row(
           children: [
-            const Icon(Icons.access_time, color: Color.fromARGB(255, 142, 142, 147), size: 26),
+            const Icon(Icons.access_time,
+                color: Color.fromARGB(255, 142, 142, 147), size: 26),
             const SizedBox(width: 8.0),
             Text(
               'Open Hours: $time',

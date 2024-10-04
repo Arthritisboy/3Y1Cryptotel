@@ -4,6 +4,11 @@ import 'package:hotel_flutter/presentation/hotel/room/navigation_row.dart';
 import 'package:hotel_flutter/presentation/hotel/room/roomSelection.dart';
 import 'package:hotel_flutter/data/model/room_model.dart';
 import 'package:hotel_flutter/data/dummydata/room_data.dart';
+import 'package:hotel_flutter/presentation/hotel/ratings/hotelRatings.dart';
+import 'package:hotel_flutter/data/dummydata/rating_data.dart';
+import 'package:hotel_flutter/data/model/rating_model.dart';
+
+
 
 
 class Hotelclicked extends StatefulWidget {
@@ -34,6 +39,7 @@ class _ReservationRoomState extends State<Hotelclicked> {
   @override
   Widget build(BuildContext context) {
     final List<RoomModel> filteredRoomList = roomList.where((room) => room.hotelName == widget.hotelName).toList();
+    final List<Rating> filteredRatingList = userRatings.where((rating) => rating.hotelName == widget.hotelName).toList();
     
     return Padding(
       padding: const EdgeInsets.only(left: 16, right: 16, top: 20),
@@ -135,6 +141,8 @@ class _ReservationRoomState extends State<Hotelclicked> {
               location: widget.location,
               time: widget.time,
             ),
+          if(widget.activeIndex == 2)
+            UserRatingsWidget(ratings: filteredRatingList),
         ],
       ),
     );
