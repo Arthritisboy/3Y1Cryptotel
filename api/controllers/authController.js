@@ -84,6 +84,37 @@ exports.register = catchAsync(async (req, res) => {
   }
 });
 
+exports.sendVerificationCode = catchAsync(async (req, res, next) => {
+  const user = await User.findOne({ email: req.body.email });
+
+  if (!user) {
+    return next(new AppError('User not found with this email.', 404));
+  }
+
+  const verificationCode = user.createVerificationCode();
+  await user.save({ validateBeforeSave: false });
+
+  try {
+    await sendEmail({
+      email: user.email,
+      subject: 'Your Verification Code',
+      verificationCode: verificationCode,
+      type: 'verification',
+    });
+    res.status(200).json({
+      status: 'success',
+      message: 'Verification code sent to email!',
+    });
+  } catch (err) {
+    user.verificationCode = undefined;
+    user.codeExpires = undefined;
+    await user.save({ validateBeforeSave: false });
+
+    return next(
+      new AppError('Error sending verification code. Try again later.', 500),
+    );
+  }
+});
 // ** Verify code controller
 exports.verifyCode = catchAsync(async (req, res, next) => {
   const { email, code } = req.body;
