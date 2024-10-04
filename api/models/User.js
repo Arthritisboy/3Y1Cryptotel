@@ -74,7 +74,7 @@ const userSchema = new mongoose.Schema(
     profile: {
       type: String,
     },
-    hasCompletedOnBoarding: {
+    hasCompletedOnboarding: {
       type: Boolean,
       default: false
     }
