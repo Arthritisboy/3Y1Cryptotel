@@ -76,7 +76,7 @@ const userSchema = new mongoose.Schema(
     },
     hasCompletedOnboarding: {
       type: Boolean,
-      default: false,
+      default: false
     }
   },
 

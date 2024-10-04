@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:hotel_flutter/presentation/screens/onboarding_screen.dart';
 import 'package:hotel_flutter/presentation/screens/crypto_wallet.dart';
 import 'package:hotel_flutter/presentation/screens/forgot_password_screen.dart';
 import 'package:hotel_flutter/presentation/screens/help_screen.dart';
@@ -101,6 +102,11 @@ class AppRouter {
       case '/help':
         return MaterialPageRoute(
           builder: (_) => const HelpScreen(),
+        );
+
+      case '/onboarding':
+        return MaterialPageRoute(
+          builder: (_) => const OnboardingScreen(),
         );
 
       default:

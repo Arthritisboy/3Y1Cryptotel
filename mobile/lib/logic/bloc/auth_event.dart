@@ -58,3 +58,5 @@ class VerifyUserEvent extends AuthEvent {
 
   VerifyUserEvent({required this.email, required this.code});
 }
+
+class CompleteOnboardingEvent extends AuthEvent {}
