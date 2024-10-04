@@ -4,17 +4,32 @@ import 'package:hotel_flutter/logic/bloc/auth_bloc.dart';
 import 'package:hotel_flutter/logic/bloc/auth_event.dart';
 import 'package:hotel_flutter/logic/bloc/auth_state.dart';
 
-class ForgotPassword extends StatefulWidget {
-  const ForgotPassword({super.key});
+class VerificationCodeScreen extends StatefulWidget {
+  final String email;
+
+  const VerificationCodeScreen({super.key, required this.email});
 
   @override
-  State<ForgotPassword> createState() => _ForgotPasswordState();
+  State<VerificationCodeScreen> createState() => _VerificationCodeScreenState();
 }
 
-class _ForgotPasswordState extends State<ForgotPassword> {
-  final _formForgotPasswordKey = GlobalKey<FormState>();
-  String? _email;
+class _VerificationCodeScreenState extends State<VerificationCodeScreen> {
+  final _formVerificationKey = GlobalKey<FormState>();
+  String? _verificationCode;
   bool _isLoading = false; // Track loading state
+
+  String _getFriendlyErrorMessage(String error) {
+    switch (error) {
+      case 'User not found':
+        return 'We couldn\'t find a user with that email. Please check and try again.';
+      case 'Invalid verification code':
+        return 'The verification code you entered is invalid. Please try again.';
+      case 'Network error':
+        return 'Please check your internet connection and try again.';
+      default:
+        return 'Something went wrong. Please try again later.';
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -29,28 +44,32 @@ class _ForgotPasswordState extends State<ForgotPassword> {
             child: BlocListener<AuthBloc, AuthState>(
               listener: (context, state) {
                 if (state is AuthLoading) {
-                  // Set loading state to true when the request is initiated
                   setState(() {
                     _isLoading = true;
                   });
-                } else if (state is AuthSuccess) {
-                  // Show success message
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                        content: Text('Check your email for the reset link.')),
-                  );
-                  // Navigate to EmailResetTokenScreen
-                  Navigator.of(context).pushNamed('/emailResetToken');
-                  // Reset loading state after successful operation
+                } else if (state is AuthSuccessVerification) {
                   setState(() {
                     _isLoading = false;
                   });
-                } else if (state is AuthError) {
-                  // Handle error
                   ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text('Error: ${state.error}')),
+                    const SnackBar(
+                      content: const Text('Verification successful!'),
+                      backgroundColor:
+                          Colors.green, // Set the background color to green
+                    ),
                   );
-                  // Reset loading state on error
+                  Navigator.of(context).pushReplacementNamed('/login');
+                } else if (state is AuthError) {
+                  setState(() {
+                    _isLoading = false;
+                  });
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text(_getFriendlyErrorMessage(state.error)),
+                      backgroundColor: Colors.red,
+                    ),
+                  );
+                } else if (state is AuthInitial) {
                   setState(() {
                     _isLoading = false;
                   });
@@ -73,7 +92,7 @@ class _ForgotPasswordState extends State<ForgotPassword> {
                     padding:
                         EdgeInsets.symmetric(horizontal: screenWidth * 0.1),
                     child: Text(
-                      'Please enter the email address associated with your account and we\'ll send you a link to reset your password.',
+                      'Please enter the verification code sent to your email address.',
                       style: TextStyle(
                         color: Colors.black,
                         fontSize: screenHeight * 0.018,
@@ -84,7 +103,7 @@ class _ForgotPasswordState extends State<ForgotPassword> {
                   ),
                   SizedBox(height: screenHeight * 0.05),
                   Form(
-                    key: _formForgotPasswordKey,
+                    key: _formVerificationKey,
                     child: Column(
                       children: [
                         SizedBox(
@@ -92,16 +111,17 @@ class _ForgotPasswordState extends State<ForgotPassword> {
                           child: TextFormField(
                             validator: (value) {
                               if (value == null || value.isEmpty) {
-                                return 'Please enter your email';
+                                return 'Please enter your verification code';
                               }
                               return null;
                             },
                             onChanged: (value) {
-                              _email = value; // Store the email input
+                              _verificationCode =
+                                  value; // Store the verification code input
                             },
                             decoration: InputDecoration(
-                              label: const Text('Email'),
-                              hintText: 'Enter Email',
+                              label: const Text('Verification Code'),
+                              hintText: 'Enter Verification Code',
                               hintStyle: const TextStyle(color: Colors.black26),
                               border: OutlineInputBorder(
                                 borderSide:
@@ -128,13 +148,13 @@ class _ForgotPasswordState extends State<ForgotPassword> {
                             onPressed: _isLoading
                                 ? null // Disable button while loading
                                 : () {
-                                    if (_formForgotPasswordKey.currentState!
+                                    if (_formVerificationKey.currentState!
                                         .validate()) {
-                                      _sendResetEmail(_email!);
+                                      _verifyCode(_verificationCode!);
                                     }
                                   },
                             child: _isLoading
-                                ? const SizedBox(
+                                ? SizedBox(
                                     height: 20,
                                     width: 20,
                                     child: CircularProgressIndicator(
@@ -143,7 +163,7 @@ class _ForgotPasswordState extends State<ForgotPassword> {
                                     ),
                                   )
                                 : const Text(
-                                    'Continue',
+                                    'Verify',
                                     style: TextStyle(fontSize: 18),
                                   ),
                           ),
@@ -153,7 +173,7 @@ class _ForgotPasswordState extends State<ForgotPassword> {
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             const Text(
-                              'Don\'t have an account? ',
+                              'Didn\'t receive the code? ',
                               style: TextStyle(
                                 fontWeight: FontWeight.bold,
                                 color: Colors.black,
@@ -161,10 +181,11 @@ class _ForgotPasswordState extends State<ForgotPassword> {
                             ),
                             GestureDetector(
                               onTap: () {
-                                Navigator.of(context).pushNamed('/signup');
+                                Navigator.of(context).pushNamed(
+                                    '/resendCode'); // Update with your resend code screen
                               },
                               child: const Text(
-                                'Sign up',
+                                'Resend Code',
                                 style: TextStyle(
                                   fontWeight: FontWeight.bold,
                                   color: Color.fromARGB(255, 29, 53, 115),
@@ -185,8 +206,9 @@ class _ForgotPasswordState extends State<ForgotPassword> {
     );
   }
 
-  void _sendResetEmail(String email) {
-    // Call the BLoC to trigger the ForgotPasswordEvent
-    context.read<AuthBloc>().add(ForgotPasswordEvent(email));
+  void _verifyCode(String code) {
+    context
+        .read<AuthBloc>()
+        .add(VerifyUserEvent(email: widget.email, code: code));
   }
 }

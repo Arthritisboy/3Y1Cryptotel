@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hotel_flutter/logic/bloc/auth_bloc.dart';
 import 'package:hotel_flutter/logic/bloc/auth_state.dart';
+import 'package:hotel_flutter/presentation/widgets/dialog/custom_dialog.dart';
 import 'package:hotel_flutter/presentation/widgets/login/custom_text_form_field.dart';
 import 'package:hotel_flutter/presentation/widgets/login/loading_button.dart';
 import 'package:hotel_flutter/logic/bloc/auth_event.dart';
@@ -18,6 +19,7 @@ class _LoginScreenState extends State<LoginScreen> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   bool _isLoading = false;
+  bool _isPasswordVisible = false; // New variable for password visibility
 
   @override
   Widget build(BuildContext context) {
@@ -105,6 +107,13 @@ class _LoginScreenState extends State<LoginScreen> {
                         ),
                       ),
                       SizedBox(height: screenHeight * 0.02),
+
+                      const Text('LOG IN',
+                          style: TextStyle(
+                              fontFamily: 'HammerSmith',
+                              fontSize: 20,
+                              color: Colors.black)),
+                      SizedBox(height: screenHeight * 0.02),
                       CustomTextFormField(
                         label: 'Email',
                         hint: 'Enter Email',
@@ -117,11 +126,20 @@ class _LoginScreenState extends State<LoginScreen> {
                         },
                       ),
                       SizedBox(height: screenHeight * 0.03),
+                      // Updated Password Field with suffixIcon
                       CustomTextFormField(
                         label: 'Password',
                         hint: 'Enter Password',
                         controller: _passwordController,
-                        isObscure: true,
+                        isObscure: true, // Set to true for password field
+                        showPassword:
+                            _isPasswordVisible, // Show password based on visibility
+                        toggleShowPassword: () {
+                          setState(() {
+                            _isPasswordVisible =
+                                !_isPasswordVisible; // Toggle password visibility
+                          });
+                        },
                         validator: (value) {
                           if (value == null || value.isEmpty) {
                             return 'Please enter your password';
@@ -205,17 +223,23 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   void _showErrorDialog(String message) {
+    String friendlyMessage;
+
+    if (message.contains('Invalid') || message.contains('Email')) {
+      friendlyMessage = 'Invalid Email or Password. Please try again';
+    } else {
+      friendlyMessage = 'Invalid Email or Password. Please try again';
+    }
+
     showDialog(
       context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Login Failed'),
-        content: Text(message),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(),
-            child: const Text('OK'),
-          ),
-        ],
+      builder: (context) => CustomDialog(
+        title: 'Login Failed',
+        description: friendlyMessage,
+        buttonText: 'OK', // Button text for closing the dialog
+        onButtonPressed: () => Navigator.of(context).pop(),
+        onSecondButtonPressed:
+            () {}, // Optional, can be left empty if no second button is needed
       ),
     );
   }

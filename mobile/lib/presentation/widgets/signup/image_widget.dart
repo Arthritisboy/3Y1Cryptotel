@@ -3,11 +3,11 @@ import 'package:flutter/material.dart';
 class ImageWidget extends StatelessWidget {
   final String imagePath;
 
-  const ImageWidget({Key? key, required this.imagePath}) : super(key: key);
+  const ImageWidget({super.key, required this.imagePath});
 
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return SizedBox(
       width: double.infinity,
       height: MediaQuery.of(context).size.height * 0.4,
       child: Image.asset(

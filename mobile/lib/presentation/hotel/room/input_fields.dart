@@ -8,6 +8,8 @@ class InputFields extends StatelessWidget {
   final TextEditingController checkInTimeController = TextEditingController();
   final TextEditingController checkOutTimeController = TextEditingController();
 
+  InputFields({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -73,7 +75,7 @@ class InputFields extends StatelessWidget {
           ),
         ),
         const SizedBox(height: 4), // Space between label and text field
-        Container(
+        SizedBox(
           height: 40, // Adjust height here
           child: TextField(
             controller: controller,

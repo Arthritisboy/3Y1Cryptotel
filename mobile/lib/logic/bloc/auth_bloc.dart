@@ -1,13 +1,10 @@
 import 'package:bloc/bloc.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:hotel_flutter/data/respositories/auth_repository.dart';
+import 'package:hotel_flutter/data/repositories/auth_repository.dart';
 import 'package:hotel_flutter/logic/bloc/auth_event.dart';
 import 'package:hotel_flutter/logic/bloc/auth_state.dart';
 
 class AuthBloc extends Bloc<AuthEvent, AuthState> {
   final AuthRepository authRepository;
-  final FlutterSecureStorage _secureStorage = const FlutterSecureStorage();
-
   AuthBloc(this.authRepository) : super(AuthInitial()) {
     on<SignUpEvent>((event, emit) async {
       emit(AuthLoading());
@@ -25,7 +22,11 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         final user = await authRepository.login(event.email, event.password);
         emit(AuthenticatedLogin(user));
       } catch (e) {
-        emit(AuthError('Login failed: ${e.toString()}'));
+        if (e.toString().contains('Invalid email or password')) {
+          emit(const AuthError('Invalid email or password. Please try again.'));
+        } else {
+          emit(AuthError('Login failed: ${e.toString()}'));
+        }
       }
     });
 
@@ -33,7 +34,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       emit(AuthLoading());
       try {
         await authRepository.forgotPassword(event.email);
-        emit(AuthSuccess('Reset link sent to your email'));
+        emit(const AuthSuccess('Reset link sent to your email'));
       } catch (e) {
         emit(AuthError('Failed to send reset link: ${e.toString()}'));
       }
@@ -81,6 +82,16 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         emit(Authenticated(event.user));
       } catch (error) {
         emit(AuthError('Failed to update user: $error'));
+      }
+    });
+
+    on<VerifyUserEvent>((event, emit) async {
+      emit(AuthLoading());
+      try {
+        await authRepository.verifyUser(event.email, event.code);
+        emit(const AuthSuccessVerification('Verification successful!'));
+      } catch (e) {
+        emit(AuthError('Verification failed: ${e.toString()}'));
       }
     });
 

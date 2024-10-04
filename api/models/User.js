@@ -42,6 +42,16 @@ const userSchema = new mongoose.Schema(
         message: `Password are not the same!`,
       },
     },
+    verificationCode: {
+      type: String,
+    },
+    codeExpires: {
+      type: Date,
+    },
+    verified: {
+      type: Boolean,
+      default: false,
+    },
     roles: {
       type: String,
       enum: ['user', 'admin'],
@@ -61,6 +71,13 @@ const userSchema = new mongoose.Schema(
       default: true,
       select: false,
     },
+    profile: {
+      type: String,
+    },
+    hasCompletedOnboarding: {
+      type: Boolean,
+      default: false,
+    }
   },
 
   { timestamps: true },
@@ -128,4 +145,14 @@ userSchema.methods.createPasswordResetToken = function () {
   return resetToken;
 };
 
+//! Generate Verification Code
+userSchema.methods.createVerificationCode = function () {
+  const verificationCode = crypto.randomBytes(3).toString('hex');
+  this.verificationCode = crypto
+    .createHash('sha256')
+    .update(verificationCode)
+    .digest('hex');
+  this.codeExpires = Date.now() + 10 * 60 * 1000;
+  return verificationCode;
+};
 module.exports = mongoose.model('User', userSchema);

@@ -4,7 +4,7 @@ import 'day_selector.dart';
 import 'input_fields.dart';
 
 class ReservationBooking extends StatefulWidget {
-  const ReservationBooking({Key? key}) : super(key: key);
+  const ReservationBooking({super.key});
 
   @override
   _ReservationBookingState createState() => _ReservationBookingState();

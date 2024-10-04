@@ -9,7 +9,7 @@ import 'package:hotel_flutter/presentation/widgets/profile/bottom_section.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 class ProfileScreen extends StatefulWidget {
-  ProfileScreen({
+  const ProfileScreen({
     super.key,
     required this.firstName,
     required this.lastName,

@@ -1,6 +1,5 @@
 const User = require('../models/User');
-const { StatusCodes } = require('http-status-codes');
-const { BadRequestError, UnauthenticatedError } = require('../errors');
+const { uploadProfileImage } = require('../middleware/imageUpload');
 const catchAsync = require('../utils/catchAsync');
 const AppError = require('../utils/appError');
 const { promisify } = require('util');
@@ -28,16 +27,130 @@ const createSendToken = (user, statusCode, res, additionalData = {}) => {
   });
 };
 
+// ** Register controller
 exports.register = catchAsync(async (req, res) => {
-  const newUser = await User.create({ ...req.body });
-  //! Creation of token
-  createSendToken(newUser, 201, res);
+  let profile = undefined;
+
+  if (req.file) {
+    try {
+      profile = await uploadProfileImage(req); 
+    } catch (uploadErr) {
+      return res.status(500).json({
+        status: 'error',
+        message: 'Image upload failed',
+        error: uploadErr
+      });
+    }
+  }
+
+  const newUser = await User.create({
+    firstName: req.body.firstName,
+    lastName: req.body.lastName,
+    email: req.body.email,
+    password: req.body.password,
+    confirmPassword: req.body.confirmPassword,
+    profile: profile || undefined  
+  });
+
+  console.warn("New user created:", newUser);
+
+  // Send a token and user data as a response
+  // createSendToken(newUser, 201, res);
+
+  //! Send verification code after signup
+  const verificationCode = newUser.createVerificationCode();
+  await newUser.save({ validateBeforeSave: false });
+
+  const message = `Your verification code is: ${verificationCode}. This code is valid for 10 minutes.`;
+
+  try {
+    await sendEmail({
+      email: newUser.email,
+      subject: 'Verification Code',
+      message,
+    });
+    res.status(201).json({
+      status: 'success',
+      message: 'User registered! Verification code sent to email.',
+    });
+  } catch (error) {
+    newUser.verificationCode = undefined;
+    newUser.codeExpires = undefined;
+    await newUser.save({ validateBeforeSave: false });
+
+    return next(
+      new AppError('Error sending verification code. Please try again.', 500),
+    );
+  }
 });
 
+exports.sendVerificationCode = catchAsync(async (req, res, next) => {
+  const user = await User.findOne({ email: req.body.email });
+
+  if (!user) {
+    return next(new AppError('User not found with this email.', 404));
+  }
+
+  const verificationCode = user.createVerificationCode();
+  await user.save({ validateBeforeSave: false });
+
+  try {
+    await sendEmail({
+      email: user.email,
+      subject: 'Your Verification Code',
+      verificationCode: verificationCode,
+      type: 'verification',
+    });
+    res.status(200).json({
+      status: 'success',
+      message: 'Verification code sent to email!',
+    });
+  } catch (err) {
+    user.verificationCode = undefined;
+    user.codeExpires = undefined;
+    await user.save({ validateBeforeSave: false });
+
+    return next(
+      new AppError('Error sending verification code. Try again later.', 500),
+    );
+  }
+});
+// ** Verify code controller
+exports.verifyCode = catchAsync(async (req, res, next) => {
+  const { email, code } = req.body;
+
+  const hashedCode = crypto.createHash('sha256').update(code).digest('hex');
+
+  // Find user by email and verification code, ensuring code has not expired
+  const user = await User.findOne({
+    email,
+    verificationCode: hashedCode,
+    codeExpires: { $gt: Date.now() }, // Ensure the code has not expired
+  });
+
+  if (!user) {
+    return next(new AppError('Invalid or expired verification code.', 400));
+  }
+
+  // Mark user as verified and clear verificationCode and codeExpires fields
+  user.verified = true;
+  user.verificationCode = undefined;
+  user.codeExpires = undefined;
+
+  // Use { validateBeforeSave: false } to prevent Mongoose from trying to validate confirmPassword
+  await user.save({ validateBeforeSave: false });
+
+  res.status(200).json({
+    status: 'success',
+    message: 'User successfully verified!',
+  });
+});
+
+// ** Login Controller
 exports.login = catchAsync(async (req, res, next) => {
   const { email, password } = req.body;
 
-  // Check if email and password exist
+  //! Check if email and password exist
   if (!email || !password) {
     return next(new AppError('Please provide email and password', 400));
   }
@@ -49,10 +162,17 @@ exports.login = catchAsync(async (req, res, next) => {
     return next(new AppError('Incorrect email or password', 401));
   }
 
+  if (!user.verified) {
+    return next(
+      new AppError('Please verify your email before logging in.', 401),
+    );
+  }
+
   //! Send the token and user id in the response only for login
   createSendToken(user, 200, res, { userId: user._id });
 });
 
+// ** Protected Controller
 exports.protect = catchAsync(async (req, res, next) => {
   //! 1) Getting token and check of it's there
   let token;
@@ -90,11 +210,12 @@ exports.protect = catchAsync(async (req, res, next) => {
     );
   }
 
-  // ** GRANT ACCESS TO THE USER ROUTE
+  // !! GRANT ACCESS TO THE USER ROUTE
   req.user = currentUser;
   next();
 });
 
+// ** Restring the access Controller
 exports.restrictTo = (...roles) => {
   return (req, res, next) => {
     console.log(req.user);
@@ -107,6 +228,7 @@ exports.restrictTo = (...roles) => {
   };
 };
 
+// ** Forgot Password Controller
 exports.forgotPassword = catchAsync(async (req, res, next) => {
   //! 1) Get user based on resetToken
   const user = await User.findOne({ email: req.body.email });
@@ -116,18 +238,15 @@ exports.forgotPassword = catchAsync(async (req, res, next) => {
   const resetToken = user.createPasswordResetToken();
   await user.save({ validateBeforeSave: false });
 
-  // ** Node Emailer
+  // Node Emailer
   //! 3) Send it to the user's email
-  const resetURL = `${req.protocol}://${req.get(
-    'host',
-  )}/api/v1/users/resetPassword/${resetToken}`;
 
-  const message = `Forgot your password? Submit a PATCH request with your new password and passwordConfirm to: ${resetURL}.\nIf you didn't forget your password, please ignore this email!`;
   try {
     await sendEmail({
       email: user.email,
       subject: 'Your password reset token (valid for 10min)',
-      message,
+      resetToken: resetToken,
+      type: 'reset',
     });
     res.status(200).json({
       status: 'success',
@@ -146,6 +265,8 @@ exports.forgotPassword = catchAsync(async (req, res, next) => {
     );
   }
 });
+
+// ** Reset Password Controller
 exports.resetPassword = catchAsync(async (req, res, next) => {
   //! 1) Get user based on the token
   const hashedToken = crypto
@@ -173,6 +294,7 @@ exports.resetPassword = catchAsync(async (req, res, next) => {
   createSendToken(user, 200, res);
 });
 
+// ** Update Password Controller
 exports.updatePassword = catchAsync(async (req, res, next) => {
   //! 1) Get user from collection
   const user = await User.findById(req.user.id).select('+password');

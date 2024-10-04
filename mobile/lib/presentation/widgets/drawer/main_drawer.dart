@@ -50,21 +50,6 @@ class MainDrawer extends StatelessWidget {
           ),
           ListTile(
             leading: Image.asset(
-              'assets/images/icons/homewhite.png',
-              height: 30,
-              width: 30,
-            ),
-            title: Text(
-              'Home',
-              style: Theme.of(context).textTheme.titleSmall!.copyWith(
-                    color: Colors.white,
-                    fontSize: 22,
-                  ),
-            ),
-            onTap: () => onSelectScreen('homescreen'),
-          ),
-          ListTile(
-            leading: Image.asset(
               'assets/images/icons/userwhite.png',
               height: 30,
               width: 30,
@@ -106,7 +91,7 @@ class MainDrawer extends StatelessWidget {
                   ),
             ),
             onTap: () {
-              onSelectScreen('profile');
+              onSelectScreen('favorite');
             },
           ),
           ListTile(
@@ -123,7 +108,7 @@ class MainDrawer extends StatelessWidget {
                   ),
             ),
             onTap: () {
-              onSelectScreen('profile');
+              onSelectScreen('help');
             },
           ),
           ListTile(

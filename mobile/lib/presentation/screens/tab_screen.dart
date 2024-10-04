@@ -5,6 +5,7 @@ import 'package:hotel_flutter/logic/bloc/auth_event.dart';
 import 'package:hotel_flutter/logic/bloc/auth_state.dart';
 import 'package:hotel_flutter/presentation/screens/home_screen.dart';
 import 'package:hotel_flutter/presentation/screens/restaurant_screen.dart';
+import 'package:hotel_flutter/presentation/widgets/dialog/custom_dialog.dart';
 import 'package:hotel_flutter/presentation/widgets/tabscreen/bottom_home_icon_navigation.dart';
 import 'package:hotel_flutter/presentation/widgets/tabscreen/tab_header.dart';
 import 'package:hotel_flutter/presentation/widgets/drawer/main_drawer.dart';
@@ -20,8 +21,7 @@ class TabScreen extends StatefulWidget {
 class _TabScreenState extends State<TabScreen> {
   final FlutterSecureStorage _secureStorage = const FlutterSecureStorage();
   int _selectedIndex = 0;
-  bool _isLoading = true; // Loading state
-
+  bool _isLoading = true;
   String? firstName;
   String? lastName;
   String? email;
@@ -42,9 +42,7 @@ class _TabScreenState extends State<TabScreen> {
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<AuthBloc, AuthState>(builder: (context, state) {
-      // Handle authentication states
       if (state is Authenticated) {
-        // Update user data when authenticated
         firstName = state.user.firstName ?? '';
         lastName = state.user.lastName ?? '';
         email = state.user.email ?? '';
@@ -75,7 +73,6 @@ class _TabScreenState extends State<TabScreen> {
           children: [
             Column(
               children: [
-                // Show loading indicator while loading
                 if (_isLoading)
                   const Expanded(
                     child: Center(
@@ -91,8 +88,6 @@ class _TabScreenState extends State<TabScreen> {
                       lastName: lastName!,
                     ),
                   const SizedBox(height: 10),
-
-                  // Build BottomHomeIconNavigation only if state is Authenticated
                   if (state is Authenticated) ...[
                     BottomHomeIconNavigation(
                       selectedIndex: _selectedIndex,
@@ -170,10 +165,31 @@ class _TabScreenState extends State<TabScreen> {
         Navigator.of(context).pushNamed('/settings');
         break;
       case 'logout':
-        context.read<AuthBloc>().add(LogoutEvent());
+        _showLogoutConfirmationDialog();
         break;
       default:
-        return null;
+        return;
     }
+  }
+
+  void _showLogoutConfirmationDialog() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return CustomDialog(
+          title: 'Logout Confirmation',
+          description: 'Are you sure you want to logout?',
+          buttonText: 'Yes',
+          onButtonPressed: () {
+            context.read<AuthBloc>().add(LogoutEvent());
+            Navigator.of(context).pop(); // Close dialog
+          },
+          secondButtonText: 'No',
+          onSecondButtonPressed: () {
+            Navigator.of(context).pop(); // Close dialog
+          },
+        );
+      },
+    );
   }
 }

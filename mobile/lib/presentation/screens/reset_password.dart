@@ -7,7 +7,7 @@ import 'package:hotel_flutter/logic/bloc/auth_state.dart';
 class ResetPassword extends StatefulWidget {
   final String token; // Add a token parameter to the widget
 
-  const ResetPassword({Key? key, required this.token}) : super(key: key);
+  const ResetPassword({super.key, required this.token});
 
   @override
   State<ResetPassword> createState() => ResetPasswordState();
@@ -39,7 +39,7 @@ class ResetPasswordState extends State<ResetPassword> {
                   ScaffoldMessenger.of(context).showSnackBar(
                     const SnackBar(content: Text('Password reset successful!')),
                   );
-                  Navigator.of(context).pushNamed('/login');
+                  Navigator.of(context).pushReplacementNamed('/login');
                   setState(() {
                     _isLoading = false;
                   });
