@@ -15,11 +15,12 @@ class AuthLoading extends AuthState {}
 
 class AuthenticatedLogin extends AuthState {
   final LoginModel user;
+  final bool hasCompletedOnboarding;
 
-  const AuthenticatedLogin(this.user);
+  const AuthenticatedLogin(this.user, {this.hasCompletedOnboarding = false});
 
   @override
-  List<Object> get props => [user];
+  List<Object> get props => [user, hasCompletedOnboarding];
 }
 
 class Authenticated extends AuthState {

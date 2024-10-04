@@ -49,7 +49,8 @@ exports.register = catchAsync(async (req, res) => {
     email: req.body.email,
     password: req.body.password,
     confirmPassword: req.body.confirmPassword,
-    profile: profile || undefined  
+    profile: profile || undefined  ,
+    hasOnboardingCompleted: req.body.hasOnboardingCompleted,
   });
 
   console.warn("New user created:", newUser);
@@ -168,8 +169,10 @@ exports.login = catchAsync(async (req, res, next) => {
     );
   }
 
+  console.log('User has completed onboarding:', user.hasCompletedOnboarding);
+
   //! Send the token and user id in the response only for login
-  createSendToken(user, 200, res, { userId: user._id });
+  createSendToken(user, 200, res, { userId: user._id, hasCompletedOnboarding: user.hasCompletedOnBoarding });
 });
 
 // ** Protected Controller

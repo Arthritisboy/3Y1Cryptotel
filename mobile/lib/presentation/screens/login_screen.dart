@@ -37,7 +37,12 @@ class _LoginScreenState extends State<LoginScreen> {
             setState(() {
               _isLoading = false;
             });
-            Navigator.of(context).pushNamed('/homescreen');
+            // Check onboarding status
+            if (state.hasCompletedOnboarding) {
+              Navigator.of(context).pushNamed('/homescreen');
+            } else {
+              Navigator.of(context).pushNamed('/onboarding');
+            }
           } else if (state is AuthError) {
             setState(() {
               _isLoading = false;

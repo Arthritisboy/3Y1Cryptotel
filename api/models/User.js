@@ -73,6 +73,10 @@ const userSchema = new mongoose.Schema(
     },
     profile: {
       type: String,
+    },
+    hasCompletedOnBoarding: {
+      type: Boolean,
+      default: false
     }
   },
 
