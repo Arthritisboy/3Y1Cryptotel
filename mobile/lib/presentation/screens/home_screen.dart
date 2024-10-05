@@ -43,17 +43,21 @@ class HomeScreen extends StatelessWidget {
       return Padding(
         padding: const EdgeInsets.only(right: 10.0),
         child: InkWell(
-          onTap: () {
+          onTap: () async {
+            List<double> coordinates = await hotel.getCoordinates();
             Navigator.push(
               context,
               MaterialPageRoute(
                 builder: (context) => HotelScreen(
-                    backgroundImage: hotel.imagePath,
-                    hotelName: hotel.hotelName,
-                    rating: hotel.rating,
-                    price: hotel.price,
-                    location: hotel.location,
-                    time: hotel.time),
+                  backgroundImage: hotel.imagePath,
+                  hotelName: hotel.hotelName,
+                  rating: hotel.rating,
+                  price: hotel.price,
+                  location: hotel.location,
+                  time: hotel.time,
+                  latitude: coordinates[0],
+                  longtitude: coordinates[1],
+                ),
               ),
             );
           },

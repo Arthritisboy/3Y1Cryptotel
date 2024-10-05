@@ -1,3 +1,5 @@
+import 'package:geocoding/geocoding.dart';
+
 class Hotel {
   final String imagePath;
   final String hotelName;
@@ -8,15 +10,16 @@ class Hotel {
   final int contactNumber;
   final String email;
 
-  Hotel(
-      {required this.imagePath,
-      required this.hotelName,
-      required this.rating,
-      required this.price,
-      required this.location,
-      required this.time,
-      required this.contactNumber,
-      required this.email});
+  Hotel({
+    required this.imagePath,
+    required this.hotelName,
+    required this.rating,
+    required this.price,
+    required this.location,
+    required this.time,
+    required this.contactNumber,
+    required this.email,
+  });
 
   factory Hotel.fromMap(Map<String, dynamic> data) {
     return Hotel(
@@ -40,6 +43,17 @@ class Hotel {
       'location': location,
       'time': time,
       'contactNumber': contactNumber,
+      'email': email, // Added email to the map
     };
+  }
+
+  Future<List<double>> getCoordinates() async {
+    try {
+      List<Location> locations = await locationFromAddress(location);
+      return [locations.first.latitude, locations.first.longitude];
+    } catch (e) {
+      // Handle exceptions, e.g., if the address is not found
+      return [0.0, 0.0]; // Return a default value or handle it differently
+    }
   }
 }
