@@ -3,12 +3,16 @@ const bookingController = require('../controllers/bookingController');
 
 const router = express.Router();
 
-router.get('/getBooking', bookingController.getBooking);
+// Get all bookings for the current user
+router.get('/bookings', bookingController.getBookings);
 
-router.route('/createBooking').post(bookingController.createBooking);
+// Create a new booking
+router.post('/bookings', bookingController.createBooking);
 
-router.patch('/editBooking', bookingController.updateBooking);
+// Update a booking by ID
+router.patch('/bookings/:bookingId', bookingController.updateBooking);
 
-router.delete('/deleteBooking', bookingController.deleteBooking);
+// Delete a booking by ID
+router.delete('/bookings/:bookingId', bookingController.deleteBooking);
 
 module.exports = router;
