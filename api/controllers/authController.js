@@ -28,17 +28,17 @@ const createSendToken = (user, statusCode, res, additionalData = {}) => {
 };
 
 // ** Register controller
-exports.register = catchAsync(async (req, res) => {
+exports.register = catchAsync(async (req, res, next) => {
   let profile = undefined;
 
   if (req.file) {
     try {
-      profile = await uploadProfileImage(req); 
+      profile = await uploadProfileImage(req);
     } catch (uploadErr) {
       return res.status(500).json({
         status: 'error',
         message: 'Image upload failed',
-        error: uploadErr
+        error: uploadErr,
       });
     }
   }
@@ -49,11 +49,11 @@ exports.register = catchAsync(async (req, res) => {
     email: req.body.email,
     password: req.body.password,
     confirmPassword: req.body.confirmPassword,
-    profile: profile || undefined  ,
+    profile: profile || undefined,
     hasOnboardingCompleted: req.body.hasOnboardingCompleted,
   });
 
-  console.warn("New user created:", newUser);
+  console.warn('New user created:', newUser);
 
   // Send a token and user data as a response
   // createSendToken(newUser, 201, res);
@@ -172,7 +172,10 @@ exports.login = catchAsync(async (req, res, next) => {
   console.log('User has completed onboarding:', user.hasCompletedOnboarding);
 
   //! Send the token and user id in the response only for login
-  createSendToken(user, 200, res, { userId: user._id, hasCompletedOnboarding: user.hasCompletedOnBoarding });
+  createSendToken(user, 200, res, {
+    userId: user._id,
+    hasCompletedOnboarding: user.hasCompletedOnBoarding,
+  });
 });
 
 // ** Protected Controller

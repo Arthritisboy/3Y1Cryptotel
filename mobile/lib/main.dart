@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hotel_flutter/data/data_provider/auth/auth_data_provider.dart';
 import 'package:hotel_flutter/logic/bloc/auth_bloc.dart';
 import 'package:hotel_flutter/presentation/screens/splash_screen.dart';
+import 'package:hotel_flutter/presentation/screens/user_guide_screen.dart';
 import 'package:hotel_flutter/router/app_router.dart';
 import 'package:hotel_flutter/data/repositories/auth_repository.dart';
 
@@ -59,7 +60,7 @@ class MyApp extends StatelessWidget {
                 .apply(bodyColor: Colors.black, displayColor: Colors.black),
           ),
         ),
-        home: const SplashScreen(),
+        home: UserGuideScreen(),
       ),
     );
   }
