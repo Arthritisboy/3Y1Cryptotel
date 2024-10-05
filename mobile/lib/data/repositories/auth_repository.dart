@@ -22,7 +22,6 @@ class AuthRepository {
       final data = await dataProvider.login(email, password);
       return LoginModel.fromJson(data);
     } catch (e) {
-      print('Error during login: ${e.toString()}');
       throw Exception('Login failed: ${e.toString()}');
     }
   }
@@ -106,7 +105,6 @@ class AuthRepository {
       final user = await getUser(userId);
       return user.hasCompletedOnboarding ?? false;
     } catch (e) {
-      print('Error checking onboarding status: ${e.toString()}');
       return false; // Default to false on error
     }
   }

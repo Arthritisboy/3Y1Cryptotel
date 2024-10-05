@@ -1,4 +1,5 @@
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+// ignore: depend_on_referenced_packages
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:hotel_flutter/data/model/user_model.dart';
@@ -21,7 +22,6 @@ class AuthDataProvider {
 
     if (response.statusCode == 200) {
       final data = json.decode(response.body);
-      print('Response: $response'); // Log the response
 
       String token = data['token'];
       String userId = data['userId'];
@@ -37,7 +37,6 @@ class AuthDataProvider {
       final errorResponse = json.decode(response.body);
       String errorMessage = errorResponse['message'] ??
           'Invalid email or password. Please try again.';
-      print(errorMessage);
       throw Exception(errorMessage);
     } else {
       final errorResponse = json.decode(response.body);
@@ -131,7 +130,6 @@ class AuthDataProvider {
       final jsonResponse = json.decode(response.body);
       return UserModel.fromJson(jsonResponse['data']['user']);
     } else {
-      print('Error response body: ${response.body}');
       final errorResponse = json.decode(response.body);
       String errorMessage =
           errorResponse['message'] ?? 'Failed to fetch user data';
@@ -143,7 +141,6 @@ class AuthDataProvider {
   Future<void> updatePassword(String currentPassword, String newPassword,
       String confirmPassword) async {
     final token = await storage.read(key: 'jwt');
-    print(token);
 
     final response = await http.patch(
       Uri.parse('$baseUrl/updateMyPassword'),
