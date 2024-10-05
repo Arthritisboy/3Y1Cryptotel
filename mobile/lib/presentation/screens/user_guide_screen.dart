@@ -55,37 +55,37 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  Expanded(
-                    child: PageView.builder(
-                      controller: _pageController,
-                      onPageChanged: (index) {
-                        setState(() {
-                          _currentPage = index;
-                        });
-                      },
-                      itemCount: _images.length,
-                      itemBuilder: (context, index) {
-                        return Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Image.asset(
-                              _images[index],
-                              height: 300,
-                              fit: BoxFit.cover,
+                  // Removed Expanded to center the content more closely like UserGuideScreen
+                  SizedBox(height: 50), // Adding space at the top
+                  PageView.builder(
+                    controller: _pageController,
+                    onPageChanged: (index) {
+                      setState(() {
+                        _currentPage = index;
+                      });
+                    },
+                    itemCount: _images.length,
+                    itemBuilder: (context, index) {
+                      return Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Image.asset(
+                            _images[index],
+                            height: 300,
+                            fit: BoxFit.cover,
+                          ),
+                          const SizedBox(height: 20),
+                          Text(
+                            _descriptions[index],
+                            style: const TextStyle(
+                              fontSize: 18,
+                              color: Colors.black,
                             ),
-                            const SizedBox(height: 20),
-                            Text(
-                              _descriptions[index],
-                              style: const TextStyle(
-                                fontSize: 18,
-                                color: Colors.black,
-                              ),
-                              textAlign: TextAlign.center,
-                            ),
-                          ],
-                        );
-                      },
-                    ),
+                            textAlign: TextAlign.center,
+                          ),
+                        ],
+                      );
+                    },
                   ),
                   const SizedBox(height: 20),
                   Row(

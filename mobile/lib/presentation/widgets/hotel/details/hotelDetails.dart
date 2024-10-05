@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:hotel_flutter/presentation/widgets/hotel/map/map_widget.dart';
 
 class HotelDetails extends StatelessWidget {
   final String hotelName;
@@ -6,6 +7,8 @@ class HotelDetails extends StatelessWidget {
   final int price;
   final String location;
   final String time;
+  final double latitude;
+  final double longitude;
 
   const HotelDetails({
     super.key,
@@ -14,12 +17,15 @@ class HotelDetails extends StatelessWidget {
     required this.price,
     required this.location,
     required this.time,
+    required this.latitude,
+    required this.longitude,
   });
 
   @override
   Widget build(BuildContext context) {
     return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
+      crossAxisAlignment:
+          CrossAxisAlignment.start, // Align children to the start
       children: [
         const Text(
           'Details',
@@ -30,23 +36,39 @@ class HotelDetails extends StatelessWidget {
           ),
         ),
         const SizedBox(height: 10),
-        Row(
+
+        // Modify the location section
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Icon(Icons.location_on,
-                color: Color.fromARGB(255, 142, 142, 147), size: 26),
-            const SizedBox(width: 8.0),
-            Expanded(
-              child: Text(
-                'Location: $location',
-                style: const TextStyle(
-                  fontSize: 18.0,
-                  fontWeight: FontWeight.w400,
-                  color: Colors.black,
+            Row(
+              children: [
+                const Icon(Icons.location_on,
+                    color: Color.fromARGB(255, 142, 142, 147), size: 26),
+                const SizedBox(width: 8.0),
+                Expanded(
+                  child: Text(
+                    'Location: $location',
+                    style: const TextStyle(
+                      fontSize: 18.0,
+                      fontWeight: FontWeight.w400,
+                      color: Colors.black,
+                    ),
+                    maxLines: 2, // Limit to 2 lines, adjust as needed
+                    overflow: TextOverflow.visible, // Show the full text
+                  ),
                 ),
-              ),
+              ],
             ),
+            const SizedBox(height: 10),
           ],
         ),
+
+        // Center the MapWidget
+        Center(
+          child: MapWidget(latitude: latitude, longitude: longitude),
+        ),
+
         const SizedBox(height: 10),
         Row(
           children: [
@@ -79,6 +101,7 @@ class HotelDetails extends StatelessWidget {
             ),
           ],
         ),
+        const SizedBox(height: 20),
       ],
     );
   }

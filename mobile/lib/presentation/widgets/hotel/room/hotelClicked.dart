@@ -1,15 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:hotel_flutter/presentation/hotel/details/hotelDetails.dart';
-import 'package:hotel_flutter/presentation/hotel/room/navigation_row.dart';
-import 'package:hotel_flutter/presentation/hotel/room/roomSelection.dart';
 import 'package:hotel_flutter/data/model/room_model.dart';
 import 'package:hotel_flutter/data/dummydata/room_data.dart';
-import 'package:hotel_flutter/presentation/hotel/ratings/hotelRatings.dart';
 import 'package:hotel_flutter/data/dummydata/rating_data.dart';
 import 'package:hotel_flutter/data/model/rating_model.dart';
-
-
-
+import 'package:hotel_flutter/presentation/widgets/hotel/details/hotelDetails.dart';
+import 'package:hotel_flutter/presentation/widgets/hotel/ratings/hotelRatings.dart';
+import 'package:hotel_flutter/presentation/widgets/hotel/room/navigation_row.dart';
+import 'package:hotel_flutter/presentation/widgets/hotel/room/roomSelection.dart';
 
 class Hotelclicked extends StatefulWidget {
   final String hotelName;
@@ -19,17 +16,20 @@ class Hotelclicked extends StatefulWidget {
   final String time;
   final int activeIndex;
   final Function(int) onNavTap;
+  final double latitude; // Added latitude parameter
+  final double longtitude; // Added longitude parameter
 
-  const Hotelclicked({
-    super.key,
-    required this.hotelName,
-    required this.rating,
-    required this.price,
-    required this.location,
-    required this.time,
-    required this.activeIndex,
-    required this.onNavTap,
-  });
+  const Hotelclicked(
+      {super.key,
+      required this.hotelName,
+      required this.rating,
+      required this.price,
+      required this.location,
+      required this.time,
+      required this.activeIndex,
+      required this.onNavTap,
+      required this.longtitude,
+      required this.latitude});
 
   @override
   State<Hotelclicked> createState() => _ReservationRoomState();
@@ -38,9 +38,12 @@ class Hotelclicked extends StatefulWidget {
 class _ReservationRoomState extends State<Hotelclicked> {
   @override
   Widget build(BuildContext context) {
-    final List<RoomModel> filteredRoomList = roomList.where((room) => room.hotelName == widget.hotelName).toList();
-    final List<Rating> filteredRatingList = userRatings.where((rating) => rating.hotelName == widget.hotelName).toList();
-    
+    final List<RoomModel> filteredRoomList =
+        roomList.where((room) => room.hotelName == widget.hotelName).toList();
+    final List<Rating> filteredRatingList = userRatings
+        .where((rating) => rating.hotelName == widget.hotelName)
+        .toList();
+
     return Padding(
       padding: const EdgeInsets.only(left: 16, right: 16, top: 20),
       child: Column(
@@ -60,7 +63,8 @@ class _ReservationRoomState extends State<Hotelclicked> {
               ClipRRect(
                 borderRadius: BorderRadius.circular(5.0),
                 child: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 6.0, vertical: 5.0),
+                  padding: const EdgeInsets.symmetric(
+                      horizontal: 6.0, vertical: 5.0),
                   color: const Color.fromARGB(255, 29, 53, 115),
                   child: Row(
                     children: [
@@ -83,7 +87,8 @@ class _ReservationRoomState extends State<Hotelclicked> {
           const SizedBox(height: 5),
           Row(
             children: [
-              const Icon(Icons.attach_money, color: Color.fromARGB(255, 142, 142, 147), size: 26),
+              const Icon(Icons.attach_money,
+                  color: Color.fromARGB(255, 142, 142, 147), size: 26),
               const SizedBox(width: 8.0),
               Text(
                 '₱${widget.price} and over',
@@ -98,7 +103,8 @@ class _ReservationRoomState extends State<Hotelclicked> {
           const SizedBox(height: 3),
           Row(
             children: [
-              const Icon(Icons.access_time, color: Color.fromARGB(255, 142, 142, 147), size: 26),
+              const Icon(Icons.access_time,
+                  color: Color.fromARGB(255, 142, 142, 147), size: 26),
               const SizedBox(width: 8.0),
               Text(
                 "Open Hours: ${widget.time}",
@@ -113,7 +119,8 @@ class _ReservationRoomState extends State<Hotelclicked> {
           const SizedBox(height: 3),
           Row(
             children: [
-              const Icon(Icons.location_on_outlined, color: Color.fromARGB(255, 142, 142, 147), size: 26),
+              const Icon(Icons.location_on_outlined,
+                  color: Color.fromARGB(255, 142, 142, 147), size: 26),
               const SizedBox(width: 8.0),
               Text(
                 widget.location,
@@ -128,24 +135,26 @@ class _ReservationRoomState extends State<Hotelclicked> {
             activeIndex: widget.activeIndex,
             onTap: widget.onNavTap,
           ),
-          const Divider(thickness: 2, color: Color.fromARGB(255, 142, 142, 147)),
-          
+          const Divider(
+              thickness: 2, color: Color.fromARGB(255, 142, 142, 147)),
+
           // Show RoomSelection or hotel details based on the active tab
           if (widget.activeIndex == 0)
             RoomSelection(roomList: filteredRoomList),
           if (widget.activeIndex == 1)
-            HotelDetails( // You can replace this with your hotel details UI
+            HotelDetails(
+              // You can replace this with your hotel details UI
               hotelName: widget.hotelName,
               rating: widget.rating,
               price: widget.price,
               location: widget.location,
-              time: widget.time,
+              time: widget.time, latitude: widget.latitude,
+              longitude: widget.longtitude,
             ),
-          if(widget.activeIndex == 2)
+          if (widget.activeIndex == 2)
             UserRatingsWidget(ratings: filteredRatingList),
         ],
       ),
     );
   }
 }
-
