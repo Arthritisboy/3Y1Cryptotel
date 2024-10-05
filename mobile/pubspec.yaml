@@ -70,6 +70,7 @@ flutter:
     - assets/images/hotels/monarchHotel.jpg
     - assets/images/hotels/starPlaza.jpg
     - assets/images/hotels/lenoxHotel.jpg
+    - assets/images/onboarding/
 
     # - assets/images/others/hotel.png
     # - assets/images/others/Vinna.jpg
