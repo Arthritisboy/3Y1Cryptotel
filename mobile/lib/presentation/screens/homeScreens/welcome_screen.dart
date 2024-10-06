@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:hotel_flutter/presentation/screens/login_screen.dart'; // Import your login screen
-import 'package:hotel_flutter/presentation/screens/signup_screen.dart'; // Import your signup screen
+import 'package:hotel_flutter/presentation/screens/authScreens/login_screen.dart'; // Import your login screen
+import 'package:hotel_flutter/presentation/screens/authScreens/signup_screen.dart'; // Import your signup screen
 
 class WelcomeScreen extends StatefulWidget {
   const WelcomeScreen({super.key});
