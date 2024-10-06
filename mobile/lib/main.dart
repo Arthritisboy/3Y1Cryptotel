@@ -6,6 +6,7 @@ import 'package:hotel_flutter/logic/bloc/auth_bloc.dart';
 import 'package:hotel_flutter/presentation/screens/signup_screen.dart';
 import 'package:hotel_flutter/presentation/screens/splash_screen.dart';
 import 'package:hotel_flutter/presentation/screens/test_screen.dart';
+import 'package:hotel_flutter/presentation/screens/upload_picture_screen.dart';
 import 'package:hotel_flutter/router/app_router.dart';
 import 'package:hotel_flutter/data/repositories/auth_repository.dart';
 
@@ -61,7 +62,7 @@ class MyApp extends StatelessWidget {
                 .apply(bodyColor: Colors.black, displayColor: Colors.black),
           ),
         ),
-        home: SignupScreen(),
+        home: const UploadPictureScreen(),
       ),
     );
   }

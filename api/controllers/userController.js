@@ -47,6 +47,20 @@ exports.deleteUser = catchAsync(async (req, res, next) => {
 });
 
 exports.updateMe = catchAsync(async (req, res, next) => {
+  let profile;
+
+  if (req.file) {
+    try {
+      profile = await uploadProfileImage(req);
+    } catch (uploadErr) {
+      return res.status(500).json({
+        status: 'error',
+        message: 'Image upload failed',
+        error: uploadErr.message,
+      });
+    }
+  }
+
   //! 1) Create error if user POSTs password data
   if (req.body.password || req.body.confirmPassword) {
     return next(
