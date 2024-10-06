@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:hotel_flutter/presentation/screens/login_screen.dart'; // Import your login screen
-import 'package:hotel_flutter/presentation/screens/signup_screen.dart'; // Import your signup screen
+import 'package:hotel_flutter/presentation/screens/authScreens/login_screen.dart'; // Import your login screen
+import 'package:hotel_flutter/presentation/screens/authScreens/signup_screen.dart'; // Import your signup screen
 
 class WelcomeScreen extends StatefulWidget {
   const WelcomeScreen({super.key});
@@ -95,8 +95,8 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                       height: screenHeight * 0.05,
                       child: ElevatedButton(
                         style: ButtonStyle(
-                          backgroundColor:
-                              WidgetStateProperty.all(const Color(0xFF1C3473)),
+                          backgroundColor: WidgetStateProperty.all(
+                              const Color.fromARGB(255, 59, 66, 82)),
                         ),
                         onPressed: () {
                           Navigator.of(context).push(_createRoute('/login'));

@@ -1,19 +1,19 @@
 import 'package:flutter/material.dart';
-import 'package:hotel_flutter/presentation/screens/onboarding_screen.dart';
-import 'package:hotel_flutter/presentation/screens/crypto_wallet.dart';
-import 'package:hotel_flutter/presentation/screens/forgot_password_screen.dart';
-import 'package:hotel_flutter/presentation/screens/help_screen.dart';
-import 'package:hotel_flutter/presentation/screens/tab_screen.dart';
-import 'package:hotel_flutter/presentation/screens/login_screen.dart';
-import 'package:hotel_flutter/presentation/screens/signup_screen.dart';
-import 'package:hotel_flutter/presentation/screens/update_password_screen.dart';
-import 'package:hotel_flutter/presentation/screens/upload_picture_screen.dart';
-import 'package:hotel_flutter/presentation/screens/verify_code_screen.dart';
-import 'package:hotel_flutter/presentation/screens/welcome_screen.dart';
-import 'package:hotel_flutter/presentation/screens/email_reset_token_screen.dart';
-import 'package:hotel_flutter/presentation/screens/reset_password.dart';
-import 'package:hotel_flutter/presentation/screens/profile_screen.dart';
-import 'package:hotel_flutter/presentation/screens/favorite_screen.dart';
+import 'package:hotel_flutter/presentation/screens/homeScreens/onboarding_screen.dart';
+import 'package:hotel_flutter/presentation/screens/drawerScreens/crypto_wallet.dart';
+import 'package:hotel_flutter/presentation/screens/authScreens/forgot_password_screen.dart';
+import 'package:hotel_flutter/presentation/screens/drawerScreens/help_screen.dart';
+import 'package:hotel_flutter/presentation/screens/homeScreens/tab_screen.dart';
+import 'package:hotel_flutter/presentation/screens/authScreens/login_screen.dart';
+import 'package:hotel_flutter/presentation/screens/authScreens/signup_screen.dart';
+import 'package:hotel_flutter/presentation/screens/authScreens/update_password_screen.dart';
+import 'package:hotel_flutter/presentation/screens/drawerScreens/upload_picture_screen.dart';
+import 'package:hotel_flutter/presentation/screens/authScreens/verify_code_screen.dart';
+import 'package:hotel_flutter/presentation/screens/homeScreens/welcome_screen.dart';
+import 'package:hotel_flutter/presentation/screens/authScreens/email_reset_token_screen.dart';
+import 'package:hotel_flutter/presentation/screens/authScreens/reset_password.dart';
+import 'package:hotel_flutter/presentation/screens/drawerScreens/profile_screen.dart';
+import 'package:hotel_flutter/presentation/screens/drawerScreens/favorite_screen.dart';
 
 class AppRouter {
   Route<dynamic>? onGenerateRoute(RouteSettings routeSettings) {
