@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:hotel_flutter/data/model/signup_model.dart';
 import 'package:hotel_flutter/data/model/user_model.dart';
 
@@ -7,7 +5,7 @@ abstract class AuthEvent {}
 
 class SignUpEvent extends AuthEvent {
   final SignUpModel signUpModel;
-  final File? profilePicture;
+  final String? profilePicture;
 
   SignUpEvent(this.signUpModel, this.profilePicture);
 }
@@ -50,8 +48,9 @@ class ChangePasswordEvent extends AuthEvent {
 
 class UpdateUserEvent extends AuthEvent {
   final UserModel user;
+  final String? profilePicture;
 
-  UpdateUserEvent(this.user);
+  UpdateUserEvent(this.user, {this.profilePicture});
 }
 
 class VerifyUserEvent extends AuthEvent {

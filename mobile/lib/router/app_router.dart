@@ -7,6 +7,7 @@ import 'package:hotel_flutter/presentation/screens/tab_screen.dart';
 import 'package:hotel_flutter/presentation/screens/login_screen.dart';
 import 'package:hotel_flutter/presentation/screens/signup_screen.dart';
 import 'package:hotel_flutter/presentation/screens/update_password_screen.dart';
+import 'package:hotel_flutter/presentation/screens/upload_picture_screen.dart';
 import 'package:hotel_flutter/presentation/screens/verify_code_screen.dart';
 import 'package:hotel_flutter/presentation/screens/welcome_screen.dart';
 import 'package:hotel_flutter/presentation/screens/email_reset_token_screen.dart';
@@ -61,12 +62,14 @@ class AppRouter {
           final String firstName = args['firstName'];
           final String lastName = args['lastName'];
           final String email = args['email'];
+          final String profile = args['profile'];
 
           return MaterialPageRoute(
             builder: (_) => ProfileScreen(
               firstName: firstName,
               lastName: lastName,
               email: email,
+              profile: profile,
             ),
           );
         } else {
@@ -108,6 +111,22 @@ class AppRouter {
         return MaterialPageRoute(
           builder: (_) => const OnboardingScreen(),
         );
+      case '/uploadPicture':
+        final args = routeSettings.arguments as Map<String, dynamic>?;
+
+        if (args != null) {
+          return MaterialPageRoute(
+            builder: (_) => UploadPictureScreen(
+              firstName: args['firstName'],
+              lastName: args['lastName'],
+              email: args['email'],
+              password: args['password'],
+              confirmPassword: args['confirmPassword'],
+            ),
+          );
+        } else {
+          return null;
+        }
 
       default:
         return null;

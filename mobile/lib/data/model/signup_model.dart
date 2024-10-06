@@ -4,7 +4,7 @@ class SignUpModel {
   final String email;
   final String password;
   final String confirmPassword;
-  final String profilePicture;
+  final String? profilePicture; // Make this nullable
 
   SignUpModel({
     required this.firstName,
@@ -12,7 +12,7 @@ class SignUpModel {
     required this.email,
     required this.password,
     required this.confirmPassword,
-    required this.profilePicture,
+    this.profilePicture, // Nullable field
   });
 
   Map<String, dynamic> toJson() {
@@ -22,7 +22,7 @@ class SignUpModel {
       'email': email,
       'password': password,
       'confirmPassword': confirmPassword,
-      'profilePicture': profilePicture,
+      'profilePicture': profilePicture ?? '', // Optional field
     };
   }
 }
