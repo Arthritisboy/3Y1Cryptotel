@@ -192,17 +192,24 @@ class AuthDataProvider {
         Uri.parse('https://3-y1-cryptotel.vercel.app/api/v1/users/updateMe');
     var request = http.MultipartRequest('PATCH', uri);
 
+    // Set Authorization header
     request.headers['Authorization'] = 'Bearer $token';
 
-    // Add text fields if they are provided
+    // Add text fields
     if (firstName != null) request.fields['firstName'] = firstName;
     if (lastName != null) request.fields['lastName'] = lastName;
-    if (email != null) request.fields['email'] = email;
+    if (email != null) request.fields['lastName'] = email;
 
-    // Add profile picture if provided
+    // Add image file if it exists
     if (profilePicture != null) {
-      request.files
-          .add(await http.MultipartFile.fromPath('image', profilePicture.path));
+      request.files.add(
+        await http.MultipartFile.fromPath(
+          'image',
+          profilePicture.path,
+          contentType:
+              MediaType('image', 'png'), // Set the appropriate content type
+        ),
+      );
     }
 
     try {

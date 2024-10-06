@@ -9,13 +9,13 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 class UploadPictureScreen extends StatefulWidget {
   const UploadPictureScreen({
-    Key? key,
+    super.key,
     required this.firstName,
     required this.lastName,
     required this.email,
     required this.password,
     required this.confirmPassword,
-  }) : super(key: key);
+  });
 
   final String firstName;
   final String lastName;
