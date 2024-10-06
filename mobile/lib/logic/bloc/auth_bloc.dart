@@ -5,11 +5,13 @@ import 'package:hotel_flutter/logic/bloc/auth_state.dart';
 
 class AuthBloc extends Bloc<AuthEvent, AuthState> {
   final AuthRepository authRepository;
+
   AuthBloc(this.authRepository) : super(AuthInitial()) {
     on<SignUpEvent>((event, emit) async {
       emit(AuthLoading());
       try {
-        final user = await authRepository.register(event.signUpModel);
+        final user = await authRepository.register(
+            event.signUpModel, event.profilePicture);
         emit(Authenticated(user));
       } catch (e) {
         emit(AuthError('Registration failed: ${e.toString()}'));

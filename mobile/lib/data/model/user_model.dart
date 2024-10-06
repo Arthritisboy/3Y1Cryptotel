@@ -4,6 +4,7 @@ class UserModel {
   final String? lastName;
   final String? email;
   final String? token;
+  final String? profile;
   bool? hasCompletedOnboarding;
 
   UserModel(
@@ -12,6 +13,7 @@ class UserModel {
       this.lastName,
       this.email,
       this.token,
+      this.profile,
       this.hasCompletedOnboarding});
 
   factory UserModel.fromJson(Map<String, dynamic> json) {
@@ -21,6 +23,7 @@ class UserModel {
         lastName: json['lastName'],
         email: json['email'],
         token: json['token'],
+        profile: json['profile'],
         hasCompletedOnboarding: json['hasCompletedOnboarding']);
   }
 }
