@@ -2,7 +2,6 @@ import 'package:hotel_flutter/data/data_provider/auth/auth_data_provider.dart';
 import 'package:hotel_flutter/data/model/login_model.dart';
 import 'package:hotel_flutter/data/model/signup_model.dart';
 import 'package:hotel_flutter/data/model/user_model.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class AuthRepository {
   final AuthDataProvider dataProvider;
@@ -112,13 +111,9 @@ class AuthRepository {
   //! Complete Onboarding
   Future<void> completeOnboarding() async {
     try {
-      // Store the completion status in SharedPreferences
-      SharedPreferences prefs = await SharedPreferences.getInstance();
-      await prefs.setBool('hasOnboardingCompleted', true);
-      // Optionally, you can also update the user model if needed
-      if (_cachedUser != null) {
-        _cachedUser!.hasCompletedOnboarding = true;
-      }
+      await dataProvider.completeOnboarding();
+      _cachedUser?.hasCompletedOnboarding =
+          true; // Update the cached user status
     } catch (e) {
       throw Exception('Failed to complete onboarding: ${e.toString()}');
     }
