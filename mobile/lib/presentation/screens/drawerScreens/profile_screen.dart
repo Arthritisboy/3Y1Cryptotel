@@ -97,7 +97,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       firstName: firstNameController.text,
       lastName: lastNameController.text,
       email: emailController.text,
-      profile: _selectedImage?.path ??
+      profilePicture: _selectedImage?.path ??
           widget.profile, // Use new image path if selected
     );
 
@@ -165,7 +165,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     });
                   },
                   gender: gender,
-                  isLoading: _isLoading, // Pass loading state here
+                  isLoading: _isLoading, // Pass the loading state
                 );
               }
               return Container();
@@ -199,7 +199,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           : const Icon(
                               Icons.person,
                               size: 80,
-                              color: Color.fromARGB(255, 29, 53, 115),
+                              color: Color.fromARGB(
+                                  255, 29, 53, 115), // Placeholder icon
                             ),
                 ),
               ),

@@ -7,15 +7,15 @@ class UserModel {
   final String? profilePicture;
   bool? hasCompletedOnboarding;
 
-  UserModel(
-      {this.id,
-      this.firstName,
-      this.lastName,
-      this.email,
-      this.token,
-      this.profilePicture,
-      this.hasCompletedOnboarding,
-      required String profile});
+  UserModel({
+    this.id,
+    this.firstName,
+    this.lastName,
+    this.email,
+    this.token,
+    this.profilePicture,
+    this.hasCompletedOnboarding,
+  });
 
   factory UserModel.fromJson(Map<String, dynamic> json) {
     return UserModel(
@@ -24,7 +24,7 @@ class UserModel {
       lastName: json['lastName'],
       email: json['email'],
       token: json['token'],
-      profile: json['profile'],
+      profilePicture: json['profile'],
       hasCompletedOnboarding: json['hasCompletedOnboarding'],
     );
   }

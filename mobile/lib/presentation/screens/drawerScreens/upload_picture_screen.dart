@@ -73,28 +73,7 @@ class _UploadPictureScreenState extends State<UploadPictureScreen> {
                         ),
                       ),
                       SizedBox(height: screenHeight * 0.05),
-                      Container(
-                        width: screenHeight * 0.18,
-                        height: screenHeight * 0.18,
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          color: const Color.fromARGB(255, 29, 53, 115),
-                        ),
-                        child: _selectedImage == null
-                            ? Icon(
-                                Icons.person,
-                                size: screenHeight * 0.1,
-                                color: Colors.white,
-                              )
-                            : ClipOval(
-                                child: Image.file(
-                                  File(_selectedImage!.path),
-                                  width: screenHeight * 0.18,
-                                  height: screenHeight * 0.18,
-                                  fit: BoxFit.cover,
-                                ),
-                              ),
-                      ),
+                      _buildProfilePicture(screenHeight),
                       SizedBox(height: screenHeight * 0.03),
                       SizedBox(
                         width: screenWidth * 0.8,
@@ -138,8 +117,8 @@ class _UploadPictureScreenState extends State<UploadPictureScreen> {
               children: [
                 TextButton(
                   onPressed: () {
-                    // Trigger sign-up without a profile picture
-                    _signUpUser(context, null);
+                    // Trigger sign-up with fallback picture
+                    _signUpUser(context, null); // No image path for "Skip"
                   },
                   child: const Text(
                     'Skip',
@@ -175,6 +154,34 @@ class _UploadPictureScreenState extends State<UploadPictureScreen> {
           ),
         ],
       ),
+    );
+  }
+
+  Widget _buildProfilePicture(double screenHeight) {
+    return Container(
+      width: screenHeight * 0.18,
+      height: screenHeight * 0.18,
+      decoration: BoxDecoration(
+        shape: BoxShape.circle,
+        color: const Color.fromARGB(255, 29, 53, 115),
+      ),
+      child: _selectedImage == null
+          ? CircleAvatar(
+              backgroundColor: const Color.fromARGB(255, 173, 175, 210),
+              child: Icon(
+                Icons.person,
+                size: screenHeight * 0.1,
+                color: const Color.fromARGB(255, 29, 53, 115),
+              ),
+            )
+          : ClipOval(
+              child: Image.file(
+                File(_selectedImage!.path),
+                width: screenHeight * 0.18,
+                height: screenHeight * 0.18,
+                fit: BoxFit.cover,
+              ),
+            ),
     );
   }
 
@@ -216,10 +223,9 @@ class _UploadPictureScreenState extends State<UploadPictureScreen> {
 
     context.read<AuthBloc>().add(SignUpEvent(signUpModel, profilePath));
 
-    // Wait for the sign-up process to start (for example, wait for some async event if needed)
+    // Wait for the sign-up process to start
     await Future.delayed(const Duration(milliseconds: 500));
 
-    // After starting sign-up, show a message indicating the verification code is being sent
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(
         content: Text('Verification code is being sent...'),
@@ -230,7 +236,6 @@ class _UploadPictureScreenState extends State<UploadPictureScreen> {
     // Simulate additional loading delay for UX purposes
     await Future.delayed(const Duration(seconds: 2));
 
-    // Navigate to the next screen
     Navigator.of(context).pushReplacementNamed(
       '/verifyCode',
       arguments: {'email': widget.email},
