@@ -6,7 +6,6 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:hotel_flutter/data/model/user_model.dart';
 import 'package:hotel_flutter/data/model/signup_model.dart';
-import 'package:http_parser/http_parser.dart';
 
 class AuthDataProvider {
   final String baseUrl = 'https://3-y1-cryptotel.vercel.app/api/v1/auth';
