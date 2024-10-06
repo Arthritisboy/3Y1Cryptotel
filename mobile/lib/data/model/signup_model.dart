@@ -4,6 +4,7 @@ class SignUpModel {
   final String email;
   final String password;
   final String confirmPassword;
+  final String profilePicture;
 
   SignUpModel({
     required this.firstName,
@@ -11,6 +12,7 @@ class SignUpModel {
     required this.email,
     required this.password,
     required this.confirmPassword,
+    required this.profilePicture,
   });
 
   Map<String, dynamic> toJson() {
@@ -20,6 +22,7 @@ class SignUpModel {
       'email': email,
       'password': password,
       'confirmPassword': confirmPassword,
+      'profilePicture': profilePicture,
     };
   }
 }

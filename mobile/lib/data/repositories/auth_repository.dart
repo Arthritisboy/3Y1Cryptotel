@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:hotel_flutter/data/data_provider/auth/auth_data_provider.dart';
 import 'package:hotel_flutter/data/model/login_model.dart';
 import 'package:hotel_flutter/data/model/signup_model.dart';
@@ -10,9 +12,15 @@ class AuthRepository {
   AuthRepository(this.dataProvider);
 
   //! Register
-  Future<UserModel> register(SignUpModel signUpModel) async {
-    final data = await dataProvider.register(signUpModel);
-    return UserModel.fromJson(data);
+  Future<UserModel> register(
+      SignUpModel signUpModel, File? profilePicture) async {
+    try {
+      // Pass the profilePicture parameter when calling dataProvider.register
+      final data = await dataProvider.register(signUpModel, profilePicture);
+      return UserModel.fromJson(data);
+    } catch (e) {
+      throw Exception('Failed to register: ${e.toString()}');
+    }
   }
 
   //! Login

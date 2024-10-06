@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hotel_flutter/data/model/signup_model.dart';
@@ -5,6 +6,7 @@ import 'package:hotel_flutter/logic/bloc/auth_bloc.dart';
 import 'package:hotel_flutter/logic/bloc/auth_event.dart';
 import 'package:hotel_flutter/logic/bloc/auth_state.dart';
 import 'package:hotel_flutter/presentation/widgets/login/custom_text_form_field.dart';
+import 'package:image_picker/image_picker.dart';
 
 class SignupForm extends StatefulWidget {
   const SignupForm({super.key});
@@ -16,6 +18,7 @@ class SignupForm extends StatefulWidget {
 class _SignupFormState extends State<SignupForm> {
   final _formSignupKey = GlobalKey<FormState>();
   bool _isLoading = false;
+  File? _profilePicture;
 
   final TextEditingController _firstNameController = TextEditingController();
   final TextEditingController _lastNameController = TextEditingController();
@@ -24,22 +27,25 @@ class _SignupFormState extends State<SignupForm> {
   final TextEditingController _confirmPasswordController =
       TextEditingController();
 
-  bool _isPasswordVisible = false; // For password visibility
-  bool _isConfirmPasswordVisible = false; // For confirm password visibility
+  bool _isPasswordVisible = false;
+  bool _isConfirmPasswordVisible = false;
+
+  final ImagePicker _picker = ImagePicker();
 
   @override
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
 
     return BlocListener<AuthBloc, AuthState>(
+      // Listen for auth state changes
       listener: (context, state) {
         if (state is AuthLoading) {
           setState(() {
-            _isLoading = true; // Start loading
+            _isLoading = true;
           });
         } else if (state is Authenticated) {
           setState(() {
-            _isLoading = false; // Stop loading
+            _isLoading = false;
           });
 
           _showSuccessMessage();
@@ -47,7 +53,7 @@ class _SignupFormState extends State<SignupForm> {
               arguments: {'email': _emailController.text});
         } else if (state is AuthError) {
           setState(() {
-            _isLoading = false; // Stop loading
+            _isLoading = false;
           });
           _showErrorDialog(state.error);
         }
@@ -61,18 +67,29 @@ class _SignupFormState extends State<SignupForm> {
               const Text(
                 'HELLO! CREATE AN ACCOUNT TO ACCESS AMAZING DEALS.',
                 style: TextStyle(
-                  fontFamily: 'HammerSmith',
-                  fontSize: 20,
-                  color: Colors.black,
-                ),
+                    fontFamily: 'HammerSmith',
+                    fontSize: 20,
+                    color: Colors.black),
               ),
               const SizedBox(height: 16),
-              const Text(
-                'SIGN UP',
-                style: TextStyle(
-                  fontFamily: 'HammerSmith',
-                  fontSize: 20,
-                  color: Colors.black,
+              const Text('SIGN UP',
+                  style: TextStyle(
+                      fontFamily: 'HammerSmith',
+                      fontSize: 20,
+                      color: Colors.black)),
+              const SizedBox(height: 16),
+              GestureDetector(
+                onTap: () {
+                  _pickImageFromGallery();
+                },
+                child: CircleAvatar(
+                  radius: 50,
+                  backgroundImage: _profilePicture != null
+                      ? FileImage(_profilePicture!)
+                      : null,
+                  child: _profilePicture == null
+                      ? const Icon(Icons.add_a_photo, size: 50)
+                      : null,
                 ),
               ),
               const SizedBox(height: 16),
@@ -96,7 +113,7 @@ class _SignupFormState extends State<SignupForm> {
                   if (value == null || value.isEmpty) {
                     return 'Please enter your email';
                   }
-                  return null; // Add more email validation if needed
+                  return null;
                 },
               ),
               const SizedBox(height: 8),
@@ -140,7 +157,7 @@ class _SignupFormState extends State<SignupForm> {
                 child: ElevatedButton(
                   style: ButtonStyle(
                     backgroundColor:
-                        WidgetStateProperty.all(const Color(0xFF1C3473)),
+                        MaterialStateProperty.all(const Color(0xFF1C3473)),
                   ),
                   onPressed: _isLoading
                       ? null
@@ -152,10 +169,11 @@ class _SignupFormState extends State<SignupForm> {
                               email: _emailController.text,
                               password: _passwordController.text,
                               confirmPassword: _confirmPasswordController.text,
+                              profilePicture: _profilePicture?.path ?? '',
                             );
                             context
                                 .read<AuthBloc>()
-                                .add(SignUpEvent(signUpModel));
+                                .add(SignUpEvent(signUpModel, _profilePicture));
                           }
                         },
                   child: _isLoading
@@ -178,6 +196,15 @@ class _SignupFormState extends State<SignupForm> {
         ),
       ),
     );
+  }
+
+  Future _pickImageFromGallery() async {
+    final returnedImage =
+        await ImagePicker().pickImage(source: ImageSource.gallery);
+
+    setState(() {
+      _profilePicture = File(returnedImage!.path);
+    });
   }
 
   Widget _buildLoginRedirect() {

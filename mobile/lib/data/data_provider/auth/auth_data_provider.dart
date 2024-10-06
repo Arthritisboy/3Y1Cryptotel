@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 // ignore: depend_on_referenced_packages
 import 'package:http/http.dart' as http;
@@ -43,18 +45,33 @@ class AuthDataProvider {
   }
 
   //! Register
-  Future<Map<String, dynamic>> register(SignUpModel signUpModel) async {
-    final response = await http.post(
-      Uri.parse('$baseUrl/signup'),
-      body: json.encode(signUpModel.toJson()),
-      headers: {'Content-Type': 'application/json'},
-    );
+  Future<Map<String, dynamic>> register(
+      SignUpModel signUpModel, File? profilePicture) async {
+    var request = http.MultipartRequest('POST', Uri.parse('$baseUrl/signup'));
+    request.headers['Content-Type'] = 'application/json';
+
+    // Add text fields
+    request.fields['firstName'] = signUpModel.firstName;
+    request.fields['lastName'] = signUpModel.lastName;
+    request.fields['email'] = signUpModel.email;
+    request.fields['password'] = signUpModel.password;
+    request.fields['confirmPassword'] = signUpModel.confirmPassword;
+
+    // Add file if it exists
+    if (profilePicture != null) {
+      request.files
+          .add(await http.MultipartFile.fromPath('image', profilePicture.path));
+    }
+
+    final response = await request.send();
 
     if (response.statusCode == 201) {
-      return json.decode(response.body);
+      final responseData = await http.Response.fromStream(response);
+      return json.decode(responseData.body);
     } else {
-      final errorResponse = json.decode(response.body);
-      String errorMessage = errorResponse['message'] ?? 'An error occurred';
+      final errorResponse = await http.Response.fromStream(response);
+      String errorMessage =
+          json.decode(errorResponse.body)['message'] ?? 'An error occurred';
       throw Exception('Failed to register: $errorMessage');
     }
   }
