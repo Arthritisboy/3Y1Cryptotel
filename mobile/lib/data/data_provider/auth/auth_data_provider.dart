@@ -205,8 +205,6 @@ class AuthDataProvider {
         await http.MultipartFile.fromPath(
           'image',
           profilePicture.path,
-          contentType:
-              MediaType('image', 'png'), // Set the appropriate content type
         ),
       );
     }
