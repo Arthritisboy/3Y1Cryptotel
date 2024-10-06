@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:hotel_flutter/data/model/room_model.dart';
+import 'package:hotel_flutter/presentation/widgets/hotel/room/activeRoom.dart';
 
 class RoomSelection extends StatelessWidget {
   final List<RoomModel> roomList;
@@ -40,70 +41,85 @@ class RoomSelection extends StatelessWidget {
             itemCount: availableRooms.length,
             itemBuilder: (context, index) {
               final room = availableRooms[index];
-              return Card(
-                margin: const EdgeInsets.symmetric(vertical: 10),
-                child: Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Container(
-                        width: 140,
-                        height: 120,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(8),
-                          image: DecorationImage(
-                            image: AssetImage(room.imageUrl),
-                            fit: BoxFit.cover,
+              return InkWell(
+                onTap: () {
+                  // Navigate to RoomDetails screen on tap
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => ActiveRoom(
+                        room: room, // Pass room details to the new screen
+                      ),
+                    ),
+                  );
+                },
+                child: Card(
+                  margin: const EdgeInsets.symmetric(vertical: 10),
+                  child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Container(
+                          width: 140,
+                          height: 120,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(8),
+                            image: DecorationImage(
+                              image: AssetImage(room.imageUrl),
+                              fit: BoxFit.cover,
+                            ),
                           ),
                         ),
-                      ),
-                      const SizedBox(width: 10),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              room.roomType,
-                              style: const TextStyle(
-                                fontSize: 18.0,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.black,
-                                fontFamily: 'Hammersmith',
+                        const SizedBox(width: 10),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                room.roomType,
+                                style: const TextStyle(
+                                  fontSize: 18.0,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.black,
+                                  fontFamily: 'Hammersmith',
+                                ),
                               ),
-                            ),
-                            const SizedBox(height: 5),
-                            Text(
-                              '₱${room.price}',
-                              style: const TextStyle(
-                                fontSize: 16.0,
-                                color: Colors.black,
-                                fontFamily: 'Hammersmith',
+                              const SizedBox(height: 5),
+                              Text(
+                                '₱${room.price}',
+                                style: const TextStyle(
+                                  fontSize: 16.0,
+                                  color: Colors.black,
+                                  fontFamily: 'Hammersmith',
+                                ),
                               ),
-                            ),
-                            const SizedBox(height: 5),
-                            Text(
-                              'Up to: ${room.numberofGuest} Guests',
-                              style: const TextStyle(
-                                fontSize: 16.0,
-                                color: Colors.black,
-                                fontFamily: 'Hammersmith',
+                              const SizedBox(height: 5),
+                              Text(
+                                'Up to: ${room.numberofGuest} Guests',
+                                style: const TextStyle(
+                                  fontSize: 16.0,
+                                  color: Colors.black,
+                                  fontFamily: 'Hammersmith',
+                                ),
                               ),
-                            ),
-                            const SizedBox(height: 5),
-                            Text(
-                              room.isAvailable ? 'Available' : 'Not Available',
-                              style: TextStyle(
-                                fontSize: 16.0,
-                                color: room.isAvailable
-                                    ? Colors.green
-                                    : Colors.red,
+                              const SizedBox(height: 5),
+                              Text(
+                                room.isAvailable
+                                    ? 'Available'
+                                    : 'Not Available',
+                                style: TextStyle(
+                                  fontSize: 16.0,
+                                  color: room.isAvailable
+                                      ? Colors.green
+                                      : Colors.red,
+                                ),
                               ),
-                            ),
-                          ],
+                            ],
+                          ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                 ),
               );
