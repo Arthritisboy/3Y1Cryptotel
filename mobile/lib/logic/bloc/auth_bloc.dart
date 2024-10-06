@@ -22,20 +22,12 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       emit(AuthLoading());
       try {
         final user = await authRepository.login(event.email, event.password);
-        print(
-            'User logged in: ${user.id}, Has completed onboarding: ${user.hasCompletedOnboarding}');
-
-        emit(AuthenticatedLogin(user,
-            hasCompletedOnboarding: user.hasCompletedOnboarding));
+        emit(AuthenticatedLogin(user)); // Pass the LoginModel directly
       } catch (e) {
-        if (e.toString().contains('Invalid email or password')) {
-          emit(const AuthError('Invalid email or password. Please try again.'));
-        } else {
-          emit(AuthError('Login failed: ${e.toString()}'));
-        }
+        print("Login Error: $e");
+        emit(AuthError('Login failed: ${e.toString()}'));
       }
     });
-
     on<ForgotPasswordEvent>((event, emit) async {
       emit(AuthLoading());
       try {
@@ -115,9 +107,8 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     on<CompleteOnboardingEvent>((event, emit) async {
       emit(AuthLoading());
       try {
-        await authRepository
-            .completeOnboarding(); // Make sure this method is implemented in your repository
-        emit(const AuthSuccess('Onboarding completed.'));
+        await authRepository.completeOnboarding();
+        emit(const AuthSuccess('Onboarding completed successfully'));
       } catch (e) {
         emit(AuthError('Failed to complete onboarding: ${e.toString()}'));
       }

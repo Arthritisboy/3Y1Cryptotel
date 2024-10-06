@@ -95,3 +95,22 @@ exports.deleteMe = catchAsync(async (req, res, next) => {
     data: null,
   });
 });
+
+exports.updateHasCompletedOnboarding = catchAsync(async (req, res, next) => {
+  await User.findByIdAndUpdate(
+    req.user.id,
+    { hasCompletedOnboarding: true },
+    { new: true, runValidators: true },
+  );
+
+  if (!User) {
+    return next(new AppError('No user found with that ID', 404));
+  }
+
+  res.status(200).json({
+    status: 'success',
+    data: {
+      User,
+    },
+  });
+});

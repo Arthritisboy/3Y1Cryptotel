@@ -4,8 +4,8 @@ import 'package:hotel_flutter/data/dummydata/room_data.dart';
 import 'package:hotel_flutter/data/dummydata/rating_data.dart';
 import 'package:hotel_flutter/data/model/rating_model.dart';
 import 'package:hotel_flutter/presentation/widgets/hotel/details/hotelDetails.dart';
+import 'package:hotel_flutter/presentation/widgets/hotel/navigation_row.dart';
 import 'package:hotel_flutter/presentation/widgets/hotel/ratings/hotelRatings.dart';
-import 'package:hotel_flutter/presentation/widgets/hotel/room/navigation_row.dart';
 import 'package:hotel_flutter/presentation/widgets/hotel/room/roomSelection.dart';
 
 class Hotelclicked extends StatefulWidget {

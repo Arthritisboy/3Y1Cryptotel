@@ -24,27 +24,22 @@ class AuthDataProvider {
 
     if (response.statusCode == 200) {
       final data = json.decode(response.body);
-
       String token = data['token'];
       String userId = data['userId'];
+      bool hasCompletedOnboarding = data['hasCompletedOnboarding'] ?? false;
 
       await storage.write(key: 'jwt', value: token);
       await storage.write(key: 'userId', value: userId);
 
       return {
         'token': token,
-        'user': {'id': userId},
+        'userId': userId,
+        'hasCompletedOnboarding': hasCompletedOnboarding,
       };
-    } else if (response.statusCode == 401) {
-      final errorResponse = json.decode(response.body);
-      String errorMessage = errorResponse['message'] ??
-          'Invalid email or password. Please try again.';
-      throw Exception(errorMessage);
     } else {
       final errorResponse = json.decode(response.body);
-      String errorMessage = errorResponse['message'] ??
-          response.reasonPhrase ??
-          'An unexpected error occurred.';
+      String errorMessage =
+          errorResponse['message'] ?? 'An unexpected error occurred.';
       throw Exception('Failed to login: $errorMessage');
     }
   }
@@ -222,5 +217,25 @@ class AuthDataProvider {
   //! Logout
   Future<void> logout() async {
     await storage.deleteAll();
+  }
+
+  //! Update User Onboarding
+  Future<void> completeOnboarding() async {
+    final token = await storage.read(key: 'jwt');
+
+    final response = await http.put(
+      Uri.parse(
+          'https://3-y1-cryptotel.vercel.app/api/v1/users/updateHasCompletedOnboarding'),
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token',
+      },
+    );
+
+    if (response.statusCode != 200) {
+      final errorResponse = json.decode(response.body);
+      String errorMessage = errorResponse['message'] ?? 'An error occurred';
+      throw Exception('Failed to complete onboarding: $errorMessage');
+    }
   }
 }

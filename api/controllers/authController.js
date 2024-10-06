@@ -174,7 +174,7 @@ exports.login = catchAsync(async (req, res, next) => {
   //! Send the token and user id in the response only for login
   createSendToken(user, 200, res, {
     userId: user._id,
-    hasCompletedOnboarding: user.hasCompletedOnBoarding,
+    hasCompletedOnboarding: user.hasCompletedOnboarding,
   });
 });
 
