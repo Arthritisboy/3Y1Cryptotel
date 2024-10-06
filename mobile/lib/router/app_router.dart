@@ -34,7 +34,7 @@ class AppRouter {
         );
       case '/homescreen':
         return MaterialPageRoute(
-          builder: (_) => const TabScreen(),
+          builder: (_) => TabScreen(),
         );
 
       case '/forgotPassword':
@@ -77,7 +77,7 @@ class AppRouter {
         }
       case '/cryptoTransaction':
         return MaterialPageRoute(
-          builder: (_) => const CryptoWallet(),
+          builder: (_) => CryptoWallet(),
         );
       case '/verifyCode':
         final args = routeSettings.arguments as Map<String, dynamic>?;
@@ -94,22 +94,22 @@ class AppRouter {
 
       case '/updatePassword':
         return MaterialPageRoute(
-          builder: (_) => const UpdatePasswordScreen(),
+          builder: (_) => UpdatePasswordScreen(),
         );
 
       case '/favorites':
         return MaterialPageRoute(
-          builder: (_) => const FavoriteScreen(),
+          builder: (_) => FavoriteScreen(),
         );
 
       case '/help':
         return MaterialPageRoute(
-          builder: (_) => const HelpScreen(),
+          builder: (_) => HelpScreen(),
         );
 
       case '/onboarding':
         return MaterialPageRoute(
-          builder: (_) => const OnboardingScreen(),
+          builder: (_) => OnboardingScreen(),
         );
       case '/uploadPicture':
         final args = routeSettings.arguments as Map<String, dynamic>?;

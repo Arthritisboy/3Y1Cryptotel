@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 
 class MainDrawer extends StatelessWidget {
@@ -23,7 +24,7 @@ class MainDrawer extends StatelessWidget {
         child: Column(
           children: [
             SizedBox(
-              height: 320, // Increase height here
+              height: 320, // Drawer header height
               child: DrawerHeader(
                 padding: const EdgeInsets.all(20),
                 decoration: const BoxDecoration(
@@ -35,26 +36,14 @@ class MainDrawer extends StatelessWidget {
                   children: [
                     profile.isNotEmpty
                         ? CircleAvatar(
-                            radius: 60, // Increase the size of profile picture
-                            backgroundImage: NetworkImage(profile),
-                          )
-                        : CircleAvatar(
                             radius: 60,
-                            backgroundColor: Colors
-                                .transparent, // Make sure background is transparent
-                            child: Container(
-                              decoration: BoxDecoration(
-                                shape: BoxShape.circle,
-                                color: Colors.white, // White background
-                              ),
-                              padding: const EdgeInsets.all(8.0),
-                              child: const Icon(
-                                Icons.person,
-                                size: 80,
-                                color: Color.fromARGB(255, 67, 131,
-                                    255), // Semi-transparent blue color
-                              ),
-                            ),
+                            backgroundImage:
+                                CachedNetworkImageProvider(profile),
+                          )
+                        : const Icon(
+                            Icons.person,
+                            size: 80,
+                            color: Color.fromARGB(255, 29, 53, 115),
                           ),
                     const SizedBox(height: 18),
                     Column(
@@ -63,18 +52,18 @@ class MainDrawer extends StatelessWidget {
                         Text(
                           '$firstName $lastName',
                           textAlign: TextAlign.center,
-                          style:
-                              Theme.of(context).textTheme.titleLarge!.copyWith(
-                                    color: Colors.white,
-                                  ),
+                          style: Theme.of(context)
+                              .textTheme
+                              .titleLarge!
+                              .copyWith(color: Colors.white),
                           overflow: TextOverflow.ellipsis, // Handle overflow
                         ),
                         Text(
                           email,
-                          style:
-                              Theme.of(context).textTheme.titleLarge!.copyWith(
-                                    color: Colors.white,
-                                  ),
+                          style: Theme.of(context)
+                              .textTheme
+                              .titleLarge!
+                              .copyWith(color: Colors.white),
                           overflow: TextOverflow.ellipsis, // Handle overflow
                         ),
                       ],
@@ -83,107 +72,70 @@ class MainDrawer extends StatelessWidget {
                 ),
               ),
             ),
-            ListTile(
-              leading: Image.asset(
-                'assets/images/icons/userwhite.png',
-                height: 30,
-                width: 30,
-              ),
-              title: Text(
-                'Profile',
-                style: Theme.of(context).textTheme.titleSmall!.copyWith(
-                      color: Colors.white,
-                      fontSize: 22,
-                    ),
-              ),
-              onTap: () => onSelectScreen('profile'),
+            _buildListTile(
+              context,
+              'Profile',
+              'assets/images/icons/userwhite.png',
+              30,
+              'profile',
             ),
-            ListTile(
-              leading: Image.asset(
-                'assets/images/icons/history.png',
-                height: 30,
-                width: 30,
-              ),
-              title: Text(
-                'Transactions',
-                style: Theme.of(context).textTheme.titleSmall!.copyWith(
-                      color: Colors.white,
-                      fontSize: 22,
-                    ),
-              ),
-              onTap: () => onSelectScreen('/cryptoTransaction'),
+            _buildListTile(
+              context,
+              'Transactions',
+              'assets/images/icons/history.png',
+              30,
+              '/cryptoTransaction',
             ),
-            ListTile(
-              leading: Image.asset(
-                'assets/images/icons/heart.png',
-                height: 30,
-                width: 30,
-              ),
-              title: Text(
-                'Favorites',
-                style: Theme.of(context).textTheme.titleSmall!.copyWith(
-                      color: Colors.white,
-                      fontSize: 22,
-                    ),
-              ),
-              onTap: () {
-                onSelectScreen('favorite');
-              },
+            _buildListTile(
+              context,
+              'Favorites',
+              'assets/images/icons/heart.png',
+              30,
+              'favorite',
             ),
-            ListTile(
-              leading: Image.asset(
-                'assets/images/icons/support.png',
-                height: 30,
-                width: 30,
-              ),
-              title: Text(
-                'Help & Support',
-                style: Theme.of(context).textTheme.titleSmall!.copyWith(
-                      color: Colors.white,
-                      fontSize: 22,
-                    ),
-              ),
-              onTap: () {
-                onSelectScreen('help');
-              },
+            _buildListTile(
+              context,
+              'Help & Support',
+              'assets/images/icons/support.png',
+              30,
+              'help',
             ),
-            ListTile(
-              leading: Image.asset(
-                'assets/images/icons/settings.png',
-                height: 30,
-                width: 30,
-              ),
-              title: Text(
-                'Settings',
-                style: Theme.of(context).textTheme.titleSmall!.copyWith(
-                      color: Colors.white,
-                      fontSize: 22,
-                    ),
-              ),
-              onTap: () {
-                onSelectScreen('settings');
-              },
+            _buildListTile(
+              context,
+              'Settings',
+              'assets/images/icons/settings.png',
+              30,
+              'settings',
             ),
-            ListTile(
-              leading: Image.asset(
-                'assets/images/icons/logout.png',
-                height: 30,
-                width: 30,
-              ),
-              title: Text(
-                'Logout',
-                style: Theme.of(context).textTheme.titleSmall!.copyWith(
-                      color: Colors.white,
-                      fontSize: 22,
-                    ),
-              ),
-              onTap: () {
-                onSelectScreen('logout');
-              },
+            _buildListTile(
+              context,
+              'Logout',
+              'assets/images/icons/logout.png',
+              30,
+              'logout',
             ),
           ],
         ),
       ),
+    );
+  }
+
+  ListTile _buildListTile(BuildContext context, String title, String iconPath,
+      double size, String identifier) {
+    return ListTile(
+      leading: Image.asset(
+        iconPath,
+        height: size,
+        width: size,
+      ),
+      title: Text(
+        title,
+        style: Theme.of(context).textTheme.titleSmall!.copyWith(
+              color: Colors.white,
+              fontSize: 22,
+            ),
+      ),
+      onTap: () => onSelectScreen(identifier),
     );
   }
 }

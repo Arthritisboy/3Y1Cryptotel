@@ -1,9 +1,14 @@
 import 'package:flutter/material.dart';
 
 class ActionButtons extends StatelessWidget {
-  const ActionButtons({super.key, required this.updateUserData});
+  const ActionButtons({
+    super.key,
+    required this.updateUserData,
+    required this.isLoading,
+  });
 
   final VoidCallback updateUserData;
+  final bool isLoading;
 
   @override
   Widget build(BuildContext context) {
@@ -23,13 +28,25 @@ class ActionButtons extends StatelessWidget {
           ),
         ),
         ElevatedButton.icon(
-          onPressed: () {
-            updateUserData();
-          },
-          icon: const Icon(Icons.update, color: Colors.white),
-          label: const Text("Update Account"),
+          onPressed:
+              isLoading ? null : updateUserData, // Disable button when loading
+          icon: isLoading
+              ? const SizedBox(
+                  height: 20,
+                  width: 20,
+                  child: CircularProgressIndicator(
+                    color: Colors.white,
+                    strokeWidth: 2,
+                  ),
+                )
+              : const Icon(Icons.update, color: Colors.white),
+          label: isLoading
+              ? const Text("Updating...")
+              : const Text("Update Account"),
           style: ElevatedButton.styleFrom(
-            backgroundColor: const Color.fromARGB(255, 29, 53, 115),
+            backgroundColor: isLoading
+                ? Colors.grey // Change background when loading
+                : const Color.fromARGB(255, 29, 53, 115),
             foregroundColor: Colors.white,
             padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
           ),
