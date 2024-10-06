@@ -6,6 +6,7 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:hotel_flutter/data/model/user_model.dart';
 import 'package:hotel_flutter/data/model/signup_model.dart';
+import 'package:http_parser/http_parser.dart';
 
 class AuthDataProvider {
   final String baseUrl = 'https://3-y1-cryptotel.vercel.app/api/v1/auth';
@@ -174,43 +175,56 @@ class AuthDataProvider {
     }
   }
 
-//! Change User Profile Data
-  Future<void> updateUserData(
-      {String? firstName, String? lastName, String? email}) async {
+  //! Change User Profile Data
+  Future<void> updateUserData({
+    String? firstName,
+    String? lastName,
+    String? email,
+    File? profilePicture,
+  }) async {
     final token = await storage.read(key: 'jwt');
 
-    // Create a map to hold the update data
-    final Map<String, dynamic> updateData = {};
-
-    // Only add the fields that are not null
-    if (firstName != null) {
-      updateData['firstName'] = firstName;
-    }
-    if (lastName != null) {
-      updateData['lastName'] = lastName;
-    }
-    if (email != null) {
-      updateData['email'] = email;
+    if (token == null) {
+      throw Exception('Authorization token is missing');
     }
 
-    // If no data is provided, throw an error
-    if (updateData.isEmpty) {
-      throw Exception('No data provided for update.');
+    final uri =
+        Uri.parse('https://3-y1-cryptotel.vercel.app/api/v1/users/updateMe');
+    var request = http.MultipartRequest('PATCH', uri);
+
+    request.headers['Authorization'] = 'Bearer $token';
+
+    // Add text fields if they are provided
+    if (firstName != null) request.fields['firstName'] = firstName;
+    if (lastName != null) request.fields['lastName'] = lastName;
+    if (email != null) request.fields['email'] = email;
+
+    // Add profile picture if provided
+    if (profilePicture != null) {
+      request.files
+          .add(await http.MultipartFile.fromPath('image', profilePicture.path));
     }
 
-    final response = await http.patch(
-      Uri.parse('https://3-y1-cryptotel.vercel.app/api/v1/users/updateMe'),
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer $token',
-      },
-      body: json.encode(updateData),
-    );
+    try {
+      final response = await request.send();
+      final responseData = await http.Response.fromStream(response);
 
-    if (response.statusCode != 200) {
-      final errorResponse = json.decode(response.body);
-      String errorMessage = errorResponse['message'] ?? 'An error occurred';
-      throw Exception('Failed to update user data: $errorMessage');
+      if (response.statusCode == 200) {
+        print("Profile updated successfully: ${responseData.body}");
+        final data = jsonDecode(responseData.body);
+
+        if (data['data']['user']['profile'] != null) {
+          print("Profile Picture URL: ${data['data']['user']['profile']}");
+        } else {
+          print("Profile Picture URL missing in response.");
+        }
+      } else {
+        print("Failed to update profile. Response: ${responseData.body}");
+        throw Exception('Failed to update user data: ${responseData.body}');
+      }
+    } catch (error) {
+      print("An error occurred: $error");
+      throw Exception('An error occurred during the update');
     }
   }
 

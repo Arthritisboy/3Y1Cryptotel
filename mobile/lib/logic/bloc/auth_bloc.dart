@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:bloc/bloc.dart';
 import 'package:hotel_flutter/data/repositories/auth_repository.dart';
 import 'package:hotel_flutter/logic/bloc/auth_event.dart';
@@ -10,8 +12,9 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     on<SignUpEvent>((event, emit) async {
       emit(AuthLoading());
       try {
-        final user = await authRepository.register(
-            event.signUpModel, event.profilePicture);
+        // Pass the profile picture if available
+        final user = await authRepository.register(event.signUpModel,
+            event.profilePicture != null ? File(event.profilePicture!) : null);
         emit(Authenticated(user));
       } catch (e) {
         emit(AuthError('Registration failed: ${e.toString()}'));
@@ -76,13 +79,17 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     on<UpdateUserEvent>((event, emit) async {
       emit(AuthLoading());
       try {
-        await authRepository.updateUser(event.user);
+        // Pass the profile picture if available
+        await authRepository.updateUser(
+          event.user,
+          profilePicture:
+              event.profilePicture != null ? File(event.profilePicture!) : null,
+        );
         emit(Authenticated(event.user));
       } catch (error) {
         emit(AuthError('Failed to update user: $error'));
       }
     });
-
     on<VerifyUserEvent>((event, emit) async {
       emit(AuthLoading());
       try {
