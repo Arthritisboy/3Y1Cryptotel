@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:hotel_flutter/presentation/widgets/hotel/map/map_widget.dart';
+import 'package:hotel_flutter/presentation/widgets/hotel/map/full_map.dart';
 
 class HotelDetails extends StatelessWidget {
   final String hotelName;
@@ -24,8 +25,7 @@ class HotelDetails extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Column(
-      crossAxisAlignment:
-          CrossAxisAlignment.start, // Align children to the start
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         const Text(
           'Details',
@@ -36,8 +36,6 @@ class HotelDetails extends StatelessWidget {
           ),
         ),
         const SizedBox(height: 10),
-
-        // Modify the location section
         Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -54,8 +52,8 @@ class HotelDetails extends StatelessWidget {
                       fontWeight: FontWeight.w400,
                       color: Colors.black,
                     ),
-                    maxLines: 2, // Limit to 2 lines, adjust as needed
-                    overflow: TextOverflow.visible, // Show the full text
+                    maxLines: 2,
+                    overflow: TextOverflow.visible,
                   ),
                 ),
               ],
@@ -63,10 +61,31 @@ class HotelDetails extends StatelessWidget {
             const SizedBox(height: 10),
           ],
         ),
-
-        // Center the MapWidget
         Center(
           child: MapWidget(latitude: latitude, longitude: longitude),
+        ),
+
+        const SizedBox(height: 10),
+        TextButton(
+          onPressed: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => FullScreenMap(
+                  latitude: latitude,
+                  longitude: longitude, hotelName: hotelName,
+                ),
+              ),
+            );
+          },
+          child: const Text(
+            'View Map',
+            style: TextStyle(
+              color: Colors.blue,
+              fontSize: 16,
+              decoration: TextDecoration.underline,
+            ),
+          ),
         ),
 
         const SizedBox(height: 10),
