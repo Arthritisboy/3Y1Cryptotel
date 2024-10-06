@@ -1,5 +1,4 @@
 import 'dart:io';
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hotel_flutter/data/model/user_model.dart';
@@ -9,8 +8,7 @@ import 'package:hotel_flutter/logic/bloc/auth_state.dart';
 import 'package:hotel_flutter/presentation/widgets/profile/blue_background_widget.dart';
 import 'package:hotel_flutter/presentation/widgets/profile/bottom_section.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:image_picker/image_picker.dart';
-import 'dart:async';
+import 'package:image_picker/image_picker.dart'; // For selecting images
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({
@@ -42,11 +40,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
   String username = "";
   String address = "";
   String gender = "Male";
-  File? _selectedImage;
+  File? _selectedImage; // To store the selected image file
   bool _isLoading = false;
 
-  final ImagePicker _picker = ImagePicker();
-  final FlutterSecureStorage _storage = const FlutterSecureStorage();
+  final ImagePicker _picker = ImagePicker(); // Image picker instance
 
   @override
   void initState() {
@@ -68,6 +65,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     super.dispose();
   }
 
+  // Method to pick an image
   Future<void> _pickImage() async {
     setState(() {
       _isLoading = true;
@@ -89,29 +87,29 @@ class _ProfileScreenState extends State<ProfileScreen> {
     });
   }
 
+  // Update user data method
   Future<void> updateUserData() async {
     setState(() {
-      _isLoading = true; // Show loading state when updating profile
+      _isLoading = true; // Start loading when the update process begins
     });
 
     final updatedUser = UserModel(
       firstName: firstNameController.text,
       lastName: lastNameController.text,
       email: emailController.text,
-      profilePicture: _selectedImage?.path ?? widget.profile,
+      profile: _selectedImage?.path ??
+          widget.profile, // Use new image path if selected
     );
 
     try {
-      // Update the user data via Bloc event
+      // Dispatch UpdateUserEvent
       context.read<AuthBloc>().add(
             UpdateUserEvent(updatedUser, profilePicture: _selectedImage?.path),
           );
-
-      // Update the local storage with the new profile path
-      await _storage.write(key: 'profile', value: _selectedImage?.path);
-
-      await Future.delayed(const Duration(seconds: 2));
-
+      final userId = await const FlutterSecureStorage().read(key: 'userId');
+      if (userId != null) {
+        context.read<AuthBloc>().add(GetUserEvent(userId));
+      }
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text('User data updated successfully!'),
@@ -125,11 +123,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
           backgroundColor: Colors.red,
         ),
       );
-    } finally {
-      setState(() {
-        _isLoading = false; // Stop loading state
-      });
     }
+
+    setState(() {
+      _isLoading = false; // Stop loading once the update is complete
+    });
   }
 
   @override
@@ -167,18 +165,19 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     });
                   },
                   gender: gender,
-                  isLoading: _isLoading,
+                  isLoading: _isLoading, // Pass loading state here
                 );
               }
               return Container();
             }),
           ),
+          // Profile Picture with GestureDetector to change it
           Positioned(
             top: MediaQuery.of(context).size.height * 0.01,
             left: 0,
             right: 0,
             child: GestureDetector(
-              onTap: _isLoading ? null : _pickImage,
+              onTap: _isLoading ? null : _pickImage, // Disable tap when loading
               child: CircleAvatar(
                 radius: 60,
                 backgroundColor: const Color.fromARGB(255, 173, 175, 210),
@@ -190,20 +189,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           height: 120,
                           fit: BoxFit.cover,
                         )
-                      : widget.profile.isNotEmpty &&
-                              widget.profile.startsWith('http')
-                          ? CachedNetworkImage(
-                              imageUrl: widget.profile,
+                      : widget.profile.isNotEmpty
+                          ? Image.network(
+                              widget.profile,
                               width: 120,
                               height: 120,
                               fit: BoxFit.cover,
-                              placeholder: (context, url) =>
-                                  CircularProgressIndicator(),
-                              errorWidget: (context, url, error) => Icon(
-                                Icons.error,
-                                color: Colors.red,
-                                size: 60,
-                              ),
                             )
                           : const Icon(
                               Icons.person,
@@ -213,7 +204,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 ),
               ),
             ),
-          )
+          ),
         ],
       ),
     );

@@ -197,7 +197,7 @@ class AuthDataProvider {
     // Add text fields
     if (firstName != null) request.fields['firstName'] = firstName;
     if (lastName != null) request.fields['lastName'] = lastName;
-    if (email != null) request.fields['lastName'] = email;
+    if (email != null) request.fields['email'] = email;
 
     // Add image file if it exists
     if (profilePicture != null) {
@@ -215,13 +215,6 @@ class AuthDataProvider {
 
       if (response.statusCode == 200) {
         print("Profile updated successfully: ${responseData.body}");
-        final data = jsonDecode(responseData.body);
-
-        if (data['data']['user']['profile'] != null) {
-          print("Profile Picture URL: ${data['data']['user']['profile']}");
-        } else {
-          print("Profile Picture URL missing in response.");
-        }
       } else {
         print("Failed to update profile. Response: ${responseData.body}");
         throw Exception('Failed to update user data: ${responseData.body}');

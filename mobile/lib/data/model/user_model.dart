@@ -14,16 +14,18 @@ class UserModel {
       this.email,
       this.token,
       this.profilePicture,
-      this.hasCompletedOnboarding});
+      this.hasCompletedOnboarding,
+      required String profile});
 
   factory UserModel.fromJson(Map<String, dynamic> json) {
     return UserModel(
-        id: json['id'],
-        firstName: json['firstName'],
-        lastName: json['lastName'],
-        email: json['email'],
-        token: json['token'],
-        profilePicture: json['profile'],
-        hasCompletedOnboarding: json['hasCompletedOnboarding']);
+      id: json['id'],
+      firstName: json['firstName'],
+      lastName: json['lastName'],
+      email: json['email'],
+      token: json['token'],
+      profile: json['profile'],
+      hasCompletedOnboarding: json['hasCompletedOnboarding'],
+    );
   }
 }
