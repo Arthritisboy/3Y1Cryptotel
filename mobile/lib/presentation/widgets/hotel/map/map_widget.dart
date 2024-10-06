@@ -8,10 +8,10 @@ class MapWidget extends StatelessWidget {
   final double longitude;
 
   const MapWidget({
-    Key? key,
+    super.key,
     required this.latitude,
     required this.longitude,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -23,12 +23,13 @@ class MapWidget extends StatelessWidget {
           MaterialPageRoute(
             builder: (context) => FullScreenMap(
               latitude: latitude,
-              longitude: longitude, hotelName: '',
+              longitude: longitude,
+              hotelName: '',
             ),
           ),
         );
       },
-      child: Container(
+      child: SizedBox(
         height: 140,
         width: 340,
         child: FlutterMap(

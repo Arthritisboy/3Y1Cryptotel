@@ -4,7 +4,7 @@ import 'package:hotel_flutter/data/model/rating_model.dart';
 class UserRatingsWidget extends StatelessWidget {
   final List<Rating> ratings;
 
-  const UserRatingsWidget({Key? key, required this.ratings}) : super(key: key);
+  const UserRatingsWidget({super.key, required this.ratings});
 
   @override
   Widget build(BuildContext context) {
@@ -16,7 +16,7 @@ class UserRatingsWidget extends StatelessWidget {
         final rating = ratings[index];
         return Card(
           margin: const EdgeInsets.symmetric(vertical: 10),
-          color: const Color(0xFF1C3473), 
+          color: const Color(0xFF1C3473),
           child: ListTile(
             title: Text(
               rating.userName,

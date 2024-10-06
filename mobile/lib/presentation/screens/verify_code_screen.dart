@@ -53,7 +53,7 @@ class _VerificationCodeScreenState extends State<VerificationCodeScreen> {
                   });
                   ScaffoldMessenger.of(context).showSnackBar(
                     const SnackBar(
-                      content: const Text('Verification successful!'),
+                      content: Text('Verification successful!'),
                       backgroundColor:
                           Colors.green, // Set the background color to green
                     ),
