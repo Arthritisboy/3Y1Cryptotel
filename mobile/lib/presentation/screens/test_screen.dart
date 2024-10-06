@@ -26,20 +26,20 @@ class _TestScreenState extends State<TestScreen> {
               onPressed: () {
                 _pickImageFromGallery();
               },
-              child: Text('Pick Image from Gallery'),
               style: ElevatedButton.styleFrom(
                 minimumSize: Size(200, 50), // width, height
               ),
+              child: Text('Pick Image from Gallery'),
             ),
             SizedBox(height: 20),
             ElevatedButton(
               onPressed: () {
                 // Action for picking image from camera goes here
               },
-              child: Text('Pick Image from Camera'),
               style: ElevatedButton.styleFrom(
                 minimumSize: Size(200, 50), // width, height
               ),
+              child: Text('Pick Image from Camera'),
             ),
             const SizedBox(height: 20),
             _selectedImage != null
