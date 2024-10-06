@@ -55,7 +55,7 @@ class _TabScreenState extends State<TabScreen> {
             firstName = state.user.firstName ?? '';
             lastName = state.user.lastName ?? '';
             email = state.user.email ?? '';
-            profile = state.user.profilePicture ?? ''; // Update profile here
+            profile = state.user.profilePicture ?? '';
             _isLoading = false;
           });
 
@@ -160,12 +160,12 @@ class _TabScreenState extends State<TabScreen> {
     });
   }
 
-  void _setScreen(String screen) {
+  void _setScreen(String screen) async {
     Navigator.of(context).pop(); // Close the drawer
 
     switch (screen) {
       case 'profile':
-        Navigator.of(context).pushNamed(
+        final updatedProfile = await Navigator.of(context).pushNamed(
           '/profile',
           arguments: {
             'firstName': firstName,
@@ -174,6 +174,11 @@ class _TabScreenState extends State<TabScreen> {
             'profile': profile,
           },
         );
+        if (updatedProfile != null) {
+          setState(() {
+            profile = updatedProfile as String?;
+          });
+        }
         break;
       case '/cryptoTransaction':
         Navigator.of(context).pushNamed('/cryptoTransaction');

@@ -79,17 +79,19 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     on<UpdateUserEvent>((event, emit) async {
       emit(AuthLoading());
       try {
-        // Pass the profile picture if available
+        // Ensure both firstName, lastName, and profilePicture are sent to the repository
         await authRepository.updateUser(
           event.user,
           profilePicture:
               event.profilePicture != null ? File(event.profilePicture!) : null,
         );
-        emit(Authenticated(event.user));
+        emit(Authenticated(event
+            .user)); // Emit the updated user after the operation is successful
       } catch (error) {
         emit(AuthError('Failed to update user: $error'));
       }
     });
+
     on<VerifyUserEvent>((event, emit) async {
       emit(AuthLoading());
       try {
