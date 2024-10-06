@@ -1,6 +1,7 @@
 const User = require('../models/User');
 const catchAsync = require('../utils/catchAsync');
 const AppError = require('../utils/appError');
+const { uploadProfileImage } = require('../middleware/imageUpload');
 
 const filterObj = (obj, ...notAllowedFields) => {
   const newObj = {};
@@ -72,6 +73,10 @@ exports.updateMe = catchAsync(async (req, res, next) => {
   }
   //! 2) Filtered out unwanted fields names
   const filteredBody = filterObj(req.body, 'roles');
+
+  if (profile) {
+    filteredBody.profile = profile;
+  }
 
   //! 3) Update user document
   const updateUser = await User.findByIdAndUpdate(req.user.id, filteredBody, {
