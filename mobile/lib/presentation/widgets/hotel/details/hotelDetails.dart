@@ -64,8 +64,9 @@ class HotelDetails extends StatelessWidget {
         Center(
           child: MapWidget(latitude: latitude, longitude: longitude),
         ),
-
         const SizedBox(height: 10),
+
+        // Updated TextButton with Icon to the left
         TextButton(
           onPressed: () {
             Navigator.push(
@@ -73,18 +74,30 @@ class HotelDetails extends StatelessWidget {
               MaterialPageRoute(
                 builder: (context) => FullScreenMap(
                   latitude: latitude,
-                  longitude: longitude, hotelName: hotelName,
+                  longitude: longitude,
+                  hotelName: hotelName,
                 ),
               ),
             );
           },
-          child: const Text(
-            'View Map',
-            style: TextStyle(
-              color: Colors.blue,
-              fontSize: 16,
-              decoration: TextDecoration.underline,
-            ),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: const [
+              Icon(
+                Icons.map, // Icon moved to the left
+                color: Color.fromARGB(255, 142, 142, 147),
+                size: 18,
+              ),
+              SizedBox(width: 5), // Add spacing between the icon and text
+              Text(
+                'View Map',
+                style: TextStyle(
+                  color: Colors.blue,
+                  fontSize: 16,
+                  decoration: TextDecoration.underline,
+                ),
+              ),
+            ],
           ),
         ),
 
