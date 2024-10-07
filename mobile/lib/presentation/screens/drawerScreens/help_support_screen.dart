@@ -77,7 +77,9 @@ class _HelpSupportScreenState extends State<HelpSupportScreen> {
         'body': message,
       },
     );
-    await launchUrl(emailLaunchUri);
+
+    // Use externalApplication mode to open Gmail or default mail app
+    await launchUrl(emailLaunchUri, mode: LaunchMode.externalApplication);
   }
 
   void showMessageDialog() {

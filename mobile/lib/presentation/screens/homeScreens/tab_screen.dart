@@ -163,6 +163,9 @@ class _TabScreenState extends State<TabScreen> {
           },
         );
         break;
+      case 'help':
+        Navigator.of(context).pushNamed('/help');
+        break;
       case '/cryptoTransaction':
         Navigator.of(context).pushNamed('/cryptoTransaction');
         break;
