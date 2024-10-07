@@ -3,11 +3,15 @@ import 'package:flutter/material.dart';
 class NavigationRow extends StatelessWidget {
   final int activeIndex;
   final ValueChanged<int> onTap;
+  final bool showRoom;
+  final bool showBook;
 
   const NavigationRow({
     super.key,
     required this.activeIndex,
     required this.onTap,
+    this.showRoom = true,
+    this.showBook = true,
   });
 
   @override
@@ -15,11 +19,17 @@ class NavigationRow extends StatelessWidget {
     return Row(
       mainAxisAlignment: MainAxisAlignment.start,
       children: [
-        _buildNavItem('Room', 0),
+        if (showRoom) ...[
+          _buildNavItem('Room', 0),
+          const SizedBox(width: 20),
+        ],
+        if (showBook) ...[
+          _buildNavItem('Book', 1),
+          const SizedBox(width: 20),
+        ],
+        _buildNavItem('Details', 2),
         const SizedBox(width: 20),
-        _buildNavItem('Details', 1),
-        const SizedBox(width: 20),
-        _buildNavItem('Ratings', 2)
+        _buildNavItem('Ratings', 3),
       ],
     );
   }
@@ -43,7 +53,7 @@ class NavigationRow extends StatelessWidget {
           if (activeIndex == index)
             Container(
               height: 2,
-              width: title.length * 10.0, // Adjust width based on title length
+              width: title.length * 10.0,
               color: const Color.fromARGB(255, 29, 53, 115),
             ),
         ],
