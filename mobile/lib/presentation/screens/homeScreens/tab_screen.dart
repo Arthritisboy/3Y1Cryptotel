@@ -169,6 +169,9 @@ class _TabScreenState extends State<TabScreen> {
       case 'settings':
         Navigator.of(context).pushNamed('/settings');
         break;
+      case 'favorite':
+        Navigator.of(context).pushNamed('/favorite');
+        break;
       case 'logout':
         _showLogoutConfirmationDialog();
         break;

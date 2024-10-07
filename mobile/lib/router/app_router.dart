@@ -97,7 +97,7 @@ class AppRouter {
           builder: (_) => UpdatePasswordScreen(),
         );
 
-      case '/favorites':
+      case '/favorite':
         return MaterialPageRoute(
           builder: (_) => FavoriteScreen(),
         );
@@ -127,7 +127,6 @@ class AppRouter {
         } else {
           return null;
         }
-
       default:
         return null;
     }
