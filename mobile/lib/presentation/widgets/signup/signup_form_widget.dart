@@ -1,9 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:hotel_flutter/data/model/signup_model.dart';
-import 'package:hotel_flutter/logic/bloc/auth_bloc.dart';
-import 'package:hotel_flutter/logic/bloc/auth_event.dart';
-import 'package:hotel_flutter/logic/bloc/auth_state.dart';
 import 'package:hotel_flutter/presentation/widgets/login/custom_text_form_field.dart';
 
 class SignupForm extends StatefulWidget {
@@ -15,7 +10,7 @@ class SignupForm extends StatefulWidget {
 
 class _SignupFormState extends State<SignupForm> {
   final _formSignupKey = GlobalKey<FormState>();
-  bool _isLoading = false;
+  final bool _isLoading = false;
 
   final TextEditingController _firstNameController = TextEditingController();
   final TextEditingController _lastNameController = TextEditingController();
@@ -24,157 +19,130 @@ class _SignupFormState extends State<SignupForm> {
   final TextEditingController _confirmPasswordController =
       TextEditingController();
 
-  bool _isPasswordVisible = false; // For password visibility
-  bool _isConfirmPasswordVisible = false; // For confirm password visibility
+  bool _isPasswordVisible = false;
+  bool _isConfirmPasswordVisible = false;
 
   @override
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
 
-    return BlocListener<AuthBloc, AuthState>(
-      listener: (context, state) {
-        if (state is AuthLoading) {
-          setState(() {
-            _isLoading = true; // Start loading
-          });
-        } else if (state is Authenticated) {
-          setState(() {
-            _isLoading = false; // Stop loading
-          });
-
-          _showSuccessMessage();
-          Navigator.of(context).pushReplacementNamed('/verifyCode',
-              arguments: {'email': _emailController.text});
-        } else if (state is AuthError) {
-          setState(() {
-            _isLoading = false; // Stop loading
-          });
-          _showErrorDialog(state.error);
-        }
-      },
-      child: SingleChildScrollView(
-        child: Form(
-          key: _formSignupKey,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              const Text(
-                'HELLO! CREATE AN ACCOUNT TO ACCESS AMAZING DEALS.',
+    return SingleChildScrollView(
+      child: Form(
+        key: _formSignupKey,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            const Text(
+              'HELLO! CREATE AN ACCOUNT TO ACCESS AMAZING DEALS.',
+              style: TextStyle(
+                  fontFamily: 'HammerSmith', fontSize: 20, color: Colors.black),
+            ),
+            const SizedBox(height: 16),
+            const Text('SIGN UP',
                 style: TextStyle(
-                  fontFamily: 'HammerSmith',
-                  fontSize: 20,
-                  color: Colors.black,
+                    fontFamily: 'HammerSmith',
+                    fontSize: 20,
+                    color: Colors.black)),
+            const SizedBox(height: 16),
+            CustomTextFormField(
+              label: 'First Name',
+              hint: 'Enter your first name',
+              controller: _firstNameController,
+            ),
+            const SizedBox(height: 8),
+            CustomTextFormField(
+              label: 'Last Name',
+              hint: 'Enter your last name',
+              controller: _lastNameController,
+            ),
+            const SizedBox(height: 8),
+            CustomTextFormField(
+              label: 'Email',
+              hint: 'Enter your email',
+              controller: _emailController,
+              validator: (value) {
+                if (value == null || value.isEmpty) {
+                  return 'Please enter your email';
+                }
+                return null;
+              },
+            ),
+            const SizedBox(height: 8),
+            CustomTextFormField(
+              label: 'Password',
+              hint: 'Enter your password',
+              controller: _passwordController,
+              isObscure: true,
+              showPassword: _isPasswordVisible,
+              toggleShowPassword: () {
+                setState(() {
+                  _isPasswordVisible = !_isPasswordVisible;
+                });
+              },
+            ),
+            const SizedBox(height: 8),
+            CustomTextFormField(
+              label: 'Confirm Password',
+              hint: 'Verify your password',
+              controller: _confirmPasswordController,
+              isObscure: true,
+              showPassword: _isConfirmPasswordVisible,
+              toggleShowPassword: () {
+                setState(() {
+                  _isConfirmPasswordVisible = !_isConfirmPasswordVisible;
+                });
+              },
+              validator: (value) {
+                if (value == null || value.isEmpty) {
+                  return 'Please confirm your password';
+                }
+                if (value != _passwordController.text) {
+                  return 'Passwords do not match';
+                }
+                return null;
+              },
+            ),
+            const SizedBox(height: 24),
+            SizedBox(
+              width: screenWidth * 0.5,
+              child: ElevatedButton(
+                style: ButtonStyle(
+                  backgroundColor:
+                      WidgetStateProperty.all(const Color(0xFF1C3473)),
                 ),
+                onPressed: _isLoading
+                    ? null
+                    : () {
+                        if (_formSignupKey.currentState!.validate()) {
+                          Navigator.of(context).pushReplacementNamed(
+                            '/uploadPicture',
+                            arguments: {
+                              'firstName': _firstNameController.text,
+                              'lastName': _lastNameController.text,
+                              'email': _emailController.text,
+                              'password': _passwordController.text,
+                              'confirmPassword':
+                                  _confirmPasswordController.text,
+                            },
+                          );
+                        }
+                      },
+                child: _isLoading
+                    ? const SizedBox(
+                        width: 20,
+                        height: 20,
+                        child: CircularProgressIndicator(
+                          valueColor:
+                              AlwaysStoppedAnimation<Color>(Colors.white),
+                          strokeWidth: 2,
+                        ),
+                      )
+                    : const Text('SIGN UP'),
               ),
-              const SizedBox(height: 16),
-              const Text(
-                'SIGN UP',
-                style: TextStyle(
-                  fontFamily: 'HammerSmith',
-                  fontSize: 20,
-                  color: Colors.black,
-                ),
-              ),
-              const SizedBox(height: 16),
-              CustomTextFormField(
-                label: 'First Name',
-                hint: 'Enter your first name',
-                controller: _firstNameController,
-              ),
-              const SizedBox(height: 8),
-              CustomTextFormField(
-                label: 'Last Name',
-                hint: 'Enter your last name',
-                controller: _lastNameController,
-              ),
-              const SizedBox(height: 8),
-              CustomTextFormField(
-                label: 'Email',
-                hint: 'Enter your email',
-                controller: _emailController,
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please enter your email';
-                  }
-                  return null; // Add more email validation if needed
-                },
-              ),
-              const SizedBox(height: 8),
-              CustomTextFormField(
-                label: 'Password',
-                hint: 'Enter your password',
-                controller: _passwordController,
-                isObscure: true,
-                showPassword: _isPasswordVisible,
-                toggleShowPassword: () {
-                  setState(() {
-                    _isPasswordVisible = !_isPasswordVisible;
-                  });
-                },
-              ),
-              const SizedBox(height: 8),
-              CustomTextFormField(
-                label: 'Confirm Password',
-                hint: 'Verify your password',
-                controller: _confirmPasswordController,
-                isObscure: true,
-                showPassword: _isConfirmPasswordVisible,
-                toggleShowPassword: () {
-                  setState(() {
-                    _isConfirmPasswordVisible = !_isConfirmPasswordVisible;
-                  });
-                },
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please confirm your password';
-                  }
-                  if (value != _passwordController.text) {
-                    return 'Passwords do not match';
-                  }
-                  return null;
-                },
-              ),
-              const SizedBox(height: 24),
-              SizedBox(
-                width: screenWidth * 0.5,
-                child: ElevatedButton(
-                  style: ButtonStyle(
-                    backgroundColor:
-                        WidgetStateProperty.all(const Color(0xFF1C3473)),
-                  ),
-                  onPressed: _isLoading
-                      ? null
-                      : () {
-                          if (_formSignupKey.currentState!.validate()) {
-                            final signUpModel = SignUpModel(
-                              firstName: _firstNameController.text,
-                              lastName: _lastNameController.text,
-                              email: _emailController.text,
-                              password: _passwordController.text,
-                              confirmPassword: _confirmPasswordController.text,
-                            );
-                            context
-                                .read<AuthBloc>()
-                                .add(SignUpEvent(signUpModel));
-                          }
-                        },
-                  child: _isLoading
-                      ? const SizedBox(
-                          width: 20,
-                          height: 20,
-                          child: CircularProgressIndicator(
-                            valueColor:
-                                AlwaysStoppedAnimation<Color>(Colors.white),
-                            strokeWidth: 2,
-                          ),
-                        )
-                      : const Text('SIGN UP'),
-                ),
-              ),
-              const SizedBox(height: 8),
-              _buildLoginRedirect(),
-            ],
-          ),
+            ),
+            const SizedBox(height: 8),
+            _buildLoginRedirect(),
+          ],
         ),
       ),
     );
@@ -198,31 +166,6 @@ class _SignupFormState extends State<SignupForm> {
           ),
         ),
       ],
-    );
-  }
-
-  void _showErrorDialog(String message) {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Error'),
-        content: Text(message),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(),
-            child: const Text('OK'),
-          ),
-        ],
-      ),
-    );
-  }
-
-  void _showSuccessMessage() {
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('Registration Successful!'),
-        backgroundColor: Colors.green,
-      ),
     );
   }
 }

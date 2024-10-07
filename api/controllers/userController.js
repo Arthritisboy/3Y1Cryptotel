@@ -1,6 +1,7 @@
 const User = require('../models/User');
 const catchAsync = require('../utils/catchAsync');
 const AppError = require('../utils/appError');
+const { uploadProfileImage } = require('../middleware/imageUpload');
 
 const filterObj = (obj, ...notAllowedFields) => {
   const newObj = {};
@@ -47,6 +48,20 @@ exports.deleteUser = catchAsync(async (req, res, next) => {
 });
 
 exports.updateMe = catchAsync(async (req, res, next) => {
+  let profile;
+
+  if (req.file) {
+    try {
+      profile = await uploadProfileImage(req);
+    } catch (uploadErr) {
+      return res.status(500).json({
+        status: 'error',
+        message: 'Image upload failed',
+        error: uploadErr.message,
+      });
+    }
+  }
+
   //! 1) Create error if user POSTs password data
   if (req.body.password || req.body.confirmPassword) {
     return next(
@@ -58,6 +73,10 @@ exports.updateMe = catchAsync(async (req, res, next) => {
   }
   //! 2) Filtered out unwanted fields names
   const filteredBody = filterObj(req.body, 'roles');
+
+  if (profile) {
+    filteredBody.profile = profile;
+  }
 
   //! 3) Update user document
   const updateUser = await User.findByIdAndUpdate(req.user.id, filteredBody, {
@@ -79,5 +98,24 @@ exports.deleteMe = catchAsync(async (req, res, next) => {
   res.status(204).json({
     status: 'success',
     data: null,
+  });
+});
+
+exports.updateHasCompletedOnboarding = catchAsync(async (req, res, next) => {
+  await User.findByIdAndUpdate(
+    req.user.id,
+    { hasCompletedOnboarding: true },
+    { new: true, runValidators: true },
+  );
+
+  if (!User) {
+    return next(new AppError('No user found with that ID', 404));
+  }
+
+  res.status(200).json({
+    status: 'success',
+    data: {
+      User,
+    },
   });
 });

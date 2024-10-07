@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
-import 'month_selector.dart';
-import 'day_selector.dart';
-import 'input_fields.dart';
+import 'package:hotel_flutter/presentation/widgets/hotel/day_selector.dart';
+import 'package:hotel_flutter/presentation/widgets/hotel/input_fields.dart';
+import 'package:hotel_flutter/presentation/widgets/hotel/month_selector.dart';
+
 
 class ReservationBooking extends StatefulWidget {
   const ReservationBooking({super.key});

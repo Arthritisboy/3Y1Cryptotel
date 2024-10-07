@@ -12,6 +12,7 @@ class BottomSection extends StatelessWidget {
   final String gender;
   final ValueChanged<String> onGenderChanged;
   final VoidCallback updateUserData;
+  final bool isLoading; // Add loading state
 
   const BottomSection({
     super.key,
@@ -23,6 +24,7 @@ class BottomSection extends StatelessWidget {
     required this.gender,
     required this.onGenderChanged,
     required this.updateUserData,
+    required this.isLoading, // Accept loading state
   });
 
   @override
@@ -91,9 +93,10 @@ class BottomSection extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 20),
-              // Pass updateUserData to ActionButtons correctly
+              // Update the ActionButtons to show loading state
               ActionButtons(
                 updateUserData: updateUserData,
+                isLoading: isLoading, // Pass the loading state to the button
               ),
               const SizedBox(height: 20),
               const DeleteAccountButton(),

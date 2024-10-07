@@ -15,14 +15,14 @@ class CustomDialog extends StatelessWidget {
   final VoidCallback onSecondButtonPressed; // No button action
 
   const CustomDialog({
-    Key? key,
+    super.key,
     required this.title,
     required this.description,
     this.buttonText = 'Close',
     this.secondButtonText = '',
     required this.onButtonPressed,
     required this.onSecondButtonPressed,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

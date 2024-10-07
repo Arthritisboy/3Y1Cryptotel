@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:hotel_flutter/presentation/screens/tab_screen.dart';
+import 'package:hotel_flutter/presentation/screens/homeScreens/tab_screen.dart';
 
 class CryptoNoTransaction extends StatelessWidget {
   const CryptoNoTransaction({super.key});

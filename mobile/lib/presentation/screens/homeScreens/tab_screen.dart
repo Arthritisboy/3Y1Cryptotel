@@ -3,8 +3,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hotel_flutter/logic/bloc/auth_bloc.dart';
 import 'package:hotel_flutter/logic/bloc/auth_event.dart';
 import 'package:hotel_flutter/logic/bloc/auth_state.dart';
-import 'package:hotel_flutter/presentation/screens/home_screen.dart';
-import 'package:hotel_flutter/presentation/screens/restaurant_screen.dart';
+import 'package:hotel_flutter/presentation/screens/homeScreens/home_screen.dart';
+import 'package:hotel_flutter/presentation/screens/homeScreens/restaurant_screen.dart';
 import 'package:hotel_flutter/presentation/widgets/dialog/custom_dialog.dart';
 import 'package:hotel_flutter/presentation/widgets/tabscreen/bottom_home_icon_navigation.dart';
 import 'package:hotel_flutter/presentation/widgets/tabscreen/tab_header.dart';
@@ -25,6 +25,7 @@ class _TabScreenState extends State<TabScreen> {
   String? firstName;
   String? lastName;
   String? email;
+  String? profile;
 
   @override
   void initState() {
@@ -46,12 +47,15 @@ class _TabScreenState extends State<TabScreen> {
         firstName = state.user.firstName ?? '';
         lastName = state.user.lastName ?? '';
         email = state.user.email ?? '';
-        _isLoading = false; // Loading finished
+        profile = state.user.profilePicture ?? '';
+        _isLoading = false;
 
-        // Write user data to secure storage
+        // Write user data to secure storage, including profile
         _secureStorage.write(key: 'firstName', value: firstName);
         _secureStorage.write(key: 'lastName', value: lastName);
         _secureStorage.write(key: 'email', value: email);
+        _secureStorage.write(
+            key: 'profile', value: profile); // Store profile URL
       } else if (state is AuthInitial) {
         WidgetsBinding.instance.addPostFrameCallback((_) {
           Navigator.of(context).pushReplacementNamed('/login');
@@ -68,6 +72,7 @@ class _TabScreenState extends State<TabScreen> {
           firstName: firstName ?? '',
           lastName: lastName ?? '',
           email: email ?? '',
+          profile: profile ?? '', // Pass profile to the drawer
         ),
         body: Stack(
           children: [
@@ -76,12 +81,10 @@ class _TabScreenState extends State<TabScreen> {
                 if (_isLoading)
                   const Expanded(
                     child: Center(
-                      child:
-                          CircularProgressIndicator(), // Centered loading indicator
+                      child: CircularProgressIndicator(),
                     ),
                   )
                 else ...[
-                  // TabHeader for authenticated users
                   if (state is Authenticated)
                     TabHeader(
                       firstName: firstName!,
@@ -97,8 +100,9 @@ class _TabScreenState extends State<TabScreen> {
                       child: Container(
                         decoration: const BoxDecoration(
                           color: Colors.white,
-                          borderRadius:
-                              BorderRadius.vertical(top: Radius.circular(30.0)),
+                          borderRadius: BorderRadius.vertical(
+                            top: Radius.circular(30.0),
+                          ),
                         ),
                         child: SingleChildScrollView(
                           child: Column(
@@ -155,6 +159,7 @@ class _TabScreenState extends State<TabScreen> {
             'firstName': firstName,
             'lastName': lastName,
             'email': email,
+            'profile': profile,
           },
         );
         break;

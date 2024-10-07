@@ -5,14 +5,14 @@ abstract class AuthEvent {}
 
 class SignUpEvent extends AuthEvent {
   final SignUpModel signUpModel;
+  final String? profilePicture;
 
-  SignUpEvent(this.signUpModel);
+  SignUpEvent(this.signUpModel, this.profilePicture);
 }
 
 class LoginEvent extends AuthEvent {
   final String email;
   final String password;
-
   LoginEvent({required this.email, required this.password});
 }
 
@@ -48,8 +48,9 @@ class ChangePasswordEvent extends AuthEvent {
 
 class UpdateUserEvent extends AuthEvent {
   final UserModel user;
+  final String? profilePicture;
 
-  UpdateUserEvent(this.user);
+  UpdateUserEvent(this.user, {this.profilePicture});
 }
 
 class VerifyUserEvent extends AuthEvent {

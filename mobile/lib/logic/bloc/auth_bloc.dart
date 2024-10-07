@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:bloc/bloc.dart';
 import 'package:hotel_flutter/data/repositories/auth_repository.dart';
 import 'package:hotel_flutter/logic/bloc/auth_event.dart';
@@ -5,11 +7,14 @@ import 'package:hotel_flutter/logic/bloc/auth_state.dart';
 
 class AuthBloc extends Bloc<AuthEvent, AuthState> {
   final AuthRepository authRepository;
+
   AuthBloc(this.authRepository) : super(AuthInitial()) {
     on<SignUpEvent>((event, emit) async {
       emit(AuthLoading());
       try {
-        final user = await authRepository.register(event.signUpModel);
+        // Pass the profile picture if available
+        final user = await authRepository.register(event.signUpModel,
+            event.profilePicture != null ? File(event.profilePicture!) : null);
         emit(Authenticated(user));
       } catch (e) {
         emit(AuthError('Registration failed: ${e.toString()}'));
@@ -19,24 +24,13 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     on<LoginEvent>((event, emit) async {
       emit(AuthLoading());
       try {
-        print('Logging in with: ${event.email}, ${event.password}');
-
         final user = await authRepository.login(event.email, event.password);
-        print(
-            'User logged in: ${user.id}, Has completed onboarding: ${user.hasCompletedOnboarding}');
-
-        emit(AuthenticatedLogin(user,
-            hasCompletedOnboarding: user.hasCompletedOnboarding));
+        emit(AuthenticatedLogin(user)); // Pass the LoginModel directly
       } catch (e) {
-        print('Login error: ${e.toString()}'); // More detailed logging
-        if (e.toString().contains('Invalid email or password')) {
-          emit(const AuthError('Invalid email or password. Please try again.'));
-        } else {
-          emit(AuthError('Login failed: ${e.toString()}'));
-        }
+        print("Login Error: $e");
+        emit(AuthError('Login failed: ${e.toString()}'));
       }
     });
-
     on<ForgotPasswordEvent>((event, emit) async {
       emit(AuthLoading());
       try {
@@ -85,8 +79,14 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     on<UpdateUserEvent>((event, emit) async {
       emit(AuthLoading());
       try {
-        await authRepository.updateUser(event.user);
-        emit(Authenticated(event.user));
+        // Ensure both firstName, lastName, and profilePicture are sent to the repository
+        await authRepository.updateUser(
+          event.user,
+          profilePicture:
+              event.profilePicture != null ? File(event.profilePicture!) : null,
+        );
+        emit(Authenticated(event
+            .user)); // Emit the updated user after the operation is successful
       } catch (error) {
         emit(AuthError('Failed to update user: $error'));
       }
@@ -116,9 +116,8 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     on<CompleteOnboardingEvent>((event, emit) async {
       emit(AuthLoading());
       try {
-        await authRepository
-            .completeOnboarding(); // Make sure this method is implemented in your repository
-        emit(const AuthSuccess('Onboarding completed.'));
+        await authRepository.completeOnboarding();
+        emit(const AuthSuccess('Onboarding completed successfully'));
       } catch (e) {
         emit(AuthError('Failed to complete onboarding: ${e.toString()}'));
       }

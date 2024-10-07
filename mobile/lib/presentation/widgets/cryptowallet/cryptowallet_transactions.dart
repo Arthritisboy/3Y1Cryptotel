@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:hotel_flutter/presentation/screens/tab_screen.dart';
+import 'package:hotel_flutter/presentation/screens/homeScreens/tab_screen.dart';
 import 'package:hotel_flutter/presentation/widgets/cryptowallet/cryptonotransaction.dart';
 import 'package:hotel_flutter/presentation/widgets/cryptowallet/cryptowithtransaction.dart';
 

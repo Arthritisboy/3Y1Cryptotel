@@ -1,18 +1,19 @@
 import 'package:flutter/material.dart';
-import 'package:hotel_flutter/presentation/screens/onboarding_screen.dart';
-import 'package:hotel_flutter/presentation/screens/crypto_wallet.dart';
-import 'package:hotel_flutter/presentation/screens/forgot_password_screen.dart';
-import 'package:hotel_flutter/presentation/screens/help_screen.dart';
-import 'package:hotel_flutter/presentation/screens/tab_screen.dart';
-import 'package:hotel_flutter/presentation/screens/login_screen.dart';
-import 'package:hotel_flutter/presentation/screens/signup_screen.dart';
-import 'package:hotel_flutter/presentation/screens/update_password_screen.dart';
-import 'package:hotel_flutter/presentation/screens/verify_code_screen.dart';
-import 'package:hotel_flutter/presentation/screens/welcome_screen.dart';
-import 'package:hotel_flutter/presentation/screens/email_reset_token_screen.dart';
-import 'package:hotel_flutter/presentation/screens/reset_password.dart';
-import 'package:hotel_flutter/presentation/screens/profile_screen.dart';
-import 'package:hotel_flutter/presentation/screens/favorite_screen.dart';
+import 'package:hotel_flutter/presentation/screens/homeScreens/onboarding_screen.dart';
+import 'package:hotel_flutter/presentation/screens/drawerScreens/crypto_wallet.dart';
+import 'package:hotel_flutter/presentation/screens/authScreens/forgot_password_screen.dart';
+import 'package:hotel_flutter/presentation/screens/drawerScreens/help_screen.dart';
+import 'package:hotel_flutter/presentation/screens/homeScreens/tab_screen.dart';
+import 'package:hotel_flutter/presentation/screens/authScreens/login_screen.dart';
+import 'package:hotel_flutter/presentation/screens/authScreens/signup_screen.dart';
+import 'package:hotel_flutter/presentation/screens/authScreens/update_password_screen.dart';
+import 'package:hotel_flutter/presentation/screens/drawerScreens/upload_picture_screen.dart';
+import 'package:hotel_flutter/presentation/screens/authScreens/verify_code_screen.dart';
+import 'package:hotel_flutter/presentation/screens/homeScreens/welcome_screen.dart';
+import 'package:hotel_flutter/presentation/screens/authScreens/email_reset_token_screen.dart';
+import 'package:hotel_flutter/presentation/screens/authScreens/reset_password.dart';
+import 'package:hotel_flutter/presentation/screens/drawerScreens/profile_screen.dart';
+import 'package:hotel_flutter/presentation/screens/drawerScreens/favorite_screen.dart';
 
 class AppRouter {
   Route<dynamic>? onGenerateRoute(RouteSettings routeSettings) {
@@ -33,7 +34,7 @@ class AppRouter {
         );
       case '/homescreen':
         return MaterialPageRoute(
-          builder: (_) => const TabScreen(),
+          builder: (_) => TabScreen(),
         );
 
       case '/forgotPassword':
@@ -61,12 +62,14 @@ class AppRouter {
           final String firstName = args['firstName'];
           final String lastName = args['lastName'];
           final String email = args['email'];
+          final String profile = args['profile'];
 
           return MaterialPageRoute(
             builder: (_) => ProfileScreen(
               firstName: firstName,
               lastName: lastName,
               email: email,
+              profile: profile,
             ),
           );
         } else {
@@ -74,7 +77,7 @@ class AppRouter {
         }
       case '/cryptoTransaction':
         return MaterialPageRoute(
-          builder: (_) => const CryptoWallet(),
+          builder: (_) => CryptoWallet(),
         );
       case '/verifyCode':
         final args = routeSettings.arguments as Map<String, dynamic>?;
@@ -91,23 +94,39 @@ class AppRouter {
 
       case '/updatePassword':
         return MaterialPageRoute(
-          builder: (_) => const UpdatePasswordScreen(),
+          builder: (_) => UpdatePasswordScreen(),
         );
 
       case '/favorites':
         return MaterialPageRoute(
-          builder: (_) => const FavoriteScreen(),
+          builder: (_) => FavoriteScreen(),
         );
 
       case '/help':
         return MaterialPageRoute(
-          builder: (_) => const HelpScreen(),
+          builder: (_) => HelpScreen(),
         );
 
       case '/onboarding':
         return MaterialPageRoute(
-          builder: (_) => const OnboardingScreen(),
+          builder: (_) => OnboardingScreen(),
         );
+      case '/uploadPicture':
+        final args = routeSettings.arguments as Map<String, dynamic>?;
+
+        if (args != null) {
+          return MaterialPageRoute(
+            builder: (_) => UploadPictureScreen(
+              firstName: args['firstName'],
+              lastName: args['lastName'],
+              email: args['email'],
+              password: args['password'],
+              confirmPassword: args['confirmPassword'],
+            ),
+          );
+        } else {
+          return null;
+        }
 
       default:
         return null;

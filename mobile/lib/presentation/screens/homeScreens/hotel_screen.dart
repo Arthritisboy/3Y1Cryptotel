@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:hotel_flutter/presentation/hotel/room/background_room_image.dart';
-import 'package:hotel_flutter/presentation/hotel/room/hotelClicked.dart';
+import 'package:hotel_flutter/presentation/widgets/hotel/hotelClicked.dart';
+import 'package:hotel_flutter/presentation/widgets/hotel/background_room_image.dart';
 
 class HotelScreen extends StatefulWidget {
   final String backgroundImage;
@@ -9,6 +9,8 @@ class HotelScreen extends StatefulWidget {
   final int price;
   final String location;
   final String time;
+  final double latitude;
+  final double longtitude;
 
   const HotelScreen({
     super.key,
@@ -18,6 +20,8 @@ class HotelScreen extends StatefulWidget {
     required this.price,
     required this.location,
     required this.time,
+    required this.latitude,
+    required this.longtitude,
   });
 
   @override
@@ -62,6 +66,8 @@ class _HotelScreenState extends State<HotelScreen> {
               location: widget.location,
               time: widget.time,
               activeIndex: _activeIndex,
+              latitude: widget.latitude,
+              longtitude: widget.longtitude,
               onNavTap: (index) {
                 setState(() {
                   _activeIndex = index;
