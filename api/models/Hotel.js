@@ -12,7 +12,8 @@ const hotelSchema = new mongoose.Schema({
         default: 0  // Automatic
     },
     averagePrice: {
-        type: String, // Automatic
+        type: Number,
+        default: 0 // Automatic
     },
     location: {
         type: String,
@@ -44,47 +45,6 @@ const hotelSchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Room'
     }],
-});
-
-// Method to calculate the average rating from all rooms' ratings
-hotelSchema.methods.calculateAverageRating = async function() {
-    await this.populate('rooms');  // Ensure rooms are populated
-    let totalRating = 0;
-    let totalReviews = 0;
-
-    for (const room of this.rooms) {
-        await room.populate('ratings');  // Populate the ratings for each room
-        const roomRatings = room.ratings;
-
-        roomRatings.forEach((rating) => {
-            totalRating += rating.rating;
-            totalReviews++;
-        });
-    }
-
-    return totalReviews > 0 ? totalRating / totalReviews : 0;
-};
-
-// Method to calculate the price range of rooms in the hotel
-hotelSchema.methods.calculatePriceRange = async function() {
-    await this.populate('rooms');  // Ensure rooms are populated
-
-    const roomPrices = this.rooms.map(room => room.price);
-
-    if (roomPrices.length === 0) {
-        return 'No rooms available';
-    }
-
-    const minPrice = Math.min(...roomPrices);
-    const maxPrice = Math.max(...roomPrices);
-
-    return `$${minPrice} - $${maxPrice}`;
-};
-
-// Pre-save hook to update hotel rating before saving
-hotelSchema.pre('save', async function(next) {
-    this.averageRating = await this.calculateAverageRating();
-    next();
 });
 
 const Hotel = mongoose.model('Hotel', hotelSchema);
