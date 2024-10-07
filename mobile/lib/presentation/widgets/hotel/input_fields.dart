@@ -1,60 +1,93 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
+import 'package:flutter/services.dart';
 
-class InputFields extends StatelessWidget {
+class InputFields extends StatefulWidget {
+  @override
+  _InputFieldsState createState() => _InputFieldsState();
+}
+
+class _InputFieldsState extends State<InputFields> {
   final TextEditingController fullNameController = TextEditingController();
   final TextEditingController emailController = TextEditingController();
-  final TextEditingController mobileNumberController = TextEditingController();
-  final TextEditingController paxController = TextEditingController();
-  final TextEditingController checkInTimeController = TextEditingController();
-  final TextEditingController checkOutTimeController = TextEditingController();
+  final TextEditingController phoneNumberController = TextEditingController();
+  final TextEditingController addressController = TextEditingController();
+  final TextEditingController checkInDateController = TextEditingController();
+  final TextEditingController checkOutDateController = TextEditingController();
+  final TextEditingController adultsController = TextEditingController();
+  final TextEditingController childrenController = TextEditingController();
 
-  InputFields({super.key});
+  Future<void> _selectDate(
+      BuildContext context, TextEditingController controller) async {
+    final DateTime? picked = await showDatePicker(
+      context: context,
+      initialDate: DateTime.now(),
+      firstDate: DateTime.now(),
+      lastDate: DateTime(2101),
+    );
+    if (picked != null) {
+      String formattedDate = DateFormat('yyyy-MM-dd').format(picked);
+      setState(() {
+        controller.text = formattedDate;
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     return Column(
       children: [
-        // Full Name and Email Address
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Expanded(
-              child: _buildLabelledTextField(fullNameController, 'Full Name'),
+              child: _buildDatePickerField(
+                  checkInDateController, 'Check-in Date', context),
             ),
             const SizedBox(width: 10),
             Expanded(
-              child: _buildLabelledTextField(emailController, 'Email Address'),
+              child: _buildDatePickerField(
+                  checkOutDateController, 'Check-out Date', context),
             ),
           ],
         ),
         const SizedBox(height: 10),
-        // Mobile Number and Number of Pax
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Expanded(
-              child: _buildLabelledTextField(
-                  mobileNumberController, 'Mobile Number'),
+              child: _buildLabelledTextField(fullNameController, 'Full Name', Icons.person),
             ),
             const SizedBox(width: 10),
             Expanded(
-              child: _buildLabelledTextField(paxController, 'Number of Pax'),
+              child: _buildLabelledTextField(emailController, 'Email Address', Icons.email),
             ),
           ],
         ),
         const SizedBox(height: 10),
-        // Check-in Time and Check-out Time
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Expanded(
               child: _buildLabelledTextField(
-                  checkInTimeController, 'Check-in Time'),
+                  phoneNumberController, 'Phone Number', Icons.phone),
             ),
             const SizedBox(width: 10),
             Expanded(
-              child: _buildLabelledTextField(
-                  checkOutTimeController, 'Check-out Time'),
+              child: _buildLabelledTextField(addressController, 'Address', Icons.home),
+            ),
+          ],
+        ),
+        const SizedBox(height: 10),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Expanded(
+              child: _buildLabelledNumericTextField(adultsController, 'Adults (Pax)', Icons.people),
+            ),
+            const SizedBox(width: 10),
+            Expanded(
+              child: _buildLabelledNumericTextField(childrenController, 'Children (Pax)', Icons.child_care),
             ),
           ],
         ),
@@ -63,7 +96,7 @@ class InputFields extends StatelessWidget {
   }
 
   Widget _buildLabelledTextField(
-      TextEditingController controller, String label) {
+      TextEditingController controller, String label, IconData icon) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -74,9 +107,9 @@ class InputFields extends StatelessWidget {
             fontSize: 14,
           ),
         ),
-        const SizedBox(height: 4), // Space between label and text field
+        const SizedBox(height: 4),
         SizedBox(
-          height: 40, // Adjust height here
+          height: 40,
           child: TextField(
             controller: controller,
             decoration: InputDecoration(
@@ -84,8 +117,78 @@ class InputFields extends StatelessWidget {
                 borderRadius: BorderRadius.circular(10),
                 borderSide: const BorderSide(color: Colors.black),
               ),
+              prefixIcon: Icon(icon),
             ),
-            style: const TextStyle(color: Colors.black), // Black input text
+            style: const TextStyle(color: Colors.black),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildLabelledNumericTextField(
+      TextEditingController controller, String label, IconData icon) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          label,
+          style: const TextStyle(
+            color: Color.fromARGB(255, 142, 142, 147),
+            fontSize: 14,
+          ),
+        ),
+        const SizedBox(height: 4),
+        SizedBox(
+          height: 40,
+          child: TextField(
+            controller: controller,
+            keyboardType: TextInputType.number,
+            inputFormatters: [
+              FilteringTextInputFormatter.digitsOnly,
+            ],
+            decoration: InputDecoration(
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(10),
+                borderSide: const BorderSide(color: Colors.black),
+              ),
+              prefixIcon: Icon(icon),
+            ),
+            style: const TextStyle(color: Colors.black),
+          ),
+        ),
+      ],
+    );
+  }
+  Widget _buildDatePickerField(TextEditingController controller, String label,
+      BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          label,
+          style: const TextStyle(
+            color: Color.fromARGB(255, 142, 142, 147),
+            fontSize: 14,
+          ),
+        ),
+        const SizedBox(height: 4),
+        SizedBox(
+          height: 40,
+          child: TextField(
+            controller: controller,
+            readOnly: true,
+            decoration: InputDecoration(
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(10),
+                borderSide: const BorderSide(color: Colors.black),
+              ),
+              prefixIcon: Icon(Icons.calendar_today),
+            ),
+            onTap: () {
+              _selectDate(context, controller);
+            },
+            style: const TextStyle(color: Colors.black),
           ),
         ),
       ],
