@@ -83,7 +83,7 @@ app.use((req, res, next) => {
 app.use('/api/v1/auth', authRouter);
 app.use('/api/v1/users', userRoute);
 app.use('/api/v1/appoint', bookingRouter);
-app.use('/api/v1/hotel', hotelRoomRatingRoutes);
+app.use('/api/v1/hotels', hotelRoomRatingRoutes);
 
 //! Handle all undefined routes
 app.all('*', (req, res, next) => {
