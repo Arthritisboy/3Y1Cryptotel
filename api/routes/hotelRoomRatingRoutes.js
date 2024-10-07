@@ -9,12 +9,12 @@ const router = express.Router();
 
 // Hotel routes
 router
-  .route('/hotels')
+  .route('/')
   .get(authController.protect, hotelController.getHotel)
   .post(upload.single('image'), hotelController.createHotel);
 
 router
-  .route('/hotels/:id')
+  .route('/:id')
   .get(authController.protect, hotelController.getHotel)
   .patch(hotelController.updateHotel)
   .delete(hotelController.deleteHotel);
