@@ -1,4 +1,4 @@
 /node_modules/
 .vercel
 /config.env
-.model.json
+model.json
