@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:hotel_flutter/presentation/screens/homeScreens/onboarding_screen.dart';
 import 'package:hotel_flutter/presentation/screens/drawerScreens/crypto_wallet.dart';
 import 'package:hotel_flutter/presentation/screens/authScreens/forgot_password_screen.dart';
-import 'package:hotel_flutter/presentation/screens/drawerScreens/help_screen.dart';
+import 'package:hotel_flutter/presentation/screens/drawerScreens/help_support_screen.dart';
 import 'package:hotel_flutter/presentation/screens/homeScreens/tab_screen.dart';
 import 'package:hotel_flutter/presentation/screens/authScreens/login_screen.dart';
 import 'package:hotel_flutter/presentation/screens/authScreens/signup_screen.dart';
@@ -97,14 +97,14 @@ class AppRouter {
           builder: (_) => UpdatePasswordScreen(),
         );
 
-      case '/favorites':
+      case '/favorite':
         return MaterialPageRoute(
           builder: (_) => FavoriteScreen(),
         );
 
       case '/help':
         return MaterialPageRoute(
-          builder: (_) => HelpScreen(),
+          builder: (_) => HelpSupportScreen(),
         );
 
       case '/onboarding':
@@ -127,7 +127,6 @@ class AppRouter {
         } else {
           return null;
         }
-
       default:
         return null;
     }

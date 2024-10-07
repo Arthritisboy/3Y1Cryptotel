@@ -163,11 +163,17 @@ class _TabScreenState extends State<TabScreen> {
           },
         );
         break;
+      case 'help':
+        Navigator.of(context).pushNamed('/help');
+        break;
       case '/cryptoTransaction':
         Navigator.of(context).pushNamed('/cryptoTransaction');
         break;
       case 'settings':
         Navigator.of(context).pushNamed('/settings');
+        break;
+      case 'favorite':
+        Navigator.of(context).pushNamed('/favorite');
         break;
       case 'logout':
         _showLogoutConfirmationDialog();
