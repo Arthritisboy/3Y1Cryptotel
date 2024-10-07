@@ -25,6 +25,21 @@ const hotelSchema = new mongoose.Schema({
     hotelImage: {
         type: String, // similar user profile
     },
+    // contactNumber: { will add this later I kida forgot to git pull
+    //   type: String,
+    //   required: true,
+    // },
+    // email: {
+    //   type: String,
+    //   required: true,
+    // },
+    // cryptoWalletAddress: {
+    //   type: String,
+    //   required: true,
+    // },
+
+
+
     rooms: [{
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Room'
@@ -70,57 +85,6 @@ hotelSchema.methods.calculatePriceRange = async function() {
 hotelSchema.pre('save', async function(next) {
     this.averageRating = await this.calculateAverageRating();
     next();
-});
-
-const Hotel = mongoose.model('Hotel', hotelSchema);
-=======
-
-const hotelSchema = new mongoose.Schema({
-  id: {
-    type: String,
-    required: true,
-  },
-  image: {
-    type: String,
-    required: true,
-  },
-  hotelName: {
-    type: String,
-    required: true,
-  },
-  imagePath: {
-    type: String,
-  },
-  rating: {
-    type: Number,
-    default: 0,
-  },
-  price: {
-    type: Number,
-    required: true,
-  },
-  location: {
-    type: String,
-    required: true,
-  },
-  contactNumber: {
-    type: String,
-    required: true,
-  },
-  email: {
-    type: String,
-    required: true,
-  },
-  cryptoWalletAddress: {
-    type: String,
-    required: true,
-  },
-  rooms: [
-    {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: 'Room',
-    },
-  ],
 });
 
 const Hotel = mongoose.model('Hotel', hotelSchema);
