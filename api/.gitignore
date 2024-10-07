@@ -2,4 +2,4 @@
 .vercel
 /config.env
 //test
-model.json
+model.js

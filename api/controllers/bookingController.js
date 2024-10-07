@@ -25,39 +25,83 @@ exports.getBookings = catchAsync(async (req, res, next) => {
 exports.createBooking = catchAsync(async (req, res, next) => {
     try {
         const { hotelId, roomId, checkInDate, checkOutDate } = req.body;
-        const userId = req.user.id;
+        const userId = req.params.userId; // Assuming userId is now coming from params
+
+        console.log("Received booking data:", {
+            userId,
+            hotelId,
+            roomId,
+            checkInDate,
+            checkOutDate
+        });
+
+        // Validate checkInDate and checkOutDate
+        const checkIn = new Date(checkInDate);
+        const checkOut = new Date(checkOutDate);
+
+        console.log("Parsed check-in date:", checkIn);
+        console.log("Parsed check-out date:", checkOut);
+
+        if (checkOut <= checkIn) {
+            console.error("Check-out date is not after check-in date");
+            return next(new AppError('Check-out date must be after check-in date', 400));
+        }
 
         // Find the room and hotel
         const room = await Room.findById(roomId);
         const hotel = await Hotel.findById(hotelId);
-        if (!room || !hotel) {
-            return next(new AppError('Room or hotel not found', 404));
+
+        console.log("Found room:", room);
+        console.log("Found hotel:", hotel);
+
+        if (!room) {
+            console.error("Room not found for roomId:", roomId);
+            return next(new AppError('Room not found', 404));
+        }
+        if (!hotel) {
+            console.error("Hotel not found for hotelId:", hotelId);
+            return next(new AppError('Hotel not found', 404));
         }
 
-        // Calculate total price (e.g., price per night * number of nights)
-        const nights = (new Date(checkOutDate) - new Date(checkInDate)) / (1000 * 60 * 60 * 24);
+        // Check if room price is valid
+        console.log("Room price:", room.price);
+        if (typeof room.price !== 'number' || room.price <= 0) {
+            console.error("Invalid room price:", room.price);
+            return next(new AppError('Invalid room price', 400));
+        }
+
+        // Calculate total price
+        const nights = Math.ceil((checkOut - checkIn) / (1000 * 60 * 60 * 24));
         const totalPrice = room.price * nights;
 
-        // Create a booking
+        console.log("Number of nights:", nights);
+        console.log("Calculated total price:", totalPrice);
+
+        // Create a new booking with the calculated total price
         const newBooking = await Booking.create({
-            user: userId,
-            hotel: hotelId,
-            room: roomId,
+            userId,
+            hotelId,
+            roomId,
             checkInDate,
             checkOutDate,
             totalPrice
         });
 
+        console.log("New booking created:", newBooking);
+
         res.status(201).json({
             status: 'success',
             data: {
-                newBooking
+                booking: newBooking
             }
         });
     } catch (error) {
+        console.error("Booking creation error:", error);
         return next(new AppError('Error in creating booking. Please try again.', 500));
     }
 });
+
+
 
 // Update an existing booking (e.g., change dates)
 exports.updateBooking = catchAsync(async (req, res, next) => {
