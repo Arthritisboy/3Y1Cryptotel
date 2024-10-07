@@ -6,8 +6,6 @@ import 'package:hotel_flutter/presentation/widgets/hotel/details/roomDetails.dar
 import 'package:hotel_flutter/presentation/widgets/hotel/input_fields.dart';
 import 'package:hotel_flutter/presentation/widgets/hotel/navigation_row.dart';
 import 'package:hotel_flutter/presentation/widgets/hotel/ratings/hotelRatings.dart';
-import 'package:hotel_flutter/presentation/widgets/hotel/room/guestSelection.dart';
-import 'package:hotel_flutter/presentation/widgets/hotel/room/reservation_booking.dart';
 
 class ActiveRoom extends StatefulWidget {
   final String hotelName;
