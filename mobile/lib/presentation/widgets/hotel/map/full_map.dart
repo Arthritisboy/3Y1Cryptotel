@@ -8,11 +8,11 @@ class FullScreenMap extends StatelessWidget {
   final double longitude;
 
   const FullScreenMap({
-    Key? key,
+    super.key,
     required this.hotelName,
     required this.latitude,
     required this.longitude,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

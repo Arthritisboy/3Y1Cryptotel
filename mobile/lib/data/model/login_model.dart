@@ -1,14 +1,12 @@
 class LoginModel {
-  final String? id;
-  final String? token;
+  final String id;
   final bool hasCompletedOnboarding;
 
-  LoginModel({this.id, this.token, required this.hasCompletedOnboarding});
+  LoginModel({required this.id, required this.hasCompletedOnboarding});
 
   factory LoginModel.fromJson(Map<String, dynamic> json) {
     return LoginModel(
-      id: json['userId'],
-      token: json['token'],
+      id: json['userId'] ?? '',
       hasCompletedOnboarding: json['hasCompletedOnboarding'] ?? false,
     );
   }

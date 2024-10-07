@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hotel_flutter/logic/bloc/auth_bloc.dart';
 import 'package:hotel_flutter/logic/bloc/auth_event.dart';
+import 'package:hotel_flutter/logic/bloc/auth_state.dart';
 
 class OnboardingScreen extends StatefulWidget {
   const OnboardingScreen({super.key});
@@ -39,8 +40,24 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
     } else {
       // This is the last page, complete onboarding
       context.read<AuthBloc>().add(CompleteOnboardingEvent());
-      Navigator.of(context).pushNamed('/homescreen');
+
+      // Listen for the state change to navigate
+      context.read<AuthBloc>().stream.listen((state) {
+        if (state is AuthSuccess) {
+          Navigator.of(context).pushNamed('/homescreen');
+        } else if (state is AuthError) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text(state.error)),
+          );
+        }
+      });
     }
+  }
+
+  @override
+  void dispose() {
+    _pageController.dispose();
+    super.dispose();
   }
 
   @override

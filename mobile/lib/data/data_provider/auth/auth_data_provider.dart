@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 // ignore: depend_on_referenced_packages
 import 'package:http/http.dart' as http;
@@ -22,44 +24,54 @@ class AuthDataProvider {
 
     if (response.statusCode == 200) {
       final data = json.decode(response.body);
-
       String token = data['token'];
       String userId = data['userId'];
+      bool hasCompletedOnboarding = data['hasCompletedOnboarding'] ?? false;
 
       await storage.write(key: 'jwt', value: token);
       await storage.write(key: 'userId', value: userId);
 
       return {
         'token': token,
-        'user': {'id': userId},
+        'userId': userId,
+        'hasCompletedOnboarding': hasCompletedOnboarding,
       };
-    } else if (response.statusCode == 401) {
-      final errorResponse = json.decode(response.body);
-      String errorMessage = errorResponse['message'] ??
-          'Invalid email or password. Please try again.';
-      throw Exception(errorMessage);
     } else {
       final errorResponse = json.decode(response.body);
-      String errorMessage = errorResponse['message'] ??
-          response.reasonPhrase ??
-          'An unexpected error occurred.';
+      String errorMessage =
+          errorResponse['message'] ?? 'An unexpected error occurred.';
       throw Exception('Failed to login: $errorMessage');
     }
   }
 
   //! Register
-  Future<Map<String, dynamic>> register(SignUpModel signUpModel) async {
-    final response = await http.post(
-      Uri.parse('$baseUrl/signup'),
-      body: json.encode(signUpModel.toJson()),
-      headers: {'Content-Type': 'application/json'},
-    );
+  Future<Map<String, dynamic>> register(
+      SignUpModel signUpModel, File? profilePicture) async {
+    var request = http.MultipartRequest('POST', Uri.parse('$baseUrl/signup'));
+    request.headers['Content-Type'] = 'application/json';
+
+    // Add text fields
+    request.fields['firstName'] = signUpModel.firstName;
+    request.fields['lastName'] = signUpModel.lastName;
+    request.fields['email'] = signUpModel.email;
+    request.fields['password'] = signUpModel.password;
+    request.fields['confirmPassword'] = signUpModel.confirmPassword;
+
+    // Add file if it exists
+    if (profilePicture != null) {
+      request.files
+          .add(await http.MultipartFile.fromPath('image', profilePicture.path));
+    }
+
+    final response = await request.send();
 
     if (response.statusCode == 201) {
-      return json.decode(response.body);
+      final responseData = await http.Response.fromStream(response);
+      return json.decode(responseData.body);
     } else {
-      final errorResponse = json.decode(response.body);
-      String errorMessage = errorResponse['message'] ?? 'An error occurred';
+      final errorResponse = await http.Response.fromStream(response);
+      String errorMessage =
+          json.decode(errorResponse.body)['message'] ?? 'An error occurred';
       throw Exception('Failed to register: $errorMessage');
     }
   }
@@ -162,48 +174,79 @@ class AuthDataProvider {
     }
   }
 
-//! Change User Profile Data
-  Future<void> updateUserData(
-      {String? firstName, String? lastName, String? email}) async {
+  //! Change User Profile Data
+  Future<void> updateUserData({
+    String? firstName,
+    String? lastName,
+    String? email,
+    File? profilePicture,
+  }) async {
     final token = await storage.read(key: 'jwt');
 
-    // Create a map to hold the update data
-    final Map<String, dynamic> updateData = {};
-
-    // Only add the fields that are not null
-    if (firstName != null) {
-      updateData['firstName'] = firstName;
-    }
-    if (lastName != null) {
-      updateData['lastName'] = lastName;
-    }
-    if (email != null) {
-      updateData['email'] = email;
+    if (token == null) {
+      throw Exception('Authorization token is missing');
     }
 
-    // If no data is provided, throw an error
-    if (updateData.isEmpty) {
-      throw Exception('No data provided for update.');
+    final uri =
+        Uri.parse('https://3-y1-cryptotel.vercel.app/api/v1/users/updateMe');
+    var request = http.MultipartRequest('PATCH', uri);
+
+    // Set Authorization header
+    request.headers['Authorization'] = 'Bearer $token';
+
+    // Add text fields
+    if (firstName != null) request.fields['firstName'] = firstName;
+    if (lastName != null) request.fields['lastName'] = lastName;
+    if (email != null) request.fields['email'] = email;
+
+    // Add image file if it exists
+    if (profilePicture != null) {
+      request.files.add(
+        await http.MultipartFile.fromPath(
+          'image',
+          profilePicture.path,
+        ),
+      );
     }
 
-    final response = await http.patch(
-      Uri.parse('https://3-y1-cryptotel.vercel.app/api/v1/users/updateMe'),
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer $token',
-      },
-      body: json.encode(updateData),
-    );
+    try {
+      final response = await request.send();
+      final responseData = await http.Response.fromStream(response);
 
-    if (response.statusCode != 200) {
-      final errorResponse = json.decode(response.body);
-      String errorMessage = errorResponse['message'] ?? 'An error occurred';
-      throw Exception('Failed to update user data: $errorMessage');
+      if (response.statusCode == 200) {
+        print("Profile updated successfully: ${responseData.body}");
+      } else {
+        print("Failed to update profile. Response: ${responseData.body}");
+        throw Exception('Failed to update user data: ${responseData.body}');
+      }
+    } catch (error) {
+      print("An error occurred: $error");
+      throw Exception('An error occurred during the update');
     }
   }
 
   //! Logout
   Future<void> logout() async {
     await storage.deleteAll();
+  }
+
+  //! Update User Onboarding
+  Future<void> completeOnboarding() async {
+    final token = await storage.read(key: 'jwt');
+
+    final response = await http.put(
+      Uri.parse(
+          'https://3-y1-cryptotel.vercel.app/api/v1/users/updateHasCompletedOnboarding'),
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token',
+      },
+    );
+
+    if (response.statusCode != 200) {
+      final errorResponse = json.decode(response.body);
+      String errorMessage = errorResponse['message'] ?? 'An error occurred';
+      throw Exception('Failed to complete onboarding: $errorMessage');
+    }
   }
 }
