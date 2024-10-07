@@ -52,7 +52,7 @@ class RoomSelection extends StatelessWidget {
                         rating: room.rating,
                         price: room.price,
                         location: room.location,
-                        room: room, // Pass room model without activeIndex
+                        room: room,
                       ),
                     ),
                   );
@@ -70,7 +70,7 @@ class RoomSelection extends StatelessWidget {
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(8),
                             image: DecorationImage(
-                              image: AssetImage(room.imageUrl),
+                              image: AssetImage(room.imageUrls[0]), // Display only the first image
                               fit: BoxFit.cover,
                             ),
                           ),
