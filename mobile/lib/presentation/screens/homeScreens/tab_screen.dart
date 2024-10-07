@@ -47,7 +47,7 @@ class _TabScreenState extends State<TabScreen> {
         firstName = state.user.firstName ?? '';
         lastName = state.user.lastName ?? '';
         email = state.user.email ?? '';
-        profile = state.user.profile ?? '';
+        profile = state.user.profilePicture ?? '';
         _isLoading = false;
 
         // Write user data to secure storage, including profile
@@ -168,6 +168,9 @@ class _TabScreenState extends State<TabScreen> {
         break;
       case 'settings':
         Navigator.of(context).pushNamed('/settings');
+        break;
+      case 'favorite':
+        Navigator.of(context).pushNamed('/favorite');
         break;
       case 'logout':
         _showLogoutConfirmationDialog();

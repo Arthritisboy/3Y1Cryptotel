@@ -89,11 +89,15 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   // Update user data method
   Future<void> updateUserData() async {
+    setState(() {
+      _isLoading = true; // Start loading when the update process begins
+    });
+
     final updatedUser = UserModel(
       firstName: firstNameController.text,
       lastName: lastNameController.text,
       email: emailController.text,
-      profile: _selectedImage?.path ??
+      profilePicture: _selectedImage?.path ??
           widget.profile, // Use new image path if selected
     );
 
@@ -120,6 +124,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
         ),
       );
     }
+
+    setState(() {
+      _isLoading = false; // Stop loading once the update is complete
+    });
   }
 
   @override
@@ -157,6 +165,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     });
                   },
                   gender: gender,
+                  isLoading: _isLoading, // Pass the loading state
                 );
               }
               return Container();
@@ -168,7 +177,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             left: 0,
             right: 0,
             child: GestureDetector(
-              onTap: _isLoading ? null : _pickImage, // On tap, pick an image
+              onTap: _isLoading ? null : _pickImage, // Disable tap when loading
               child: CircleAvatar(
                 radius: 60,
                 backgroundColor: const Color.fromARGB(255, 173, 175, 210),
@@ -190,7 +199,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           : const Icon(
                               Icons.person,
                               size: 80,
-                              color: Color.fromARGB(255, 29, 53, 115),
+                              color: Color.fromARGB(
+                                  255, 29, 53, 115), // Placeholder icon
                             ),
                 ),
               ),

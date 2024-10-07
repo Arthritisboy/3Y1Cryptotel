@@ -134,6 +134,7 @@ class _ReservationRoomState extends State<Hotelclicked> {
           NavigationRow(
             activeIndex: widget.activeIndex,
             onTap: widget.onNavTap,
+            showBook: false, // Hide the Book option
           ),
           const Divider(
               thickness: 2, color: Color.fromARGB(255, 142, 142, 147)),
@@ -141,17 +142,18 @@ class _ReservationRoomState extends State<Hotelclicked> {
           // Show RoomSelection or hotel details based on the active tab
           if (widget.activeIndex == 0)
             RoomSelection(roomList: filteredRoomList),
-          if (widget.activeIndex == 1)
+          if (widget.activeIndex == 2)
             HotelDetails(
-              // You can replace this with your hotel details UI
+              // Replace with your hotel details UI
               hotelName: widget.hotelName,
               rating: widget.rating,
               price: widget.price,
               location: widget.location,
-              time: widget.time, latitude: widget.latitude,
+              time: widget.time,
+              latitude: widget.latitude,
               longitude: widget.longtitude,
             ),
-          if (widget.activeIndex == 2)
+          if (widget.activeIndex == 3)
             UserRatingsWidget(ratings: filteredRatingList),
         ],
       ),

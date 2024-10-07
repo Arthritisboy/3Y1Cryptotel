@@ -1,7 +1,8 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 
 class MainDrawer extends StatelessWidget {
-  MainDrawer({
+  const MainDrawer({
     super.key,
     required this.onSelectScreen,
     required this.firstName,
@@ -35,25 +36,36 @@ class MainDrawer extends StatelessWidget {
                   children: [
                     profile.isNotEmpty
                         ? CircleAvatar(
-                            radius: 60, // Increase the size of profile picture
-                            backgroundImage: NetworkImage(profile),
+                            radius: 60,
+                            backgroundColor: Colors.transparent,
+                            child: CachedNetworkImage(
+                              imageUrl: profile,
+                              placeholder: (context, url) =>
+                                  const CircularProgressIndicator(),
+                              errorWidget: (context, url, error) =>
+                                  const Icon(Icons.error),
+                              imageBuilder: (context, imageProvider) =>
+                                  Container(
+                                width: 120.0,
+                                height: 120.0,
+                                decoration: BoxDecoration(
+                                  shape: BoxShape.circle,
+                                  image: DecorationImage(
+                                    image: imageProvider,
+                                    fit: BoxFit.cover,
+                                  ),
+                                ),
+                              ),
+                            ),
                           )
                         : CircleAvatar(
                             radius: 60,
-                            backgroundColor: Colors
-                                .transparent, // Make sure background is transparent
-                            child: Container(
-                              decoration: BoxDecoration(
-                                shape: BoxShape.circle,
-                                color: Colors.white, // White background
-                              ),
-                              padding: const EdgeInsets.all(8.0),
-                              child: const Icon(
-                                Icons.person,
-                                size: 80,
-                                color: Color.fromARGB(255, 67, 131,
-                                    255), // Semi-transparent blue color
-                              ),
+                            backgroundColor:
+                                const Color.fromARGB(255, 173, 175, 210),
+                            child: const Icon(
+                              Icons.person,
+                              size: 80,
+                              color: Color.fromARGB(255, 29, 53, 115),
                             ),
                           ),
                     const SizedBox(height: 18),

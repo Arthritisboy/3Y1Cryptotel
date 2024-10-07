@@ -43,12 +43,16 @@ class RoomSelection extends StatelessWidget {
               final room = availableRooms[index];
               return InkWell(
                 onTap: () {
-                  // Navigate to RoomDetails screen on tap
+                  // Navigate to ActiveRoom screen on tap
                   Navigator.push(
                     context,
                     MaterialPageRoute(
                       builder: (context) => ActiveRoom(
-                        room: room, // Pass room details to the new screen
+                        hotelName: room.hotelName,
+                        rating: room.rating,
+                        price: room.price,
+                        location: room.location,
+                        room: room, // Pass room model without activeIndex
                       ),
                     ),
                   );

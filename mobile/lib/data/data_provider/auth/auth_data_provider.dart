@@ -6,7 +6,6 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:hotel_flutter/data/model/user_model.dart';
 import 'package:hotel_flutter/data/model/signup_model.dart';
-import 'package:http_parser/http_parser.dart';
 
 class AuthDataProvider {
   final String baseUrl = 'https://3-y1-cryptotel.vercel.app/api/v1/auth';
@@ -192,17 +191,22 @@ class AuthDataProvider {
         Uri.parse('https://3-y1-cryptotel.vercel.app/api/v1/users/updateMe');
     var request = http.MultipartRequest('PATCH', uri);
 
+    // Set Authorization header
     request.headers['Authorization'] = 'Bearer $token';
 
-    // Add text fields if they are provided
+    // Add text fields
     if (firstName != null) request.fields['firstName'] = firstName;
     if (lastName != null) request.fields['lastName'] = lastName;
     if (email != null) request.fields['email'] = email;
 
-    // Add profile picture if provided
+    // Add image file if it exists
     if (profilePicture != null) {
-      request.files
-          .add(await http.MultipartFile.fromPath('image', profilePicture.path));
+      request.files.add(
+        await http.MultipartFile.fromPath(
+          'image',
+          profilePicture.path,
+        ),
+      );
     }
 
     try {
@@ -211,13 +215,6 @@ class AuthDataProvider {
 
       if (response.statusCode == 200) {
         print("Profile updated successfully: ${responseData.body}");
-        final data = jsonDecode(responseData.body);
-
-        if (data['data']['user']['profile'] != null) {
-          print("Profile Picture URL: ${data['data']['user']['profile']}");
-        } else {
-          print("Profile Picture URL missing in response.");
-        }
       } else {
         print("Failed to update profile. Response: ${responseData.body}");
         throw Exception('Failed to update user data: ${responseData.body}');

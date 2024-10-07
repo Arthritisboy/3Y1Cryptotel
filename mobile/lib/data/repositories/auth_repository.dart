@@ -95,13 +95,14 @@ class AuthRepository {
   //! Update user
   Future<void> updateUser(UserModel user, {File? profilePicture}) async {
     try {
+      // Pass updated firstName, lastName, email, and profilePicture to the data provider
       await dataProvider.updateUserData(
         firstName: user.firstName,
         lastName: user.lastName,
         email: user.email,
         profilePicture: profilePicture,
       );
-      _cachedUser = user;
+      _cachedUser = user; // Update cached user
     } catch (error) {
       throw Exception('Failed to update user: $error');
     }
