@@ -5,6 +5,9 @@ const roomSchema = new mongoose.Schema({
         type: String,
         required: true
     },
+    roomImage: {
+        type: String,
+    },
     type: {
         type: String,
         required: true

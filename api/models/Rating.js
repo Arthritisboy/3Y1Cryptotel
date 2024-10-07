@@ -11,12 +11,12 @@ const ratingSchema = new mongoose.Schema({
         type: String,
         maxlength: 500  // Optional review message
     },
-    user: {
+    userId: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User',  // User who submitted the rating
         required: true
     },
-    room: {
+    roomId: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Room',  // Room being rated
         required: true

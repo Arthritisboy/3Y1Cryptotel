@@ -4,10 +4,10 @@ const bookingController = require('../controllers/bookingController');
 const router = express.Router();
 
 // Get all bookings for the current user
-router.get('/bookings', bookingController.getBookings);
+router.get('/bookings/userId', bookingController.getBookings);
 
 // Create a new booking
-router.post('/bookings', bookingController.createBooking);
+router.post('/bookings/:userId', bookingController.createBooking);
 
 // Update a booking by ID
 router.patch('/bookings/:bookingId', bookingController.updateBooking);

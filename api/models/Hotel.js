@@ -7,19 +7,33 @@ const hotelSchema = new mongoose.Schema({
         type: String,
         required: true
     },
+    averageRating: {
+        type: Number,
+        default: 0  // Automatic
+    },
+    averagePrice: {
+        type: String, // Automatic
+    },
+    location: {
+        type: String,
+        required: true,
+    },
+    openingHours: {
+        type: String,
+        required: true // example "7:30 Am to 4:30 Pm" I make it simpler rather than using complicated type: Date
+    },
+    hotelImage: {
+        type: String, // similar user profile
+    },
     rooms: [{
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Room'
     }],
-    rating: {
-        type: Number,
-        default: 0  // Store the calculated average of ratings
-    }
 });
 
-// Virtual to calculate average rating from all rooms' ratings
-hotelSchema.virtual('averageRating').get(async function() {
-    await this.populate('rooms');  // Make sure rooms are populated
+// Method to calculate the average rating from all rooms' ratings
+hotelSchema.methods.calculateAverageRating = async function() {
+    await this.populate('rooms');  // Ensure rooms are populated
     let totalRating = 0;
     let totalReviews = 0;
 
@@ -34,11 +48,27 @@ hotelSchema.virtual('averageRating').get(async function() {
     }
 
     return totalReviews > 0 ? totalRating / totalReviews : 0;
-});
+};
+
+// Method to calculate the price range of rooms in the hotel
+hotelSchema.methods.calculatePriceRange = async function() {
+    await this.populate('rooms');  // Ensure rooms are populated
+
+    const roomPrices = this.rooms.map(room => room.price);
+
+    if (roomPrices.length === 0) {
+        return 'No rooms available';
+    }
+
+    const minPrice = Math.min(...roomPrices);
+    const maxPrice = Math.max(...roomPrices);
+
+    return `$${minPrice} - $${maxPrice}`;
+};
 
 // Pre-save hook to update hotel rating before saving
 hotelSchema.pre('save', async function(next) {
-    this.rating = await this.averageRating;
+    this.averageRating = await this.calculateAverageRating();
     next();
 });
 
