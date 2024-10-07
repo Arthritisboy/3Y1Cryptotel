@@ -1,17 +1,17 @@
 import 'package:flutter/material.dart';
-import 'package:hotel_flutter/data/dummydata/rating_data.dart';
-import 'package:hotel_flutter/data/model/rating_model.dart';
-import 'package:hotel_flutter/data/model/room_model.dart';
-import 'package:hotel_flutter/presentation/widgets/hotel/details/roomDetails.dart';
-import 'package:hotel_flutter/presentation/widgets/hotel/input_fields.dart';
-import 'package:hotel_flutter/presentation/widgets/hotel/navigation_row.dart';
+import 'package:hotel_flutter/data/model/hotel/rating_model.dart';
+import 'package:hotel_flutter/data/model/hotel/room_model.dart';
 import 'package:hotel_flutter/presentation/widgets/hotel/ratings/hotelRatings.dart';
+import 'package:hotel_flutter/presentation/widgets/hotel/navigation_row.dart';
+import 'package:hotel_flutter/presentation/widgets/hotel/input_fields.dart';
+import 'package:hotel_flutter/presentation/widgets/hotel/details/roomDetails.dart';
 
 class ActiveRoom extends StatefulWidget {
   final String hotelName;
   final double rating;
   final int price;
   final String location;
+  final RoomModel room;
 
   const ActiveRoom({
     super.key,
@@ -19,7 +19,7 @@ class ActiveRoom extends StatefulWidget {
     required this.rating,
     required this.price,
     required this.location,
-    required RoomModel room,
+    required this.room,
   });
 
   @override
@@ -28,6 +28,7 @@ class ActiveRoom extends StatefulWidget {
 
 class _ActiveRoomState extends State<ActiveRoom> {
   int activeIndex = 1;
+
   void onNavTap(int index) {
     setState(() {
       activeIndex = index;
@@ -36,9 +37,7 @@ class _ActiveRoomState extends State<ActiveRoom> {
 
   @override
   Widget build(BuildContext context) {
-    final List<Rating> filteredRatingList = userRatings
-        .where((rating) => rating.hotelName == widget.hotelName)
-        .toList();
+    final List<RatingModel> filteredRatingList = widget.room.ratings;
 
     return Scaffold(
       appBar: AppBar(
@@ -64,7 +63,8 @@ class _ActiveRoomState extends State<ActiveRoom> {
                 ClipRRect(
                   borderRadius: BorderRadius.circular(5.0),
                   child: Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 6.0, vertical: 5.0),
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 6.0, vertical: 5.0),
                     color: const Color.fromARGB(255, 29, 53, 115),
                     child: Row(
                       children: [
@@ -116,16 +116,14 @@ class _ActiveRoomState extends State<ActiveRoom> {
               ],
             ),
             NavigationRow(
-              activeIndex: activeIndex,  
-              onTap: onNavTap,            
-              showRoom: false,            
+              activeIndex: activeIndex,
+              onTap: onNavTap,
+              showRoom: false,
             ),
             const Divider(
                 thickness: 2, color: Color.fromARGB(255, 142, 142, 147)),
-            if (activeIndex == 1)
-              InputFields(),
-            if(activeIndex == 2)
-              Roomdetails(),
+            if (activeIndex == 1) InputFields(),
+            if (activeIndex == 2) const Roomdetails(),
             if (activeIndex == 3)
               UserRatingsWidget(ratings: filteredRatingList),
           ],

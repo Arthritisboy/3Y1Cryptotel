@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:hotel_flutter/logic/bloc/auth_bloc.dart';
-import 'package:hotel_flutter/logic/bloc/auth_event.dart';
-import 'package:hotel_flutter/logic/bloc/auth_state.dart';
+import 'package:hotel_flutter/logic/bloc/auth/auth_bloc.dart';
+import 'package:hotel_flutter/logic/bloc/auth/auth_event.dart';
+import 'package:hotel_flutter/logic/bloc/auth/auth_state.dart';
 
 class ResetPassword extends StatefulWidget {
   final String token; // Add a token parameter to the widget

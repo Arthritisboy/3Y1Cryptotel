@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:hotel_flutter/logic/bloc/auth_bloc.dart';
-import 'package:hotel_flutter/logic/bloc/auth_event.dart';
-import 'package:hotel_flutter/logic/bloc/auth_state.dart';
+import 'package:hotel_flutter/logic/bloc/auth/auth_bloc.dart';
+import 'package:hotel_flutter/logic/bloc/auth/auth_event.dart';
+import 'package:hotel_flutter/logic/bloc/auth/auth_state.dart';
 import 'package:hotel_flutter/presentation/screens/homeScreens/home_screen.dart';
 import 'package:hotel_flutter/presentation/screens/homeScreens/restaurant_screen.dart';
 import 'package:hotel_flutter/presentation/widgets/dialog/custom_dialog.dart';
@@ -50,7 +50,7 @@ class _TabScreenState extends State<TabScreen> {
         profile = state.user.profilePicture ?? '';
         _isLoading = false;
 
-        // Write user data to secure storage, including profile
+        // Write user data to secure storage
         _secureStorage.write(key: 'firstName', value: firstName);
         _secureStorage.write(key: 'lastName', value: lastName);
         _secureStorage.write(key: 'email', value: email);
@@ -104,15 +104,9 @@ class _TabScreenState extends State<TabScreen> {
                             top: Radius.circular(30.0),
                           ),
                         ),
-                        child: SingleChildScrollView(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              if (_selectedIndex == 0) const HomeScreen(),
-                              if (_selectedIndex == 1) const RestaurantScreen(),
-                            ],
-                          ),
-                        ),
+                        child: _selectedIndex == 0
+                            ? const HomeScreen()
+                            : const RestaurantScreen(),
                       ),
                     ),
                   ],

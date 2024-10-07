@@ -1,10 +1,10 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:hotel_flutter/data/model/user_model.dart';
-import 'package:hotel_flutter/logic/bloc/auth_bloc.dart';
-import 'package:hotel_flutter/logic/bloc/auth_event.dart';
-import 'package:hotel_flutter/logic/bloc/auth_state.dart';
+import 'package:hotel_flutter/data/model/auth/user_model.dart';
+import 'package:hotel_flutter/logic/bloc/auth/auth_bloc.dart';
+import 'package:hotel_flutter/logic/bloc/auth/auth_event.dart';
+import 'package:hotel_flutter/logic/bloc/auth/auth_state.dart';
 import 'package:hotel_flutter/presentation/widgets/profile/blue_background_widget.dart';
 import 'package:hotel_flutter/presentation/widgets/profile/bottom_section.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';

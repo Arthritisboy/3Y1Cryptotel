@@ -1,4 +1,4 @@
-import 'package:hotel_flutter/data/model/restaurant_model.dart';
+import 'package:hotel_flutter/data/model/restaurant/restaurant_model.dart';
 
 final List<RestaurantModel> restaurantData = [
   RestaurantModel(

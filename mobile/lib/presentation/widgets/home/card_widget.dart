@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class CardWidget extends StatelessWidget {
-  final String imagePath;
+  final String imagePath; // URL for network image
   final String hotelName;
   final String location;
   final double rating;
@@ -31,11 +31,29 @@ class CardWidget extends StatelessWidget {
             ClipRRect(
               borderRadius:
                   const BorderRadius.vertical(top: Radius.circular(12.0)),
-              child: Image.asset(
-                imagePath,
+              child: Image.network(
+                imagePath, // Load image from network URL
                 height: 120.0,
                 width: double.infinity,
                 fit: BoxFit.cover,
+                loadingBuilder: (context, child, loadingProgress) {
+                  if (loadingProgress == null) {
+                    return child; // Return the image when fully loaded
+                  }
+                  return const Center(
+                    child:
+                        CircularProgressIndicator(), // Show a loader while the image is being loaded
+                  );
+                },
+                errorBuilder: (context, error, stackTrace) {
+                  return const Center(
+                    child: Icon(
+                      Icons.broken_image,
+                      size: 50,
+                      color: Colors.grey,
+                    ), // Display an icon if the image fails to load
+                  );
+                },
               ),
             ),
             Padding(
