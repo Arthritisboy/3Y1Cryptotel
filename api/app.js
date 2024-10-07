@@ -23,7 +23,7 @@ const authRouter = require('./routes/authRoute');
 const userRoute = require('./routes/userRoute');
 // const profileRouter = require('./routes/profileRoute.js');
 const bookingRouter = require('./routes/bookingRoute.js');
-const hotelRoomRatingRoutes = require('./routes/test.hotelRoomRatingRoutes');
+const hotelRoomRatingRoutes = require('./routes/hotelRoomRatingRoutes');
 // const web3Router = require('./routes/web3');
 
 //!Error Handler
