@@ -5,7 +5,7 @@ class HotelScreen extends StatefulWidget {
   final String hotelImage;
   final String hotelName;
   final double rating;
-  final int price;
+  final double price;
   final String location;
   final String time;
   final double latitude;
