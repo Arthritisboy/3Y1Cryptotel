@@ -17,7 +17,7 @@ class RoomSelection extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Padding(
-            padding: const EdgeInsets.only(top: 8, left: 16),
+            padding: const EdgeInsets.only(top: 16, left: 16),
             child: Text(
               'Available Rooms',
               style: TextStyle(
