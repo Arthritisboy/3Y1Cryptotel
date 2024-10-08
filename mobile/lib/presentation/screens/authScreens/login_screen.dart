@@ -6,6 +6,7 @@ import 'package:hotel_flutter/presentation/widgets/dialog/custom_dialog.dart';
 import 'package:hotel_flutter/presentation/widgets/login/custom_text_form_field.dart';
 import 'package:hotel_flutter/presentation/widgets/login/loading_button.dart';
 import 'package:hotel_flutter/logic/bloc/auth/auth_event.dart';
+import 'package:logging/logging.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -15,6 +16,7 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
+  final Logger _logger = Logger('LoginScreen');
   final _formSignInKey = GlobalKey<FormState>();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
@@ -219,8 +221,8 @@ class _LoginScreenState extends State<LoginScreen> {
   void _login() {
     final email = _emailController.text;
     final password = _passwordController.text;
-    print('Email: $email');
-    print('Password: $password');
+    _logger.info('Email: $email');
+    _logger.info('Password: $password');
 
     context.read<AuthBloc>().add(
           LoginEvent(email: email, password: password),
