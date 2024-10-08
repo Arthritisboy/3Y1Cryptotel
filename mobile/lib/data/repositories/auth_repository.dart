@@ -1,13 +1,12 @@
 import 'dart:io';
-
 import 'package:hotel_flutter/data/data_provider/auth/auth_data_provider.dart';
-import 'package:hotel_flutter/data/model/login_model.dart';
-import 'package:hotel_flutter/data/model/signup_model.dart';
-import 'package:hotel_flutter/data/model/user_model.dart';
+import 'package:hotel_flutter/data/model/auth/login_model.dart';
+import 'package:hotel_flutter/data/model/auth/signup_model.dart';
+import 'package:hotel_flutter/data/model/auth/user_model.dart';
 
 class AuthRepository {
   final AuthDataProvider dataProvider;
-  UserModel? _cachedUser; // Cached user data
+  UserModel? _cachedUser;
 
   AuthRepository(this.dataProvider);
 
@@ -15,7 +14,6 @@ class AuthRepository {
   Future<UserModel> register(
       SignUpModel signUpModel, File? profilePicture) async {
     try {
-      // Pass the profilePicture parameter when calling dataProvider.register
       final data = await dataProvider.register(signUpModel, profilePicture);
       return UserModel.fromJson(data);
     } catch (e) {
@@ -65,6 +63,16 @@ class AuthRepository {
     }
   }
 
+  //! Fetch all users
+  Future<List<UserModel>> fetchAllUsers() async {
+    try {
+      final users = await dataProvider.fetchAllUsers();
+      return users;
+    } catch (error) {
+      throw Exception('Failed to fetch all users: $error');
+    }
+  }
+
   //! Update Password
   Future<void> updatePassword(String currentPassword, String newPassword,
       String confirmPassword) async {
@@ -95,7 +103,6 @@ class AuthRepository {
   //! Update user
   Future<void> updateUser(UserModel user, {File? profilePicture}) async {
     try {
-      // Pass updated firstName, lastName, email, and profilePicture to the data provider
       await dataProvider.updateUserData(
         firstName: user.firstName,
         lastName: user.lastName,

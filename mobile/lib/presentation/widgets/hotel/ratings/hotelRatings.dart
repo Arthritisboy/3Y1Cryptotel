@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:hotel_flutter/data/model/rating_model.dart';
+import 'package:hotel_flutter/data/model/hotel/rating_model.dart';
 
 class UserRatingsWidget extends StatelessWidget {
-  final List<Rating> ratings;
+  final List<RatingModel> ratings;
 
   const UserRatingsWidget({super.key, required this.ratings});
 
@@ -19,24 +19,26 @@ class UserRatingsWidget extends StatelessWidget {
           color: const Color(0xFF1C3473),
           child: ListTile(
             title: Text(
-              rating.userName,
+              rating
+                  .message, // Assuming 'message' is what you want to display for the title
               style: const TextStyle(fontWeight: FontWeight.bold),
             ),
             subtitle: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Row(
-                  children: [
-                    for (int i = 1; i <= 5; i++)
-                      Icon(
-                        i <= rating.rating ? Icons.star : Icons.star_border,
-                        color: Colors.amber,
-                        size: 18,
-                      ),
-                  ],
+                  children: List.generate(
+                    5,
+                    (i) => Icon(
+                      i < rating.rating ? Icons.star : Icons.star_border,
+                      color: Colors.amber,
+                      size: 18,
+                    ),
+                  ),
                 ),
                 const SizedBox(height: 5),
-                Text(rating.comment),
+                Text(rating
+                    .message), // Assuming this shows the comment or rating message
               ],
             ),
           ),

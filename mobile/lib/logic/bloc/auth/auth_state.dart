@@ -1,6 +1,7 @@
 import 'package:equatable/equatable.dart';
-import 'package:hotel_flutter/data/model/login_model.dart';
-import 'package:hotel_flutter/data/model/user_model.dart';
+import 'package:hotel_flutter/data/model/hotel/hotel_model.dart';
+import 'package:hotel_flutter/data/model/auth/login_model.dart';
+import 'package:hotel_flutter/data/model/auth/user_model.dart';
 
 abstract class AuthState extends Equatable {
   const AuthState();
@@ -71,4 +72,13 @@ class AuthSuccessVerification extends AuthState {
   final String message;
 
   const AuthSuccessVerification(this.message);
+}
+
+class UsersFetched extends AuthState {
+  final List<UserModel> users;
+
+  const UsersFetched(this.users);
+
+  @override
+  List<Object> get props => [users];
 }

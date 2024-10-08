@@ -2,8 +2,8 @@ import 'dart:io';
 
 import 'package:bloc/bloc.dart';
 import 'package:hotel_flutter/data/repositories/auth_repository.dart';
-import 'package:hotel_flutter/logic/bloc/auth_event.dart';
-import 'package:hotel_flutter/logic/bloc/auth_state.dart';
+import 'package:hotel_flutter/logic/bloc/auth/auth_event.dart';
+import 'package:hotel_flutter/logic/bloc/auth/auth_state.dart';
 
 class AuthBloc extends Bloc<AuthEvent, AuthState> {
   final AuthRepository authRepository;
@@ -49,6 +49,16 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         emit(const AuthSuccess('Password reset successful'));
       } catch (e) {
         emit(AuthError('Failed to reset password: ${e.toString()}'));
+      }
+    });
+
+    on<FetchAllUsersEvent>((event, emit) async {
+      emit(AuthLoading());
+      try {
+        final users = await authRepository.fetchAllUsers();
+        emit(UsersFetched(users));
+      } catch (e) {
+        emit(AuthError('Failed to fetch users: ${e.toString()}'));
       }
     });
 

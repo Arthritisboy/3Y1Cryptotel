@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:hotel_flutter/data/faq/faq_data.dart';
+import 'package:hotel_flutter/data/faq_data/faq_data.dart';
 import 'package:hotel_flutter/presentation/widgets/help_support/email_dialog.dart';
 import 'package:hotel_flutter/presentation/widgets/help_support/faq_item.dart';
 

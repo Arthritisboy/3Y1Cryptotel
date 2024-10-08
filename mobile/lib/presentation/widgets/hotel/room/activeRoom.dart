@@ -1,18 +1,17 @@
 import 'package:flutter/material.dart';
-import 'package:hotel_flutter/data/dummydata/rating_data.dart';
-import 'package:hotel_flutter/data/model/rating_model.dart';
-import 'package:hotel_flutter/data/model/room_model.dart';
-import 'package:hotel_flutter/presentation/widgets/hotel/details/roomDetails.dart';
-import 'package:hotel_flutter/presentation/widgets/hotel/input_fields.dart';
-import 'package:hotel_flutter/presentation/widgets/hotel/navigation_row.dart';
+import 'package:hotel_flutter/data/model/hotel/rating_model.dart';
+import 'package:hotel_flutter/data/model/hotel/room_model.dart';
 import 'package:hotel_flutter/presentation/widgets/hotel/ratings/hotelRatings.dart';
+import 'package:hotel_flutter/presentation/widgets/hotel/navigation_row.dart';
+import 'package:hotel_flutter/presentation/widgets/hotel/input_fields.dart';
+import 'package:hotel_flutter/presentation/widgets/hotel/details/roomDetails.dart';
 
 class ActiveRoom extends StatefulWidget {
   final String hotelName;
   final double rating;
   final int price;
   final String location;
-  final RoomModel room; 
+  final RoomModel room;
 
   const ActiveRoom({
     super.key,
@@ -30,13 +29,12 @@ class ActiveRoom extends StatefulWidget {
 class _ActiveRoomState extends State<ActiveRoom> {
   int activeIndex = 1;
   late String currentImage;
-  late List<String> previewImages;
 
   @override
   void initState() {
     super.initState();
-    currentImage = widget.room.imageUrls[0];
-    previewImages = widget.room.imageUrls; 
+    // Initialize currentImage with the room's image URL
+    currentImage = widget.room.roomImage; // Use roomImage from RoomModel
   }
 
   void onNavTap(int index) {
@@ -53,65 +51,37 @@ class _ActiveRoomState extends State<ActiveRoom> {
 
   @override
   Widget build(BuildContext context) {
-    final List<Rating> filteredRatingList = userRatings
-        .where((rating) => rating.hotelName == widget.hotelName)
-        .toList();
+    final List<RatingModel> filteredRatingList =
+        widget.room.ratings; // Fetch room ratings
 
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.hotelName),
       ),
-      body: SingleChildScrollView( 
+      body: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.only(left: 16, right: 16, top: 20),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-
               GestureDetector(
-                onTap: () {}, 
+                onTap: () {}, // Placeholder for future tap actions
                 child: Container(
                   width: double.infinity,
                   height: 200,
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(10),
                     image: DecorationImage(
-                      image: AssetImage(currentImage),
+                      image:
+                          NetworkImage(currentImage), // Use the current image
                       fit: BoxFit.cover,
                     ),
                   ),
                 ),
               ),
               const SizedBox(height: 10),
-              // Small preview images section
-              SizedBox(
-                height: 80,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: previewImages.take(4).map((image) {
-                    return Expanded(
-                      child: GestureDetector(
-                        onTap: () => changeImage(image),
-                        child: Container(
-                          height: 80,
-                          margin: const EdgeInsets.only(right: 4),
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(10),
-                            image: DecorationImage(
-                              image: AssetImage(image),
-                              fit: BoxFit.cover,
-                            ),
-                          ),
-                        ),
-                      ),
-                    );
-                  }).toList(),
-                ),
-              ),
-              const SizedBox(height: 10),
-              // Room details
               Text(
-                widget.room.roomType,
+                widget.room.type, // Room type
                 style: const TextStyle(
                   fontSize: 22.0,
                   fontWeight: FontWeight.bold,
@@ -126,16 +96,16 @@ class _ActiveRoomState extends State<ActiveRoom> {
                     text: TextSpan(
                       children: [
                         TextSpan(
-                          text: '₱${widget.room.price}',
+                          text: '₱${widget.room.price}', // Room price
                           style: const TextStyle(
                             fontSize: 18.0,
                             fontWeight: FontWeight.bold,
                             color: Colors.black,
                           ),
                         ),
-                        TextSpan(
+                        const TextSpan(
                           text: ' per night',
-                          style: const TextStyle(
+                          style: TextStyle(
                             fontSize: 14.0,
                             fontWeight: FontWeight.bold,
                             color: Colors.grey,
@@ -146,16 +116,15 @@ class _ActiveRoomState extends State<ActiveRoom> {
                   ),
                 ],
               ),
-
               const SizedBox(height: 5),
 
-              // Display guests with icon
+              // Display guests capacity with icon
               Row(
                 children: [
-                  const Icon(Icons.group, color: Colors.black), 
+                  const Icon(Icons.group, color: Colors.black),
                   const SizedBox(width: 5),
                   Text(
-                    'Up to ${widget.room.numberofGuest} Guests',
+                    'Up to ${widget.room.capacity} Guests',
                     style: const TextStyle(
                       fontSize: 16.0,
                       color: Colors.black,
@@ -163,7 +132,7 @@ class _ActiveRoomState extends State<ActiveRoom> {
                   ),
                 ],
               ),
-              
+
               const SizedBox(height: 10),
 
               NavigationRow(
@@ -175,10 +144,13 @@ class _ActiveRoomState extends State<ActiveRoom> {
                 thickness: 2,
                 color: Color.fromARGB(255, 142, 142, 147),
               ),
-              if (activeIndex == 1) InputFields(),
-              if (activeIndex == 2) Roomdetails(),
+              if (activeIndex == 1)
+                InputFields(), // Placeholder for input fields section
+              if (activeIndex == 2)
+                Roomdetails(), // Placeholder for room details section
               if (activeIndex == 3)
-                UserRatingsWidget(ratings: filteredRatingList),
+                UserRatingsWidget(
+                    ratings: filteredRatingList), // Display user ratings
             ],
           ),
         ),
