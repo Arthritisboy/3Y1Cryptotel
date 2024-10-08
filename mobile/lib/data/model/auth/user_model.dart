@@ -8,7 +8,7 @@ class UserModel {
   final bool? verified;
   final String? roles;
   bool? hasCompletedOnboarding;
-  final bool? active; // Add active field
+  final bool? active;
 
   UserModel({
     this.id,
