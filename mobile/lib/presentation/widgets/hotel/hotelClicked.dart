@@ -44,9 +44,7 @@ class _HotelClickedState extends State<HotelClicked> {
   @override
   void initState() {
     super.initState();
-    context
-        .read<HotelBloc>()
-        .add(FetchHotelDetailsEvent(widget.hotelId)); // Using hotelId
+    context.read<HotelBloc>().add(FetchHotelDetailsEvent(widget.hotelId));
   }
 
   @override
@@ -58,28 +56,25 @@ class _HotelClickedState extends State<HotelClicked> {
         } else if (state is HotelError) {
           return Center(child: Text(state.error));
         } else if (state is HotelDetailsLoaded) {
-          final filteredRoomList =
-              state.hotel.rooms; // Accessing rooms from hotel object
+          final filteredRoomList = state.hotel.rooms;
           final filteredRatingList =
               state.hotel.rooms.expand((room) => room.ratings).toList();
           return SingleChildScrollView(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // Network Image as per the new logic
                 ClipRRect(
                   child: Image.network(
                     widget.hotelImage,
-                    height: 200.0,
+                    height: 300.0,
                     width: double.infinity,
                     fit: BoxFit.cover,
                     loadingBuilder: (context, child, loadingProgress) {
                       if (loadingProgress == null) {
-                        return child; // Image is fully loaded
+                        return child;
                       }
                       return const Center(
-                        child:
-                            CircularProgressIndicator(), // Show loader while loading
+                        child: CircularProgressIndicator(),
                       );
                     },
                     errorBuilder: (context, error, stackTrace) {
@@ -205,11 +200,8 @@ class _HotelClickedState extends State<HotelClicked> {
                 ),
                 const Divider(
                     thickness: 2, color: Color.fromARGB(255, 142, 142, 147)),
-
-                // Room selection or hotel details based on the active tab
                 if (widget.activeIndex == 0)
                   RoomSelection(roomList: filteredRoomList),
-
                 if (widget.activeIndex == 2)
                   HotelDetails(
                     hotelName: widget.hotelName,
