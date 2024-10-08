@@ -2,21 +2,22 @@ const User = require('../models/User');
 const Hotel = require('../models/Hotel');
 const Room = require('../models/Room');
 const Rating = require('../models/Rating');
+const { calculateAverageRating } = require('../middleware/averageCalculator');
 const catchAsync = require('../utils/catchAsync');
 const AppError = require('../utils/appError');
 
-// Helper function to find the hotel by room ID
-const findHotelByRoomId = async (roomId) => {
-    const room = await Room.findById(roomId);
-    if (!room) {
-        throw new AppError('Room not found', 404);
-    }
-    const hotel = await Hotel.findOne({ rooms: room._id });
-    if (!hotel) {
-        throw new AppError('No hotel found for this room ID.', 404);
-    }
-    return hotel;
-};
+// // Helper function to find the hotel by room ID
+// const findHotelByRoomId = async (roomId) => {
+//     const room = await Room.findById(roomId);
+//     if (!room) {
+//         throw new AppError('Room not found', 404);
+//     }
+//     const hotel = await Hotel.findOne({ rooms: room._id });
+//     if (!hotel) {
+//         throw new AppError('No hotel found for this room ID.', 404);
+//     }
+//     return hotel;
+// };
 
 // Get a specific rating by ID
 exports.getRating = catchAsync(async (req, res, next) => {
@@ -76,33 +77,32 @@ exports.createRating = catchAsync(async (req, res, next) => {
     // Log that the room was updated with the new rating
     console.log('Room updated with new rating:', room);
 
-    // Find the hotel that contains this room
-    const hotel = await findHotelByRoomId(roomId);
-
-    console.log('Hotel found:', hotel);
-
-    // Update hotel average rating manually
-    let totalRating = 0;
-    let totalReviews = 0;
-
-    // Populate all rooms within the hotel
-    await hotel.populate({
+    // Find the hotel associated with the room
+    const hotel = await Hotel.findOne({ rooms: room._id }).populate({
         path: 'rooms',
         populate: {
             path: 'ratings', // Populate ratings for each room
-        }
+        },
     });
 
-    console.log('Populated hotel with rooms:', hotel.rooms);
+    if (!hotel) {
+        return next(new AppError('No hotel found for this room.', 404));
+    }
+
+    // Log that the hotel was found
+    console.log('Hotel found:', hotel);
+
+    // Update hotel's average rating manually
+    let totalRating = 0;
+    let totalReviews = 0;
 
     // Calculate the total ratings and reviews
-    for (const room of hotel.rooms) {
-        const roomRatings = room.ratings;
-        roomRatings.forEach((rating) => {
+    hotel.rooms.forEach(room => {
+        room.ratings.forEach(rating => {
             totalRating += rating.rating;
             totalReviews++;
         });
-    }
+    });
 
     // Update hotel's average rating
     hotel.averageRating = totalReviews > 0 ? totalRating / totalReviews : 0; // Avoid division by zero
@@ -122,7 +122,6 @@ exports.createRating = catchAsync(async (req, res, next) => {
     // Log final success response
     console.log('Rating creation successful:', newRating);
 });
-
 // Update a specific rating by ID
 exports.updateRating = catchAsync(async (req, res, next) => {
     const { rating, message } = req.body;
@@ -134,7 +133,7 @@ exports.updateRating = catchAsync(async (req, res, next) => {
     }
 
     // Update hotel average rating manually
-    const hotel = await findHotelByRoomId(updatedRating.roomId); // Use the helper function
+    const hotel = await calculateAverageRating(updatedRating.roomId); // Use the helper function
 
     let totalRating = 0;
     let totalReviews = 0;
@@ -174,7 +173,7 @@ exports.deleteRating = catchAsync(async (req, res, next) => {
     await Room.findByIdAndUpdate(rating.roomId, { $pull: { ratings: rating._id } });
 
     // Find the hotel that contains this room
-    const hotel = await findHotelByRoomId(rating.roomId); // Use the helper function
+    const hotel = await calculateAverageRating(rating.roomId); // Use the helper function
 
     // Recalculate the hotel's average rating
     let totalRating = 0;
