@@ -17,8 +17,8 @@ class CardWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      width: 300.0,
-      height: 400.0,
+      width: 300.0, // Set a fixed width for the card
+      height: 500.0, // Set a longer height to make the card taller
       child: Card(
         elevation: 4.0,
         color: Colors.white,
@@ -33,9 +33,11 @@ class CardWidget extends StatelessWidget {
                   const BorderRadius.vertical(top: Radius.circular(12.0)),
               child: Image.network(
                 imagePath, // Load image from network URL
-                height: 120.0,
+                height:
+                    190.0, // Increase the height of the image section to make it longer
                 width: double.infinity,
-                fit: BoxFit.cover,
+                fit: BoxFit
+                    .cover, // BoxFit.cover to ensure the image fits the container without zooming
                 loadingBuilder: (context, child, loadingProgress) {
                   if (loadingProgress == null) {
                     return child; // Return the image when fully loaded
@@ -61,17 +63,15 @@ class CardWidget extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  SizedBox(
-                    child: Text(
-                      hotelName,
-                      style: const TextStyle(
-                        fontSize: 16.0,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.black,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                      maxLines: 1,
+                  Text(
+                    hotelName,
+                    style: const TextStyle(
+                      fontSize: 16.0,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.black,
+                      overflow: TextOverflow.ellipsis,
                     ),
+                    maxLines: 1,
                   ),
                   const SizedBox(height: 4.0),
                   Row(

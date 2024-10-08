@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:hotel_flutter/presentation/widgets/hotel/hotelClicked.dart';
-import 'package:hotel_flutter/presentation/widgets/hotel/background_room_image.dart';
 
 class HotelScreen extends StatefulWidget {
-  final String hotelId;
-  final String backgroundImage;
+  final String hotelImage;
   final String hotelName;
   final double rating;
   final int price;
@@ -12,18 +10,19 @@ class HotelScreen extends StatefulWidget {
   final String time;
   final double latitude;
   final double longitude;
+  final String hotelId;
 
   const HotelScreen({
     super.key,
     required this.hotelId,
-    required this.backgroundImage,
+    required this.hotelImage,
     required this.hotelName,
     required this.rating,
     required this.price,
     required this.location,
     required this.time,
     required this.latitude,
-    required this.longitude,
+    required this.longitude, // Updated typo
   });
 
   @override
@@ -56,13 +55,13 @@ class _HotelScreenState extends State<HotelScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            SizedBox(
-              height: MediaQuery.of(context).size.height * 0.3,
-              width: double.infinity,
-              child: BackgroundRoomImage(image: widget.backgroundImage),
-            ),
+            // Main hotel image using NetworkImage (to load from the URL)
+
+            const SizedBox(height: 10),
+
             HotelClicked(
-              hotelId: widget.hotelId, // Pass hotelId
+              hotelId: widget.hotelId,
+              hotelImage: widget.hotelImage,
               hotelName: widget.hotelName,
               rating: widget.rating,
               price: widget.price,

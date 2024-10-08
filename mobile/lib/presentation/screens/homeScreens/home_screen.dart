@@ -29,7 +29,7 @@ class HomeScreen extends StatelessWidget {
               ),
               const SizedBox(height: 10.0),
               SizedBox(
-                height: 200.0, // Constraint height for the horizontal scroll
+                height: 270.0, // Constraint height for the horizontal scroll
                 child: BlocBuilder<HotelBloc, HotelState>(
                   builder: (context, state) {
                     if (state is HotelLoading) {
@@ -65,7 +65,7 @@ class HomeScreen extends StatelessWidget {
                   MaterialPageRoute(
                     builder: (context) => HotelScreen(
                       hotelId: hotel.id,
-                      backgroundImage: hotel.hotelImage,
+                      hotelImage: hotel.hotelImage,
                       hotelName: hotel.name,
                       rating: hotel.averageRating,
                       price: hotel.averagePrice,
