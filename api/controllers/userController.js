@@ -50,6 +50,7 @@ exports.deleteUser = catchAsync(async (req, res, next) => {
 exports.updateMe = catchAsync(async (req, res, next) => {
   let profile;
 
+  // Upload image if provided
   if (req.file) {
     try {
       profile = await uploadProfileImage(req);
@@ -62,32 +63,24 @@ exports.updateMe = catchAsync(async (req, res, next) => {
     }
   }
 
-  //! 1) Create error if user POSTs password data
-  if (req.body.password || req.body.confirmPassword) {
-    return next(
-      new AppError(
-        'This route is not for password updates. Please use /updateMyPassword',
-        400,
-      ),
-    );
-  }
-  //! 2) Filtered out unwanted fields names
+  // Filter out unwanted fields
   const filteredBody = filterObj(req.body, 'roles');
 
   if (profile) {
-    filteredBody.profile = profile;
+    filteredBody.profile = profile; // Add profile image URL
   }
 
-  //! 3) Update user document
+  // Update user document
   const updateUser = await User.findByIdAndUpdate(req.user.id, filteredBody, {
     new: true,
     runValidators: true,
   });
 
+  // Send the updated user data in response
   res.status(200).json({
-    status: 'Success',
+    status: 'success',
     data: {
-      user: updateUser,
+      user: updateUser, // Ensure this includes the profile URL
     },
   });
 });

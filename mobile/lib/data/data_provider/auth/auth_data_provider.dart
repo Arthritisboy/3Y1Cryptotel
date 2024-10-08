@@ -1,14 +1,15 @@
 import 'dart:io';
 
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:hotel_flutter/data/model/hotel/hotel_model.dart';
 // ignore: depend_on_referenced_packages
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:hotel_flutter/data/model/auth/user_model.dart';
 import 'package:hotel_flutter/data/model/auth/signup_model.dart';
+import 'package:logging/logging.dart';
 
 class AuthDataProvider {
+  final Logger _logger = Logger('AuthDataProvider');
   final String baseUrl = 'https://3-y1-cryptotel.vercel.app/api/v1/auth';
   final FlutterSecureStorage storage = const FlutterSecureStorage();
 
@@ -167,14 +168,14 @@ class AuthDataProvider {
       },
     );
 
-    print('API response status: ${response.statusCode}');
-    print('API response body: ${response.body}');
+    _logger.info('API response status: ${response.statusCode}');
+    _logger.info('API response body: ${response.body}');
 
     if (response.statusCode == 200) {
       final data = json.decode(response.body)['data']['users'] as List;
       return data.map((userJson) => UserModel.fromJson(userJson)).toList();
     } else {
-      print('Error fetching users: ${response.body}');
+      _logger.info('Error fetching users: ${response.body}');
       throw Exception('Failed to load users: ${response.body}');
     }
   }
@@ -219,7 +220,7 @@ class AuthDataProvider {
 
     final uri =
         Uri.parse('https://3-y1-cryptotel.vercel.app/api/v1/users/updateMe');
-    var request = http.MultipartRequest('PATCH', uri);
+    var request = http.MultipartRequest('PUT', uri);
 
     // Set Authorization header
     request.headers['Authorization'] = 'Bearer $token';

@@ -1,7 +1,9 @@
 import 'package:hotel_flutter/data/model/hotel/room_model.dart';
 import 'package:geocoding/geocoding.dart';
+import 'package:logging/logging.dart';
 
 class HotelModel {
+  final Logger _logger = Logger('HotelModel');
   final String id;
   final String name;
   final String location;
@@ -46,7 +48,7 @@ class HotelModel {
       List<Location> locations = await locationFromAddress(location);
       return [locations.first.latitude, locations.first.longitude];
     } catch (e) {
-      print("Error fetching coordinates for $location: $e");
+      _logger.info("Error fetching coordinates for $location: $e");
       return [0.0, 0.0];
     }
   }

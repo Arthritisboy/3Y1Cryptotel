@@ -26,7 +26,7 @@ const hotelSchema = new mongoose.Schema({
   hotelImage: {
     type: String, // similar user profile
   },
-  // contactNumber: { will add this later I kida forgot to git pull
+  // contactNumber: { will add this later I kinda forgot to git pull
   //   type: String,
   //   required: true,
   // },
