@@ -47,7 +47,7 @@ class _LoginScreenState extends State<LoginScreen> {
             setState(() {
               _isLoading = false;
             });
-            _showErrorDialog(state.error); // Update to use message property
+            _showErrorDialog(state.error);
           }
         },
         child: Stack(

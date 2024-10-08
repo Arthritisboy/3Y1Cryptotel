@@ -55,10 +55,7 @@ class _HotelScreenState extends State<HotelScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Main hotel image using NetworkImage (to load from the URL)
-
             const SizedBox(height: 10),
-
             HotelClicked(
               hotelId: widget.hotelId,
               hotelImage: widget.hotelImage,

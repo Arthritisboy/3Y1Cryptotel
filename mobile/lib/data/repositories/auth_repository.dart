@@ -63,11 +63,21 @@ class AuthRepository {
     }
   }
 
-  //! Fetch all users
+  //! Fetch all users with filtering conditions
   Future<List<UserModel>> fetchAllUsers() async {
     try {
       final users = await dataProvider.fetchAllUsers();
-      return users;
+
+      // Filter users where active == true, verified == true, hasCompletedOnboarding == true, and roles == 'user'
+      final filteredUsers = users
+          .where((user) =>
+              user.active != false &&
+              user.verified == true &&
+              user.hasCompletedOnboarding == true &&
+              user.roles == "user")
+          .toList();
+
+      return filteredUsers; // Return the filtered list
     } catch (error) {
       throw Exception('Failed to fetch all users: $error');
     }

@@ -1,8 +1,8 @@
-import 'package:hotel_flutter/data/data_provider/auth/auth_data_provider.dart';
+import 'package:hotel_flutter/data/data_provider/auth/hotel_data_provider.dart';
 import 'package:hotel_flutter/data/model/hotel/hotel_model.dart';
 
 class HotelRepository {
-  final AuthDataProvider dataProvider;
+  final HotelDataProvider dataProvider;
   List<HotelModel>? _cachedHotels;
 
   HotelRepository(this.dataProvider);
