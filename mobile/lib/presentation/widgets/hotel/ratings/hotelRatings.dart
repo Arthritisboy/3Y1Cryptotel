@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:hotel_flutter/data/model/hotel/rating_model.dart';
 
-class UserRatingsWidget extends StatelessWidget {
+class HotelRatingWidget extends StatelessWidget {
   final List<RatingModel> ratings;
 
-  const UserRatingsWidget({super.key, required this.ratings});
+  const HotelRatingWidget({super.key, required this.ratings});
 
   @override
   Widget build(BuildContext context) {
@@ -15,30 +15,77 @@ class UserRatingsWidget extends StatelessWidget {
       itemBuilder: (context, index) {
         final rating = ratings[index];
         return Card(
-          margin: const EdgeInsets.symmetric(vertical: 10),
-          color: const Color(0xFF1C3473),
-          child: ListTile(
-            title: Text(
-              rating
-                  .message, // Assuming 'message' is what you want to display for the title
-              style: const TextStyle(fontWeight: FontWeight.bold),
-            ),
-            subtitle: Column(
+          margin: const EdgeInsets.symmetric(vertical: 10, horizontal: 16),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20),
+          ),
+          color: const Color(0xFF1C3473), // Dark blue background color
+          child: Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Row(
-                  children: List.generate(
-                    5,
-                    (i) => Icon(
-                      i < rating.rating ? Icons.star : Icons.star_border,
-                      color: Colors.amber,
-                      size: 18,
-                    ),
+                // User profile picture placeholder
+                CircleAvatar(
+                  backgroundColor: Colors.grey[300],
+                  radius: 30,
+                  child: Icon(
+                    Icons.person,
+                    size: 40,
+                    color: Colors.grey[700],
                   ),
                 ),
-                const SizedBox(height: 5),
-                Text(rating
-                    .message), // Assuming this shows the comment or rating message
+                const SizedBox(width: 16),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      // User name and rating
+                      Row(
+                        children: [
+                          Text(
+                            "User ${rating.userId}", // Replace with actual user name if available
+                            style: const TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.white,
+                            ),
+                          ),
+                          const SizedBox(width: 8),
+                          Row(
+                            children: List.generate(
+                              5,
+                              (i) => Icon(
+                                i < rating.rating
+                                    ? Icons.star
+                                    : Icons.star_border,
+                                color: Colors.amber,
+                                size: 20,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        "${rating.rating}.0",
+                        style: const TextStyle(
+                          fontSize: 14,
+                          color: Colors.white,
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      // Review message
+                      Text(
+                        rating.message,
+                        style: const TextStyle(
+                          color: Colors.white70,
+                          fontSize: 14,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
               ],
             ),
           ),

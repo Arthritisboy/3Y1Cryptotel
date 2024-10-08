@@ -221,7 +221,7 @@ class _HotelClickedState extends State<HotelClicked> {
                     longitude: widget.longitude,
                   ),
                 if (widget.activeIndex == 3)
-                  UserRatingsWidget(ratings: filteredRatingList),
+                  HotelRatingWidget(ratings: filteredRatingList),
               ],
             ),
           );

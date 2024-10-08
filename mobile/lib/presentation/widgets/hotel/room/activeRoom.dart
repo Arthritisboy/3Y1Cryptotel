@@ -149,7 +149,7 @@ class _ActiveRoomState extends State<ActiveRoom> {
               if (activeIndex == 2)
                 Roomdetails(), // Placeholder for room details section
               if (activeIndex == 3)
-                UserRatingsWidget(
+                HotelRatingWidget(
                     ratings: filteredRatingList), // Display user ratings
             ],
           ),

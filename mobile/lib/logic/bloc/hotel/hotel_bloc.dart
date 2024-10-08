@@ -1,7 +1,7 @@
 import 'package:bloc/bloc.dart';
-import 'package:hotel_flutter/data/repositories/hotel_repository.dart';
 import 'hotel_event.dart';
 import 'hotel_state.dart';
+import 'package:hotel_flutter/data/repositories/hotel_repository.dart';
 
 class HotelBloc extends Bloc<HotelEvent, HotelState> {
   final HotelRepository hotelRepository;
