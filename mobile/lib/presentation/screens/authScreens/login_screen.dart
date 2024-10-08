@@ -47,7 +47,9 @@ class _LoginScreenState extends State<LoginScreen> {
             setState(() {
               _isLoading = false;
             });
-            _showErrorDialog(state.error);
+            if (state.error.isNotEmpty) {
+              _showErrorDialog(state.error);
+            }
           }
         },
         child: Stack(
@@ -241,10 +243,9 @@ class _LoginScreenState extends State<LoginScreen> {
       builder: (context) => CustomDialog(
         title: 'Login Failed',
         description: friendlyMessage,
-        buttonText: 'OK', // Button text for closing the dialog
+        buttonText: 'OK',
         onButtonPressed: () => Navigator.of(context).pop(),
-        onSecondButtonPressed:
-            () {}, // Optional, can be left empty if no second button is needed
+        onSecondButtonPressed: () {},
       ),
     );
   }

@@ -12,7 +12,7 @@ class RoomSelection extends StatelessWidget {
     final availableRooms = roomList.where((room) => room.availability).toList();
 
     return Container(
-      color: const Color(0xFFF8F8F8),
+      // color: const Color(0xFFF8F8F8),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [

@@ -131,7 +131,6 @@ class _HotelRatingWidgetState extends State<HotelRatingWidget> {
                 child: Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    // User profile picture or default icon
                     ClipRRect(
                       borderRadius: BorderRadius.circular(10),
                       child: user.profilePicture != null &&
