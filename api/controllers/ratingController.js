@@ -2,22 +2,26 @@ const User = require('../models/User');
 const Hotel = require('../models/Hotel');
 const Room = require('../models/Room');
 const Rating = require('../models/Rating');
-const { calculateAverageRating } = require('../middleware/averageCalculator');
 const catchAsync = require('../utils/catchAsync');
 const AppError = require('../utils/appError');
+const chalk = require('chalk'); // Import chalk for colored logging
 
-// // Helper function to find the hotel by room ID
-// const findHotelByRoomId = async (roomId) => {
-//     const room = await Room.findById(roomId);
-//     if (!room) {
-//         throw new AppError('Room not found', 404);
-//     }
-//     const hotel = await Hotel.findOne({ rooms: room._id });
-//     if (!hotel) {
-//         throw new AppError('No hotel found for this room ID.', 404);
-//     }
-//     return hotel;
-// };
+// Function to calculate average rating
+const calculateAverageRating = async (roomId) => {
+    const room = await Room.findById(roomId).populate('ratings');
+
+    if (!room) {
+        throw new AppError('Room not found', 404);
+    }
+
+    const ratings = room.ratings; // This should be populated with actual rating objects
+    if (ratings.length === 0) return 0.0; // Return 0.0 if no ratings
+
+    const totalRating = ratings.reduce((sum, rating) => sum + rating.rating, 0);
+    const average = parseFloat((totalRating / ratings.length).toFixed(1));
+    console.log(chalk.blue(`Calculated average rating for room ID ${roomId}: ${average}`)); // Log average rating
+    return average; // Return rounded average with one decimal place
+};
 
 // Get a specific rating by ID
 exports.getRating = catchAsync(async (req, res, next) => {
@@ -35,29 +39,23 @@ exports.getRating = catchAsync(async (req, res, next) => {
     });
 });
 
+// Create a new rating
 exports.createRating = catchAsync(async (req, res, next) => {
     const { rating, message, userId } = req.body;
     const { roomId } = req.params;
 
-    // Log received data
-    console.log('Received rating data:', { rating, message, roomId });
-    console.log('User ID:', userId);
-
     // Validate roomId
     if (!roomId) {
-        console.log('Room ID missing in request');
+        console.log(chalk.red('Room ID is required to create a rating.'));
         return next(new AppError('Room ID is required to create a rating.', 400));
     }
 
     // Check if the room exists
     const room = await Room.findById(roomId);
     if (!room) {
-        console.log('Room not found with ID:', roomId);
+        console.log(chalk.red(`Room not found with ID: ${roomId}`));
         return next(new AppError('Room not found with this ID.', 404));
     }
-
-    // Log that room exists
-    console.log('Room found:', room);
 
     // Create the rating
     const newRating = await Rating.create({
@@ -67,49 +65,18 @@ exports.createRating = catchAsync(async (req, res, next) => {
         roomId,
     });
 
-    // Log that the rating was created
-    console.log('New rating created:', newRating);
-
     // Push the new rating ID into the Room's ratings array
     room.ratings.push(newRating._id);
     await room.save();
 
-    // Log that the room was updated with the new rating
-    console.log('Room updated with new rating:', room);
-
-    // Find the hotel associated with the room
-    const hotel = await Hotel.findOne({ rooms: room._id }).populate({
-        path: 'rooms',
-        populate: {
-            path: 'ratings', // Populate ratings for each room
-        },
-    });
-
-    if (!hotel) {
-        return next(new AppError('No hotel found for this room.', 404));
+    // Calculate and update average rating for the hotel associated with the room
+    const averageRating = await calculateAverageRating(roomId);
+    const hotel = await Hotel.findOne({ rooms: roomId });
+    if (hotel) {
+        hotel.averageRating = averageRating; // Update hotel average rating
+        await hotel.save();
+        console.log(chalk.green(`Updated hotel average rating for hotel ID: ${hotel._id} to ${averageRating}`));
     }
-
-    // Log that the hotel was found
-    console.log('Hotel found:', hotel);
-
-    // Update hotel's average rating manually
-    let totalRating = 0;
-    let totalReviews = 0;
-
-    // Calculate the total ratings and reviews
-    hotel.rooms.forEach(room => {
-        room.ratings.forEach(rating => {
-            totalRating += rating.rating;
-            totalReviews++;
-        });
-    });
-
-    // Update hotel's average rating
-    hotel.averageRating = totalReviews > 0 ? totalRating / totalReviews : 0; // Avoid division by zero
-    await hotel.save();
-
-    // Log the updated average rating
-    console.log('Updated hotel average rating:', hotel.averageRating);
 
     // Respond with the new rating
     res.status(201).json({
@@ -118,10 +85,8 @@ exports.createRating = catchAsync(async (req, res, next) => {
             rating: newRating,
         },
     });
-
-    // Log final success response
-    console.log('Rating creation successful:', newRating);
 });
+
 // Update a specific rating by ID
 exports.updateRating = catchAsync(async (req, res, next) => {
     const { rating, message } = req.body;
@@ -129,29 +94,19 @@ exports.updateRating = catchAsync(async (req, res, next) => {
     const updatedRating = await Rating.findByIdAndUpdate(req.params.id, { rating, message }, { new: true, runValidators: true });
 
     if (!updatedRating) {
+        console.log(chalk.red(`Rating not found with ID: ${req.params.id}`));
         return next(new AppError('Rating not found', 404));
     }
 
-    // Update hotel average rating manually
-    const hotel = await calculateAverageRating(updatedRating.roomId); // Use the helper function
-
-    let totalRating = 0;
-    let totalReviews = 0;
-
-    await hotel.populate('rooms'); // Populate rooms in the hotel
-
-    for (const room of hotel.rooms) {
-        await room.populate('ratings');  // Populate the ratings for each room
-        const roomRatings = room.ratings;
-
-        roomRatings.forEach((rating) => {
-            totalRating += rating.rating;
-            totalReviews++;
-        });
+    // Automatically calculate average rating after updating
+    const roomId = updatedRating.roomId; // Get roomId from the updated rating
+    const averageRating = await calculateAverageRating(roomId);
+    const hotel = await Hotel.findOne({ rooms: roomId });
+    if (hotel) {
+        hotel.averageRating = averageRating; // Update hotel average rating
+        await hotel.save();
+        console.log(chalk.green(`Updated hotel average rating for hotel ID: ${hotel._id} to ${averageRating}`));
     }
-
-    hotel.averageRating = totalReviews > 0 ? totalRating / totalReviews : 0; // Avoid division by zero
-    await hotel.save();
 
     res.status(200).json({
         status: 'success',
@@ -166,47 +121,24 @@ exports.deleteRating = catchAsync(async (req, res, next) => {
     const rating = await Rating.findByIdAndDelete(req.params.id);
 
     if (!rating) {
+        console.log(chalk.red(`Rating not found with ID: ${req.params.id}`));
         return next(new AppError('Rating not found', 404));
     }
 
-    // Optional: Remove the rating ID from the Room's ratings array
+    // Remove the rating ID from the Room's ratings array
     await Room.findByIdAndUpdate(rating.roomId, { $pull: { ratings: rating._id } });
 
-    // Find the hotel that contains this room
-    const hotel = await calculateAverageRating(rating.roomId); // Use the helper function
-
-    // Recalculate the hotel's average rating
-    let totalRating = 0;
-    let totalReviews = 0;
-
-    // Populate all rooms within the hotel
-    await hotel.populate({
-        path: 'rooms',
-        populate: {
-            path: 'ratings', // Populate ratings for each room
-        }
-    });
-
-    console.log('Populated hotel with rooms:', hotel.rooms);
-
-    // Calculate the total ratings and reviews
-    for (const room of hotel.rooms) {
-        const roomRatings = room.ratings;
-        roomRatings.forEach((rating) => {
-            totalRating += rating.rating;
-            totalReviews++;
-        });
+    // Calculate and update average rating for the hotel associated with the room
+    const averageRating = await calculateAverageRating(rating.roomId);
+    const hotel = await Hotel.findOne({ rooms: rating.roomId });
+    if (hotel) {
+        hotel.averageRating = averageRating; // Update hotel average rating
+        await hotel.save();
+        console.log(chalk.green(`Updated hotel average rating for hotel ID: ${hotel._id} to ${averageRating}`));
     }
-
-    // Update hotel's average rating
-    hotel.averageRating = totalReviews > 0 ? totalRating / totalReviews : 0; // Avoid division by zero
-    await hotel.save();
 
     res.status(204).json({
         status: 'success',
         data: null,
     });
-
-    // Log final success response
-    console.log('Rating deletion successful. Hotel average rating updated:', hotel.averageRating);
 });

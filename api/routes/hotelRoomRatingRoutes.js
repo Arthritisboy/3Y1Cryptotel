@@ -36,7 +36,8 @@ router
   .delete(roomController.deleteRoom);
 
 // Rating routes
-router.route('/ratings/:roomId').post(ratingController.createRating);
+router.route('/ratings/:roomId')
+  .post(ratingController.createRating);
 
 router
   .route('/ratings/:id')
