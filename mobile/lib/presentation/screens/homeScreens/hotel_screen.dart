@@ -39,7 +39,7 @@ class _HotelScreenState extends State<HotelScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.hotelName),
-        backgroundColor: Colors.transparent,
+        backgroundColor: Colors.white,
         elevation: 0,
         actions: [
           IconButton(

@@ -122,11 +122,11 @@ class _TabScreenState extends State<TabScreen> {
                       child: CircularProgressIndicator(),
                     ),
                   )
-                else ...[
+                else if (!_isLoading) ...[
                   if (state is Authenticated)
                     TabHeader(
-                      firstName: firstName!,
-                      lastName: lastName!,
+                      firstName: firstName ?? 'Guest',
+                      lastName: lastName ?? '',
                     ),
                   const SizedBox(height: 10),
                   BottomHomeIconNavigation(
