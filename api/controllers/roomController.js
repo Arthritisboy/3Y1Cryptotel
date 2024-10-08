@@ -3,27 +3,28 @@ const Hotel = require('../models/Hotel');
 const Room = require('../models/Room');
 const Booking = require('../models/Booking');
 const { uploadHotelRoomImage } = require('../middleware/imageUpload');
+const { calculateAveragePrice } = require('../middleware/averageCalculator');
 const catchAsync = require('../utils/catchAsync');
 const AppError = require('../utils/appError');
 
-// Helper function to calculate the average price
-const calculateAveragePrice = async (hotelId) => {
-    const hotel = await Hotel.findById(hotelId).populate('rooms');
+// // Helper function to calculate the average price
+// const calculateAveragePrice = async (hotelId) => {
+//     const hotel = await Hotel.findById(hotelId).populate('rooms');
     
-    if (!hotel || hotel.rooms.length === 0) {
-        hotel.averagePrice = 0; // No rooms, set average price to 0
-        await hotel.save();
-        return 0; 
-    }
+//     if (!hotel || hotel.rooms.length === 0) {
+//         hotel.averagePrice = 0; // No rooms, set average price to 0
+//         await hotel.save();
+//         return 0; 
+//     }
 
-    const totalPrice = hotel.rooms.reduce((sum, room) => sum + room.price, 0);
-    const averagePrice = totalPrice / hotel.rooms.length;
+//     const totalPrice = hotel.rooms.reduce((sum, room) => sum + room.price, 0);
+//     const averagePrice = totalPrice / hotel.rooms.length;
 
-    hotel.averagePrice = averagePrice; // Update average price in hotel
-    await hotel.save(); // Save the hotel with the updated average price
+//     hotel.averagePrice = averagePrice; // Update average price in hotel
+//     await hotel.save(); // Save the hotel with the updated average price
 
-    return averagePrice; // Return the average price
-};
+//     return averagePrice; // Return the average price
+// };
 
 // Get a room by ID or all rooms
 exports.getRoom = catchAsync(async (req, res, next) => {
