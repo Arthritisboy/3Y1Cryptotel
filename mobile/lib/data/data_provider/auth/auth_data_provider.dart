@@ -152,7 +152,7 @@ class AuthDataProvider {
 
   //! Fetch All Users
   Future<List<UserModel>> fetchAllUsers() async {
-    final String url = '$baseUrl/users';
+    final String url = 'https://3-y1-cryptotel.vercel.app/api/v1/users';
     final token = await storage.read(key: 'jwt');
 
     if (token == null) {
@@ -167,10 +167,14 @@ class AuthDataProvider {
       },
     );
 
+    print('API response status: ${response.statusCode}');
+    print('API response body: ${response.body}');
+
     if (response.statusCode == 200) {
       final data = json.decode(response.body)['data']['users'] as List;
       return data.map((userJson) => UserModel.fromJson(userJson)).toList();
     } else {
+      print('Error fetching users: ${response.body}');
       throw Exception('Failed to load users: ${response.body}');
     }
   }

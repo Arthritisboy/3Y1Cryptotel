@@ -39,7 +39,7 @@ class _LoginScreenState extends State<LoginScreen> {
             });
             // Check onboarding status
             if (state.user.hasCompletedOnboarding) {
-              Navigator.of(context).pushNamed('/homescreen');
+              Navigator.of(context).pushReplacementNamed('/homescreen');
             } else {
               Navigator.of(context).pushNamed('/onboarding');
             }
@@ -47,7 +47,7 @@ class _LoginScreenState extends State<LoginScreen> {
             setState(() {
               _isLoading = false;
             });
-            _showErrorDialog(state.error); // Update to use message property
+            _showErrorDialog(state.error);
           }
         },
         child: Stack(

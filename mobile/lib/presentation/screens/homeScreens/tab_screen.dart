@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:hotel_flutter/data/model/auth/user_model.dart';
 import 'package:hotel_flutter/logic/bloc/auth/auth_bloc.dart';
 import 'package:hotel_flutter/logic/bloc/auth/auth_event.dart';
 import 'package:hotel_flutter/logic/bloc/auth/auth_state.dart';
@@ -26,11 +27,13 @@ class _TabScreenState extends State<TabScreen> {
   String? lastName;
   String? email;
   String? profile;
+  List<UserModel> allUsers = [];
 
   @override
   void initState() {
     super.initState();
     _getUserData();
+    _fetchAllUsers();
   }
 
   Future<void> _getUserData() async {
@@ -38,6 +41,11 @@ class _TabScreenState extends State<TabScreen> {
     if (userId != null) {
       context.read<AuthBloc>().add(GetUserEvent(userId));
     }
+  }
+
+  Future<void> _fetchAllUsers() async {
+    print('Fetching all users...');
+    context.read<AuthBloc>().add(FetchAllUsersEvent());
   }
 
   @override
@@ -54,8 +62,7 @@ class _TabScreenState extends State<TabScreen> {
         _secureStorage.write(key: 'firstName', value: firstName);
         _secureStorage.write(key: 'lastName', value: lastName);
         _secureStorage.write(key: 'email', value: email);
-        _secureStorage.write(
-            key: 'profile', value: profile); // Store profile URL
+        _secureStorage.write(key: 'profile', value: profile);
       } else if (state is AuthInitial) {
         WidgetsBinding.instance.addPostFrameCallback((_) {
           Navigator.of(context).pushReplacementNamed('/login');
@@ -64,6 +71,20 @@ class _TabScreenState extends State<TabScreen> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('Error: ${state.error}')),
         );
+      } else if (state is UsersFetched) {
+        allUsers = state.users;
+        // Check if users are being fetched
+        print('Number of users fetched: ${allUsers.length}');
+
+        if (allUsers.isNotEmpty) {
+          // Print all users in the console
+          for (var user in allUsers) {
+            print(
+                'User: ${user.firstName} ${user.lastName}, Email: ${user.email}, Profile: ${user.profilePicture}');
+          }
+        } else {
+          print('No users found or list is empty');
+        }
       }
 
       return Scaffold(

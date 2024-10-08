@@ -56,12 +56,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       emit(AuthLoading());
       try {
         final users = await authRepository.fetchAllUsers();
-
-        final filteredUsers = users
-            .where((user) => user.verified == true && user.roles == "user")
-            .toList();
-
-        emit(UsersFetched(filteredUsers));
+        emit(UsersFetched(users));
       } catch (e) {
         emit(AuthError('Failed to fetch users: ${e.toString()}'));
       }

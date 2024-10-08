@@ -7,7 +7,8 @@ class UserModel {
   final String? profilePicture;
   final bool? verified;
   final String? roles;
-  bool? hasCompletedOnboarding;
+  late final bool? hasCompletedOnboarding;
+  final bool? active; // Add active field
 
   UserModel({
     this.id,
@@ -19,6 +20,7 @@ class UserModel {
     this.verified,
     this.roles,
     this.hasCompletedOnboarding,
+    this.active, // Initialize active
   });
 
   factory UserModel.fromJson(Map<String, dynamic> json) {
@@ -32,6 +34,7 @@ class UserModel {
       verified: json['verified'],
       roles: json['roles'],
       hasCompletedOnboarding: json['hasCompletedOnboarding'],
+      active: json['active'],
     );
   }
 }
