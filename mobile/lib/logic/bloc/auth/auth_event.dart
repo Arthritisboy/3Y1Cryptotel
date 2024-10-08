@@ -1,5 +1,5 @@
-import 'package:hotel_flutter/data/model/signup_model.dart';
-import 'package:hotel_flutter/data/model/user_model.dart';
+import 'package:hotel_flutter/data/model/auth/signup_model.dart';
+import 'package:hotel_flutter/data/model/auth/user_model.dart';
 
 abstract class AuthEvent {}
 

@@ -1,18 +1,17 @@
 import 'package:flutter/material.dart';
-import 'package:hotel_flutter/data/dummydata/rating_data.dart';
-import 'package:hotel_flutter/data/model/rating_model.dart';
-import 'package:hotel_flutter/data/model/room_model.dart';
-import 'package:hotel_flutter/presentation/widgets/hotel/details/roomDetails.dart';
-import 'package:hotel_flutter/presentation/widgets/hotel/input_fields.dart';
-import 'package:hotel_flutter/presentation/widgets/hotel/navigation_row.dart';
+import 'package:hotel_flutter/data/model/hotel/rating_model.dart';
+import 'package:hotel_flutter/data/model/hotel/room_model.dart';
 import 'package:hotel_flutter/presentation/widgets/hotel/ratings/hotelRatings.dart';
+import 'package:hotel_flutter/presentation/widgets/hotel/navigation_row.dart';
+import 'package:hotel_flutter/presentation/widgets/hotel/input_fields.dart';
+import 'package:hotel_flutter/presentation/widgets/hotel/details/roomDetails.dart';
 
 class ActiveRoom extends StatefulWidget {
   final String hotelName;
   final double rating;
   final int price;
   final String location;
-  final RoomModel room; 
+  final RoomModel room;
 
   const ActiveRoom({
     super.key,
@@ -35,8 +34,10 @@ class _ActiveRoomState extends State<ActiveRoom> {
   @override
   void initState() {
     super.initState();
-    currentImage = widget.room.imageUrls[0];
-    previewImages = widget.room.imageUrls; 
+    // Set the current image to the single image from the RoomModel
+    // currentImage = widget.room.imageUrl;
+    // If you had multiple preview images, use this
+    // previewImages = [widget.room.imageUrl];
   }
 
   void onNavTap(int index) {
@@ -53,71 +54,45 @@ class _ActiveRoomState extends State<ActiveRoom> {
 
   @override
   Widget build(BuildContext context) {
-    final List<Rating> filteredRatingList = userRatings
-        .where((rating) => rating.hotelName == widget.hotelName)
-        .toList();
+    // If RoomModel doesn't have ratings, you can handle it like this
+    final List<RatingModel> filteredRatingList = [];
 
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.hotelName),
       ),
-      body: SingleChildScrollView( 
+      body: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.only(left: 16, right: 16, top: 20),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-
               GestureDetector(
-                onTap: () {}, 
+                onTap: () {},
                 child: Container(
                   width: double.infinity,
                   height: 200,
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(10),
                     image: DecorationImage(
-                      image: AssetImage(currentImage),
+                      image:
+                          NetworkImage(currentImage), // Use NetworkImage here
                       fit: BoxFit.cover,
                     ),
                   ),
                 ),
               ),
               const SizedBox(height: 10),
-              // Small preview images section
-              SizedBox(
-                height: 80,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: previewImages.take(4).map((image) {
-                    return Expanded(
-                      child: GestureDetector(
-                        onTap: () => changeImage(image),
-                        child: Container(
-                          height: 80,
-                          margin: const EdgeInsets.only(right: 4),
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(10),
-                            image: DecorationImage(
-                              image: AssetImage(image),
-                              fit: BoxFit.cover,
-                            ),
-                          ),
-                        ),
-                      ),
-                    );
-                  }).toList(),
-                ),
-              ),
-              const SizedBox(height: 10),
+
               // Room details
-              Text(
-                widget.room.roomType,
-                style: const TextStyle(
-                  fontSize: 22.0,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.black,
-                ),
-              ),
+              // Text(
+              //   widget.room.roomType,
+              //   style: const TextStyle(
+              //     fontSize: 22.0,
+              //     fontWeight: FontWeight.bold,
+              //     color: Colors.black,
+              //   ),
+              // ),
               const SizedBox(height: 5),
 
               Row(
@@ -133,9 +108,9 @@ class _ActiveRoomState extends State<ActiveRoom> {
                             color: Colors.black,
                           ),
                         ),
-                        TextSpan(
+                        const TextSpan(
                           text: ' per night',
-                          style: const TextStyle(
+                          style: TextStyle(
                             fontSize: 14.0,
                             fontWeight: FontWeight.bold,
                             color: Colors.grey,
@@ -152,18 +127,18 @@ class _ActiveRoomState extends State<ActiveRoom> {
               // Display guests with icon
               Row(
                 children: [
-                  const Icon(Icons.group, color: Colors.black), 
+                  const Icon(Icons.group, color: Colors.black),
                   const SizedBox(width: 5),
-                  Text(
-                    'Up to ${widget.room.numberofGuest} Guests',
-                    style: const TextStyle(
-                      fontSize: 16.0,
-                      color: Colors.black,
-                    ),
-                  ),
+                  // Text(
+                  //   'Up to ${widget.room.numberofGuest} Guests',
+                  //   style: const TextStyle(
+                  //     fontSize: 16.0,
+                  //     color: Colors.black,
+                  //   ),
+                  // ),
                 ],
               ),
-              
+
               const SizedBox(height: 10),
 
               NavigationRow(
