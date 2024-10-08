@@ -6,6 +6,7 @@ import 'package:hotel_flutter/presentation/widgets/hotel/details/hotelDetails.da
 import 'package:hotel_flutter/presentation/widgets/hotel/navigation_row.dart';
 import 'package:hotel_flutter/presentation/widgets/hotel/ratings/hotelRatings.dart';
 import 'package:hotel_flutter/logic/bloc/hotel/hotel_event.dart';
+import 'package:hotel_flutter/presentation/widgets/hotel/room/roomSelection.dart';
 
 class HotelClicked extends StatefulWidget {
   final String hotelId;
@@ -18,7 +19,7 @@ class HotelClicked extends StatefulWidget {
   final Function(int) onNavTap;
   final double latitude;
   final double longitude;
-  final String hotelImage; // Image passed as a parameter
+  final String hotelImage;
 
   const HotelClicked({
     super.key,
@@ -32,7 +33,7 @@ class HotelClicked extends StatefulWidget {
     required this.onNavTap,
     required this.latitude,
     required this.longitude,
-    required this.hotelImage, // Pass the image URL
+    required this.hotelImage,
   });
 
   @override
@@ -43,7 +44,6 @@ class _HotelClickedState extends State<HotelClicked> {
   @override
   void initState() {
     super.initState();
-    // Fetch the room and rating details using Bloc when the hotel is clicked
     context
         .read<HotelBloc>()
         .add(FetchHotelDetailsEvent(widget.hotelId)); // Using hotelId
@@ -170,15 +170,24 @@ class _HotelClickedState extends State<HotelClicked> {
                       const SizedBox(height: 3),
                       Row(
                         children: [
-                          const Icon(Icons.location_on_outlined,
-                              color: Color.fromARGB(255, 142, 142, 147),
-                              size: 26),
+                          const Icon(
+                            Icons.location_on_outlined,
+                            color: Color.fromARGB(255, 142, 142, 147),
+                            size: 26,
+                          ),
                           const SizedBox(width: 8.0),
-                          Text(
-                            widget.location,
-                            style: const TextStyle(
-                              color: Color.fromARGB(255, 142, 142, 147),
-                              fontSize: 15,
+                          Expanded(
+                            // Wrap Text with Expanded to allow wrapping
+                            child: Text(
+                              widget.location,
+                              style: const TextStyle(
+                                color: Color.fromARGB(255, 142, 142, 147),
+                                fontSize: 15,
+                              ),
+                              overflow: TextOverflow
+                                  .ellipsis, // Add ellipsis if text is too long
+                              maxLines:
+                                  1, // Limit to 1 line to prevent overflow
                             ),
                           ),
                         ],
@@ -199,11 +208,8 @@ class _HotelClickedState extends State<HotelClicked> {
 
                 // Room selection or hotel details based on the active tab
                 if (widget.activeIndex == 0)
-                  Column(
-                    children: [
-                      // Room selection example logic goes here
-                    ],
-                  ),
+                  RoomSelection(roomList: filteredRoomList),
+
                 if (widget.activeIndex == 2)
                   HotelDetails(
                     hotelName: widget.hotelName,
