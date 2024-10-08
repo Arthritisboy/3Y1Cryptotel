@@ -7,7 +7,7 @@ class UserModel {
   final String? profilePicture;
   final bool? verified;
   final String? roles;
-  late final bool? hasCompletedOnboarding;
+  bool? hasCompletedOnboarding;
   final bool? active; // Add active field
 
   UserModel({
