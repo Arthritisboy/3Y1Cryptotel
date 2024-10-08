@@ -1,36 +1,35 @@
 const mongoose = require('mongoose');
 
-const roomSchema = new mongoose.Schema({
-  roomId: {
+const restaurantSchema = new mongoose.Schema({
+  tableNumber: {
     type: String,
     required: true,
   },
-  imagePath: {
+  restaurantImage: {
     type: String,
   },
-  roomType: {
+  type: {
     type: String,
     required: true,
   },
-  pricePerNight: {
+  price: {
     type: Number,
-    required: true,
+    required: true
+  },
+  capacity: {
+    type: Number,
+    required: true
   },
   availability: {
     type: Boolean,
-    required: true,
-    default: true,
+    default: true
   },
-  amenities: {
-    type: [String],
-    required: true,
-  },
-  maxOccupancy: {
-    type: Number,
-    required: true,
-  },
+  ratings: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Rating'  // Array of ratings
+  }]
 });
 
-const Room = mongoose.model('Room', roomSchema);
+const Restaurant = mongoose.model('Restaurant', restaurantSchema);
 
-module.exports = Room;
+module.exports = Restaurant;

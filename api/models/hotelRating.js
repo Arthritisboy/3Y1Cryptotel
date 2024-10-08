@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 
-const ratingSchema = new mongoose.Schema({
+const hotelRatingSchema = new mongoose.Schema({
     rating: {
         type: Number,
         min: 1,
@@ -27,5 +27,5 @@ const ratingSchema = new mongoose.Schema({
     }
 });
 
-const Rating = mongoose.model('Rating', ratingSchema);
-module.exports = Rating;
+const HotelRating = mongoose.model('hotelRating', hotelRatingSchema); // Use consistent naming
+module.exports = HotelRating;

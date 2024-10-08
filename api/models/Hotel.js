@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 const Room = require('./Room');
-const Rating = require('./Rating');
+const HotelRating = require('./hotelRating');
 
 const hotelSchema = new mongoose.Schema({
   name: {
