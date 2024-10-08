@@ -150,31 +150,6 @@ class AuthDataProvider {
     }
   }
 
-  //! Fetch All Users
-  Future<List<UserModel>> fetchAllUsers() async {
-    final String url = '$baseUrl/users';
-    final token = await storage.read(key: 'jwt');
-
-    if (token == null) {
-      throw Exception('Authorization token is missing');
-    }
-
-    final response = await http.get(
-      Uri.parse(url),
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer $token',
-      },
-    );
-
-    if (response.statusCode == 200) {
-      final data = json.decode(response.body)['data']['users'] as List;
-      return data.map((userJson) => UserModel.fromJson(userJson)).toList();
-    } else {
-      throw Exception('Failed to load users: ${response.body}');
-    }
-  }
-
   //! Change Password
   Future<void> updatePassword(String currentPassword, String newPassword,
       String confirmPassword) async {

@@ -52,16 +52,6 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       }
     });
 
-    on<FetchAllUsersEvent>((event, emit) async {
-      emit(AuthLoading());
-      try {
-        final users = await authRepository.fetchAllUsers();
-        emit(UsersFetched(users));
-      } catch (e) {
-        emit(AuthError('Failed to fetch users: ${e.toString()}'));
-      }
-    });
-
     on<GetUserEvent>((event, emit) async {
       emit(AuthLoading());
       try {

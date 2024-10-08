@@ -73,12 +73,3 @@ class AuthSuccessVerification extends AuthState {
 
   const AuthSuccessVerification(this.message);
 }
-
-class UsersFetched extends AuthState {
-  final List<UserModel> users;
-
-  const UsersFetched(this.users);
-
-  @override
-  List<Object> get props => [users];
-}
