@@ -206,7 +206,7 @@ class AuthDataProvider {
   }
 
   //! Change User Profile Data
-  Future<void> updateUserData({
+  Future<UserModel> updateUserData({
     String? firstName,
     String? lastName,
     String? email,
@@ -245,6 +245,11 @@ class AuthDataProvider {
       final responseData = await http.Response.fromStream(response);
 
       if (response.statusCode == 200) {
+        // Parse the response body to extract user data
+        final Map<String, dynamic> data = jsonDecode(responseData.body);
+        final updatedUser = UserModel.fromJson(
+            data['data']['user']); // Assuming you have a fromJson method
+        return updatedUser; // Return the updated user model
       } else {
         throw Exception('Failed to update user data: ${responseData.body}');
       }

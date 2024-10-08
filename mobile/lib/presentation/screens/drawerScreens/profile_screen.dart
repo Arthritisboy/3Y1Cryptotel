@@ -1,17 +1,15 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:hotel_flutter/data/model/auth/user_model.dart';
 import 'package:hotel_flutter/logic/bloc/auth/auth_bloc.dart';
-import 'package:hotel_flutter/logic/bloc/auth/auth_event.dart';
 import 'package:hotel_flutter/logic/bloc/auth/auth_state.dart';
 import 'package:hotel_flutter/presentation/widgets/profile/blue_background_widget.dart';
 import 'package:hotel_flutter/presentation/widgets/profile/bottom_section.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:image_picker/image_picker.dart'; // For selecting images
+import 'package:hotel_flutter/data/data_provider/auth/auth_data_provider.dart';
 
 class ProfileScreen extends StatefulWidget {
-  const ProfileScreen({
+  ProfileScreen({
     super.key,
     required this.firstName,
     required this.lastName,
@@ -22,7 +20,7 @@ class ProfileScreen extends StatefulWidget {
   final String firstName;
   final String lastName;
   final String email;
-  final String profile;
+  String profile;
 
   @override
   State<StatefulWidget> createState() {
@@ -93,23 +91,26 @@ class _ProfileScreenState extends State<ProfileScreen> {
       _isLoading = true; // Start loading when the update process begins
     });
 
-    final updatedUser = UserModel(
-      firstName: firstNameController.text,
-      lastName: lastNameController.text,
-      email: emailController.text,
-      profilePicture: _selectedImage?.path ??
-          widget.profile, // Use new image path if selected
-    );
-
     try {
-      // Dispatch UpdateUserEvent
-      context.read<AuthBloc>().add(
-            UpdateUserEvent(updatedUser, profilePicture: _selectedImage?.path),
-          );
-      final userId = await const FlutterSecureStorage().read(key: 'userId');
-      if (userId != null) {
-        context.read<AuthBloc>().add(GetUserEvent(userId));
-      }
+      // Call the updateUserData method and get the updated user
+      final updatedUser = await AuthDataProvider().updateUserData(
+        firstName: firstNameController.text,
+        lastName: lastNameController.text,
+        email: emailController.text,
+        profilePicture: _selectedImage,
+      );
+
+      // Update the UI with the new user data
+      setState(() {
+        // Use the updatedUser properties to set the profile URL
+        widget.profile =
+            updatedUser.profilePicture!; // Update the profile image URL
+      });
+
+      // Clear image cache if necessary
+      imageCache.clear();
+      imageCache.clearLiveImages();
+
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text('User data updated successfully!'),
