@@ -29,15 +29,12 @@ class ActiveRoom extends StatefulWidget {
 class _ActiveRoomState extends State<ActiveRoom> {
   int activeIndex = 1;
   late String currentImage;
-  late List<String> previewImages;
 
   @override
   void initState() {
     super.initState();
-    // Set the current image to the single image from the RoomModel
-    // currentImage = widget.room.imageUrl;
-    // If you had multiple preview images, use this
-    // previewImages = [widget.room.imageUrl];
+    // Initialize currentImage with the room's image URL
+    currentImage = widget.room.roomImage; // Use roomImage from RoomModel
   }
 
   void onNavTap(int index) {
@@ -54,8 +51,8 @@ class _ActiveRoomState extends State<ActiveRoom> {
 
   @override
   Widget build(BuildContext context) {
-    // If RoomModel doesn't have ratings, you can handle it like this
-    final List<RatingModel> filteredRatingList = [];
+    final List<RatingModel> filteredRatingList =
+        widget.room.ratings; // Fetch room ratings
 
     return Scaffold(
       appBar: AppBar(
@@ -68,7 +65,7 @@ class _ActiveRoomState extends State<ActiveRoom> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               GestureDetector(
-                onTap: () {},
+                onTap: () {}, // Placeholder for future tap actions
                 child: Container(
                   width: double.infinity,
                   height: 200,
@@ -76,23 +73,21 @@ class _ActiveRoomState extends State<ActiveRoom> {
                     borderRadius: BorderRadius.circular(10),
                     image: DecorationImage(
                       image:
-                          NetworkImage(currentImage), // Use NetworkImage here
+                          NetworkImage(currentImage), // Use the current image
                       fit: BoxFit.cover,
                     ),
                   ),
                 ),
               ),
               const SizedBox(height: 10),
-
-              // Room details
-              // Text(
-              //   widget.room.roomType,
-              //   style: const TextStyle(
-              //     fontSize: 22.0,
-              //     fontWeight: FontWeight.bold,
-              //     color: Colors.black,
-              //   ),
-              // ),
+              Text(
+                widget.room.type, // Room type
+                style: const TextStyle(
+                  fontSize: 22.0,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.black,
+                ),
+              ),
               const SizedBox(height: 5),
 
               Row(
@@ -101,7 +96,7 @@ class _ActiveRoomState extends State<ActiveRoom> {
                     text: TextSpan(
                       children: [
                         TextSpan(
-                          text: '₱${widget.room.price}',
+                          text: '₱${widget.room.price}', // Room price
                           style: const TextStyle(
                             fontSize: 18.0,
                             fontWeight: FontWeight.bold,
@@ -121,21 +116,20 @@ class _ActiveRoomState extends State<ActiveRoom> {
                   ),
                 ],
               ),
-
               const SizedBox(height: 5),
 
-              // Display guests with icon
+              // Display guests capacity with icon
               Row(
                 children: [
                   const Icon(Icons.group, color: Colors.black),
                   const SizedBox(width: 5),
-                  // Text(
-                  //   'Up to ${widget.room.numberofGuest} Guests',
-                  //   style: const TextStyle(
-                  //     fontSize: 16.0,
-                  //     color: Colors.black,
-                  //   ),
-                  // ),
+                  Text(
+                    'Up to ${widget.room.capacity} Guests',
+                    style: const TextStyle(
+                      fontSize: 16.0,
+                      color: Colors.black,
+                    ),
+                  ),
                 ],
               ),
 
@@ -150,10 +144,13 @@ class _ActiveRoomState extends State<ActiveRoom> {
                 thickness: 2,
                 color: Color.fromARGB(255, 142, 142, 147),
               ),
-              if (activeIndex == 1) InputFields(),
-              if (activeIndex == 2) Roomdetails(),
+              if (activeIndex == 1)
+                InputFields(), // Placeholder for input fields section
+              if (activeIndex == 2)
+                Roomdetails(), // Placeholder for room details section
               if (activeIndex == 3)
-                UserRatingsWidget(ratings: filteredRatingList),
+                UserRatingsWidget(
+                    ratings: filteredRatingList), // Display user ratings
             ],
           ),
         ),
