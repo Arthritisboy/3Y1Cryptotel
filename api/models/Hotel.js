@@ -12,7 +12,8 @@ const hotelSchema = new mongoose.Schema({
         default: 0  // Automatic
     },
     averagePrice: {
-        type: String, // Automatic
+        type: Number,
+        default: 0 // Automatic
     },
     location: {
         type: String,
