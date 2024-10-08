@@ -4,6 +4,8 @@ import 'package:hotel_flutter/presentation/widgets/help_support/email_dialog.dar
 import 'package:hotel_flutter/presentation/widgets/help_support/faq_item.dart';
 
 class HelpSupportScreen extends StatefulWidget {
+  const HelpSupportScreen({super.key});
+
   @override
   _HelpSupportScreenState createState() => _HelpSupportScreenState();
 }
