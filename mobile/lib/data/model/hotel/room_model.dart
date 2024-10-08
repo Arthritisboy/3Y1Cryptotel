@@ -33,6 +33,6 @@ class RoomModel {
       ratings: (json['ratings'] as List)
           .map((ratingJson) => RatingModel.fromJson(ratingJson))
           .toList(),
-    );
+    );//hello
   }
 }
