@@ -20,7 +20,7 @@ const storage = multer.diskStorage({
 });
 const upload = multer({storage: storage});
 
-const uploadHotelRoomRestaurantImage = async (req) => {
+const uploadHotelRoomImage = async (req) => {
   return new Promise((resolve, reject) => {
     cloudinary.uploader.upload(req.file.path, {
       transformation: [
@@ -72,4 +72,4 @@ const uploadProfileImage = async (req) => {
 
 
 
-module.exports = { upload, cloudinary, generateTestUrl, uploadProfileImage, uploadHotelRoomRestaurantImage };
+module.exports = { upload, cloudinary, generateTestUrl, uploadProfileImage, uploadHotelRoomImage };

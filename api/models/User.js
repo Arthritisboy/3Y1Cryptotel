@@ -2,7 +2,6 @@ const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const crypto = require('crypto');
-const Favourite = require('./Favourite');  // Import the Favourite schema
 
 const userSchema = new mongoose.Schema(
   {
@@ -14,7 +13,7 @@ const userSchema = new mongoose.Schema(
     },
     lastName: {
       type: String,
-      required: [true, 'Please provide last name'],
+      required: [true, 'Please provide first name'],
       minLength: 3,
       maxLength: 50,
     },
@@ -40,7 +39,7 @@ const userSchema = new mongoose.Schema(
         validator: function (val) {
           return val === this.password;
         },
-        message: 'Passwords are not the same!',
+        message: `Password are not the same!`,
       },
     },
     verificationCode: {
@@ -78,20 +77,20 @@ const userSchema = new mongoose.Schema(
     hasCompletedOnboarding: {
       type: Boolean,
       default: false
-    },
-    favourites: {
-      type: Favourite.schema, // Embedding the Favourite schema
-      required: false
     }
   },
+
   { timestamps: true },
 );
 
-// Middleware and Methods for password, JWT, and verification logic
-
 userSchema.pre('save', async function (next) {
+  //! Only run this function if password was actually modifed
   if (!this.isModified('password')) return next();
+
+  //! Hash the password with cost of 12
   this.password = await bcrypt.hash(this.password, 12);
+
+  //! Delete confirmPassword field
   this.confirmPassword = undefined;
   next();
 });
@@ -109,34 +108,51 @@ userSchema.methods.createJWT = function () {
 
 userSchema.pre('save', function (next) {
   if (!this.isModified('password') || this.isNew) return next();
+
   this.passwordChangedAt = Date.now() - 1000;
   next();
 });
 
-userSchema.methods.correctPassword = async function (candidatePassword, userPassword) {
+userSchema.methods.correctPassword = async function (
+  candidatePassword,
+  userPassword,
+) {
   return await bcrypt.compare(candidatePassword, userPassword);
 };
 
 userSchema.methods.changedPasswordAfter = function (JWTTimestamp) {
   if (this.passwordChangedAt) {
-    const changedPasswordTimestamp = parseInt(this.passwordChangedAt.getTime() / 1000, 10);
+    const changedPasswordTimestamp = parseInt(
+      this.passwordChangedAt.getTime() / 1000,
+      10,
+    );
+
     return JWTTimestamp < changedPasswordTimestamp;
   }
+  //! False means NOT changed
   return false;
 };
 
 userSchema.methods.createPasswordResetToken = function () {
   const resetToken = crypto.randomBytes(32).toString('hex');
-  this.passwordResetToken = crypto.createHash('sha256').update(resetToken).digest('hex');
+  this.passwordResetToken = crypto
+    .createHash('sha256')
+    .update(resetToken)
+    .digest('hex');
+  console.log({ resetToken }, this.passwordResetToken);
   this.passwordResetExpires = Date.now() + 10 * 60 * 1000;
+
   return resetToken;
 };
 
+//! Generate Verification Code
 userSchema.methods.createVerificationCode = function () {
   const verificationCode = crypto.randomBytes(3).toString('hex');
-  this.verificationCode = crypto.createHash('sha256').update(verificationCode).digest('hex');
+  this.verificationCode = crypto
+    .createHash('sha256')
+    .update(verificationCode)
+    .digest('hex');
   this.codeExpires = Date.now() + 10 * 60 * 1000;
   return verificationCode;
 };
-
 module.exports = mongoose.model('User', userSchema);
