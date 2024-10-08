@@ -39,7 +39,7 @@ class _LoginScreenState extends State<LoginScreen> {
             });
             // Check onboarding status
             if (state.user.hasCompletedOnboarding) {
-              Navigator.of(context).pushReplacementNamed('/homescreen');
+              Navigator.of(context).pushNamed('/homescreen');
             } else {
               Navigator.of(context).pushNamed('/onboarding');
             }

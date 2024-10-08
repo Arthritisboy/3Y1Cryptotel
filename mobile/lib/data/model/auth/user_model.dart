@@ -20,9 +20,10 @@ class UserModel {
     this.verified,
     this.roles,
     this.hasCompletedOnboarding,
-    this.active, // Initialize active
+    this.active,
   });
 
+  // From JSON
   factory UserModel.fromJson(Map<String, dynamic> json) {
     return UserModel(
       id: json['_id'],
@@ -36,5 +37,16 @@ class UserModel {
       hasCompletedOnboarding: json['hasCompletedOnboarding'],
       active: json['active'],
     );
+  }
+
+  // To JSON
+  Map<String, dynamic> toJson() {
+    return {
+      '_id': id,
+      'firstName': firstName,
+      'lastName': lastName,
+      'email': email,
+      'profile': profilePicture,
+    };
   }
 }
