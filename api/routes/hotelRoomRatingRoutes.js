@@ -4,14 +4,8 @@ const roomController = require('../controllers/roomController');
 const ratingController = require('../controllers/ratingController');
 const authController = require('../controllers/authController');
 const { upload } = require('../middleware/imageUpload');
-const { updateAllHotelsAverage } = require('../middleware/averageCalculator');
 
 const router = express.Router();
-
-router
-  .route('/update-all-averages')
-  .patch(updateAllHotelsAverage);
-
 
 // Hotel routes
 router

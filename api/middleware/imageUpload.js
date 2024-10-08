@@ -26,7 +26,7 @@ const uploadHotelRoomImage = async (req) => {
       transformation: [
         { fetch_format: 'auto', quality: 'auto' },
         {
-          width: 400,
+          width: 300,
           height: 300,
           crop: 'fill',
           gravity: 'auto',
