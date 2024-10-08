@@ -8,7 +8,7 @@ class HotelModel {
   final String openingHours;
   final String hotelImage;
   final double averageRating;
-  final int averagePrice;
+  final double averagePrice;
   final List<RoomModel> rooms;
 
   HotelModel({
@@ -28,9 +28,13 @@ class HotelModel {
       name: json['name'],
       location: json['location'],
       openingHours: json['openingHours'],
-      averageRating: json['averageRating'],
+      averageRating: (json['averageRating'] is int)
+          ? (json['averageRating'] as int).toDouble()
+          : (json['averageRating'] as double),
       hotelImage: json['hotelImage'],
-      averagePrice: json['averagePrice'],
+      averagePrice: (json['averagePrice'] is int)
+          ? (json['averagePrice'] as int).toDouble()
+          : (json['averagePrice'] as double),
       rooms: (json['rooms'] as List)
           .map((roomJson) => RoomModel.fromJson(roomJson))
           .toList(),

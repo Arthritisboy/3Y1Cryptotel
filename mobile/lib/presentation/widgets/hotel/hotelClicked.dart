@@ -12,7 +12,7 @@ class HotelClicked extends StatefulWidget {
   final String hotelId;
   final String hotelName;
   final double rating;
-  final int price;
+  final double price;
   final String location;
   final String time;
   final int activeIndex;

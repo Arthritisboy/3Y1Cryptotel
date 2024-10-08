@@ -5,7 +5,7 @@ import 'package:hotel_flutter/presentation/widgets/hotel/map/full_map.dart';
 class HotelDetails extends StatelessWidget {
   final String hotelName;
   final double rating;
-  final int price;
+  final double price;
   final String location;
   final String time;
   final double latitude;
