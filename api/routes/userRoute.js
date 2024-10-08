@@ -6,7 +6,7 @@ const { upload } = require('../middleware/imageUpload');
 const router = express.Router();
 
 router.route('/').get(authController.protect, userController.getAllUsers);
-router.patch(
+router.put(
   '/updateMe',
   authController.protect,
   upload.single('image'),
