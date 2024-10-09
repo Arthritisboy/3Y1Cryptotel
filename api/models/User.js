@@ -13,7 +13,7 @@ const userSchema = new mongoose.Schema(
     },
     lastName: {
       type: String,
-      required: [true, 'Please provide first name'],
+      required: [true, 'Please provide last name'],
       minLength: 3,
       maxLength: 50,
     },
@@ -25,6 +25,16 @@ const userSchema = new mongoose.Schema(
         'Please provide a valid email',
       ],
       unique: true,
+    },
+    phoneNumber: {
+      type: String,
+      required: [true, 'Please provide a phone number'],
+      match: [/^\+?[1-9]\d{1,14}$/, 'Please provide a valid phone number'],
+    },
+    gender: {
+      type: String,
+      enum: ['male', 'female', 'other'],
+      required: [true, 'Please specify your gender'],
     },
     password: {
       type: String,
@@ -39,7 +49,7 @@ const userSchema = new mongoose.Schema(
         validator: function (val) {
           return val === this.password;
         },
-        message: `Password are not the same!`,
+        message: `Passwords are not the same!`,
       },
     },
     verificationCode: {
@@ -76,15 +86,14 @@ const userSchema = new mongoose.Schema(
     },
     hasCompletedOnboarding: {
       type: Boolean,
-      default: false
-    }
+      default: false,
+    },
   },
-
   { timestamps: true },
 );
 
 userSchema.pre('save', async function (next) {
-  //! Only run this function if password was actually modifed
+  //! Only run this function if password was actually modified
   if (!this.isModified('password')) return next();
 
   //! Hash the password with cost of 12
@@ -155,4 +164,5 @@ userSchema.methods.createVerificationCode = function () {
   this.codeExpires = Date.now() + 10 * 60 * 1000;
   return verificationCode;
 };
+
 module.exports = mongoose.model('User', userSchema);

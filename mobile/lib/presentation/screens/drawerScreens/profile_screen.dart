@@ -1,26 +1,32 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:hotel_flutter/data/model/auth/user_model.dart';
 import 'package:hotel_flutter/logic/bloc/auth/auth_bloc.dart';
+import 'package:hotel_flutter/logic/bloc/auth/auth_event.dart';
 import 'package:hotel_flutter/logic/bloc/auth/auth_state.dart';
 import 'package:hotel_flutter/presentation/widgets/profile/blue_background_widget.dart';
 import 'package:hotel_flutter/presentation/widgets/profile/bottom_section.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:image_picker/image_picker.dart'; // For selecting images
-import 'package:hotel_flutter/data/data_provider/auth/auth_data_provider.dart';
 
 class ProfileScreen extends StatefulWidget {
-  ProfileScreen({
+  const ProfileScreen({
     super.key,
     required this.firstName,
     required this.lastName,
     required this.email,
     required this.profile,
+    required this.phoneNumber, // Added Phone Number
+    required this.gender, // Added Gender
   });
 
   final String firstName;
   final String lastName;
   final String email;
-  String profile;
+  final String profile;
+  final String phoneNumber; // Added Phone Number
+  final String gender; // Added Gender
 
   @override
   State<StatefulWidget> createState() {
@@ -31,13 +37,10 @@ class ProfileScreen extends StatefulWidget {
 class _ProfileScreenState extends State<ProfileScreen> {
   late TextEditingController firstNameController;
   late TextEditingController lastNameController;
-  late TextEditingController usernameController;
   late TextEditingController emailController;
-  late TextEditingController addressController;
+  late TextEditingController phoneNumberController; // Phone Number Controller
 
-  String username = "";
-  String address = "";
-  String gender = "Male";
+  String? gender; // Gender state
   File? _selectedImage; // To store the selected image file
   bool _isLoading = false;
 
@@ -48,18 +51,18 @@ class _ProfileScreenState extends State<ProfileScreen> {
     super.initState();
     firstNameController = TextEditingController(text: widget.firstName);
     lastNameController = TextEditingController(text: widget.lastName);
-    usernameController = TextEditingController(text: username);
     emailController = TextEditingController(text: widget.email);
-    addressController = TextEditingController(text: address);
+    phoneNumberController = TextEditingController(
+        text: widget.phoneNumber); // Initialize phone number controller
+    gender = widget.gender; // Initialize gender
   }
 
   @override
   void dispose() {
     firstNameController.dispose();
     lastNameController.dispose();
-    usernameController.dispose();
     emailController.dispose();
-    addressController.dispose();
+    phoneNumberController.dispose(); // Dispose phone number controller
     super.dispose();
   }
 
@@ -91,26 +94,25 @@ class _ProfileScreenState extends State<ProfileScreen> {
       _isLoading = true; // Start loading when the update process begins
     });
 
+    final updatedUser = UserModel(
+      firstName: firstNameController.text,
+      lastName: lastNameController.text,
+      email: emailController.text,
+      phoneNumber: phoneNumberController.text, // Include updated phone number
+      profilePicture: _selectedImage?.path ??
+          widget.profile, // Use new image path if selected
+      gender: gender ?? "Male", // Include updated gender
+    );
+
     try {
-      // Call the updateUserData method and get the updated user
-      final updatedUser = await AuthDataProvider().updateUserData(
-        firstName: firstNameController.text,
-        lastName: lastNameController.text,
-        email: emailController.text,
-        profilePicture: _selectedImage,
-      );
-
-      // Update the UI with the new user data
-      setState(() {
-        // Use the updatedUser properties to set the profile URL
-        widget.profile =
-            updatedUser.profilePicture!; // Update the profile image URL
-      });
-
-      // Clear image cache if necessary
-      imageCache.clear();
-      imageCache.clearLiveImages();
-
+      // Dispatch UpdateUserEvent
+      context.read<AuthBloc>().add(
+            UpdateUserEvent(updatedUser, profilePicture: _selectedImage?.path),
+          );
+      final userId = await const FlutterSecureStorage().read(key: 'userId');
+      if (userId != null) {
+        context.read<AuthBloc>().add(GetUserEvent(userId));
+      }
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text('User data updated successfully!'),
@@ -156,23 +158,21 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 return BottomSection(
                   firstNameController: firstNameController,
                   lastNameController: lastNameController,
-                  usernameController: usernameController,
                   emailController: emailController,
-                  addressController: addressController,
+                  phoneNumberController: phoneNumberController,
+                  gender: gender ?? 'Male',
                   updateUserData: updateUserData,
                   onGenderChanged: (selectedGender) {
                     setState(() {
                       gender = selectedGender;
                     });
                   },
-                  gender: gender,
                   isLoading: _isLoading, // Pass the loading state
                 );
               }
               return Container();
             }),
           ),
-          // Profile Picture with GestureDetector to change it
           Positioned(
             top: MediaQuery.of(context).size.height * 0.01,
             left: 0,

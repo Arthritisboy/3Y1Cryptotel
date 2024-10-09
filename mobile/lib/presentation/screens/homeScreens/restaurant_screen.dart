@@ -40,10 +40,10 @@ class RestaurantScreen extends StatelessWidget {
       return Padding(
         padding: const EdgeInsets.only(right: 10.0),
         child: CardWidget(
-          imagePath: restaurant.imagePath,
-          hotelName: restaurant.restaurantName,
+          imagePath: restaurant.restaurantImage,
+          hotelName: restaurant.name,
           location: restaurant.location,
-          rating: restaurant.rating,
+          rating: restaurant.averageRating,
         ),
       );
     }).toList();

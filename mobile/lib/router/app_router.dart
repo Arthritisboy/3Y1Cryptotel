@@ -63,6 +63,8 @@ class AppRouter {
           final String lastName = args['lastName'];
           final String email = args['email'];
           final String profile = args['profile'];
+          final String phoneNumber = args['phoneNumber'];
+          final String gender = args['gender'];
 
           return MaterialPageRoute(
             builder: (_) => ProfileScreen(
@@ -70,6 +72,8 @@ class AppRouter {
               lastName: lastName,
               email: email,
               profile: profile,
+              phoneNumber: phoneNumber,
+              gender: gender,
             ),
           );
         } else {
@@ -122,6 +126,8 @@ class AppRouter {
               email: args['email'],
               password: args['password'],
               confirmPassword: args['confirmPassword'],
+              phoneNumber: args['phoneNumber'],
+              gender: args['gender'],
             ),
           );
         } else {

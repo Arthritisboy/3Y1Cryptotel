@@ -18,6 +18,9 @@ class _SignupFormState extends State<SignupForm> {
   final TextEditingController _passwordController = TextEditingController();
   final TextEditingController _confirmPasswordController =
       TextEditingController();
+  final TextEditingController _phoneNumberController = TextEditingController();
+
+  String? _selectedGender;
 
   bool _isPasswordVisible = false;
   bool _isConfirmPasswordVisible = false;
@@ -56,6 +59,81 @@ class _SignupFormState extends State<SignupForm> {
               controller: _lastNameController,
             ),
             const SizedBox(height: 8),
+
+            // Contact Number Input
+            CustomTextFormField(
+              label: 'Contact Number',
+              hint: 'Enter your contact number',
+              controller: _phoneNumberController,
+              validator: (value) {
+                if (value == null || value.isEmpty) {
+                  return 'Please enter your contact number';
+                }
+                return null;
+              },
+            ),
+
+            SizedBox(
+              height: 8,
+            ),
+            // Gender Dropdown with matching width and height
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              child: SizedBox(
+                width: screenWidth *
+                    0.7, // Matching the width of other input fields
+                height: screenWidth *
+                    0.1, // Matching the height of other input fields
+                child: DropdownButtonFormField<String>(
+                  decoration: InputDecoration(
+                    labelText: 'Gender',
+                    labelStyle: const TextStyle(
+                        color: Colors.black), // Matching text color
+                    hintStyle: const TextStyle(
+                        color:
+                            Color.fromARGB(12, 0, 0, 0)), // Matching hint color
+                    border: const OutlineInputBorder(
+                      borderSide: BorderSide(
+                          color: Colors.black), // Matching border color
+                    ),
+                    enabledBorder: const OutlineInputBorder(
+                      borderSide: BorderSide(
+                          color: Colors.black), // Matching enabled border color
+                    ),
+                    contentPadding: const EdgeInsets.symmetric(
+                        horizontal: 12, vertical: 12),
+                  ),
+                  value: _selectedGender,
+                  items: const [
+                    DropdownMenuItem(
+                      value: 'Male',
+                      child: Text('Male'),
+                    ),
+                    DropdownMenuItem(
+                      value: 'Female',
+                      child: Text('Female'),
+                    ),
+                    DropdownMenuItem(
+                      value: 'Other',
+                      child: Text('Other'),
+                    ),
+                  ],
+                  onChanged: (value) {
+                    setState(() {
+                      _selectedGender = value;
+                    });
+                  },
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Please select your gender';
+                    }
+                    return null;
+                  },
+                ),
+              ),
+            ),
+            const SizedBox(height: 8),
+            // Email Input
             CustomTextFormField(
               label: 'Email',
               hint: 'Enter your email',
@@ -68,6 +146,8 @@ class _SignupFormState extends State<SignupForm> {
               },
             ),
             const SizedBox(height: 8),
+
+            // Password Input
             CustomTextFormField(
               label: 'Password',
               hint: 'Enter your password',
@@ -81,6 +161,8 @@ class _SignupFormState extends State<SignupForm> {
               },
             ),
             const SizedBox(height: 8),
+
+            // Confirm Password Input
             CustomTextFormField(
               label: 'Confirm Password',
               hint: 'Verify your password',
@@ -103,12 +185,14 @@ class _SignupFormState extends State<SignupForm> {
               },
             ),
             const SizedBox(height: 24),
+
+            // Signup Button
             SizedBox(
               width: screenWidth * 0.5,
               child: ElevatedButton(
                 style: ButtonStyle(
-                  backgroundColor:
-                      WidgetStateProperty.all(const Color(0xFF1C3473)),
+                  backgroundColor: MaterialStateProperty.all(
+                      const Color(0xFF1C3473)), // Updated MaterialStateProperty
                 ),
                 onPressed: _isLoading
                     ? null
@@ -123,6 +207,9 @@ class _SignupFormState extends State<SignupForm> {
                               'password': _passwordController.text,
                               'confirmPassword':
                                   _confirmPasswordController.text,
+                              'phoneNumber':
+                                  _phoneNumberController.text, // Added
+                              'gender': _selectedGender, // Added
                             },
                           );
                         }

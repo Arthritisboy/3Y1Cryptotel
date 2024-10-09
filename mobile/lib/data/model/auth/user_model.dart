@@ -7,13 +7,17 @@ class UserModel {
   final String? profilePicture;
   final bool? verified;
   final String? roles;
-  late final bool? hasCompletedOnboarding;
-  final bool? active; // Add active field
+  final String? gender;
+  final String? phoneNumber;
+  bool? hasCompletedOnboarding;
+  final bool? active;
 
   UserModel({
     this.id,
     this.firstName,
     this.lastName,
+    this.phoneNumber,
+    this.gender,
     this.email,
     this.token,
     this.profilePicture,
@@ -30,6 +34,8 @@ class UserModel {
       firstName: json['firstName'],
       lastName: json['lastName'],
       email: json['email'],
+      gender: json['gender'],
+      phoneNumber: json['phoneNumber'],
       token: json['token'],
       profilePicture: json['profile'],
       verified: json['verified'],
@@ -38,7 +44,6 @@ class UserModel {
       active: json['active'],
     );
   }
-
   // To JSON
   Map<String, dynamic> toJson() {
     return {
