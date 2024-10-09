@@ -17,12 +17,16 @@ class ProfileScreen extends StatefulWidget {
     required this.lastName,
     required this.email,
     required this.profile,
+    required this.phoneNumber, // Added Phone Number
+    required this.gender, // Added Gender
   });
 
   final String firstName;
   final String lastName;
   final String email;
   final String profile;
+  final String phoneNumber; // Added Phone Number
+  final String gender; // Added Gender
 
   @override
   State<StatefulWidget> createState() {
@@ -33,13 +37,10 @@ class ProfileScreen extends StatefulWidget {
 class _ProfileScreenState extends State<ProfileScreen> {
   late TextEditingController firstNameController;
   late TextEditingController lastNameController;
-  late TextEditingController usernameController;
   late TextEditingController emailController;
-  late TextEditingController addressController;
+  late TextEditingController phoneNumberController; // Phone Number Controller
 
-  String username = "";
-  String address = "";
-  String gender = "Male";
+  String? gender; // Gender state
   File? _selectedImage; // To store the selected image file
   bool _isLoading = false;
 
@@ -50,18 +51,18 @@ class _ProfileScreenState extends State<ProfileScreen> {
     super.initState();
     firstNameController = TextEditingController(text: widget.firstName);
     lastNameController = TextEditingController(text: widget.lastName);
-    usernameController = TextEditingController(text: username);
     emailController = TextEditingController(text: widget.email);
-    addressController = TextEditingController(text: address);
+    phoneNumberController = TextEditingController(
+        text: widget.phoneNumber); // Initialize phone number controller
+    gender = widget.gender; // Initialize gender
   }
 
   @override
   void dispose() {
     firstNameController.dispose();
     lastNameController.dispose();
-    usernameController.dispose();
     emailController.dispose();
-    addressController.dispose();
+    phoneNumberController.dispose(); // Dispose phone number controller
     super.dispose();
   }
 
@@ -97,8 +98,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
       firstName: firstNameController.text,
       lastName: lastNameController.text,
       email: emailController.text,
+      phoneNumber: phoneNumberController.text, // Include updated phone number
       profilePicture: _selectedImage?.path ??
           widget.profile, // Use new image path if selected
+      gender: gender ?? "Male", // Include updated gender
     );
 
     try {
@@ -155,23 +158,21 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 return BottomSection(
                   firstNameController: firstNameController,
                   lastNameController: lastNameController,
-                  usernameController: usernameController,
                   emailController: emailController,
-                  addressController: addressController,
+                  phoneNumberController: phoneNumberController,
+                  gender: gender ?? 'Male',
                   updateUserData: updateUserData,
                   onGenderChanged: (selectedGender) {
                     setState(() {
                       gender = selectedGender;
                     });
                   },
-                  gender: gender,
                   isLoading: _isLoading, // Pass the loading state
                 );
               }
               return Container();
             }),
           ),
-          // Profile Picture with GestureDetector to change it
           Positioned(
             top: MediaQuery.of(context).size.height * 0.01,
             left: 0,

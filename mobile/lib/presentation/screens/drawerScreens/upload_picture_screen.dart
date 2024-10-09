@@ -15,6 +15,8 @@ class UploadPictureScreen extends StatefulWidget {
     required this.email,
     required this.password,
     required this.confirmPassword,
+    required this.phoneNumber,
+    required this.gender,
   });
 
   final String firstName;
@@ -22,6 +24,8 @@ class UploadPictureScreen extends StatefulWidget {
   final String email;
   final String password;
   final String confirmPassword;
+  final String phoneNumber;
+  final String gender;
 
   @override
   State<UploadPictureScreen> createState() => _UploadPictureScreenState();
@@ -218,7 +222,9 @@ class _UploadPictureScreenState extends State<UploadPictureScreen> {
       email: widget.email,
       password: widget.password,
       confirmPassword: widget.confirmPassword,
-      profilePicture: profilePath, // Pass profilePath if available
+      gender: widget.gender,
+      phoneNumber: widget.phoneNumber,
+      profilePicture: profilePath,
     );
 
     context.read<AuthBloc>().add(SignUpEvent(signUpModel, profilePath));

@@ -6,9 +6,8 @@ import 'package:hotel_flutter/presentation/widgets/profile/gender_selection_widg
 class BottomSection extends StatelessWidget {
   final TextEditingController firstNameController;
   final TextEditingController lastNameController;
-  final TextEditingController usernameController;
   final TextEditingController emailController;
-  final TextEditingController addressController;
+  final TextEditingController phoneNumberController; // Phone number controller
   final String gender;
   final ValueChanged<String> onGenderChanged;
   final VoidCallback updateUserData;
@@ -18,13 +17,12 @@ class BottomSection extends StatelessWidget {
     super.key,
     required this.firstNameController,
     required this.lastNameController,
-    required this.usernameController,
     required this.emailController,
-    required this.addressController,
+    required this.phoneNumberController, // Added phone number controller
     required this.gender,
     required this.onGenderChanged,
     required this.updateUserData,
-    required this.isLoading, // Accept loading state
+    required this.isLoading,
   });
 
   @override
@@ -65,14 +63,6 @@ class BottomSection extends StatelessWidget {
               ),
               const SizedBox(height: 10),
               TextField(
-                controller: usernameController,
-                decoration: const InputDecoration(
-                  labelText: 'Username',
-                  border: OutlineInputBorder(),
-                ),
-              ),
-              const SizedBox(height: 10),
-              TextField(
                 controller: emailController,
                 decoration: const InputDecoration(
                   labelText: 'Email',
@@ -80,25 +70,28 @@ class BottomSection extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 10),
+              // Gender Selection widget
               GenderSelection(
                 gender: gender,
                 onGenderChanged: onGenderChanged,
               ),
               const SizedBox(height: 10),
+              // Updated: Changed labelText from "Address" to "Phone Number"
               TextField(
-                controller: addressController,
+                controller: phoneNumberController, // Phone number controller
                 decoration: const InputDecoration(
-                  labelText: 'Address',
+                  labelText: 'Phone Number', // Updated label
                   border: OutlineInputBorder(),
                 ),
               ),
               const SizedBox(height: 20),
-              // Update the ActionButtons to show loading state
+              // Action Buttons with loading state
               ActionButtons(
                 updateUserData: updateUserData,
                 isLoading: isLoading, // Pass the loading state to the button
               ),
               const SizedBox(height: 20),
+              // Delete Account Button
               const DeleteAccountButton(),
             ],
           ),

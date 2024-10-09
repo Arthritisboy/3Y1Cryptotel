@@ -47,6 +47,8 @@ class _TabScreenState extends State<TabScreen> {
   String? lastName;
   String? email;
   String? profile;
+  String? gender;
+  String? phoneNumber;
   List<UserModel> allUsers = [];
 
   @override
@@ -74,6 +76,8 @@ class _TabScreenState extends State<TabScreen> {
         firstName = state.user.firstName ?? '';
         lastName = state.user.lastName ?? '';
         email = state.user.email ?? '';
+        gender = state.user.gender ?? '';
+        phoneNumber = state.user.phoneNumber ?? '';
         profile = state.user.profilePicture ?? '';
         _isLoading = false;
 
@@ -81,6 +85,8 @@ class _TabScreenState extends State<TabScreen> {
         _secureStorage.write(key: 'firstName', value: firstName);
         _secureStorage.write(key: 'lastName', value: lastName);
         _secureStorage.write(key: 'email', value: email);
+        _secureStorage.write(key: 'gender', value: gender);
+        _secureStorage.write(key: 'phoneNumber', value: phoneNumber);
         _secureStorage.write(
             key: 'profile', value: profile); // Store profile URL
       } else if (state is AuthInitial) {
@@ -110,7 +116,7 @@ class _TabScreenState extends State<TabScreen> {
           firstName: firstName ?? '',
           lastName: lastName ?? '',
           email: email ?? '',
-          profile: profile ?? '', // Pass profile to the drawer
+          profile: profile ?? '',
         ),
         body: Stack(
           children: [
@@ -190,6 +196,8 @@ class _TabScreenState extends State<TabScreen> {
             'lastName': lastName,
             'email': email,
             'profile': profile,
+            'gender': gender,
+            'phoneNumber': phoneNumber,
           },
         );
         break;

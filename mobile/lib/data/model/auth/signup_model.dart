@@ -4,9 +4,13 @@ class SignUpModel {
   final String email;
   final String password;
   final String confirmPassword;
-  final String? profilePicture; // Make this nullable
+  final String phoneNumber;
+  final String gender;
+  final String? profilePicture;
 
   SignUpModel({
+    required this.phoneNumber,
+    required this.gender,
     required this.firstName,
     required this.lastName,
     required this.email,
@@ -21,6 +25,8 @@ class SignUpModel {
       'lastName': lastName,
       'email': email,
       'password': password,
+      'phoneNumber': phoneNumber,
+      'gender': gender,
       'confirmPassword': confirmPassword,
       'profilePicture': profilePicture ?? '', // Optional field
     };
