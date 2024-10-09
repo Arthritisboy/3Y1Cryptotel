@@ -10,24 +10,22 @@ class Roomdetails extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text(
-            'Room Details',
-            style: TextStyle(
-              fontSize: 25.0,
-              fontWeight: FontWeight.bold,
-              color: Colors.black,
-            ),
-          ),
-          const SizedBox(height: 20),
-
           // Room Type Section
-          const Text(
-            'Room Type:',
-            style: TextStyle(
-              fontSize: 18.0,
-              fontWeight: FontWeight.bold,
-              color: Colors.black,
-            ),
+          Row(
+            children: const [
+              Icon(Icons.bed, color: Colors.black, size: 20),
+              SizedBox(width: 8),
+              Expanded(
+                child: Text(
+                  'Room Type:',
+                  style: TextStyle(
+                    fontSize: 18.0,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black,
+                  ),
+                ),
+              ),
+            ],
           ),
           const SizedBox(height: 5),
           const Text(
@@ -49,13 +47,21 @@ class Roomdetails extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Text(
-                      'In Your Private Bathroom:',
-                      style: TextStyle(
-                        fontSize: 18.0,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.black,
-                      ),
+                    Row(
+                      children: const [
+                        Icon(Icons.bathtub, color: Colors.black, size: 20),
+                        SizedBox(width: 8),
+                        Expanded(
+                          child: Text(
+                            'In Your Private Bathroom:',
+                            style: TextStyle(
+                              fontSize: 18.0,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.black,
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
                     const SizedBox(height: 5),
                     Column(
@@ -81,13 +87,21 @@ class Roomdetails extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Text(
-                      'Facilities:',
-                      style: TextStyle(
-                        fontSize: 18.0,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.black,
-                      ),
+                    Row(
+                      children: const [
+                        Icon(Icons.miscellaneous_services, color: Colors.black, size: 20),
+                        SizedBox(width: 8),
+                        Expanded(
+                          child: Text(
+                            'Facilities:',
+                            style: TextStyle(
+                              fontSize: 18.0,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.black,
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
                     const SizedBox(height: 5),
                     Column(
@@ -113,17 +127,25 @@ class Roomdetails extends StatelessWidget {
           const SizedBox(height: 20),
 
           // Smoking Section
-          const Text(
-            'Smoking:',
-            style: TextStyle(
-              fontSize: 18.0,
-              fontWeight: FontWeight.bold,
-              color: Colors.black,
-            ),
+          Row(
+            children: const [
+              Icon(Icons.smoke_free, color: Colors.black, size: 20),
+              SizedBox(width: 8),
+              Expanded(
+                child: Text(
+                  'Smoking:',
+                  style: TextStyle(
+                    fontSize: 18.0,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black,
+                  ),
+                ),
+              ),
+            ],
           ),
           const SizedBox(height: 5),
           const Text(
-            'No Smoking',
+            '• No Smoking',
             style: TextStyle(
               fontSize: 18.0,
               fontWeight: FontWeight.w400,
