@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:hotel_flutter/presentation/widgets/hotel/map/map_widget.dart';
-import 'package:hotel_flutter/presentation/widgets/hotel/map/full_map.dart';
 
 class Roomdetails extends StatelessWidget {
+  const Roomdetails({super.key});
+
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
@@ -89,7 +89,8 @@ class Roomdetails extends StatelessWidget {
                   children: [
                     Row(
                       children: const [
-                        Icon(Icons.miscellaneous_services, color: Colors.black, size: 20),
+                        Icon(Icons.miscellaneous_services,
+                            color: Colors.black, size: 20),
                         SizedBox(width: 8),
                         Expanded(
                           child: Text(

@@ -191,7 +191,7 @@ class _SignupFormState extends State<SignupForm> {
               width: screenWidth * 0.5,
               child: ElevatedButton(
                 style: ButtonStyle(
-                  backgroundColor: MaterialStateProperty.all(
+                  backgroundColor: WidgetStateProperty.all(
                       const Color(0xFF1C3473)), // Updated MaterialStateProperty
                 ),
                 onPressed: _isLoading
