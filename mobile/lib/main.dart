@@ -92,7 +92,7 @@ class MyApp extends StatelessWidget {
                   .apply(bodyColor: Colors.black, displayColor: Colors.black),
             ),
           ),
-          home: const AdminScreen(),
+          home: const SplashScreen(),
         ),
       ),
     );
