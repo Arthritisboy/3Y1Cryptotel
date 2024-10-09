@@ -49,6 +49,8 @@ exports.register = catchAsync(async (req, res, next) => {
     email: req.body.email,
     password: req.body.password,
     confirmPassword: req.body.confirmPassword,
+    gender: req.body.gender,
+    phoneNumber: req.body.phoneNumber,
     profile: profile || undefined,
     hasOnboardingCompleted: req.body.hasOnboardingCompleted,
   });

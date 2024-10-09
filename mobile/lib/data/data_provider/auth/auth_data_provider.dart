@@ -56,6 +56,8 @@ class AuthDataProvider {
     request.fields['firstName'] = signUpModel.firstName;
     request.fields['lastName'] = signUpModel.lastName;
     request.fields['email'] = signUpModel.email;
+    request.fields['phoneNumber'] = signUpModel.phoneNumber;
+    request.fields['gender'] = signUpModel.gender;
     request.fields['password'] = signUpModel.password;
     request.fields['confirmPassword'] = signUpModel.confirmPassword;
 
