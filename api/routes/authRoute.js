@@ -17,7 +17,7 @@ router.post('/verifyCode', authController.verifyCode);
 router.route('/login').post(authController.login);
 
 // ** Logout route
-router.route('/logout').post(authController.logout);
+router.post('/logout', authController.logout);
 
 // ** Forgot Password route
 router.post('/forgotPassword', authController.forgotPassword);
