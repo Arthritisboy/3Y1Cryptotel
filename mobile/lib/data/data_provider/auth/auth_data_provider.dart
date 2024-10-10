@@ -251,6 +251,11 @@ class AuthDataProvider {
         final Map<String, dynamic> data = jsonDecode(responseData.body);
         final updatedUser = UserModel.fromJson(
             data['data']['user']); // Assuming you have a fromJson method
+
+        // Log or print the new profile image URL
+        _logger
+            .info('Updated profile image URL: ${updatedUser.profilePicture}');
+
         return updatedUser; // Return the updated user model
       } else {
         throw Exception('Failed to update user data: ${responseData.body}');

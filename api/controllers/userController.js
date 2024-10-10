@@ -66,21 +66,22 @@ exports.updateMe = catchAsync(async (req, res, next) => {
   // Filter out unwanted fields
   const filteredBody = filterObj(req.body, 'roles');
 
+  // If profile image URL is available, add it to the user object
   if (profile) {
-    filteredBody.profile = profile; // Add profile image URL
+    filteredBody.profile = profile;
   }
 
   // Update user document
-  const updateUser = await User.findByIdAndUpdate(req.user.id, filteredBody, {
+  const updatedUser = await User.findByIdAndUpdate(req.user.id, filteredBody, {
     new: true,
     runValidators: true,
   });
 
-  // Send the updated user data in response
+  // Return updated user data, including profile image URL
   res.status(200).json({
     status: 'success',
     data: {
-      user: updateUser, // Ensure this includes the profile URL
+      user: updatedUser, // Ensure the profile URL is part of the user object
     },
   });
 });
