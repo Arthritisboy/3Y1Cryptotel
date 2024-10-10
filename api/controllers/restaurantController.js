@@ -2,27 +2,11 @@ const User = require('../models/User');
 const Restaurant = require('../models/Restaurant');
 const Booking = require('../models/Booking');
 const { uploadEveryImage } = require('../middleware/imageUpload');
-const { calculateAveragePrice } = require('../middleware/averageCalculator');
 const catchAsync = require('../utils/catchAsync');
 const AppError = require('../utils/appError');
 
-const average = async() => {
-    console.log('Fetching all restaurants to calculate average price...');
-    const restaurants = await Restaurant.find(); // Fetch all restaurants
-    if (!restaurants.length) {
-        console.log('No restaurants found. Returning average price as 0.');
-        return 0; // If no restaurants exist, return 0
-    }
-
-    // Calculate total price
-    const totalPrice = restaurants.reduce((sum, restaurant) => sum + restaurant.price, 0);
-    const averagePrice = totalPrice / restaurants.length; // Calculate average
-    console.log(`Calculated average price: ${averagePrice}`);
-    return averagePrice;
-};
-
 // Get a restaurant by ID or all restaurants
-exports.getRestaurant = catchAsync(async(req, res, next) => {
+exports.getRestaurant = catchAsync(async (req, res, next) => {
     const restaurantId = req.params.id;
     let restaurant;
 
@@ -49,7 +33,7 @@ exports.getRestaurant = catchAsync(async(req, res, next) => {
 });
 
 // Create a restaurant
-exports.createRestaurant = catchAsync(async(req, res, next) => {
+exports.createRestaurant = catchAsync(async (req, res, next) => {
     const { tableNumber, name, price, capacity, ratingId } = req.body;
 
     console.log('Creating restaurant with data:', { tableNumber, name, price, capacity, ratingId });
@@ -73,10 +57,6 @@ exports.createRestaurant = catchAsync(async(req, res, next) => {
         console.log('No image file provided for the restaurant.');
     }
 
-    // Calculate the average price for all restaurants
-    // const averagePrice = await average();
-    console.log('Calculated average price for new restaurant:', averagePrice);
-
     // Create the restaurant with multiple ratingIds (if provided, otherwise null)
     const newRestaurant = await Restaurant.create({
         tableNumber,
@@ -85,25 +65,23 @@ exports.createRestaurant = catchAsync(async(req, res, next) => {
         price,
         capacity,
         ratings: ratingId && ratingId.length ? ratingId : [], // Assign multiple ratingIds or an empty array
-        averagePrice, // Include average price in the new restaurant data
     });
 
     console.log('New restaurant created:', newRestaurant);
 
-    // Respond with the new restaurant data and the updated average price
+    // Respond with the new restaurant data
     res.status(201).json({
         status: 'success',
         data: {
             restaurant: newRestaurant,
-            averagePrice,
         },
     });
 
-    console.log('Response sent with new restaurant data and average price.');
+    console.log('Response sent with new restaurant data.');
 });
 
 // Update a restaurant by ID
-exports.updateRestaurant = catchAsync(async(req, res, next) => {
+exports.updateRestaurant = catchAsync(async (req, res, next) => {
     const restaurantId = req.params.id;
 
     console.log(`Updating restaurant with ID: ${restaurantId}`);
@@ -144,10 +122,6 @@ exports.updateRestaurant = catchAsync(async(req, res, next) => {
         return next(new AppError('Restaurant not found with this ID.', 404));
     }
 
-    // Update the average price of restaurants
-    const averagePrice = await calculateAveragePrice();
-    console.log('Updated average price for restaurants:', averagePrice);
-
     res.status(200).json({
         status: 'success',
         data: {
@@ -157,7 +131,7 @@ exports.updateRestaurant = catchAsync(async(req, res, next) => {
 });
 
 // Delete a restaurant by ID
-exports.deleteRestaurant = catchAsync(async(req, res, next) => {
+exports.deleteRestaurant = catchAsync(async (req, res, next) => {
     const restaurantId = req.params.id;
 
     console.log(`Deleting restaurant with ID: ${restaurantId}`);
@@ -170,10 +144,6 @@ exports.deleteRestaurant = catchAsync(async(req, res, next) => {
 
     await Restaurant.findByIdAndDelete(restaurantId);
     console.log('Restaurant deleted successfully.');
-
-    // Update average price after restaurant deletion
-    const averagePrice = await calculateAveragePrice();
-    console.log('Updated average price after restaurant deletion:', averagePrice);
 
     res.status(204).json({
         status: 'success',
