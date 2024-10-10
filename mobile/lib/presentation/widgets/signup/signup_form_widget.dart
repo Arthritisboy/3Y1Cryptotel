@@ -106,15 +106,15 @@ class _SignupFormState extends State<SignupForm> {
                   value: _selectedGender,
                   items: const [
                     DropdownMenuItem(
-                      value: 'Male',
+                      value: 'male',
                       child: Text('Male'),
                     ),
                     DropdownMenuItem(
-                      value: 'Female',
+                      value: 'female',
                       child: Text('Female'),
                     ),
                     DropdownMenuItem(
-                      value: 'Other',
+                      value: 'other',
                       child: Text('Other'),
                     ),
                   ],
@@ -207,9 +207,8 @@ class _SignupFormState extends State<SignupForm> {
                               'password': _passwordController.text,
                               'confirmPassword':
                                   _confirmPasswordController.text,
-                              'phoneNumber':
-                                  _phoneNumberController.text, // Added
-                              'gender': _selectedGender, // Added
+                              'phoneNumber': _phoneNumberController.text,
+                              'gender': _selectedGender,
                             },
                           );
                         }

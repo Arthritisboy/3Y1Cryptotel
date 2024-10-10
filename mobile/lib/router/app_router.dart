@@ -7,7 +7,7 @@ import 'package:hotel_flutter/presentation/screens/homeScreens/tab_screen.dart';
 import 'package:hotel_flutter/presentation/screens/authScreens/login_screen.dart';
 import 'package:hotel_flutter/presentation/screens/authScreens/signup_screen.dart';
 import 'package:hotel_flutter/presentation/screens/authScreens/update_password_screen.dart';
-import 'package:hotel_flutter/presentation/screens/drawerScreens/upload_picture_screen.dart';
+import 'package:hotel_flutter/presentation/screens/authScreens/upload_picture_screen.dart';
 import 'package:hotel_flutter/presentation/screens/authScreens/verify_code_screen.dart';
 import 'package:hotel_flutter/presentation/screens/homeScreens/welcome_screen.dart';
 import 'package:hotel_flutter/presentation/screens/authScreens/email_reset_token_screen.dart';
