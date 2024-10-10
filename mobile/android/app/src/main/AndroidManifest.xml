@@ -9,7 +9,7 @@
 
     <application
         android:usesCleartextTraffic="true"
-        android:label="hotel_flutter"
+        android:label="Cryptotel"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
 

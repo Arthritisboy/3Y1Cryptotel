@@ -90,13 +90,13 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       emit(AuthLoading());
       try {
         // Ensure both firstName, lastName, and profilePicture are sent to the repository
-        await authRepository.updateUser(
+        final updatedUser = await authRepository.updateUser(
           event.user,
           profilePicture:
               event.profilePicture != null ? File(event.profilePicture!) : null,
         );
-        emit(Authenticated(event
-            .user)); // Emit the updated user after the operation is successful
+        emit(Authenticated(
+            updatedUser)); // Emit the updated user after the operation is successful
       } catch (error) {
         emit(AuthError('Failed to update user: $error'));
       }
@@ -112,15 +112,17 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       }
     });
 
-    on<LogoutEvent>((event, emit) async {
-      emit(AuthLoading());
-      try {
-        await authRepository.logout();
-        emit(AuthInitial());
-      } catch (e) {
-        emit(AuthError('Failed to logout: ${e.toString()}'));
-      }
-    });
+    on<LogoutEvent>(
+      (event, emit) async {
+        emit(AuthLoading());
+        try {
+          await authRepository.logout();
+          emit(AuthInitial());
+        } catch (e) {
+          emit(AuthError('Failed to logout: ${e.toString()}'));
+        }
+      },
+    );
 
     // Handle the CompleteOnboardingEvent
     on<CompleteOnboardingEvent>((event, emit) async {

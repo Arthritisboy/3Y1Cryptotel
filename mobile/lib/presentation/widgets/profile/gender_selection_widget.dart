@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:hotel_flutter/presentation/widgets/profile/gender_option.dart';
 
 class GenderSelection extends StatelessWidget {
   final String gender;
@@ -16,70 +17,34 @@ class GenderSelection extends StatelessWidget {
       children: [
         Expanded(
           child: GestureDetector(
-            onTap: () => onGenderChanged("Male"),
+            onTap: () => onGenderChanged("male"), // Lowercase values
             child: GenderOption(
-              label: 'Male',
-              isSelected: gender == "Male",
+              label: 'Male', // Display label with capitalized letter
+              isSelected: gender.toLowerCase() == "male", // Compare lowercase
             ),
           ),
         ),
         const SizedBox(width: 10),
         Expanded(
           child: GestureDetector(
-            onTap: () => onGenderChanged("Female"),
+            onTap: () => onGenderChanged("female"), // Lowercase values
             child: GenderOption(
-              label: 'Female',
-              isSelected: gender == "Female",
+              label: 'Female', // Display label with capitalized letter
+              isSelected: gender.toLowerCase() == "female", // Compare lowercase
+            ),
+          ),
+        ),
+        const SizedBox(width: 10),
+        Expanded(
+          child: GestureDetector(
+            onTap: () => onGenderChanged("other"), // Handle "other"
+            child: GenderOption(
+              label: 'Other', // Display label with capitalized letter
+              isSelected: gender.toLowerCase() == "other", // Compare lowercase
             ),
           ),
         ),
       ],
-    );
-  }
-}
-
-class GenderOption extends StatelessWidget {
-  final String label;
-  final bool isSelected;
-
-  const GenderOption({
-    super.key,
-    required this.label,
-    required this.isSelected,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-        border: Border.all(
-          color:
-              isSelected ? const Color.fromARGB(255, 29, 53, 115) : Colors.grey,
-        ),
-        borderRadius: BorderRadius.circular(10),
-        color: Colors.white, // Center color
-      ),
-      padding: const EdgeInsets.symmetric(vertical: 10),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Container(
-            width: 20,
-            height: 20,
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              color: Colors.white, // Center color
-              border: Border.all(
-                color: isSelected
-                    ? const Color.fromARGB(255, 29, 53, 115)
-                    : Colors.grey,
-              ),
-            ),
-          ),
-          const SizedBox(width: 8),
-          Text(label),
-        ],
-      ),
     );
   }
 }

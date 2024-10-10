@@ -320,3 +320,34 @@ exports.updatePassword = catchAsync(async (req, res, next) => {
   //! 4) Log user in, send JWT
   createSendToken(user, 200, res);
 });
+
+exports.logout = async (req, res) => {
+  // Clear the JWT cookie by setting its expiration to a past date
+  res.cookie('jwt', 'loggedOut', {
+    expires: new Date(Date.now() + 1000), // Set the cookie expiration to 1 second in the past
+    httpOnly: true,
+    secure: process.env.NODE_ENV === 'production', // Use secure cookies in production
+  });
+
+  // Optional: Blacklist the token
+  if (
+    req.headers.authorization &&
+    req.headers.authorization.startsWith('Bearer')
+  ) {
+    const token = req.headers.authorization.split(' ')[1];
+
+    // Add token to blacklist with an expiration time (optional)
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const expiresAt = new Date(decoded.exp * 1000); // Convert to Date object
+
+    await TokenBlacklist.create({
+      token,
+      expiresAt,
+    });
+  }
+
+  res.status(200).json({
+    status: 'success',
+    message: 'Successfully logged out!',
+  });
+};

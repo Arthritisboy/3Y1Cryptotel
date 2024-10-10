@@ -10,7 +10,7 @@ import 'package:logging/logging.dart';
 
 class AuthDataProvider {
   final Logger _logger = Logger('AuthDataProvider');
-  final String baseUrl = 'https://3-y1-cryptotel.vercel.app/api/v1/auth';
+  final String baseUrl = 'https://3-y1-cryptotel-hazel.vercel.app/api/v1/auth';
   final FlutterSecureStorage storage = const FlutterSecureStorage();
 
   //! Login
@@ -132,7 +132,7 @@ class AuthDataProvider {
   //! Fetch User
   Future<UserModel> getUser(String userId) async {
     final token = await storage.read(key: 'jwt');
-    final url = 'https://3-y1-cryptotel.vercel.app/api/v1/users/$userId';
+    final url = 'https://3-y1-cryptotel-hazel.vercel.app/api/v1/users/$userId';
 
     final response = await http.get(
       Uri.parse(url),
@@ -155,7 +155,7 @@ class AuthDataProvider {
 
   //! Fetch All Users
   Future<List<UserModel>> fetchAllUsers() async {
-    final String url = 'https://3-y1-cryptotel.vercel.app/api/v1/users';
+    final String url = 'https://3-y1-cryptotel-hazel.vercel.app/api/v1/users';
     final token = await storage.read(key: 'jwt');
 
     if (token == null) {
@@ -220,8 +220,8 @@ class AuthDataProvider {
       throw Exception('Authorization token is missing');
     }
 
-    final uri =
-        Uri.parse('https://3-y1-cryptotel.vercel.app/api/v1/users/updateMe');
+    final uri = Uri.parse(
+        'https://3-y1-cryptotel-hazel.vercel.app/api/v1/users/updateMe');
     var request = http.MultipartRequest('PUT', uri);
 
     // Set Authorization header
@@ -251,7 +251,12 @@ class AuthDataProvider {
         final Map<String, dynamic> data = jsonDecode(responseData.body);
         final updatedUser = UserModel.fromJson(
             data['data']['user']); // Assuming you have a fromJson method
-        return updatedUser; // Return the updated user model
+
+        // Log or print the new profile image URL
+        _logger
+            .info('Updated profile image URL: ${updatedUser.profilePicture}');
+
+        return updatedUser; // Return the updated user model, including profile picture
       } else {
         throw Exception('Failed to update user data: ${responseData.body}');
       }
@@ -262,7 +267,17 @@ class AuthDataProvider {
 
   //! Logout
   Future<void> logout() async {
-    await storage.deleteAll();
+    final response = await http.post(
+      Uri.parse('$baseUrl/logout'), // Replace with your actual logout URL
+      headers: {
+        'Authorization':
+            'Bearer ${await storage.read(key: 'jwt')}', // Ensure to include the JWT token if needed
+      },
+    );
+
+    if (response.statusCode != 200) {
+      throw Exception('Failed to logout: ${response.body}');
+    }
   }
 
   //! Update User Onboarding
@@ -271,7 +286,7 @@ class AuthDataProvider {
 
     final response = await http.put(
       Uri.parse(
-          'https://3-y1-cryptotel.vercel.app/api/v1/users/updateHasCompletedOnboarding'),
+          'https://3-y1-cryptotel-hazel.vercel.app/api/v1/users/updateHasCompletedOnboarding'),
       headers: {
         'Content-Type': 'application/json',
         'Authorization': 'Bearer $token',

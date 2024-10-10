@@ -2,12 +2,12 @@ const User = require('../models/User');
 const Hotel = require('../models/Hotel');
 const Room = require('../models/Room');
 const Booking = require('../models/Booking');
-const { uploadHotelRoomImage } = require('../middleware/imageUpload');
+const { uploadEveryImage } = require('../middleware/imageUpload');
 const catchAsync = require('../utils/catchAsync');
 const AppError = require('../utils/appError');
 
 // Get a hotel by ID or all hotels (with rooms)
-exports.getHotel = catchAsync(async (req, res, next) => {
+exports.getHotel = catchAsync(async(req, res, next) => {
     const hotelId = req.params.id;
     let hotel;
 
@@ -39,7 +39,7 @@ exports.getHotel = catchAsync(async (req, res, next) => {
 });
 
 // Create a hotel with optional rooms
-exports.createHotel = catchAsync(async (req, res, next) => {
+exports.createHotel = catchAsync(async(req, res, next) => {
     const { name, location, openingHours, rooms } = req.body;
 
     let hotelImage = undefined;
@@ -47,7 +47,7 @@ exports.createHotel = catchAsync(async (req, res, next) => {
     // Handle image upload if a file is provided
     if (req.file) {
         try {
-            hotelImage = await uploadHotelRoomImage(req);
+            hotelImage = await uploadEveryImage(req);
         } catch (uploadErr) {
             return res.status(500).json({
                 status: 'error',
@@ -92,15 +92,15 @@ exports.createHotel = catchAsync(async (req, res, next) => {
 });
 
 // Update a hotel and optionally its rooms
-exports.updateHotel = catchAsync(async (req, res, next) => {
+exports.updateHotel = catchAsync(async(req, res, next) => {
     const hotelId = req.params.id;
-    let updateData = { ...req.body };
+    let updateData = {...req.body };
     const { rooms } = req.body;
 
     // Handle image upload if a file is provided during update
     if (req.file) {
         try {
-            const hotelImage = await uploadHotelRoomImage(req);
+            const hotelImage = await uploadEveryImage(req);
             updateData.hotelImage = hotelImage;
         } catch (uploadErr) {
             return res.status(500).json({
@@ -147,7 +147,7 @@ exports.updateHotel = catchAsync(async (req, res, next) => {
 });
 
 // Delete a hotel by ID
-exports.deleteHotel = catchAsync(async (req, res, next) => {
+exports.deleteHotel = catchAsync(async(req, res, next) => {
     const hotelId = req.params.id;
 
     const hotel = await Hotel.findById(hotelId);

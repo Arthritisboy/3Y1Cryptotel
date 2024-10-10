@@ -1,36 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:hotel_flutter/presentation/widgets/dialog/custom_dialog.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'dart:convert';
+import 'package:hotel_flutter/presentation/screens/homeScreens/restaurant_screen.dart';
+import 'package:hotel_flutter/presentation/widgets/shimmer_loading/tab/shimmer_card_widget.dart';
+import 'package:hotel_flutter/presentation/widgets/tabscreen/user_storage_helper.dart';
+import 'package:hotel_flutter/presentation/widgets/utils_widget/custom_dialog.dart';
 import 'package:hotel_flutter/data/model/auth/user_model.dart';
 import 'package:hotel_flutter/logic/bloc/auth/auth_bloc.dart';
 import 'package:hotel_flutter/logic/bloc/auth/auth_event.dart';
 import 'package:hotel_flutter/logic/bloc/auth/auth_state.dart';
 import 'package:hotel_flutter/presentation/screens/homeScreens/home_screen.dart';
-import 'package:hotel_flutter/presentation/screens/homeScreens/restaurant_screen.dart';
 import 'package:hotel_flutter/presentation/widgets/tabscreen/bottom_home_icon_navigation.dart';
 import 'package:hotel_flutter/presentation/widgets/tabscreen/tab_header.dart';
 import 'package:hotel_flutter/presentation/widgets/drawer/main_drawer.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-
-// Helper function to store users in SharedPreferences
-Future<void> _storeUsers(List<UserModel> users) async {
-  SharedPreferences prefs = await SharedPreferences.getInstance();
-  String usersJson = jsonEncode(users.map((user) => user.toJson()).toList());
-  await prefs.setString('allUsers', usersJson);
-}
-
-// Helper function to get stored users from SharedPreferences
-Future<List<UserModel>> _getStoredUsers() async {
-  SharedPreferences prefs = await SharedPreferences.getInstance();
-  String? usersJson = prefs.getString('allUsers');
-  if (usersJson != null) {
-    List<dynamic> decodedUsers = jsonDecode(usersJson);
-    return decodedUsers.map((user) => UserModel.fromJson(user)).toList();
-  }
-  return [];
-}
+import 'package:hotel_flutter/presentation/widgets/shimmer_loading/tab/shimmer_tab_header.dart';
+import 'package:hotel_flutter/presentation/widgets/shimmer_loading/tab/shimmer_bottom_navigation.dart';
+import 'package:logging/logging.dart';
 
 class TabScreen extends StatefulWidget {
   const TabScreen({super.key});
@@ -40,6 +25,7 @@ class TabScreen extends StatefulWidget {
 }
 
 class _TabScreenState extends State<TabScreen> {
+  final Logger _logger = Logger('TabScreen');
   final FlutterSecureStorage _secureStorage = const FlutterSecureStorage();
   int _selectedIndex = 0;
   bool _isLoading = true;
@@ -56,6 +42,7 @@ class _TabScreenState extends State<TabScreen> {
     super.initState();
     _getUserData();
     _fetchAllUsers();
+    _checkClearedUsers();
   }
 
   Future<void> _getUserData() async {
@@ -67,6 +54,15 @@ class _TabScreenState extends State<TabScreen> {
 
   Future<void> _fetchAllUsers() async {
     context.read<AuthBloc>().add(FetchAllUsersEvent());
+  }
+
+  // Function to store users asynchronously
+  Future<void> _storeFetchedUsers(List<UserModel> users) async {
+    // Clear the users in storage before storing the new list
+    await UserStorageHelper.clearUsers();
+
+    // Store the users in shared preferences
+    await UserStorageHelper.storeUsers(users);
   }
 
   @override
@@ -87,8 +83,10 @@ class _TabScreenState extends State<TabScreen> {
         _secureStorage.write(key: 'email', value: email);
         _secureStorage.write(key: 'gender', value: gender);
         _secureStorage.write(key: 'phoneNumber', value: phoneNumber);
-        _secureStorage.write(
-            key: 'profile', value: profile); // Store profile URL
+        _secureStorage.write(key: 'profile', value: profile);
+
+        // No need for await here, as we're not inside an async function
+        _storeFetchedUsers(allUsers);
       } else if (state is AuthInitial) {
         WidgetsBinding.instance.addPostFrameCallback((_) {
           Navigator.of(context).pushReplacementNamed('/login');
@@ -98,10 +96,15 @@ class _TabScreenState extends State<TabScreen> {
           SnackBar(content: Text('Error: ${state.error}')),
         );
       } else if (state is UsersFetched) {
+        // Clear the local list to avoid duplication
+        allUsers.clear();
+        _logger.info('users cleared');
+
+        // Assign new list of users
         allUsers = state.users;
 
-        // Store the users in shared preferences
-        _storeUsers(allUsers);
+        // Call the async function to store the users without await
+        _storeFetchedUsers(allUsers);
 
         // Print users for confirmation
         for (var user in allUsers) {
@@ -118,59 +121,62 @@ class _TabScreenState extends State<TabScreen> {
           email: email ?? '',
           profile: profile ?? '',
         ),
-        body: Stack(
-          children: [
-            Column(
-              children: [
-                if (_isLoading)
-                  const Expanded(
-                    child: Center(
-                      child: CircularProgressIndicator(),
-                    ),
-                  )
-                else if (!_isLoading) ...[
-                  if (state is Authenticated)
-                    TabHeader(
-                      firstName: firstName ?? 'Guest',
-                      lastName: lastName ?? '',
-                    ),
-                  const SizedBox(height: 10),
-                  BottomHomeIconNavigation(
-                    selectedIndex: _selectedIndex,
-                    onIconTapped: _onIconTapped,
+        body: _isLoading
+            ? Column(
+                children: const [
+                  ShimmerTabHeader(),
+                  SizedBox(height: 10),
+                  ShimmerBottomNavigation(),
+                  SizedBox(
+                    height: 10,
                   ),
-                  Expanded(
-                    child: Container(
-                      decoration: const BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.vertical(
-                          top: Radius.circular(30.0),
+                  Expanded(child: ShimmerCardWidget()),
+                ],
+              )
+            : Stack(
+                children: [
+                  Column(
+                    children: [
+                      TabHeader(
+                        firstName: firstName ?? 'Guest',
+                        lastName: lastName ?? '',
+                      ),
+                      const SizedBox(height: 10),
+                      BottomHomeIconNavigation(
+                        selectedIndex: _selectedIndex,
+                        onIconTapped: _onIconTapped,
+                      ),
+                      Expanded(
+                        child: Container(
+                          decoration: const BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.vertical(
+                              top: Radius.circular(30.0),
+                            ),
+                          ),
+                          child: _selectedIndex == 0
+                              ? const HomeScreen()
+                              : const RestaurantScreen(),
                         ),
                       ),
-                      child: _selectedIndex == 0
-                          ? const HomeScreen()
-                          : const RestaurantScreen(),
+                    ],
+                  ),
+                  Positioned(
+                    top: 40.0,
+                    right: 10.0,
+                    child: Builder(
+                      builder: (context) {
+                        return IconButton(
+                          icon: const Icon(Icons.menu, color: Colors.black),
+                          onPressed: () {
+                            Scaffold.of(context).openEndDrawer();
+                          },
+                        );
+                      },
                     ),
                   ),
                 ],
-              ],
-            ),
-            Positioned(
-              top: 40.0,
-              right: 10.0,
-              child: Builder(
-                builder: (context) {
-                  return IconButton(
-                    icon: const Icon(Icons.menu, color: Colors.black),
-                    onPressed: () {
-                      Scaffold.of(context).openEndDrawer();
-                    },
-                  );
-                },
               ),
-            ),
-          ],
-        ),
       );
     });
   }
@@ -230,7 +236,7 @@ class _TabScreenState extends State<TabScreen> {
           description: 'Are you sure you want to logout?',
           buttonText: 'Yes',
           onButtonPressed: () {
-            context.read<AuthBloc>().add(LogoutEvent());
+            _handleLogout(); // Call logout handler
             Navigator.of(context).pop(); // Close dialog
           },
           secondButtonText: 'No',
@@ -240,5 +246,32 @@ class _TabScreenState extends State<TabScreen> {
         );
       },
     );
+  }
+
+  // Logout handler
+  void _handleLogout() async {
+    await UserStorageHelper.clearUsers(); // Clear stored users
+    final clearedUsers =
+        await UserStorageHelper.getUsers(); // Fetch cleared users
+
+    if (clearedUsers.isEmpty) {
+      _logger.info('Users Cleared Successfully.');
+    } else {
+      _logger.severe('Failed to Clear Users. Users still exist: $clearedUsers');
+    }
+
+    allUsers.clear(); // Clear local list
+    _logger.info('Users Cleared. Logging out.');
+    context.read<AuthBloc>().add(LogoutEvent());
+  }
+
+  Future<void> _checkClearedUsers() async {
+    final users = await UserStorageHelper.getUsers();
+    if (users.isEmpty) {
+      _logger.info('No users found in SharedPreferences, storage is clear.');
+    } else {
+      _logger.warning(
+          'Users still exist in SharedPreferences after logout: $users');
+    }
   }
 }

@@ -7,6 +7,7 @@ import 'package:hotel_flutter/presentation/widgets/hotel/navigation_row.dart';
 import 'package:hotel_flutter/presentation/widgets/hotel/ratings/hotelRatings.dart';
 import 'package:hotel_flutter/logic/bloc/hotel/hotel_event.dart';
 import 'package:hotel_flutter/presentation/widgets/hotel/room/roomSelection.dart';
+import 'package:hotel_flutter/presentation/widgets/shimmer_loading/hotel/hotel_clicked.dart';
 
 class HotelClicked extends StatefulWidget {
   final String hotelId;
@@ -52,7 +53,8 @@ class _HotelClickedState extends State<HotelClicked> {
     return BlocBuilder<HotelBloc, HotelState>(
       builder: (context, state) {
         if (state is HotelLoading) {
-          return const Center(child: CircularProgressIndicator());
+          // Display the shimmer effect during loading state
+          return const ShimmerHotelClicked();
         } else if (state is HotelError) {
           return Center(child: Text(state.error));
         } else if (state is HotelDetailsLoaded) {
@@ -90,7 +92,7 @@ class _HotelClickedState extends State<HotelClicked> {
                 ),
                 const SizedBox(height: 10),
                 Padding(
-                  padding: EdgeInsets.all(16.0),
+                  padding: const EdgeInsets.all(16.0),
                   child: Column(
                     children: [
                       Row(
