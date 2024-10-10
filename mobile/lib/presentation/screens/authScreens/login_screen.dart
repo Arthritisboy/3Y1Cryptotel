@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hotel_flutter/logic/bloc/auth/auth_bloc.dart';
 import 'package:hotel_flutter/logic/bloc/auth/auth_state.dart';
-import 'package:hotel_flutter/presentation/widgets/dialog/custom_dialog.dart';
+import 'package:hotel_flutter/presentation/widgets/utils_widget/custom_dialog.dart';
 import 'package:hotel_flutter/presentation/widgets/login/custom_text_form_field.dart';
 import 'package:hotel_flutter/presentation/widgets/login/loading_button.dart';
 import 'package:hotel_flutter/logic/bloc/auth/auth_event.dart';
