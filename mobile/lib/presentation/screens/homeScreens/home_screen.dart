@@ -32,9 +32,7 @@ class HomeScreen extends StatelessWidget {
                 height: 270.0, // Constraint height for the horizontal scroll
                 child: BlocBuilder<HotelBloc, HotelState>(
                   builder: (context, state) {
-                    if (state is HotelLoading) {
-                      return const Center(child: CircularProgressIndicator());
-                    } else if (state is HotelLoaded) {
+                    if (state is HotelLoaded) {
                       return _buildHotelList(context, state.hotels);
                     } else if (state is HotelError) {
                       return Center(child: Text('Error: ${state.error}'));
