@@ -112,15 +112,17 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       }
     });
 
-    on<LogoutEvent>((event, emit) async {
-      emit(AuthLoading());
-      try {
-        await authRepository.logout();
-        emit(AuthInitial());
-      } catch (e) {
-        emit(AuthError('Failed to logout: ${e.toString()}'));
-      }
-    });
+    on<LogoutEvent>(
+      (event, emit) async {
+        emit(AuthLoading());
+        try {
+          await authRepository.logout();
+          emit(AuthInitial());
+        } catch (e) {
+          emit(AuthError('Failed to logout: ${e.toString()}'));
+        }
+      },
+    );
 
     // Handle the CompleteOnboardingEvent
     on<CompleteOnboardingEvent>((event, emit) async {

@@ -95,7 +95,7 @@ class AuthRepository {
   Future<void> logout() async {
     try {
       await dataProvider.logout();
-      clearUserCache(); // Clear cache on logout
+      clearUserCache(); // Clear cache on logout if necessary
     } catch (e) {
       throw Exception('Failed to logout: $e');
     }
