@@ -275,6 +275,9 @@ class AuthDataProvider {
       },
     );
 
+    _logger.info('Logout response status: ${response.statusCode}');
+    _logger.info('Logout response body: ${response.body}');
+
     if (response.statusCode != 200) {
       throw Exception('Failed to logout: ${response.body}');
     }

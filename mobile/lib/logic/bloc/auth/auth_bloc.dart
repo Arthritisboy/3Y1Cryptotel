@@ -116,8 +116,13 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       (event, emit) async {
         emit(AuthLoading());
         try {
-          await authRepository.logout();
-          emit(AuthInitial());
+          await authRepository.logout(); // Assuming this is an API call
+          // Optionally, you could clear user data from local storage here
+          emit(const AuthSuccess(
+              'Logged out successfully!')); // Provide user feedback
+          await Future.delayed(
+              const Duration(milliseconds: 500)); // Optional delay for feedback
+          emit(AuthInitial()); // Transition to initial state
         } catch (e) {
           emit(AuthError('Failed to logout: ${e.toString()}'));
         }

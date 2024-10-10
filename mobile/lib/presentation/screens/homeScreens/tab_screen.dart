@@ -42,7 +42,6 @@ class _TabScreenState extends State<TabScreen> {
     super.initState();
     _getUserData();
     _fetchAllUsers();
-    _checkClearedUsers();
   }
 
   Future<void> _getUserData() async {
@@ -60,7 +59,6 @@ class _TabScreenState extends State<TabScreen> {
   Future<void> _storeFetchedUsers(List<UserModel> users) async {
     // Clear the users in storage before storing the new list
     await UserStorageHelper.clearUsers();
-
     // Store the users in shared preferences
     await UserStorageHelper.storeUsers(users);
   }
@@ -85,9 +83,10 @@ class _TabScreenState extends State<TabScreen> {
         _secureStorage.write(key: 'phoneNumber', value: phoneNumber);
         _secureStorage.write(key: 'profile', value: profile);
 
-        // No need for await here, as we're not inside an async function
+        // Store fetched users
         _storeFetchedUsers(allUsers);
       } else if (state is AuthInitial) {
+        // Navigate to login if not authenticated
         WidgetsBinding.instance.addPostFrameCallback((_) {
           Navigator.of(context).pushReplacementNamed('/login');
         });
@@ -96,10 +95,6 @@ class _TabScreenState extends State<TabScreen> {
           SnackBar(content: Text('Error: ${state.error}')),
         );
       } else if (state is UsersFetched) {
-        // Clear the local list to avoid duplication
-        allUsers.clear();
-        _logger.info('users cleared');
-
         // Assign new list of users
         allUsers = state.users;
 
@@ -108,11 +103,10 @@ class _TabScreenState extends State<TabScreen> {
 
         // Print users for confirmation
         for (var user in allUsers) {
-          print(
+          _logger.info(
               'User: ${user.firstName} ${user.lastName}, Email: ${user.email}');
         }
       }
-
       return Scaffold(
         endDrawer: MainDrawer(
           onSelectScreen: _setScreen,
@@ -127,9 +121,7 @@ class _TabScreenState extends State<TabScreen> {
                   ShimmerTabHeader(),
                   SizedBox(height: 10),
                   ShimmerBottomNavigation(),
-                  SizedBox(
-                    height: 10,
-                  ),
+                  SizedBox(height: 10),
                   Expanded(child: ShimmerCardWidget()),
                 ],
               )
@@ -235,43 +227,39 @@ class _TabScreenState extends State<TabScreen> {
           title: 'Logout Confirmation',
           description: 'Are you sure you want to logout?',
           buttonText: 'Yes',
-          onButtonPressed: () {
-            _handleLogout(); // Call logout handler
-            Navigator.of(context).pop(); // Close dialog
+          onButtonPressed: () async {
+            await _handleLogout(); // Await the logout handler
+            Navigator.of(context).pop(); // Close the dialog
           },
           secondButtonText: 'No',
           onSecondButtonPressed: () {
-            Navigator.of(context).pop(); // Close dialog
+            Navigator.of(context).pop(); // Close the dialog
           },
         );
       },
     );
   }
 
-  // Logout handler
-  void _handleLogout() async {
-    await UserStorageHelper.clearUsers(); // Clear stored users
-    final clearedUsers =
-        await UserStorageHelper.getUsers(); // Fetch cleared users
-
-    if (clearedUsers.isEmpty) {
-      _logger.info('Users Cleared Successfully.');
-    } else {
-      _logger.severe('Failed to Clear Users. Users still exist: $clearedUsers');
-    }
-
-    allUsers.clear(); // Clear local list
-    _logger.info('Users Cleared. Logging out.');
+  Future<void> _handleLogout() async {
+    // Emit the LogoutEvent without awaiting
     context.read<AuthBloc>().add(LogoutEvent());
-  }
 
-  Future<void> _checkClearedUsers() async {
-    final users = await UserStorageHelper.getUsers();
-    if (users.isEmpty) {
-      _logger.info('No users found in SharedPreferences, storage is clear.');
-    } else {
-      _logger.warning(
-          'Users still exist in SharedPreferences after logout: $users');
+    // Delay showing the snackbar to avoid the "during build" error
+    await Future.delayed(const Duration(milliseconds: 100));
+
+    // Ensure the widget is still mounted before using context
+    if (mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Logged out successfully!'),
+          backgroundColor: Colors.green,
+        ),
+      );
+
+      // Navigate to login screen after showing the snackbar
+      await Future.delayed(const Duration(
+          milliseconds: 500)); // Add a short delay for the snackbar
+      Navigator.of(context).pushReplacementNamed('/login');
     }
   }
 }
