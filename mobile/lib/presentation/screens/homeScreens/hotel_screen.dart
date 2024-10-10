@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:hotel_flutter/presentation/widgets/hotel/hotelClicked.dart';
+import 'package:hotel_flutter/presentation/widgets/hotel/hotel_clicked.dart';
 
 class HotelScreen extends StatefulWidget {
   final String hotelImage;
