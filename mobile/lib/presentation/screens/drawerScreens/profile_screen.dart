@@ -9,6 +9,7 @@ import 'package:hotel_flutter/presentation/widgets/profile/blue_background_widge
 import 'package:hotel_flutter/presentation/widgets/profile/bottom_section.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:image_picker/image_picker.dart'; // For selecting images
+import 'package:logging/logging.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({
@@ -35,6 +36,7 @@ class ProfileScreen extends StatefulWidget {
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
+  final Logger _logger = Logger('ProfileScreen');
   late TextEditingController firstNameController;
   late TextEditingController lastNameController;
   late TextEditingController emailController;
@@ -155,6 +157,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
             bottom: 0,
             child: BlocBuilder<AuthBloc, AuthState>(builder: (context, state) {
               if (state is Authenticated) {
+                _logger.info(
+                    '${state.user.email}\n${state.user.firstName}\n${state.user.lastName}\n${state.user.profilePicture}\n${state.user.gender}\n${state.user.phoneNumber}');
                 return BottomSection(
                   firstNameController: firstNameController,
                   lastNameController: lastNameController,
@@ -169,6 +173,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   },
                   isLoading: _isLoading, // Pass the loading state
                 );
+              } else {
+                _logger.info(state);
               }
               return Container();
             }),
