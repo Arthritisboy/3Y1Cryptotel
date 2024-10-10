@@ -49,8 +49,12 @@ class ChangePasswordEvent extends AuthEvent {
 class UpdateUserEvent extends AuthEvent {
   final UserModel user;
   final String? profilePicture;
+  final String? firstName;
+  final String? lastName;
+  final String? email;
 
-  UpdateUserEvent(this.user, {this.profilePicture});
+  UpdateUserEvent(this.user,
+      {this.profilePicture, this.firstName, this.lastName, this.email});
 }
 
 class VerifyUserEvent extends AuthEvent {

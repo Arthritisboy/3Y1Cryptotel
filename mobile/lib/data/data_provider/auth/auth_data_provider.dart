@@ -256,7 +256,7 @@ class AuthDataProvider {
         _logger
             .info('Updated profile image URL: ${updatedUser.profilePicture}');
 
-        return updatedUser; // Return the updated user model
+        return updatedUser; // Return the updated user model, including profile picture
       } else {
         throw Exception('Failed to update user data: ${responseData.body}');
       }

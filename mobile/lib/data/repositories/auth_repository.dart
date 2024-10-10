@@ -111,15 +111,22 @@ class AuthRepository {
   }
 
   //! Update user
-  Future<void> updateUser(UserModel user, {File? profilePicture}) async {
+  Future<UserModel> updateUser(UserModel user, {File? profilePicture}) async {
     try {
-      await dataProvider.updateUserData(
+      // Call the data provider to update the user data
+      final updatedUser = await dataProvider.updateUserData(
         firstName: user.firstName,
         lastName: user.lastName,
         email: user.email,
         profilePicture: profilePicture,
       );
-      _cachedUser = user; // Update cached user
+
+      // Update cached user with the new data (if needed)
+      _cachedUser =
+          updatedUser; // Assuming updatedUser is returned from dataProvider
+
+      // Return the updated user model
+      return updatedUser; // Ensure to return the updated UserModel
     } catch (error) {
       throw Exception('Failed to update user: $error');
     }
