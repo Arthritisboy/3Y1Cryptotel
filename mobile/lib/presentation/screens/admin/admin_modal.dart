@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 class BookingDetailsModal extends StatelessWidget {
   final Map<String, String> bookingRequest;
 
-  const BookingDetailsModal({Key? key, required this.bookingRequest}) : super(key: key);
+  const BookingDetailsModal({super.key, required this.bookingRequest});
 
   @override
   Widget build(BuildContext context) {
@@ -18,7 +18,7 @@ class BookingDetailsModal extends StatelessWidget {
           IconButton(
             icon: const Icon(Icons.close),
             onPressed: () {
-              Navigator.of(context).pop(); 
+              Navigator.of(context).pop();
             },
           ),
         ],
@@ -119,13 +119,15 @@ class BookingDetailsModal extends StatelessWidget {
           children: [
             ElevatedButton(
               onPressed: () {
-                Navigator.of(context).pop(); 
+                Navigator.of(context).pop();
                 ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text('Accepted booking by ${bookingRequest["userName"]}')),
+                  SnackBar(
+                      content: Text(
+                          'Accepted booking by ${bookingRequest["userName"]}')),
                 );
               },
               style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.green, 
+                backgroundColor: Colors.green,
               ),
               child: const Text('Accept'),
             ),
@@ -134,7 +136,9 @@ class BookingDetailsModal extends StatelessWidget {
               onPressed: () {
                 Navigator.of(context).pop();
                 ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text('Rejected booking by ${bookingRequest["userName"]}')),
+                  SnackBar(
+                      content: Text(
+                          'Rejected booking by ${bookingRequest["userName"]}')),
                 );
               },
               style: ElevatedButton.styleFrom(

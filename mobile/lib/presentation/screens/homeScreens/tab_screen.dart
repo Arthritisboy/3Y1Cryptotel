@@ -13,7 +13,8 @@ import 'package:hotel_flutter/presentation/widgets/tabscreen/bottom_home_icon_na
 import 'package:hotel_flutter/presentation/widgets/tabscreen/tab_header.dart';
 import 'package:hotel_flutter/presentation/widgets/drawer/main_drawer.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:hotel_flutter/presentation/widgets/utils_widget/shimmer_loading_widget.dart';
+import 'package:hotel_flutter/presentation/widgets/shimmer_loading/tab/shimmer_tab_header.dart';
+import 'package:hotel_flutter/presentation/widgets/shimmer_loading/tab/shimmer_bottom_navigation.dart';
 
 class TabScreen extends StatefulWidget {
   const TabScreen({super.key});
