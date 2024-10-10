@@ -1,23 +1,31 @@
-import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:hotel_flutter/data/model/auth/user_model.dart';
 
 class UserStorageHelper {
-  // Helper function to store users in SharedPreferences
+  static const String _usersKey = 'storedUsers';
+
   static Future<void> storeUsers(List<UserModel> users) async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    String usersJson = jsonEncode(users.map((user) => user.toJson()).toList());
-    await prefs.setString('allUsers', usersJson);
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    final List<String> jsonUsers =
+        users.map((user) => jsonEncode(user.toJson())).toList();
+    await prefs.setStringList(_usersKey, jsonUsers);
   }
 
-  // Helper function to get stored users from SharedPreferences
-  static Future<List<UserModel>> getStoredUsers() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    String? usersJson = prefs.getString('allUsers');
-    if (usersJson != null) {
-      List<dynamic> decodedUsers = jsonDecode(usersJson);
-      return decodedUsers.map((user) => UserModel.fromJson(user)).toList();
+  static Future<List<UserModel>> getUsers() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    final List<String>? jsonUsers = prefs.getStringList(_usersKey);
+    if (jsonUsers != null) {
+      return jsonUsers
+          .map((jsonUser) => UserModel.fromJson(jsonDecode(jsonUser)))
+          .toList();
     }
     return [];
+  }
+
+  static Future<void> clearUsers() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs
+        .remove(_usersKey); // This removes the key from SharedPreferences
   }
 }
