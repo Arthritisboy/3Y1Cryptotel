@@ -17,7 +17,7 @@ const raitingSchema = new mongoose.Schema({
     required: true,
   },
   openingHours: {
-    type: Number,
+    type: String,
     required: true,
   },
   capacity: {
