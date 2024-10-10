@@ -65,29 +65,29 @@ app.use(cors());
 app.use(express.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 if (process.env.NODE_ENV === 'development') {
-  app.use(morgan('dev'));
+    app.use(morgan('dev'));
 }
 
 //! Custom middlewares to log requests and add request time
 app.use((req, res, next) => {
-  console.log('Hello from the server 👋');
-  next();
+    console.log('Hello from the server 👋');
+    next();
 });
 
 app.use((req, res, next) => {
-  req.requestTime = new Date().toISOString();
-  next();
+    req.requestTime = new Date().toISOString();
+    next();
 });
 
 //! Routes
 app.use('/api/v1/auth', authRouter);
 app.use('/api/v1/users', userRoute);
-app.use('/api/v1/appoint', bookingRouter);
+app.use('/api/v1/bookings', bookingRouter);
 app.use('/api/v1/hotel', hotelRoomRatingRoutes);
 
 //! Handle all undefined routes
 app.all('*', (req, res, next) => {
-  next(new AppError(`Can't find ${req.originalUrl} on this server`, 404));
+    next(new AppError(`Can't find ${req.originalUrl} on this server`, 404));
 });
 
 // Global error handling middleware
@@ -98,14 +98,14 @@ app.use(globalErrorHandler);
 //! Start the server
 const port = process.env.PORT || 3000;
 
-const start = async () => {
-  try {
-    await connectToDatabase();
-    app.listen(port, () =>
-      console.log(`Server is listening on port ${port}...`),
-    );
-  } catch (error) {
-    console.log(error);
-  }
+const start = async() => {
+    try {
+        await connectToDatabase();
+        app.listen(port, () =>
+            console.log(`Server is listening on port ${port}...`),
+        );
+    } catch (error) {
+        console.log(error);
+    }
 };
 start();
