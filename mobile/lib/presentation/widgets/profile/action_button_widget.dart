@@ -24,7 +24,7 @@ class ActionButtons extends StatelessWidget {
           style: ElevatedButton.styleFrom(
             backgroundColor: const Color.fromARGB(255, 29, 53, 115),
             foregroundColor: Colors.white,
-            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 12),
           ),
         ),
         ElevatedButton.icon(
@@ -48,7 +48,7 @@ class ActionButtons extends StatelessWidget {
                 ? Colors.grey // Change background when loading
                 : const Color.fromARGB(255, 29, 53, 115),
             foregroundColor: Colors.white,
-            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 12),
           ),
         ),
       ],
