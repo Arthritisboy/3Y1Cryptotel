@@ -1,16 +1,12 @@
 const mongoose = require('mongoose');
 
 const raitingSchema = new mongoose.Schema({
-    tableNumber: {
+    name: {
         type: String,
         required: true,
     },
     restaurantImage: {
         type: String,
-    },
-    name: {
-        type: String,
-        required: true,
     },
     price: {
         type: Number,

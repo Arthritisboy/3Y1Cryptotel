@@ -18,6 +18,16 @@ const bookingSchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Restaurant',
     },
+    tableNumber: {
+        type: Number,
+        validate: {
+            validator: function(value) {
+                // Only validate if bookingType is 'RestaurantBooking'
+                return this.bookingType === 'RestaurantBooking' ? value != null : true;
+            },
+            message: 'Table number is required for Restaurant Booking.',
+        },
+    },
     checkInDate: {
         type: Date,
         required: true,

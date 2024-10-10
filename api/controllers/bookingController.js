@@ -7,7 +7,7 @@ const catchAsync = require('../utils/catchAsync');
 const AppError = require('../utils/appError');
 
 // Get all bookings for a user
-exports.getBookings = catchAsync(async(req, res, next) => {
+exports.getBookings = catchAsync(async (req, res, next) => {
     try {
         const bookings = await Booking.find({ userId: req.params.userId }).populate('hotelId roomId restaurantId');
 
@@ -23,9 +23,9 @@ exports.getBookings = catchAsync(async(req, res, next) => {
 });
 
 // Create a new booking
-exports.createBooking = catchAsync(async(req, res, next) => {
+exports.createBooking = catchAsync(async (req, res, next) => {
     try {
-        const { bookingType, hotelId, roomId, restaurantId, checkInDate, checkOutDate } = req.body;
+        const { bookingType, hotelId, roomId, restaurantId, checkInDate, checkOutDate, tableNumber } = req.body;
         const userId = req.params.userId; // Getting userId from params
 
         console.log("Received booking data:", {
@@ -35,7 +35,8 @@ exports.createBooking = catchAsync(async(req, res, next) => {
             roomId,
             restaurantId,
             checkInDate,
-            checkOutDate
+            checkOutDate,
+            tableNumber
         });
 
         // Validate checkInDate and checkOutDate
@@ -75,12 +76,32 @@ exports.createBooking = catchAsync(async(req, res, next) => {
                 return next(new AppError('Restaurant not found', 404));
             }
 
-            // Example static price for restaurant booking
-            totalPrice = 50;
+            // Check if the table number is taken
+            const existingBooking = await Booking.findOne({
+                restaurantId,
+                tableNumber,
+                checkInDate: { $lte: checkOut },
+                checkOutDate: { $gte: checkIn }
+            });
 
-            // Set restaurant availability to false
-            restaurant.availability = false;
-            await restaurant.save(); // Save the updated restaurant status
+            if (existingBooking) {
+                return next(new AppError('Table number is already booked for the selected time.', 400));
+            }
+
+            // Check if the restaurant capacity allows for more bookings
+            const currentBookingsCount = await Booking.countDocuments({
+                restaurantId,
+                checkInDate: { $lte: checkOut },
+                checkOutDate: { $gte: checkIn }
+            });
+
+            if (currentBookingsCount >= restaurant.capacity) {
+                return next(new AppError('The restaurant is fully booked for the selected time.', 400));
+            }
+
+            // Use the restaurant's price per person
+            const pricePerPerson = restaurant.pricePerPerson; // Ensure this field exists in your Restaurant model
+            totalPrice = pricePerPerson * Math.min(restaurant.capacity - currentBookingsCount, restaurant.capacity);
 
         } else {
             return next(new AppError('Invalid booking type', 400));
@@ -93,6 +114,7 @@ exports.createBooking = catchAsync(async(req, res, next) => {
             hotelId,
             roomId,
             restaurantId,
+            tableNumber, // Include table number for restaurant bookings
             checkInDate,
             checkOutDate,
             totalPrice
@@ -111,7 +133,7 @@ exports.createBooking = catchAsync(async(req, res, next) => {
 });
 
 // Update an existing booking (e.g., change dates)
-exports.updateBooking = catchAsync(async(req, res, next) => {
+exports.updateBooking = catchAsync(async (req, res, next) => {
     try {
         const { bookingId, checkInDate, checkOutDate } = req.body;
 
@@ -136,7 +158,7 @@ exports.updateBooking = catchAsync(async(req, res, next) => {
 });
 
 // Delete a booking
-exports.deleteBooking = catchAsync(async(req, res, next) => {
+exports.deleteBooking = catchAsync(async (req, res, next) => {
     try {
         const { bookingId } = req.params;
 
