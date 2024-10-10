@@ -12,6 +12,7 @@ const raitingSchema = new mongoose.Schema({
     type: Number,
     required: true,
   },
+  //test
   location: {
     type: String,
     required: true,
