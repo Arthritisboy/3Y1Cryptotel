@@ -117,7 +117,7 @@ class MainDrawer extends StatelessWidget {
                 width: 30,
               ),
               title: Text(
-                'Transactions',
+                'Payment',
                 style: Theme.of(context).textTheme.titleSmall!.copyWith(
                       color: Colors.white,
                       fontSize: 22,
