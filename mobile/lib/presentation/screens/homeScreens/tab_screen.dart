@@ -16,6 +16,7 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:hotel_flutter/presentation/widgets/shimmer_loading/tab/shimmer_tab_header.dart';
 import 'package:hotel_flutter/presentation/widgets/shimmer_loading/tab/shimmer_bottom_navigation.dart';
 import 'package:logging/logging.dart';
+import 'package:flutter/services.dart';
 
 class TabScreen extends StatefulWidget {
   const TabScreen({super.key});
@@ -65,112 +66,145 @@ class _TabScreenState extends State<TabScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<AuthBloc, AuthState>(builder: (context, state) {
-      if (state is Authenticated) {
-        firstName = state.user.firstName ?? '';
-        lastName = state.user.lastName ?? '';
-        email = state.user.email ?? '';
-        gender = state.user.gender ?? '';
-        phoneNumber = state.user.phoneNumber ?? '';
-        profile = state.user.profilePicture ?? '';
-        _isLoading = false;
+    return WillPopScope(
+      onWillPop: () async {
+        // Show the exit confirmation dialog
+        return await _showExitConfirmationDialog(context);
+      },
+      child: BlocBuilder<AuthBloc, AuthState>(builder: (context, state) {
+        if (state is Authenticated) {
+          firstName = state.user.firstName ?? '';
+          lastName = state.user.lastName ?? '';
+          email = state.user.email ?? '';
+          gender = state.user.gender ?? '';
+          phoneNumber = state.user.phoneNumber ?? '';
+          profile = state.user.profilePicture ?? '';
+          _isLoading = false;
 
-        // Write user data to secure storage
-        _secureStorage.write(key: 'firstName', value: firstName);
-        _secureStorage.write(key: 'lastName', value: lastName);
-        _secureStorage.write(key: 'email', value: email);
-        _secureStorage.write(key: 'gender', value: gender);
-        _secureStorage.write(key: 'phoneNumber', value: phoneNumber);
-        _secureStorage.write(key: 'profile', value: profile);
+          // Write user data to secure storage
+          _secureStorage.write(key: 'firstName', value: firstName);
+          _secureStorage.write(key: 'lastName', value: lastName);
+          _secureStorage.write(key: 'email', value: email);
+          _secureStorage.write(key: 'gender', value: gender);
+          _secureStorage.write(key: 'phoneNumber', value: phoneNumber);
+          _secureStorage.write(key: 'profile', value: profile);
 
-        // Store fetched users
-        _storeFetchedUsers(allUsers);
-      } else if (state is AuthInitial) {
-        // Navigate to login if not authenticated
-        WidgetsBinding.instance.addPostFrameCallback((_) {
-          Navigator.of(context).pushReplacementNamed('/login');
-        });
-      } else if (state is AuthError) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Error: ${state.error}')),
-        );
-      } else if (state is UsersFetched) {
-        // Assign new list of users
-        allUsers = state.users;
+          // Store fetched users
+          _storeFetchedUsers(allUsers);
+        } else if (state is AuthInitial) {
+          // Navigate to login if not authenticated
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            Navigator.of(context).pushReplacementNamed('/login');
+          });
+        } else if (state is AuthError) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Error: ${state.error}')),
+          );
+        } else if (state is UsersFetched) {
+          // Assign new list of users
+          allUsers = state.users;
 
-        // Call the async function to store the users without await
-        _storeFetchedUsers(allUsers);
+          // Call the async function to store the users without await
+          _storeFetchedUsers(allUsers);
 
-        // Print users for confirmation
-        for (var user in allUsers) {
-          _logger.info(
-              'User: ${user.firstName} ${user.lastName}, Email: ${user.email}');
+          // Print users for confirmation
+          for (var user in allUsers) {
+            _logger.info(
+                'User: ${user.firstName} ${user.lastName}, Email: ${user.email}');
+          }
         }
-      }
-      return Scaffold(
-        endDrawer: MainDrawer(
-          onSelectScreen: _setScreen,
-          firstName: firstName ?? '',
-          lastName: lastName ?? '',
-          email: email ?? '',
-          profile: profile ?? '',
-        ),
-        body: _isLoading
-            ? Column(
-                children: const [
-                  ShimmerTabHeader(),
-                  SizedBox(height: 10),
-                  ShimmerBottomNavigation(),
-                  SizedBox(height: 10),
-                  Expanded(child: ShimmerCardWidget()),
-                ],
-              )
-            : Stack(
-                children: [
-                  Column(
-                    children: [
-                      TabHeader(
-                        firstName: firstName ?? 'Guest',
-                        lastName: lastName ?? '',
-                      ),
-                      const SizedBox(height: 10),
-                      BottomHomeIconNavigation(
-                        selectedIndex: _selectedIndex,
-                        onIconTapped: _onIconTapped,
-                      ),
-                      Expanded(
-                        child: Container(
-                          decoration: const BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.vertical(
-                              top: Radius.circular(30.0),
-                            ),
-                          ),
-                          child: _selectedIndex == 0
-                              ? const HomeScreen()
-                              : const RestaurantScreen(),
+        return Scaffold(
+          endDrawer: MainDrawer(
+            onSelectScreen: _setScreen,
+            firstName: firstName ?? '',
+            lastName: lastName ?? '',
+            email: email ?? '',
+            profile: profile ?? '',
+          ),
+          body: _isLoading
+              ? Column(
+                  children: const [
+                    ShimmerTabHeader(),
+                    SizedBox(height: 10),
+                    ShimmerBottomNavigation(),
+                    SizedBox(height: 10),
+                    Expanded(child: ShimmerCardWidget()),
+                  ],
+                )
+              : Stack(
+                  children: [
+                    Column(
+                      children: [
+                        TabHeader(
+                          firstName: firstName ?? 'Guest',
+                          lastName: lastName ?? '',
                         ),
-                      ),
-                    ],
-                  ),
-                  Positioned(
-                    top: 40.0,
-                    right: 10.0,
-                    child: Builder(
-                      builder: (context) {
-                        return IconButton(
-                          icon: const Icon(Icons.menu, color: Colors.black),
-                          onPressed: () {
-                            Scaffold.of(context).openEndDrawer();
-                          },
-                        );
-                      },
+                        const SizedBox(height: 10),
+                        BottomHomeIconNavigation(
+                          selectedIndex: _selectedIndex,
+                          onIconTapped: _onIconTapped,
+                        ),
+                        Expanded(
+                          child: Container(
+                            decoration: const BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.vertical(
+                                top: Radius.circular(30.0),
+                              ),
+                            ),
+                            child: _selectedIndex == 0
+                                ? const HomeScreen()
+                                : const RestaurantScreen(),
+                          ),
+                        ),
+                      ],
                     ),
-                  ),
-                ],
-              ),
-      );
-    });
+                    Positioned(
+                      top: 40.0,
+                      right: 10.0,
+                      child: Builder(
+                        builder: (context) {
+                          return IconButton(
+                            icon: const Icon(Icons.menu, color: Colors.black),
+                            onPressed: () {
+                              Scaffold.of(context).openEndDrawer();
+                            },
+                          );
+                        },
+                      ),
+                    ),
+                  ],
+                ),
+        );
+      }),
+    );
+  }
+
+  Future<bool> _showExitConfirmationDialog(BuildContext context) async {
+    return await showDialog<bool>(
+          context: context,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              title: const Text('Exit App'),
+              content: const Text('Do you really want to exit the app?'),
+              actions: <Widget>[
+                TextButton(
+                  onPressed: () {
+                    Navigator.of(context).pop(false); // Don't exit
+                  },
+                  child: const Text('Cancel'),
+                ),
+                TextButton(
+                  onPressed: () {
+                    SystemNavigator.pop(); // Close the app
+                  },
+                  child: const Text('Exit'),
+                ),
+              ],
+            );
+          },
+        ) ??
+        false; // Return false if dialog is dismissed
   }
 
   void _onIconTapped(int index) {
