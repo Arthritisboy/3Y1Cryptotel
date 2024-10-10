@@ -133,6 +133,11 @@ class AppRouter {
         } else {
           return null;
         }
+      case '/logout':
+        // Redirect to login screen or welcome screen after logout
+        return MaterialPageRoute(
+          builder: (_) => const LoginScreen(), // or WelcomeScreen()
+        );
       default:
         return null;
     }

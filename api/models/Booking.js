@@ -1,28 +1,40 @@
 const mongoose = require('mongoose');
 
 const bookingSchema = new mongoose.Schema({
-    userId: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'User',
-        required: true
+    bookingType: {
+        type: String,
+        required: true,
+        enum: ['HotelBooking', 'RestaurantBooking'], // Specify allowed types
     },
     hotelId: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Hotel',
-        required: true
     },
     roomId: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Room',
-        required: true
+    },
+    restaurantId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Restaurant',
+    },
+    tableNumber: {
+        type: Number,
+        validate: {
+            validator: function(value) {
+                // Only validate if bookingType is 'RestaurantBooking'
+                return this.bookingType === 'RestaurantBooking' ? value != null : true;
+            },
+            message: 'Table number is required for Restaurant Booking.',
+        },
     },
     checkInDate: {
         type: Date,
-        required: true
+        required: true,
     },
     checkOutDate: {
         type: Date,
-        required: true
+        required: true,
     },
     totalPrice: {
         type: Number,
@@ -30,13 +42,14 @@ const bookingSchema = new mongoose.Schema({
     status: {
         type: String,
         enum: ['pending', 'confirmed', 'cancelled', 'rejected'],
-        default: 'pending'
+        default: 'pending',
     },
     createdAt: {
         type: Date,
-        default: Date.now
-    }
+        default: Date.now,
+    },
 });
 
+// Create the Booking model
 const Booking = mongoose.model('Booking', bookingSchema);
 module.exports = Booking;

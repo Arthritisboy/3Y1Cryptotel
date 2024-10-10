@@ -2,7 +2,7 @@ const User = require('../models/User');
 const Hotel = require('../models/Hotel');
 const Room = require('../models/Room');
 const Booking = require('../models/Booking');
-const { uploadHotelRoomImage } = require('../middleware/imageUpload');
+const { uploadEveryImage } = require('../middleware/imageUpload');
 const { calculateAveragePrice } = require('../middleware/averageCalculator');
 const catchAsync = require('../utils/catchAsync');
 const AppError = require('../utils/appError');
@@ -10,7 +10,7 @@ const AppError = require('../utils/appError');
 // // Helper function to calculate the average price
 // const calculateAveragePrice = async (hotelId) => {
 //     const hotel = await Hotel.findById(hotelId).populate('rooms');
-    
+
 //     if (!hotel || hotel.rooms.length === 0) {
 //         hotel.averagePrice = 0; // No rooms, set average price to 0
 //         await hotel.save();
@@ -27,7 +27,7 @@ const AppError = require('../utils/appError');
 // };
 
 // Get a room by ID or all rooms
-exports.getRoom = catchAsync(async (req, res, next) => {
+exports.getRoom = catchAsync(async(req, res, next) => {
     const roomId = req.params.id;
     let room;
 
@@ -49,7 +49,7 @@ exports.getRoom = catchAsync(async (req, res, next) => {
 });
 
 // Create a room
-exports.createRoom = catchAsync(async (req, res, next) => {
+exports.createRoom = catchAsync(async(req, res, next) => {
     const { roomNumber, type, price, capacity, ratingId } = req.body;
     const { hotelId } = req.params; // Get hotelId from the route parameters
 
@@ -60,7 +60,7 @@ exports.createRoom = catchAsync(async (req, res, next) => {
     // Handle image upload if a file is provided
     if (req.file) {
         try {
-            roomImage = await uploadHotelRoomImage(req);
+            roomImage = await uploadEveryImage(req);
             console.log('Image uploaded successfully:', roomImage);
         } catch (uploadErr) {
             console.error('Image upload error:', uploadErr);
@@ -86,7 +86,7 @@ exports.createRoom = catchAsync(async (req, res, next) => {
         console.log('No hotel found with the provided ID:', hotelId);
         return next(new AppError('Hotel not found with this ID.', 404));
     }
-    
+
     console.log('Found hotel:', hotel.name);
 
     // Create the room with multiple ratingIds (if provided, otherwise null)
@@ -109,7 +109,7 @@ exports.createRoom = catchAsync(async (req, res, next) => {
     // Calculate and update the average price of the hotel
     const averagePrice = await calculateAveragePrice(hotelId);
     console.log('Updated average price for hotel:', hotel.averagePrice);
-    
+
     // Respond with the new room data and the updated average price
     res.status(201).json({
         status: 'success',
@@ -123,7 +123,7 @@ exports.createRoom = catchAsync(async (req, res, next) => {
 });
 
 // Update a room by ID
-exports.updateRoom = catchAsync(async (req, res, next) => {
+exports.updateRoom = catchAsync(async(req, res, next) => {
     const roomId = req.params.id;
 
     // Check if the room exists
@@ -137,7 +137,7 @@ exports.updateRoom = catchAsync(async (req, res, next) => {
     // Handle image upload if a file is provided
     if (req.file) {
         try {
-            roomImage = await uploadHotelRoomImage(req);
+            roomImage = await uploadEveryImage(req);
             console.log('Room image updated:', roomImage);
             req.body.roomImage = roomImage; // Add image to update body
         } catch (uploadErr) {
@@ -177,7 +177,7 @@ exports.updateRoom = catchAsync(async (req, res, next) => {
 });
 
 // Delete a room by ID
-exports.deleteRoom = catchAsync(async (req, res, next) => {
+exports.deleteRoom = catchAsync(async(req, res, next) => {
     const roomId = req.params.id;
 
     const room = await Room.findById(roomId);
