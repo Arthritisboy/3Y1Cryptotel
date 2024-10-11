@@ -14,10 +14,11 @@ class BookingModel {
   final DateTime? timeOfDeparture;
   final int adult;
   final int children;
-  final int? totalPrice;
+  final int? tableNumber;
 
   BookingModel({
     this.id,
+    this.tableNumber,
     required this.bookingType,
     this.hotelId,
     this.roomId,
@@ -28,11 +29,10 @@ class BookingModel {
     required this.address,
     required this.checkInDate,
     required this.checkOutDate,
-    required this.timeOfArrival,
-    required this.timeOfDeparture,
+    this.timeOfArrival,
+    this.timeOfDeparture,
     required this.adult,
     required this.children,
-    this.totalPrice,
   });
 
   // Convert JSON to BookingModel object
@@ -40,6 +40,7 @@ class BookingModel {
     return BookingModel(
       id: json['id'],
       bookingType: json['bookingType'],
+      tableNumber: json['tableNumber'],
       hotelId: json['hotelId'],
       roomId: json['roomId'],
       restaurantId: json['restaurantId'],
@@ -57,7 +58,6 @@ class BookingModel {
           : null,
       adult: json['adult'],
       children: json['children'],
-      totalPrice: json['totalPrice'],
     );
   }
 
@@ -67,6 +67,8 @@ class BookingModel {
       'bookingType': bookingType,
       'hotelId': hotelId,
       'roomId': roomId,
+      'restaurantId': restaurantId,
+      'tableNumber': tableNumber,
       'fullName': fullName,
       'email': email,
       'phoneNumber': phoneNumber,

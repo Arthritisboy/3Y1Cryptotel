@@ -10,9 +10,11 @@ class RestaurantDetails extends StatelessWidget {
   final String time;
   final double latitude;
   final double longitude;
+  final int capacity; // Capacity added
 
   const RestaurantDetails({
     super.key,
+    required this.capacity, // Capacity required
     required this.restaurantName,
     required this.rating,
     required this.price,
@@ -127,6 +129,23 @@ class RestaurantDetails extends StatelessWidget {
               const SizedBox(width: 8.0),
               Text(
                 'Open Hours: $time',
+                style: const TextStyle(
+                  fontSize: 18.0,
+                  fontWeight: FontWeight.w400,
+                  color: Colors.black,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 10),
+          // Capacity display added
+          Row(
+            children: [
+              const Icon(Icons.group_outlined,
+                  color: Color.fromARGB(255, 142, 142, 147), size: 26),
+              const SizedBox(width: 8.0),
+              Text(
+                'Capacity: $capacity people',
                 style: const TextStyle(
                   fontSize: 18.0,
                   fontWeight: FontWeight.w400,
