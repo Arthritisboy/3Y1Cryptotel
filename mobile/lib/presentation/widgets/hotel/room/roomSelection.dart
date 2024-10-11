@@ -4,15 +4,19 @@ import 'package:hotel_flutter/presentation/widgets/hotel/room/activeRoom.dart';
 
 class RoomSelection extends StatelessWidget {
   final List<RoomModel> roomList;
+  final String hotelId; // Add hotelId parameter
 
-  const RoomSelection({super.key, required this.roomList});
+  const RoomSelection({
+    super.key,
+    required this.roomList,
+    required this.hotelId, // Accept hotelId as parameter
+  });
 
   @override
   Widget build(BuildContext context) {
     final availableRooms = roomList.where((room) => room.availability).toList();
 
     return Container(
-      // color: const Color(0xFFF8F8F8),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -20,7 +24,7 @@ class RoomSelection extends StatelessWidget {
             padding: const EdgeInsets.only(top: 16, left: 16),
             child: Text(
               'Available Rooms',
-              style: TextStyle(
+              style: const TextStyle(
                 fontSize: 22.0,
                 fontWeight: FontWeight.bold,
                 color: Colors.black,
@@ -49,6 +53,7 @@ class RoomSelection extends StatelessWidget {
 
                 return InkWell(
                   onTap: () {
+                    // Pass the selected roomId and hotelId to ActiveRoom
                     Navigator.push(
                       context,
                       MaterialPageRoute(
@@ -63,6 +68,8 @@ class RoomSelection extends StatelessWidget {
                           price: room.price,
                           location: 'Sample Location',
                           room: room,
+                          hotelId: hotelId, // Pass hotelId to ActiveRoom
+                          roomId: room.id, // Pass roomId to ActiveRoom
                         ),
                       ),
                     );

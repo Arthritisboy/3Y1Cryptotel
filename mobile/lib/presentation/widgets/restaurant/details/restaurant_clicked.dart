@@ -3,9 +3,10 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hotel_flutter/logic/bloc/restaurant/restaurant_bloc.dart';
 import 'package:hotel_flutter/logic/bloc/restaurant/restaurant_event.dart';
 import 'package:hotel_flutter/logic/bloc/restaurant/restaurant_state.dart';
-import 'package:hotel_flutter/presentation/widgets/hotel/utils/input_fields.dart';
+import 'package:hotel_flutter/presentation/widgets/hotel/utils/hotel_input_fields/hotel_input_fields.dart';
 import 'package:hotel_flutter/presentation/widgets/restaurant/navigation/restaurant_navigation_row.dart';
 import 'package:hotel_flutter/presentation/widgets/restaurant/details/restaurant_details.dart';
+import 'package:hotel_flutter/presentation/widgets/restaurant/utils/restaurant_input_fields.dart';
 import 'package:hotel_flutter/presentation/widgets/shimmer_loading/hotel/hotel_clicked.dart';
 
 class RestaurantClicked extends StatefulWidget {
@@ -193,7 +194,7 @@ class _RestaurantClickedState extends State<RestaurantClicked> {
                 if (widget.activeIndex == 0)
                   Padding(
                       padding: EdgeInsets.only(left: 16, right: 16, bottom: 10),
-                      child: InputFields()),
+                      child: RestaurantInputFields()),
                 if (widget.activeIndex == 1)
                   RestaurantDetails(
                     restaurantName: widget.restaurantName,
