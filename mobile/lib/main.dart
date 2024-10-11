@@ -3,8 +3,10 @@ import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hotel_flutter/data/data_provider/auth/auth_data_provider.dart';
+import 'package:hotel_flutter/data/data_provider/auth/booking_data_provider.dart';
 import 'package:hotel_flutter/data/data_provider/auth/hotel_data_provider.dart';
 import 'package:hotel_flutter/data/data_provider/auth/restaurant_data_provider.dart';
+import 'package:hotel_flutter/data/repositories/booking_repository.dart';
 import 'package:hotel_flutter/data/repositories/hotel_repository.dart';
 import 'package:hotel_flutter/data/repositories/restaurant_repository.dart';
 import 'package:hotel_flutter/logic/bloc/auth/auth_bloc.dart';
@@ -40,6 +42,9 @@ class MyApp extends StatelessWidget {
         ),
         RepositoryProvider(
           create: (context) => RestaurantRepository(RestaurantDataProvider()),
+        ),
+        RepositoryProvider(
+          create: (context) => BookingRepository(BookingDataProvider()),
         )
       ],
       child: MultiBlocProvider(

@@ -36,6 +36,7 @@ class _TabScreenState extends State<TabScreen> {
   String? profile;
   String? gender;
   String? phoneNumber;
+  String? userId;
   List<UserModel> allUsers = [];
 
   @override
@@ -73,6 +74,7 @@ class _TabScreenState extends State<TabScreen> {
       },
       child: BlocBuilder<AuthBloc, AuthState>(builder: (context, state) {
         if (state is Authenticated) {
+          userId = state.user.id ?? '';
           firstName = state.user.firstName ?? '';
           lastName = state.user.lastName ?? '';
           email = state.user.email ?? '';
@@ -82,6 +84,7 @@ class _TabScreenState extends State<TabScreen> {
           _isLoading = false;
 
           // Write user data to secure storage
+          _secureStorage.write(key: 'userId', value: userId);
           _secureStorage.write(key: 'firstName', value: firstName);
           _secureStorage.write(key: 'lastName', value: lastName);
           _secureStorage.write(key: 'email', value: email);

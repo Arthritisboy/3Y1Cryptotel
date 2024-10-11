@@ -3,14 +3,16 @@ import 'package:intl/intl.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart'; // For secure storage
 
-class InputFields extends StatefulWidget {
-  const InputFields({super.key});
+class RestaurantInputFields extends StatefulWidget {
+  const RestaurantInputFields({super.key});
 
   @override
-  _InputFieldsState createState() => _InputFieldsState();
+  State<StatefulWidget> createState() {
+    return _RestaurantInputFieldsState();
+  }
 }
 
-class _InputFieldsState extends State<InputFields> {
+class _RestaurantInputFieldsState extends State<RestaurantInputFields> {
   final TextEditingController fullNameController = TextEditingController();
   final TextEditingController emailController = TextEditingController();
   final TextEditingController phoneNumberController =
