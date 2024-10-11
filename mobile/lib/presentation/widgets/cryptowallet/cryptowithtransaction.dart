@@ -1,12 +1,21 @@
 import 'dart:convert';
-import 'dart:math'; // Import for pow function
-
+import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:reown_appkit/reown_appkit.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 class CryptoWithTransaction extends StatefulWidget {
-  const CryptoWithTransaction({super.key});
+  final bool isConnected;
+  final String walletAddress;
+  final String balance;
+  final Function(String, String, bool) onWalletUpdated;
+
+  const CryptoWithTransaction({
+    Key? key,
+    required this.isConnected,
+    required this.walletAddress,
+    required this.balance,
+    required this.onWalletUpdated,
+  }) : super(key: key);
 
   @override
   State<CryptoWithTransaction> createState() => _CryptoWithTransactionState();
@@ -14,33 +23,19 @@ class CryptoWithTransaction extends StatefulWidget {
 
 class _CryptoWithTransactionState extends State<CryptoWithTransaction> {
   ReownAppKitModal? appKitModal;
-  String walletAddress = 'No Address';
   String _balance = '0';
-  bool isLoading = false; // Add isLoading state variable
-
-  // Define the custom network for Sepolia
-  final customNetwork = ReownAppKitModalNetworkInfo(
-    name: 'Sepolia',
-    chainId: '11155111', // Sepolia chain ID
-    currency: 'ETH',
-    rpcUrl: 'https://rpc.sepolia.org/', // Sepolia RPC URL
-    explorerUrl: 'https://sepolia.etherscan.io/', // Explorer URL for Sepolia
-    isTestNetwork: true, // Set to true for test networks
-  );
+  bool isLoading = false;
 
   @override
   void initState() {
     super.initState();
-    // Add the custom Sepolia network to the supported networks
-    ReownAppKitModalNetworks.addNetworks('eip155', [customNetwork]);
     initializeAppKitModal();
   }
 
   void initializeAppKitModal() async {
     appKitModal = ReownAppKitModal(
       context: context,
-      projectId:
-          '40e5897bd6b0d9d2b27b717ec50906c3', // Replace with your actual project ID
+      projectId: '40e5897bd6b0d9d2b27b717ec50906c3',
       metadata: const PairingMetadata(
         name: 'Crypto Flutter',
         description: 'A Crypto Flutter Example App',
@@ -54,46 +49,28 @@ class _CryptoWithTransactionState extends State<CryptoWithTransaction> {
       ),
     );
 
-    try {
-      if (appKitModal != null) {
-        await appKitModal!.init();
-        debugPrint('appKitModal initialized successfully.');
-
-        // Check if session is available
-        if (appKitModal!.session != null) {
-          debugPrint(
-              'Current wallet address: ${appKitModal!.session!.address}');
-          updateWalletAddress();
-        } else {
-          debugPrint('Session is null after initialization.');
-        }
-      } else {
-        debugPrint('appKitModal is null, skipping initialization.');
-      }
-    } catch (e) {
-      debugPrint('Error during appKitModal initialization: $e');
-    }
-
+    await appKitModal?.init();
     appKitModal?.addListener(() {
       updateWalletAddress();
     });
 
-    setState(() {});
+    updateWalletAddress();
   }
 
   void updateWalletAddress() {
     setState(() {
       if (appKitModal?.session != null) {
-        walletAddress = appKitModal!.session!.address ?? 'No Address';
-        _balance = appKitModal!.balanceNotifier.value.isEmpty
-            ? '0'
-            : appKitModal!.balanceNotifier.value; // Use the balance
+        widget.onWalletUpdated(
+          appKitModal!.session!.address ?? 'No Address',
+          appKitModal!.balanceNotifier.value.isEmpty
+              ? '₱ 0'
+              : appKitModal!.balanceNotifier.value,
+          appKitModal!.isConnected,
+        );
+        _balance = appKitModal!.balanceNotifier.value;
       } else {
-        walletAddress = 'No Address';
-        _balance = '0';
+        _balance = '₱ 0';
       }
-      debugPrint('Wallet address updated: $walletAddress');
-      debugPrint('Balance updated: $_balance');
     });
   }
 
@@ -111,15 +88,12 @@ class _CryptoWithTransactionState extends State<CryptoWithTransaction> {
             children: [
               TextField(
                 controller: addressController,
-                decoration: const InputDecoration(
-                  hintText: 'Recipient Address (0x..)',
-                ),
+                decoration:
+                    const InputDecoration(hintText: 'Recipient Address (0x..)'),
               ),
               TextField(
                 controller: amountController,
-                decoration: const InputDecoration(
-                  hintText: 'Amount to Send',
-                ),
+                decoration: const InputDecoration(hintText: 'Amount to Send'),
                 keyboardType: TextInputType.number,
               ),
             ],
@@ -128,32 +102,16 @@ class _CryptoWithTransactionState extends State<CryptoWithTransaction> {
             TextButton(
               onPressed: () async {
                 String recipient = addressController.text;
-                String amount =
-                    amountController.text; // Directly pass the string
+                String amount = amountController.text;
 
                 Navigator.of(context).pop();
-                setState(() {
-                  isLoading = true;
-                  print('gumana');
-                  final Uri metamaskUri = Uri.parse("metamask://");
-                  // Launch the MetaMask URI without checking
-                  launchUrl(metamaskUri, mode: LaunchMode.externalApplication);
-                });
-
-                try {
-                  await sendTransaction(
-                      recipient, amount); // Pass the string amount here
-                } catch (e) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text('Error: ${e.toString()}')),
-                  );
-                }
+                await sendTransaction(recipient, amount);
               },
               child: const Text('Send'),
             ),
             TextButton(
               onPressed: () {
-                Navigator.of(context).pop(); // Close the dialog
+                Navigator.of(context).pop();
               },
               child: const Text('Cancel'),
             ),
@@ -303,65 +261,27 @@ class _CryptoWithTransactionState extends State<CryptoWithTransaction> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: appKitModal == null
-          ? const Center(
-              child: CircularProgressIndicator(),
-            ) // Show loading indicator until appKitModal is initialized
-          : Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text(
-                  'Wallet Address: $walletAddress',
-                  style: const TextStyle(color: Colors.black, fontSize: 16),
-                ),
-                const SizedBox(height: 5),
-                Text(
-                  'Balance: $_balance',
-                  style: const TextStyle(color: Colors.black, fontSize: 16),
-                ),
-                const SizedBox(height: 20),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    _buildSimpleButton(
-                      context,
-                      appKitModal!.isConnected
-                          ? 'Disconnect'
-                          : 'Connect Wallet',
-                      color:
-                          appKitModal!.isConnected ? Colors.red : Colors.green,
-                      onPressed: () {
-                        if (appKitModal!.isConnected) {
-                          appKitModal!.disconnect();
-                        } else {
-                          appKitModal!.openModalView();
-                        }
-                      },
-                    ),
-                    _buildSimpleButton(
-                      context,
-                      'Send',
-                      color: Colors.blue,
-                      onPressed: () {
-                        _showSendDialog(context); // Call the new dialog method
-                      },
-                    ),
-                  ],
-                ),
-                if (isLoading)
-                  const CircularProgressIndicator(), // Show loader if isLoading is true
-              ],
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: [
+            IconButton(
+              icon: const Icon(Icons.arrow_back),
+              onPressed: () {
+                Navigator.pop(context); // Go back to the previous screen
+              },
             ),
-    );
-  }
-
-  Widget _buildSimpleButton(BuildContext context, String label,
-      {Color color = Colors.blue, required VoidCallback onPressed}) {
-    return ElevatedButton(
-      onPressed: onPressed,
-      style: ElevatedButton.styleFrom(backgroundColor: color),
-      child: Text(label),
+          ],
+        ),
+        ElevatedButton(
+          onPressed: widget.isConnected ? () => _showSendDialog(context) : null,
+          child: isLoading
+              ? const CircularProgressIndicator()
+              : const Text('Send Crypto'),
+        ),
+      ],
     );
   }
 }

@@ -1,12 +1,19 @@
 import 'package:flutter/material.dart';
-import 'package:hotel_flutter/presentation/screens/homeScreens/tab_screen.dart';
-import 'package:hotel_flutter/presentation/widgets/cryptowallet/cryptonotransaction.dart';
 import 'package:hotel_flutter/presentation/widgets/cryptowallet/cryptowithtransaction.dart';
 
 class CryptoWalletTransactions extends StatelessWidget {
-  final bool hasTransactions;
+  final bool isConnected;
+  final String walletAddress;
+  final String balance;
+  final Function(String, String, bool) onWalletUpdated;
 
-  const CryptoWalletTransactions({super.key, this.hasTransactions = false});
+  const CryptoWalletTransactions({
+    Key? key,
+    required this.isConnected,
+    required this.walletAddress,
+    required this.balance,
+    required this.onWalletUpdated,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -18,8 +25,8 @@ class CryptoWalletTransactions extends StatelessWidget {
             decoration: BoxDecoration(
               color: Colors.white,
               borderRadius: const BorderRadius.only(
-                topLeft: Radius.circular(40.0), // Only top-left corner
-                topRight: Radius.circular(40.0), // Only top-right corner
+                topLeft: Radius.circular(40.0),
+                topRight: Radius.circular(40.0),
               ),
               boxShadow: [
                 BoxShadow(
@@ -31,21 +38,11 @@ class CryptoWalletTransactions extends StatelessWidget {
               ],
             ),
             padding: const EdgeInsets.all(16.0),
-            child: hasTransactions
-                ? const CryptoWithTransaction()
-                : const CryptoWithTransaction(),
-          ),
-          Positioned(
-            top: 10.0,
-            left: 10.0,
-            child: IconButton(
-              icon: const Icon(Icons.arrow_back, color: Colors.black),
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => const TabScreen()),
-                );
-              },
+            child: CryptoWithTransaction(
+              isConnected: isConnected,
+              walletAddress: walletAddress,
+              balance: balance,
+              onWalletUpdated: onWalletUpdated,
             ),
           ),
         ],

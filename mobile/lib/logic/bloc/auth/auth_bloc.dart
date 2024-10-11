@@ -4,9 +4,11 @@ import 'package:bloc/bloc.dart';
 import 'package:hotel_flutter/data/repositories/auth_repository.dart';
 import 'package:hotel_flutter/logic/bloc/auth/auth_event.dart';
 import 'package:hotel_flutter/logic/bloc/auth/auth_state.dart';
+import 'package:logging/logging.dart';
 
 class AuthBloc extends Bloc<AuthEvent, AuthState> {
   final AuthRepository authRepository;
+  final Logger _logger = Logger('AuthBloc');
 
   AuthBloc(this.authRepository) : super(AuthInitial()) {
     on<SignUpEvent>((event, emit) async {
@@ -54,11 +56,15 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     });
 
     on<FetchAllUsersEvent>((event, emit) async {
-      emit(AuthLoading());
+      emit(AuthLoading()); // Start with loading state
       try {
         final users = await authRepository.fetchAllUsers();
-        emit(UsersFetched(users));
+        print(
+            'Fetched users count: ${users.length}'); // Log the number of users fetched
+        emit(UsersFetched(users)); // Emit users fetched state
       } catch (e) {
+        _logger.severe(
+            'Failed to fetch users: ${e.toString()}'); // Log error if fetching users fails
         emit(AuthError('Failed to fetch users: ${e.toString()}'));
       }
     });

@@ -3,8 +3,10 @@ import 'package:hotel_flutter/data/data_provider/auth/auth_data_provider.dart';
 import 'package:hotel_flutter/data/model/auth/login_model.dart';
 import 'package:hotel_flutter/data/model/auth/signup_model.dart';
 import 'package:hotel_flutter/data/model/auth/user_model.dart';
+import 'package:logging/logging.dart';
 
 class AuthRepository {
+  final Logger _logger = Logger('AuthRepository');
   final AuthDataProvider dataProvider;
   UserModel? _cachedUser;
 
@@ -66,9 +68,13 @@ class AuthRepository {
   //! Fetch all users with filtering conditions
   Future<List<UserModel>> fetchAllUsers() async {
     try {
+      print('Starting user fetch from DataProvider...'); // Log before fetching
       final users = await dataProvider.fetchAllUsers();
 
-      // Filter users where active == true, verified == true, hasCompletedOnboarding == true, and roles == 'user'
+      // Log the total users before filtering
+      print('Total users before filtering: ${users.length}');
+
+      // Filter users
       final filteredUsers = users
           .where((user) =>
               user.active != false &&
@@ -77,8 +83,12 @@ class AuthRepository {
               user.roles == "user")
           .toList();
 
-      return filteredUsers; // Return the filtered list
+      // Log the filtered users count
+      print('Filtered users count: ${filteredUsers.length}');
+
+      return filteredUsers; // Return the filtered users
     } catch (error) {
+      _logger.severe('Failed to fetch all users: $error'); // Log error
       throw Exception('Failed to fetch all users: $error');
     }
   }

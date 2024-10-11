@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'dart:convert';
 import 'package:hotel_flutter/data/model/hotel/rating_model.dart';
 import 'package:hotel_flutter/data/model/auth/user_model.dart';
+import 'package:hotel_flutter/presentation/widgets/tabscreen/user_storage_helper.dart';
 
 class HotelRatingWidget extends StatefulWidget {
   final List<RatingModel> ratings;
@@ -21,23 +20,24 @@ class _HotelRatingWidgetState extends State<HotelRatingWidget> {
   void initState() {
     super.initState();
     _getStoredUsers();
+    print(
+        "HotelRatingWidget initialized with ${widget.ratings.length} ratings");
   }
 
-  // Helper function to get stored users from SharedPreferences
   Future<void> _getStoredUsers() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    String? usersJson = prefs.getString('allUsers');
-    if (usersJson != null) {
-      List<dynamic> decodedUsers = jsonDecode(usersJson);
+    final users = await UserStorageHelper.getUsers();
+    if (users.isNotEmpty) {
       setState(() {
-        allUsers =
-            decodedUsers.map((user) => UserModel.fromJson(user)).toList();
+        allUsers = users;
+        print("Loaded ${allUsers.length} users from SharedPreferences");
       });
+    } else {
+      print("No users found in SharedPreferences");
     }
   }
 
-  // Function to sort ratings based on selected option
   List<RatingModel> _sortRatings(List<RatingModel> ratings) {
+    print("Sorting ratings by $selectedSort");
     if (selectedSort == "Highest") {
       ratings.sort((a, b) => b.rating.compareTo(a.rating));
     } else {
@@ -48,12 +48,17 @@ class _HotelRatingWidgetState extends State<HotelRatingWidget> {
 
   @override
   Widget build(BuildContext context) {
-    // Sort the ratings based on the selected option
+    if (allUsers.isEmpty) {
+      return const Center(child: CircularProgressIndicator());
+    }
+
     List<RatingModel> sortedRatings = _sortRatings(widget.ratings);
+
+    print("Displaying ${sortedRatings.length} sorted ratings");
 
     return Column(
       children: [
-        // Sorting dropdown button with updated style
+        // Sorting dropdown button
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
           child: Row(
@@ -74,26 +79,27 @@ class _HotelRatingWidgetState extends State<HotelRatingWidget> {
                   value: selectedSort,
                   dropdownColor: const Color.fromARGB(255, 29, 53, 115),
                   iconEnabledColor: Colors.white,
-                  underline: SizedBox(),
+                  underline: const SizedBox(),
                   items: [
                     DropdownMenuItem(
                       value: "Highest",
-                      child: Text(
+                      child: const Text(
                         "Highest First",
-                        style: const TextStyle(color: Colors.white),
+                        style: TextStyle(color: Colors.white),
                       ),
                     ),
                     DropdownMenuItem(
                       value: "Lowest",
-                      child: Text(
+                      child: const Text(
                         "Lowest First",
-                        style: const TextStyle(color: Colors.white),
+                        style: TextStyle(color: Colors.white),
                       ),
                     ),
                   ],
                   onChanged: (value) {
                     setState(() {
                       selectedSort = value!;
+                      print("Selected sorting option: $selectedSort");
                     });
                   },
                 ),
@@ -108,18 +114,18 @@ class _HotelRatingWidgetState extends State<HotelRatingWidget> {
           itemCount: sortedRatings.length,
           itemBuilder: (context, index) {
             final rating = sortedRatings[index];
+            print("Rendering rating with score ${rating.rating}");
 
-            // Find the user by userId
             UserModel? user = allUsers.firstWhere(
               (u) => u.id == rating.userId,
               orElse: () => UserModel(), // Returns empty UserModel if not found
             );
 
-            // If user is null or the name is null, don't display the card
             if (user.firstName == null || user.lastName == null) {
-              return SizedBox.shrink(); // Do not display anything
+              print(
+                  "User not found or invalid for rating with score ${rating.rating}");
+              return const SizedBox.shrink(); // Do not display anything
             }
-
             return Card(
               margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
               elevation: 2,
