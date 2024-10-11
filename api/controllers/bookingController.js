@@ -7,7 +7,7 @@ const catchAsync = require('../utils/catchAsync');
 const AppError = require('../utils/appError');
 const sendEmail = require('../utils/email');
 
-// Get all bookings for a user
+// ** Get all bookings for a user
 exports.getBookings = catchAsync(async (req, res, next) => {
   try {
     const bookings = await Booking.find({ userId: req.params.userId }).populate(
@@ -27,7 +27,7 @@ exports.getBookings = catchAsync(async (req, res, next) => {
   }
 });
 
-/// Create a new booking
+// ** Create a new booking
 exports.createBooking = catchAsync(async (req, res, next) => {
   try {
     console.log('Booking request body:', req.body);
@@ -151,7 +151,8 @@ exports.createBooking = catchAsync(async (req, res, next) => {
     );
   }
 });
-// Update an existing booking (e.g., change dates)
+
+// ** Update an existing booking (e.g., change dates)
 exports.updateBooking = catchAsync(async (req, res, next) => {
   try {
     const {
