@@ -29,7 +29,6 @@ class BookingRepository {
       _cachedBookings = null; // Clear cache after booking creation
       return newBooking;
     } catch (e) {
-      print('failed to create booking: $e');
       throw Exception('Failed to create booking: $e');
     }
   }

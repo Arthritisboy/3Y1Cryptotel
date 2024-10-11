@@ -42,7 +42,7 @@ class _HistoryModalState extends State<HistoryModal> {
         builder: (context, constraints) {
           return ConstrainedBox(
             constraints: const BoxConstraints(
-              maxHeight: 500, 
+              maxHeight: 500,
               maxWidth: 350,
               minHeight: 500,
               minWidth: 350,
@@ -65,7 +65,7 @@ class _HistoryModalState extends State<HistoryModal> {
                         ),
                         GestureDetector(
                           onTap: () {
-                            Navigator.of(context).pop(); 
+                            Navigator.of(context).pop();
                           },
                           child: const Icon(
                             Icons.close,
@@ -76,7 +76,6 @@ class _HistoryModalState extends State<HistoryModal> {
                       ],
                     ),
                   ),
-                  
                   const Padding(
                     padding: EdgeInsets.symmetric(horizontal: 16.0),
                     child: Text(
@@ -86,10 +85,7 @@ class _HistoryModalState extends State<HistoryModal> {
                       ),
                     ),
                   ),
-
                   const Divider(height: 20.0, thickness: 1.0),
-
-
                   const Padding(
                     padding: EdgeInsets.symmetric(horizontal: 16.0),
                     child: Text(
@@ -106,7 +102,8 @@ class _HistoryModalState extends State<HistoryModal> {
                         direction: Axis.horizontal,
                         allowHalfRating: false,
                         itemCount: 5,
-                        itemPadding: const EdgeInsets.symmetric(horizontal: 4.0),
+                        itemPadding:
+                            const EdgeInsets.symmetric(horizontal: 4.0),
                         itemBuilder: (context, _) => const Icon(
                           Icons.star,
                           color: Colors.amber,
@@ -119,7 +116,6 @@ class _HistoryModalState extends State<HistoryModal> {
                       ),
                     ),
                   ),
-
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 16.0),
                     child: Column(
@@ -162,25 +158,27 @@ class _HistoryModalState extends State<HistoryModal> {
                             '$_currentLength/$_maxLength',
                             style: TextStyle(
                               fontSize: 12.0,
-                              color: _currentLength >= 400 ? Colors.red : Colors.grey,
+                              color: _currentLength >= 400
+                                  ? Colors.red
+                                  : Colors.grey,
                             ),
                           ),
                         ),
                       ],
                     ),
                   ),
-
                   const SizedBox(height: 10.0),
-
                   Padding(
-                    padding: const EdgeInsets.only(left: 16.0, right: 16.0, bottom: 5.0),
+                    padding: const EdgeInsets.only(
+                        left: 16.0, right: 16.0, bottom: 5.0),
                     child: Center(
                       child: ElevatedButton(
                         onPressed: () {
                           Navigator.of(context).pop();
                           ScaffoldMessenger.of(context).showSnackBar(
                             SnackBar(
-                              content: Text('Rating: $rating stars submitted for the service'),
+                              content: Text(
+                                  'Rating: $rating stars submitted for the service'),
                             ),
                           );
                         },
