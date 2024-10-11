@@ -25,11 +25,12 @@ class RoomSelection extends StatelessWidget {
             padding: EdgeInsets.only(left: 20, right: 20, top: 50),
             child: Center(
               child: Text(
-                'No rooms available',
+                "No rooms are available at the moment. Please come back later.",
                 style: TextStyle(
-                  fontSize: 18.0,
+                  fontSize: 15.0,
                   color: Color.fromARGB(255, 74, 74, 74),
                 ),
+                textAlign: TextAlign.center,
               ),
             ),
           )
