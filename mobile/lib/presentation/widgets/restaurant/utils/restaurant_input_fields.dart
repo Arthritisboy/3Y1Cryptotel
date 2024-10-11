@@ -172,33 +172,23 @@ class _RestaurantInputFieldsState extends State<RestaurantInputFields> {
           arrivalDateTime != null &&
           departureDateTime != null &&
           userId != null) {
-        print('Booking Details:');
-        print('Booking Type: RestaurantBooking');
-        print('Restaurant ID: ${widget.restaurantId}');
-        print('Full Name: ${fullNameController.text}');
-        print('Email: ${emailController.text}');
-        print('Phone Number: ${phoneNumberController.text}');
-        print('Address: ${addressController.text}');
-        print('Check-in Date: $checkInDate');
-        print('Check-out Date: $checkOutDate');
-        print('Time of Arrival: $arrivalDateTime');
-        print('Time of Departure: $departureDateTime');
-        print('Adults: ${int.tryParse(adultsController.text) ?? 1}');
-        print('Children: ${int.tryParse(childrenController.text) ?? 0}');
         final booking = BookingModel(
-          bookingType: 'RestaurantBooking',
-          restaurantId: widget.restaurantId,
-          fullName: fullNameController.text,
-          email: emailController.text,
-          phoneNumber: phoneNumberController.text,
-          address: addressController.text,
-          checkInDate: checkInDate,
-          checkOutDate: checkOutDate,
-          timeOfArrival: arrivalDateTime,
-          timeOfDeparture: departureDateTime,
-          adult: int.tryParse(adultsController.text) ?? 1,
-          children: int.tryParse(childrenController.text) ?? 0,
-        );
+            bookingType: 'RestaurantBooking',
+            restaurantId: widget.restaurantId,
+            fullName: fullNameController.text,
+            email: emailController.text,
+            phoneNumber: phoneNumberController.text,
+            address: addressController.text,
+            checkInDate: checkInDate,
+            checkOutDate: checkOutDate,
+            timeOfArrival: arrivalDateTime,
+            timeOfDeparture: departureDateTime,
+            adult: int.tryParse(adultsController.text) ?? 1,
+            children: int.tryParse(childrenController.text) ?? 0,
+            tableNumber: (int.tryParse(adultsController.text) ?? 1) +
+                (int.tryParse(childrenController.text) ??
+                    0) // Sum of adults and children
+            );
 
         setState(() {
           isLoading = true; // Show loading spinner
