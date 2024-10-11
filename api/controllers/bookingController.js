@@ -103,6 +103,9 @@ exports.createBooking = catchAsync(async (req, res, next) => {
     const newBooking = await Booking.create({
       userId,
       bookingType,
+      hotelName,
+      roomName,
+      restaurantName,
       hotelId,
       roomId,
       restaurantId,

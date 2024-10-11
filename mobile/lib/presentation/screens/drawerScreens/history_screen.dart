@@ -1,11 +1,41 @@
 import 'package:flutter/material.dart';
-import 'package:hotel_flutter/presentation/widgets/history/history_accepted.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:hotel_flutter/logic/bloc/booking/booking_bloc.dart';
+import 'package:hotel_flutter/logic/bloc/booking/booking_event.dart';
+import 'package:hotel_flutter/logic/bloc/booking/booking_state.dart';
 import 'package:hotel_flutter/presentation/widgets/history/history_header.dart';
 import 'package:hotel_flutter/presentation/widgets/history/history_pending.dart';
+import 'package:hotel_flutter/presentation/widgets/history/history_accepted.dart';
 import 'package:hotel_flutter/presentation/widgets/history/history_rate.dart';
 
-class HistoryScreen extends StatelessWidget {
+class HistoryScreen extends StatefulWidget {
   const HistoryScreen({super.key});
+
+  @override
+  _HistoryScreenState createState() => _HistoryScreenState();
+}
+
+class _HistoryScreenState extends State<HistoryScreen> {
+  final FlutterSecureStorage _storage = const FlutterSecureStorage();
+  String? _userId;
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchUserId();
+  }
+
+  Future<void> _fetchUserId() async {
+    String? userId = await _storage.read(key: 'userId');
+    if (userId != null) {
+      setState(() {
+        _userId = userId;
+      });
+      // Trigger the fetch bookings event when the userId is retrieved
+      context.read<BookingBloc>().add(FetchBookings(userId: userId));
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -19,7 +49,7 @@ class HistoryScreen extends StatelessWidget {
           bottom: const TabBar(
             labelColor: Colors.black,
             unselectedLabelColor: Colors.grey,
-            indicatorColor: Color(0xFF1C3473), 
+            indicatorColor: Color(0xFF1C3473),
             tabs: [
               Tab(text: 'Pending'),
               Tab(text: 'Accepted'),
@@ -27,46 +57,32 @@ class HistoryScreen extends StatelessWidget {
             ],
           ),
         ),
-        body: Column(
-          children: [
-            const SizedBox(height: 10.0), 
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16.0),
-              child: Row(
-                children: [
-                  IconButton(
-                    icon: const Icon(Icons.arrow_back, color: Colors.black),
-                    onPressed: () {
-                      Navigator.of(context).pop(); 
-                    },
-                  ),
-                  Expanded(
-                    child: Center(
-                      child: const Text(
-                        'Bookings',
-                        style: TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.black,
-                        ),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(width: 48),
-                ],
+        body: _userId == null
+            ? const Center(child: CircularProgressIndicator()) // Loading state
+            : BlocBuilder<BookingBloc, BookingState>(
+                builder: (context, state) {
+                  if (state is BookingLoading) {
+                    return const Center(child: CircularProgressIndicator());
+                  } else if (state is BookingSuccess) {
+                    // Filter pending bookings
+                    final pendingBookings = state.bookings
+                        .where((booking) => booking.status == 'pending')
+                        .toList();
+
+                    return TabBarView(
+                      children: [
+                        HistoryPendingBody(pendingBookings: pendingBookings),
+                        const HistoryAcceptedBody(),
+                        const HistoryRateBody(status: 'Rate'),
+                      ],
+                    );
+                  } else if (state is BookingFailure) {
+                    return Center(child: Text('Error: ${state.error}'));
+                  } else {
+                    return const Center(child: Text('No bookings found.'));
+                  }
+                },
               ),
-            ),
-            const Expanded(
-              child: TabBarView(
-                children: [
-                  HistoryPendingBody(),
-                  HistoryAcceptedBody(),
-                  HistoryRateBody(status: 'Rate'),
-                ],
-              ),
-            ),
-          ],
-        ),
       ),
     );
   }
