@@ -65,6 +65,8 @@ exports.createBooking = catchAsync(async (req, res, next) => {
     }
 
     let totalPrice;
+    let hotelName = '';
+    let roomName = '';
 
     if (bookingType === 'HotelBooking') {
       const room = await Room.findById(roomId);
@@ -74,6 +76,9 @@ exports.createBooking = catchAsync(async (req, res, next) => {
         console.log('Room or Hotel not found');
         return next(new AppError('Room or Hotel not found', 404));
       }
+
+      hotelName = hotel.name; // Get the hotel name
+      roomName = room.roomType; // Get the room name
 
       const nights = Math.ceil((checkOut - checkIn) / (1000 * 60 * 60 * 24));
       totalPrice = room.price * nights;
@@ -158,8 +163,8 @@ exports.createBooking = catchAsync(async (req, res, next) => {
       type: 'booking', // Define this in the email utility
       bookingDetails: {
         fullName,
-        hotelId,
-        roomId,
+        hotelName, // Send hotel name instead of hotelId
+        roomName, // Send room name instead of roomId
         checkInDate,
         checkOutDate,
         totalPrice,
