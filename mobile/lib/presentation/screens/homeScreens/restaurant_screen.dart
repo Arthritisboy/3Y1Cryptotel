@@ -9,7 +9,9 @@ import 'package:hotel_flutter/data/model/restaurant/restaurant_model.dart';
 import 'package:shimmer/shimmer.dart';
 
 class RestaurantScreen extends StatelessWidget {
-  const RestaurantScreen({super.key});
+  final String restaurantName;
+
+  const RestaurantScreen({super.key, required this.restaurantName});
 
   @override
   Widget build(BuildContext context) {
@@ -22,8 +24,8 @@ class RestaurantScreen extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Text(
-                'Top Rated Restaurants',
+              Text(
+                restaurantName,
                 style: TextStyle(
                   fontSize: 24.0,
                   color: Colors.black,
