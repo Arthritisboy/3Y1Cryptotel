@@ -15,6 +15,38 @@ const sendEmail = async (options) => {
 
   // ** Message
   let message;
+  if (options.type === 'booking') {
+    const {
+      fullName,
+      hotelName,
+      roomName,
+      checkInDate,
+      checkOutDate,
+      totalPrice,
+    } = options.bookingDetails;
+    message = `
+      <div style="font-family: Arial, sans-serif; margin: 0; padding: 20px; background-color: #f4f4f4;">
+        <table style="border: 2px solid #4CAF50; border-radius: 5px; padding: 10px; max-width: 600px; margin: auto; border-collapse: collapse; background-color: #ffffff;">
+          <tr>
+            <td style="padding: 10px; text-align: center;">
+              <h2 style="color: #4CAF50;">Booking Confirmation</h2>
+              <p style="font-size: 16px;">Dear ${fullName},</p>
+              <p>Thank you for booking with us. Your booking details are as follows:</p>
+              <ul>
+                <li><strong>Hotel:</strong> ${hotelName}</li>
+                <li><strong>Room:</strong> ${roomName}</li>
+                <li><strong>Check-in Date:</strong> ${new Date(checkInDate).toLocaleDateString()}</li>
+                <li><strong>Check-out Date:</strong> ${new Date(checkOutDate).toLocaleDateString()}</li>
+                <li><strong>Total Price:</strong> ₱${totalPrice}</li>
+              </ul>
+              <p>Your booking is being processed and is currently pending confirmation.</p>
+              <p>We will notify you once your booking is confirmed. Thank you for choosing us!</p>
+            </td>
+          </tr>
+        </table>
+      </div>`;
+  }
+
   if (options.type === 'verification') {
     message = `
       <div style="font-family: Arial, sans-serif; margin: 0; padding: 20px; background-color: #f4f4f4;">

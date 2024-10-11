@@ -1,6 +1,6 @@
 class BookingModel {
-  final String id;
-  final String bookingType; // HotelBooking or RestaurantBooking
+  final String? id;
+  final String bookingType;
   final String? hotelId;
   final String? roomId;
   final String? restaurantId;
@@ -14,11 +14,10 @@ class BookingModel {
   final DateTime? timeOfDeparture;
   final int adult;
   final int children;
-  // final double totalPrice;
-  // bool isAccepted;
+  final int? totalPrice;
 
   BookingModel({
-    required this.id,
+    this.id,
     required this.bookingType,
     this.hotelId,
     this.roomId,
@@ -33,8 +32,7 @@ class BookingModel {
     required this.timeOfDeparture,
     required this.adult,
     required this.children,
-    // required this.totalPrice,
-    // this.isAccepted = false,
+    this.totalPrice,
   });
 
   // Convert JSON to BookingModel object
@@ -59,8 +57,7 @@ class BookingModel {
           : null,
       adult: json['adult'],
       children: json['children'],
-      // totalPrice: json['totalPrice'].toDouble(),
-      // isAccepted: json['isAccepted'] ?? false,
+      totalPrice: json['totalPrice'],
     );
   }
 
@@ -74,11 +71,11 @@ class BookingModel {
       'email': email,
       'phoneNumber': phoneNumber,
       'address': address,
-      'checkInDate': checkInDate.toUtc().toIso8601String(), // Ensure UTC format
+      'checkInDate': checkInDate.toUtc().toIso8601String(),
       'checkOutDate': checkOutDate.toUtc().toIso8601String(),
       'timeOfArrival': timeOfArrival?.toUtc().toIso8601String(),
       'timeOfDeparture': timeOfDeparture?.toUtc().toIso8601String(),
-      'adult': adult, // Change from 'adults' to 'adult'
+      'adult': adult,
       'children': children,
     };
   }
