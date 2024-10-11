@@ -15,7 +15,6 @@ import 'package:hotel_flutter/presentation/widgets/drawer/main_drawer.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:hotel_flutter/presentation/widgets/shimmer_loading/tab/shimmer_tab_header.dart';
 import 'package:hotel_flutter/presentation/widgets/shimmer_loading/tab/shimmer_bottom_navigation.dart';
-import 'package:logging/logging.dart';
 import 'package:flutter/services.dart';
 
 class TabScreen extends StatefulWidget {
@@ -26,7 +25,6 @@ class TabScreen extends StatefulWidget {
 }
 
 class _TabScreenState extends State<TabScreen> {
-  final Logger _logger = Logger('TabScreen');
   final FlutterSecureStorage _secureStorage = const FlutterSecureStorage();
   int _selectedIndex = 0;
   bool _isLoading = true;
@@ -49,6 +47,7 @@ class _TabScreenState extends State<TabScreen> {
   Future<void> _getUserData() async {
     final userId = await _secureStorage.read(key: 'userId');
     if (userId != null) {
+      // ignore: use_build_context_synchronously
       context.read<AuthBloc>().add(GetUserEvent(userId));
     }
   }
@@ -270,6 +269,7 @@ class _TabScreenState extends State<TabScreen> {
           buttonText: 'Yes',
           onButtonPressed: () async {
             await _handleLogout();
+            // ignore: use_build_context_synchronously
             Navigator.of(context).pop();
           },
           secondButtonText: 'No',
@@ -295,6 +295,7 @@ class _TabScreenState extends State<TabScreen> {
       );
 
       await Future.delayed(const Duration(milliseconds: 500));
+      // ignore: use_build_context_synchronously
       Navigator.of(context).pushReplacementNamed('/login');
     }
   }

@@ -1,5 +1,5 @@
-import 'package:hotel_flutter/data/model/hotel/room_model.dart';
 import 'package:geocoding/geocoding.dart';
+import 'package:hotel_flutter/data/model/hotel/room_model.dart';
 import 'package:logging/logging.dart';
 
 class HotelModel {
@@ -26,30 +26,29 @@ class HotelModel {
 
   factory HotelModel.fromJson(Map<String, dynamic> json) {
     return HotelModel(
-      id: json['_id'],
-      name: json['name'],
-      location: json['location'],
-      openingHours: json['openingHours'],
-      averageRating: (json['averageRating'] is int)
-          ? (json['averageRating'] as int).toDouble()
-          : (json['averageRating'] as double),
-      hotelImage: json['hotelImage'],
-      averagePrice: (json['averagePrice'] is int)
-          ? (json['averagePrice'] as int).toDouble()
-          : (json['averagePrice'] as double),
-      rooms: (json['rooms'] as List)
-          .map((roomJson) => RoomModel.fromJson(roomJson))
-          .toList(),
+      id: json['_id'] ?? 'Unknown ID',
+      name: json['name'] ?? 'Unknown Hotel',
+      location: json['location'] ?? 'Unknown Location',
+      openingHours: json['openingHours'] ?? 'Unknown Hours',
+      hotelImage: json['hotelImage'] ?? 'https://via.placeholder.com/150',
+      averageRating: (json['averageRating'] ?? 0).toDouble(),
+      averagePrice: (json['averagePrice'] ?? 0).toDouble(),
+      rooms: (json['rooms'] != null && json['rooms'] is List)
+          ? (json['rooms'] as List)
+              .map((roomJson) => RoomModel.fromJson(roomJson))
+              .toList()
+          : <RoomModel>[], // Default to an empty list if rooms is null or not a List
     );
   }
 
+  // Fetch coordinates based on the location string
   Future<List<double>> getCoordinates() async {
     try {
       List<Location> locations = await locationFromAddress(location);
       return [locations.first.latitude, locations.first.longitude];
     } catch (e) {
       _logger.info("Error fetching coordinates for $location: $e");
-      return [0.0, 0.0];
+      return [0.0, 0.0]; // Return [0.0, 0.0] if there is an error
     }
   }
 }

@@ -152,6 +152,7 @@ exports.createBooking = catchAsync(async (req, res, next) => {
       adult,
       children,
       totalPrice,
+      status: 'pending',
     });
 
     console.log('Booking created successfully:', newBooking);
@@ -168,6 +169,7 @@ exports.createBooking = catchAsync(async (req, res, next) => {
         checkInDate,
         checkOutDate,
         totalPrice,
+        status: 'pending', // Include status in the email content
       },
     });
 

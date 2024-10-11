@@ -215,9 +215,6 @@ class _RestaurantInputFieldsState extends State<RestaurantInputFields> {
                         checkOutDateController.text,
                         timeOfDepartureController.text);
 
-                    print("Time of Arrival: $arrivalDateTime");
-                    print("Time of Departure: $departureDateTime");
-
                     // Send these DateTime objects to the backend
                   }
                 : null, // Disable button when fields are incomplete

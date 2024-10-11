@@ -23,16 +23,18 @@ class RoomModel {
 
   factory RoomModel.fromJson(Map<String, dynamic> json) {
     return RoomModel(
-      id: json['_id'],
-      roomNumber: json['roomNumber'],
-      roomImage: json['roomImage'],
-      type: json['type'],
-      price: json['price'],
-      capacity: json['capacity'],
-      availability: json['availability'],
-      ratings: (json['ratings'] as List)
-          .map((ratingJson) => RatingModel.fromJson(ratingJson))
-          .toList(),
+      id: json['_id'] ?? 'Unknown ID',
+      roomNumber: json['roomNumber'] ?? 'Unknown Room',
+      roomImage: json['roomImage'] ?? 'https://via.placeholder.com/150',
+      type: json['type'] ?? 'Unknown Type',
+      price: json['price'] ?? 0,
+      capacity: json['capacity'] ?? 1,
+      availability: json['availability'] ?? false,
+      ratings: (json['ratings'] != null && json['ratings'] is List)
+          ? (json['ratings'] as List)
+              .map((ratingJson) => RatingModel.fromJson(ratingJson))
+              .toList()
+          : <RatingModel>[], // Default to an empty list if ratings is null or not a List
     );
   }
 }
