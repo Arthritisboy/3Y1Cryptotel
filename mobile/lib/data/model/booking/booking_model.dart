@@ -2,6 +2,9 @@ class BookingModel {
   final String? id;
   final String bookingType;
   final String? hotelId;
+  final String? restaurantName;
+  final String? hotelName;
+  final String? roomName;
   final String? roomId;
   final String? restaurantId;
   final String fullName;
@@ -18,6 +21,9 @@ class BookingModel {
   final String? status;
 
   BookingModel({
+    this.roomName,
+    this.hotelName,
+    this.restaurantName,
     this.id,
     this.tableNumber,
     required this.bookingType,
@@ -40,14 +46,17 @@ class BookingModel {
   // Convert JSON to BookingModel object
   factory BookingModel.fromJson(Map<String, dynamic> json) {
     return BookingModel(
-      id: json['_id'], // Use "_id" from the JSON
+      // id: json['_id'],
       bookingType: json['bookingType'],
       tableNumber: json['tableNumber'],
-      hotelId: json['hotelId'], // Ensure this matches your API response format
+      restaurantName: json['restaurantName'],
+      hotelName: json['hotelName'],
+      roomName: json['roomName'],
+      // hotelId: json['hotelId'],
       status: json['status'],
-      roomId: json['roomId'], // Ensure this matches your API response format
-      restaurantId:
-          json['restaurantId'], // Ensure this matches your API response format
+      // roomId: json['roomId'],
+      // restaurantId:
+      //     json['restaurantId'],
       fullName: json['fullName'],
       email: json['email'],
       phoneNumber: json['phoneNumber'],
@@ -68,7 +77,7 @@ class BookingModel {
   // Convert BookingModel object to JSON
   Map<String, dynamic> toJson() {
     return {
-      '_id': id, // Use "_id" when converting back to JSON
+      // '_id': id, // Use "_id" when converting back to JSON
       'bookingType': bookingType,
       'hotelId': hotelId,
       'roomId': roomId,

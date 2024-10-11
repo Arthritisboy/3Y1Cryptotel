@@ -240,8 +240,8 @@ class _TabScreenState extends State<TabScreen> {
       case '/cryptoTransaction':
         Navigator.of(context).pushNamed('/cryptoTransaction');
         break;
-      case 'settings':
-        Navigator.of(context).pushNamed('/settings');
+      case 'history':
+        Navigator.of(context).pushNamed('/history');
         break;
       case 'favorite':
         Navigator.of(context).pushNamed('/favorite');

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:hotel_flutter/presentation/screens/drawerScreens/history_screen.dart';
 import 'package:hotel_flutter/presentation/screens/homeScreens/onboarding_screen.dart';
 import 'package:hotel_flutter/presentation/screens/drawerScreens/crypto_wallet.dart';
 import 'package:hotel_flutter/presentation/screens/authScreens/forgot_password_screen.dart';
@@ -110,7 +111,10 @@ class AppRouter {
         return MaterialPageRoute(
           builder: (_) => HelpSupportScreen(),
         );
-
+      case '/history':
+        return MaterialPageRoute(
+          builder: (_) => HistoryScreen(),
+        );
       case '/onboarding':
         return MaterialPageRoute(
           builder: (_) => OnboardingScreen(),
