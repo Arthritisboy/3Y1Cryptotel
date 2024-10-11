@@ -33,7 +33,11 @@
 
             <!-- Move these intent-filters inside the activity tag -->
             <intent-filter>
-                <action android:name="android.intent.action.VIEW"/>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <!-- your own custom scheme. Be mind of removing :// for this step -->
+                <data android:scheme="cryptoflutter" />
                 <data android:scheme="mailto"/>
             </intent-filter>
             
@@ -48,7 +52,13 @@
             android:name="flutterEmbedding"
             android:value="2" />
     </application>
-
+    <queries>
+        <package android:name="io.metamask"/>
+        <package android:name="com.wallet.crypto.trustapp"/>
+        <package android:name="io.gnosis.safe"/>
+        <package android:name="me.rainbow"/>
+        <!-- Add other wallet schemes names here -->
+    </queries>
     <queries>
         <intent>
             <action android:name="android.intent.action.VIEW"/>

@@ -1,15 +1,26 @@
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
-import 'package:flutter/services.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart'; // For secure storage
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:hotel_flutter/logic/bloc/booking/booking_bloc.dart';
+import 'package:hotel_flutter/logic/bloc/booking/booking_event.dart';
+import 'package:hotel_flutter/logic/bloc/booking/booking_state.dart';
+import 'package:hotel_flutter/data/model/booking/booking_model.dart';
+import 'shared_widgets.dart'; // Shared UI components for input fields
+import 'date_time_helper.dart'; // Helper for selecting date, time, and combining
+import 'package:hotel_flutter/presentation/widgets/utils_widget/custom_dialog.dart'; // Import the CustomDialog widget
 
 class RestaurantInputFields extends StatefulWidget {
-  const RestaurantInputFields({super.key});
+  final String restaurantId;
+  final int capacity;
+
+  const RestaurantInputFields({
+    super.key,
+    required this.restaurantId,
+    required this.capacity,
+  });
 
   @override
-  State<StatefulWidget> createState() {
-    return _RestaurantInputFieldsState();
-  }
+  State<RestaurantInputFields> createState() => _RestaurantInputFieldsState();
 }
 
 class _RestaurantInputFieldsState extends State<RestaurantInputFields> {
@@ -19,17 +30,18 @@ class _RestaurantInputFieldsState extends State<RestaurantInputFields> {
       TextEditingController(text: "+63 ");
   final TextEditingController addressController = TextEditingController();
   final TextEditingController checkInDateController = TextEditingController();
-  final TextEditingController checkOutDateController = TextEditingController();
-  final TextEditingController adultsController = TextEditingController();
-  final TextEditingController childrenController = TextEditingController();
-
+  final TextEditingController checkOutDateController =
+      TextEditingController(); // Added checkOutDateController
   final TextEditingController timeOfArrivalController = TextEditingController();
   final TextEditingController timeOfDepartureController =
       TextEditingController();
+  final TextEditingController adultsController = TextEditingController();
+  final TextEditingController childrenController = TextEditingController();
 
   final FlutterSecureStorage secureStorage = const FlutterSecureStorage();
-
-  bool isBookButtonEnabled = false; // To control the Book Now button
+  bool isBookButtonEnabled = false;
+  String? userId;
+  bool isLoading = false; // For button loading state
 
   @override
   void initState() {
@@ -38,8 +50,8 @@ class _RestaurantInputFieldsState extends State<RestaurantInputFields> {
     _checkFieldsFilled();
   }
 
-  // Load user data from FlutterSecureStorage
   Future<void> _loadUserData() async {
+    userId = await secureStorage.read(key: 'userId');
     String? firstName = await secureStorage.read(key: 'firstName') ?? '';
     String? lastName = await secureStorage.read(key: 'lastName') ?? '';
     String? storedEmail = await secureStorage.read(key: 'email') ?? '';
@@ -55,387 +67,285 @@ class _RestaurantInputFieldsState extends State<RestaurantInputFields> {
     _checkFieldsFilled();
   }
 
-  // Check if all required fields are filled
   void _checkFieldsFilled() {
     setState(() {
       isBookButtonEnabled = fullNameController.text.isNotEmpty &&
           emailController.text.isNotEmpty &&
-          phoneNumberController.text.length >= 11; // Example condition
+          phoneNumberController.text.length >= 11 &&
+          checkInDateController.text.isNotEmpty &&
+          checkOutDateController
+              .text.isNotEmpty && // Check for checkOutDateController
+          timeOfArrivalController.text.isNotEmpty &&
+          timeOfDepartureController.text.isNotEmpty &&
+          adultsController.text.isNotEmpty &&
+          childrenController.text.isNotEmpty;
     });
   }
 
-  Future<void> _selectDate(
-      BuildContext context, TextEditingController controller) async {
-    final DateTime? picked = await showDatePicker(
+  // Dialog to show when the guest capacity is exceeded
+  void _showCapacityErrorDialog(BuildContext context) {
+    showDialog(
       context: context,
-      initialDate: DateTime.now(),
-      firstDate: DateTime.now(),
-      lastDate: DateTime(2101),
+      builder: (BuildContext context) {
+        return CustomDialog(
+          title: 'Guest Limit Exceeded',
+          description:
+              'You have exceeded the maximum guest capacity for this restaurant. Please reduce the number of guests to proceed.',
+          buttonText: 'Close',
+          onButtonPressed: () {
+            Navigator.of(context).pop(); // Close the dialog
+          },
+          onSecondButtonPressed: () {},
+        );
+      },
     );
-    if (picked != null) {
-      String formattedDate = DateFormat('yyyy-MM-dd').format(picked);
-      setState(() {
-        controller.text = formattedDate;
-        _checkFieldsFilled();
-      });
-    }
   }
 
-  Future<void> _selectTime(
-      BuildContext context, TextEditingController controller) async {
-    final TimeOfDay? picked = await showTimePicker(
+  // Dialog to show when booking is successful
+  void _showBookingSuccessDialog(BuildContext context) {
+    showDialog(
       context: context,
-      initialTime: TimeOfDay.now(),
+      barrierDismissible: false, // Prevent closing by tapping outside
+      builder: (BuildContext context) {
+        return CustomDialog(
+          title: 'Booking Successful',
+          description:
+              'Your booking has been successfully submitted and is currently being processed. You will be notified once it is confirmed.',
+          buttonText: 'OK',
+          onButtonPressed: () {
+            Navigator.of(context).pop();
+            Navigator.of(context).pushReplacementNamed('/homescreen');
+          },
+          onSecondButtonPressed: () {},
+        );
+      },
     );
-    if (picked != null) {
-      String formattedTime = picked.format(context);
-      setState(() {
-        controller.text = formattedTime;
-        _checkFieldsFilled();
-      });
-    }
   }
 
-  // This function combines the date and time fields into a single DateTime object.
-  DateTime? _combineDateAndTime(String date, String time) {
-    if (date.isEmpty || time.isEmpty) return null;
-    try {
-      final parsedDate = DateTime.parse(date); // Parse the date
-      final parsedTime = TimeOfDay.fromDateTime(
-          DateFormat.jm().parse(time)); // Parse the time (e.g., "9:30 AM")
+  void _showDateErrorDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      barrierDismissible: false, // Prevent closing by tapping outside
+      builder: (BuildContext context) {
+        return CustomDialog(
+          title: 'Invalid Date Selection',
+          description:
+              'The check-in date cannot be the same as the check-out date. Please select valid dates to proceed.',
+          buttonText: 'OK',
+          onButtonPressed: () {
+            Navigator.of(context).pop(); // Close the dialog
+          },
+          onSecondButtonPressed: () {},
+        );
+      },
+    );
+  }
 
-      return DateTime(parsedDate.year, parsedDate.month, parsedDate.day,
-          parsedTime.hour, parsedTime.minute);
-    } catch (e) {
-      print("Error parsing date or time: $e");
-      return null;
+  // Function to create a booking
+  void _createBooking(BuildContext context) {
+    final int totalGuests = (int.tryParse(adultsController.text) ?? 0) +
+        (int.tryParse(childrenController.text) ?? 0);
+
+    if (totalGuests > widget.capacity) {
+      _showCapacityErrorDialog(context); // Show error if capacity is exceeded
+    } else {
+      // Proceed with booking logic
+      DateTime? checkInDate = DateTime.tryParse(checkInDateController.text);
+      DateTime? checkOutDate = DateTime.tryParse(checkOutDateController.text);
+
+      // Check if the check-in date is the same as the check-out date
+      if (checkInDate != null &&
+          checkOutDate != null &&
+          checkInDate.isAtSameMomentAs(checkOutDate)) {
+        _showDateErrorDialog(
+            context); // Show error dialog for invalid date selection
+        return; // Stop further processing
+      }
+
+      DateTime? arrivalDateTime = combineDateAndTime(
+          checkInDateController.text, timeOfArrivalController.text);
+      DateTime? departureDateTime = combineDateAndTime(
+          checkOutDateController.text, timeOfDepartureController.text);
+
+      if (checkInDate != null &&
+          checkOutDate != null &&
+          arrivalDateTime != null &&
+          departureDateTime != null &&
+          userId != null) {
+        final booking = BookingModel(
+            bookingType: 'RestaurantBooking',
+            restaurantId: widget.restaurantId,
+            fullName: fullNameController.text,
+            email: emailController.text,
+            phoneNumber: phoneNumberController.text,
+            address: addressController.text,
+            checkInDate: checkInDate,
+            checkOutDate: checkOutDate,
+            timeOfArrival: arrivalDateTime,
+            timeOfDeparture: departureDateTime,
+            adult: int.tryParse(adultsController.text) ?? 1,
+            children: int.tryParse(childrenController.text) ?? 0,
+            tableNumber: (int.tryParse(adultsController.text) ?? 1) +
+                (int.tryParse(childrenController.text) ??
+                    0) // Sum of adults and children
+            );
+
+        setState(() {
+          isLoading = true; // Show loading spinner
+        });
+
+        context.read<BookingBloc>().add(CreateBooking(
+              booking: booking,
+              userId: userId!,
+            ));
+      }
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Expanded(
-              child: _buildDatePickerField(checkInDateController,
-                  'Check-in Date', context, 'Check-in date'),
-            ),
-            const SizedBox(width: 10),
-            Expanded(
-              child: _buildDatePickerField(checkOutDateController,
-                  'Check-out Date', context, 'Check-out date'),
-            ),
-          ],
-        ),
-        const SizedBox(height: 10),
-
-        // Time of Arrival and Departure Row
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Expanded(
-              child: _buildTimePickerField(
-                timeOfArrivalController,
-                'Time of Arrival',
-                context,
+    return BlocListener<BookingBloc, BookingState>(
+      listener: (context, state) {
+        if (state is BookingCreateSuccess) {
+          setState(() {
+            isLoading = false; // Hide loading spinner
+          });
+          _showBookingSuccessDialog(context);
+        } else if (state is BookingFailure) {
+          setState(() {
+            isLoading = false; // Hide loading spinner
+          });
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Failed to create booking: ${state.error}')),
+          );
+        }
+      },
+      child: Column(
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Expanded(
+                child: buildDatePickerField(checkInDateController,
+                    'Check-in Date', context, 'Check-in date', () {
+                  selectDate(context, checkInDateController);
+                }),
               ),
-            ),
-            const SizedBox(width: 10),
-            Expanded(
-              child: _buildTimePickerField(
-                timeOfDepartureController,
-                'Time of Departure',
-                context,
+              const SizedBox(width: 10),
+              Expanded(
+                child: buildDatePickerField(checkOutDateController,
+                    'Check-out Date', context, 'Check-out date', () {
+                  selectDate(context, checkOutDateController);
+                }),
               ),
-            ),
-          ],
-        ),
-        const SizedBox(height: 10),
-
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Expanded(
-              child: _buildLabelledTextField(fullNameController, 'Full Name',
-                  Icons.person, 'Juan Dela Cruz'),
-            ),
-            const SizedBox(width: 10),
-            Expanded(
-              child: _buildLabelledTextField(emailController, 'Email Address',
-                  Icons.email, 'example@email.com'),
-            ),
-          ],
-        ),
-        const SizedBox(height: 10),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Expanded(
-              child: _buildPhoneNumberField(
-                  phoneNumberController, 'Phone Number', Icons.phone),
-            ),
-            const SizedBox(width: 10),
-            Expanded(
-              child: _buildLabelledTextField(
-                  addressController, 'Address', Icons.home, '123 Main St'),
-            ),
-          ],
-        ),
-        const SizedBox(height: 10),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Expanded(
-              child: _buildLabelledNumericTextField(
-                  adultsController, 'Adults (Pax)', Icons.people, '0'),
-            ),
-            const SizedBox(width: 10),
-            Expanded(
-              child: _buildLabelledNumericTextField(
-                  childrenController, 'Children (Pax)', Icons.child_care, '0'),
-            ),
-          ],
-        ),
-        const SizedBox(height: 20),
-
-        // Book Now Button
-        SizedBox(
-          width: double.infinity,
-          height: 50,
-          child: ElevatedButton(
-            onPressed: isBookButtonEnabled
-                ? () {
-                    DateTime? arrivalDateTime = _combineDateAndTime(
-                        checkInDateController.text,
-                        timeOfArrivalController.text);
-                    DateTime? departureDateTime = _combineDateAndTime(
-                        checkOutDateController.text,
-                        timeOfDepartureController.text);
-
-                    print("Time of Arrival: $arrivalDateTime");
-                    print("Time of Departure: $departureDateTime");
-
-                    // Send these DateTime objects to the backend
-                  }
-                : null, // Disable button when fields are incomplete
-            style: ElevatedButton.styleFrom(
-              backgroundColor: isBookButtonEnabled
-                  ? const Color.fromARGB(255, 29, 53, 115)
-                  : Colors.grey, // Change color if disabled
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(10),
-              ),
-            ),
-            child: const Text(
-              'Book Now',
-              style: TextStyle(
-                fontSize: 18,
-                color: Colors.white,
-              ),
-            ),
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildPhoneNumberField(
-      TextEditingController controller, String label, IconData icon) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          label,
-          style: const TextStyle(
-            color: Color.fromARGB(255, 142, 142, 147),
-            fontSize: 14,
-          ),
-        ),
-        const SizedBox(height: 4),
-        SizedBox(
-          height: 40,
-          child: TextField(
-            controller: controller,
-            keyboardType: TextInputType.phone,
-            inputFormatters: [
-              FilteringTextInputFormatter.digitsOnly,
-              LengthLimitingTextInputFormatter(12),
             ],
-            decoration: InputDecoration(
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(10),
-                borderSide: const BorderSide(color: Colors.black),
+          ),
+          const SizedBox(height: 10),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Expanded(
+                child: buildTimePickerField(
+                    timeOfArrivalController, 'Time of Arrival', context, () {
+                  selectTime(context, timeOfArrivalController);
+                }),
               ),
-              prefixIcon: Icon(icon),
-              hintText: '+63 9123456789',
-              hintStyle: const TextStyle(color: Colors.grey),
-              contentPadding: const EdgeInsets.symmetric(vertical: 8),
-            ),
-            onChanged: (value) {
-              _checkFieldsFilled(); // Check if fields are filled when input changes
-            },
-            style: const TextStyle(
-                color: Colors.black), // Make text black when present
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildDatePickerField(TextEditingController controller, String label,
-      BuildContext context, String placeholder) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          label,
-          style: const TextStyle(
-            color: Color.fromARGB(255, 142, 142, 147),
-            fontSize: 14,
-          ),
-        ),
-        const SizedBox(height: 4),
-        SizedBox(
-          height: 40,
-          child: TextField(
-            controller: controller,
-            readOnly: true,
-            decoration: InputDecoration(
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(10),
-                borderSide: const BorderSide(color: Colors.black),
+              const SizedBox(width: 10),
+              Expanded(
+                child: buildTimePickerField(
+                    timeOfDepartureController, 'Time of Departure', context,
+                    () {
+                  selectTime(context, timeOfDepartureController);
+                }),
               ),
-              prefixIcon: Icon(Icons.calendar_today),
-              hintText: placeholder,
-              hintStyle: const TextStyle(color: Colors.grey),
-              contentPadding: const EdgeInsets.symmetric(vertical: 8),
-            ),
-            onTap: () {
-              _selectDate(context, controller);
-            },
-            style: const TextStyle(color: Colors.black),
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildTimePickerField(
-      TextEditingController controller, String label, BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          label,
-          style: const TextStyle(
-            color: Color.fromARGB(255, 142, 142, 147),
-            fontSize: 14,
-          ),
-        ),
-        const SizedBox(height: 4),
-        SizedBox(
-          height: 40,
-          child: TextField(
-            controller: controller,
-            readOnly: true,
-            decoration: InputDecoration(
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(10),
-                borderSide: const BorderSide(color: Colors.black),
-              ),
-              prefixIcon: Icon(Icons.access_time),
-              hintText: 'Select Time',
-              hintStyle: const TextStyle(color: Colors.grey),
-              contentPadding: const EdgeInsets.symmetric(vertical: 8),
-            ),
-            onTap: () {
-              _selectTime(context, controller);
-            },
-            style: const TextStyle(color: Colors.black),
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildLabelledTextField(TextEditingController controller, String label,
-      IconData icon, String placeholder) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          label,
-          style: const TextStyle(
-            color: Color.fromARGB(255, 142, 142, 147),
-            fontSize: 14,
-          ),
-        ),
-        const SizedBox(height: 4),
-        SizedBox(
-          height: 40,
-          child: TextField(
-            controller: controller,
-            decoration: InputDecoration(
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(10),
-                borderSide: const BorderSide(color: Colors.black),
-              ),
-              prefixIcon: Icon(icon),
-              hintText: placeholder,
-              hintStyle: const TextStyle(color: Colors.grey),
-              contentPadding: const EdgeInsets.symmetric(vertical: 8),
-            ),
-            style: const TextStyle(color: Colors.black),
-            onChanged: (value) {
-              _checkFieldsFilled(); // Check if fields are filled when input changes
-            },
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildLabelledNumericTextField(TextEditingController controller,
-      String label, IconData icon, String placeholder) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          label,
-          style: const TextStyle(
-            color: Color.fromARGB(255, 142, 142, 147),
-            fontSize: 14,
-          ),
-        ),
-        const SizedBox(height: 4),
-        SizedBox(
-          height: 40,
-          child: TextField(
-            controller: controller,
-            keyboardType: TextInputType.number,
-            inputFormatters: [
-              FilteringTextInputFormatter.digitsOnly,
             ],
-            decoration: InputDecoration(
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(10),
-                borderSide: const BorderSide(color: Colors.black),
-              ),
-              prefixIcon: Icon(icon),
-              hintText: placeholder,
-              hintStyle: const TextStyle(color: Colors.grey),
-              contentPadding: const EdgeInsets.symmetric(vertical: 8),
-            ),
-            style: const TextStyle(color: Colors.black),
-            onChanged: (value) {
-              _checkFieldsFilled(); // Check if fields are filled when input changes
-            },
           ),
-        ),
-      ],
+          const SizedBox(height: 10),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Expanded(
+                child: buildLabelledTextField(fullNameController, 'Full Name',
+                    Icons.person, 'Juan Dela Cruz', _checkFieldsFilled),
+              ),
+              const SizedBox(width: 10),
+              Expanded(
+                child: buildLabelledTextField(emailController, 'Email Address',
+                    Icons.email, 'example@email.com', _checkFieldsFilled),
+              ),
+            ],
+          ),
+          const SizedBox(height: 10),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Expanded(
+                child: buildLabelledTextField(
+                    phoneNumberController,
+                    'Phone Number',
+                    Icons.phone,
+                    '+63 9123456789',
+                    _checkFieldsFilled),
+              ),
+              const SizedBox(width: 10),
+              Expanded(
+                child: buildLabelledTextField(addressController, 'Address',
+                    Icons.home, '123 Main St', _checkFieldsFilled),
+              ),
+            ],
+          ),
+          const SizedBox(height: 10),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Expanded(
+                child: buildLabelledNumericTextField(adultsController,
+                    'Adults (Pax)', Icons.people, '0', _checkFieldsFilled),
+              ),
+              const SizedBox(width: 10),
+              Expanded(
+                child: buildLabelledNumericTextField(
+                    childrenController,
+                    'Children (Pax)',
+                    Icons.child_care,
+                    '0',
+                    _checkFieldsFilled),
+              ),
+            ],
+          ),
+          const SizedBox(height: 20),
+          SizedBox(
+            width: double.infinity,
+            height: 50,
+            child: ElevatedButton(
+              onPressed: isBookButtonEnabled && !isLoading
+                  ? () {
+                      _createBooking(context);
+                    }
+                  : null,
+              style: ElevatedButton.styleFrom(
+                backgroundColor: isBookButtonEnabled && !isLoading
+                    ? const Color.fromARGB(255, 29, 53, 115)
+                    : Colors.grey,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10),
+                ),
+              ),
+              child: isLoading
+                  ? const CircularProgressIndicator(
+                      valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                    )
+                  : const Text(
+                      'Book Now',
+                      style: TextStyle(
+                        fontSize: 18,
+                        color: Colors.white,
+                      ),
+                    ),
+            ),
+          ),
+        ],
+      ),
     );
   }
 }

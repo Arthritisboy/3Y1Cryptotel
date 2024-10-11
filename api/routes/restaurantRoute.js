@@ -14,7 +14,7 @@ router
 router
   .route('/:id')
   .get(authController.protect, restaurantController.getRestaurant)
-  .patch(restaurantController.updateRestaurant)
+  .patch(upload.single('image'),restaurantController.updateRestaurant)
   .delete(restaurantController.deleteRestaurant);
 
 module.exports = router;

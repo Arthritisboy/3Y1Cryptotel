@@ -63,6 +63,7 @@ class HomeScreen extends StatelessWidget {
               onTap: () async {
                 List<double> coordinates = await hotel.getCoordinates();
                 Navigator.push(
+                  // ignore: use_build_context_synchronously
                   context,
                   MaterialPageRoute(
                     builder: (context) => HotelScreen(

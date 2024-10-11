@@ -27,7 +27,7 @@ exports.getBookings = catchAsync(async (req, res, next) => {
   }
 });
 
-// Create a new booking
+/// Create a new booking
 exports.createBooking = catchAsync(async (req, res, next) => {
   try {
     console.log('Booking request body:', req.body);
@@ -67,13 +67,16 @@ exports.createBooking = catchAsync(async (req, res, next) => {
     let totalPrice;
     let hotelName = '';
     let roomName = '';
+    let restaurantName = ''; // For restaurant bookings
+
+    let numAdults = parseInt(adult, 10);
+    let numChildren = parseInt(children, 10);
 
     if (bookingType === 'HotelBooking') {
       const room = await Room.findById(roomId);
       const hotel = await Hotel.findById(hotelId);
 
       if (!room || !hotel) {
-        console.log('Room or Hotel not found');
         return next(new AppError('Room or Hotel not found', 404));
       }
 
@@ -83,57 +86,20 @@ exports.createBooking = catchAsync(async (req, res, next) => {
       const nights = Math.ceil((checkOut - checkIn) / (1000 * 60 * 60 * 24));
       totalPrice = room.price * nights;
 
-      // Set room availability to false
       room.availability = false;
       await room.save();
     } else if (bookingType === 'RestaurantBooking') {
       const restaurant = await Restaurant.findById(restaurantId);
       if (!restaurant) {
-        console.log('Restaurant not found');
         return next(new AppError('Restaurant not found', 404));
       }
 
-      const existingBooking = await Booking.findOne({
-        restaurantId,
-        tableNumber,
-        checkInDate: { $lte: checkOut },
-        checkOutDate: { $gte: checkIn },
-      });
+      restaurantName = restaurant.name;
 
-      if (existingBooking) {
-        console.log('Table number is already booked for the selected time.');
-        return next(
-          new AppError(
-            'Table number is already booked for the selected time.',
-            400,
-          ),
-        );
-      }
-
-      const currentBookingsCount = await Booking.countDocuments({
-        restaurantId,
-        checkInDate: { $lte: checkOut },
-        checkOutDate: { $gte: checkIn },
-      });
-
-      if (currentBookingsCount >= restaurant.capacity) {
-        console.log('The restaurant is fully booked for the selected time.');
-        return next(
-          new AppError(
-            'The restaurant is fully booked for the selected time.',
-            400,
-          ),
-        );
-      }
-
-      const pricePerPerson = restaurant.pricePerPerson;
-      totalPrice = pricePerPerson * (adult + children);
-    } else {
-      console.log('Invalid booking type');
-      return next(new AppError('Invalid booking type', 400));
+      const pricePerPerson = restaurant.pricePerPerson || 0;
+      totalPrice = pricePerPerson * (numAdults + numChildren);
     }
 
-    // Create a new booking
     const newBooking = await Booking.create({
       userId,
       bookingType,
@@ -149,25 +115,27 @@ exports.createBooking = catchAsync(async (req, res, next) => {
       checkOutDate,
       timeOfArrival,
       timeOfDeparture,
-      adult,
-      children,
+      adult: numAdults,
+      children: numChildren,
       totalPrice,
+      status: 'pending',
     });
 
-    console.log('Booking created successfully:', newBooking);
-
-    // Send email to the user after the booking is created
     await sendEmail({
-      email: email, // User's email address
+      email: email,
       subject: 'Booking Confirmation - Your booking is being processed',
-      type: 'booking', // Define this in the email utility
+      type: 'booking',
       bookingDetails: {
+        bookingType,
         fullName,
-        hotelName, // Send hotel name instead of hotelId
-        roomName, // Send room name instead of roomId
+        hotelName,
+        roomName,
+        restaurantName,
+        tableNumber,
         checkInDate,
         checkOutDate,
         totalPrice,
+        status: 'pending',
       },
     });
 
@@ -178,13 +146,11 @@ exports.createBooking = catchAsync(async (req, res, next) => {
       },
     });
   } catch (error) {
-    console.error('Booking creation error:', error);
     return next(
       new AppError('Error in creating booking. Please try again.', 500),
     );
   }
 });
-
 // Update an existing booking (e.g., change dates)
 exports.updateBooking = catchAsync(async (req, res, next) => {
   try {

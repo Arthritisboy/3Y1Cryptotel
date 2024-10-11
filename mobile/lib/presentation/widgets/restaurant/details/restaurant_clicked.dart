@@ -20,9 +20,11 @@ class RestaurantClicked extends StatefulWidget {
   final double latitude;
   final double longitude;
   final String restaurantImage;
+  final int capacity; // Capacity added
 
   const RestaurantClicked({
     super.key,
+    required this.capacity, // Capacity required
     required this.restaurantId,
     required this.restaurantName,
     required this.rating,
@@ -177,6 +179,24 @@ class _RestaurantClickedState extends State<RestaurantClicked> {
                           ),
                         ],
                       ),
+                      const SizedBox(height: 3),
+                      // Capacity information added
+                      Row(
+                        children: [
+                          const Icon(Icons.group_outlined,
+                              color: Color.fromARGB(255, 142, 142, 147),
+                              size: 26),
+                          const SizedBox(width: 8.0),
+                          Text(
+                            "Capacity: ${widget.capacity} people",
+                            style: const TextStyle(
+                              fontSize: 15,
+                              fontWeight: FontWeight.w400,
+                              color: Color.fromARGB(255, 142, 142, 147),
+                            ),
+                          ),
+                        ],
+                      ),
                     ],
                   ),
                 ),
@@ -192,10 +212,15 @@ class _RestaurantClickedState extends State<RestaurantClicked> {
                     thickness: 2, color: Color.fromARGB(255, 142, 142, 147)),
                 if (widget.activeIndex == 0)
                   Padding(
-                      padding: EdgeInsets.only(left: 16, right: 16, bottom: 10),
-                      child: RestaurantInputFields()),
+                      padding: const EdgeInsets.only(
+                          left: 16, right: 16, bottom: 10),
+                      child: RestaurantInputFields(
+                        restaurantId: widget.restaurantId,
+                        capacity: widget.capacity,
+                      )),
                 if (widget.activeIndex == 1)
                   RestaurantDetails(
+                    capacity: widget.capacity,
                     restaurantName: widget.restaurantName,
                     rating: widget.rating,
                     price: widget.price,
