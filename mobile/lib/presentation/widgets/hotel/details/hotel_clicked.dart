@@ -207,7 +207,10 @@ class _HotelClickedState extends State<HotelClicked> {
                 const Divider(
                     thickness: 2, color: Color.fromARGB(255, 142, 142, 147)),
                 if (widget.activeIndex == 0)
-                  RoomSelection(roomList: filteredRoomList),
+                  RoomSelection(
+                    roomList: filteredRoomList,
+                    hotelId: widget.hotelId,
+                  ),
                 if (widget.activeIndex == 2)
                   HotelDetails(
                     hotelName: widget.hotelName,

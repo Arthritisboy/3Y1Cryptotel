@@ -12,10 +12,10 @@ class BookingModel {
   final DateTime checkOutDate;
   final DateTime? timeOfArrival;
   final DateTime? timeOfDeparture;
-  final int adults;
+  final int adult;
   final int children;
-  final double totalPrice;
-  bool isAccepted;
+  // final double totalPrice;
+  // bool isAccepted;
 
   BookingModel({
     required this.id,
@@ -29,12 +29,12 @@ class BookingModel {
     required this.address,
     required this.checkInDate,
     required this.checkOutDate,
-    this.timeOfArrival,
-    this.timeOfDeparture,
-    required this.adults,
+    required this.timeOfArrival,
+    required this.timeOfDeparture,
+    required this.adult,
     required this.children,
-    required this.totalPrice,
-    this.isAccepted = false,
+    // required this.totalPrice,
+    // this.isAccepted = false,
   });
 
   // Convert JSON to BookingModel object
@@ -57,33 +57,29 @@ class BookingModel {
       timeOfDeparture: json['timeOfDeparture'] != null
           ? DateTime.parse(json['timeOfDeparture'])
           : null,
-      adults: json['adults'],
+      adult: json['adult'],
       children: json['children'],
-      totalPrice: json['totalPrice'].toDouble(),
-      isAccepted: json['isAccepted'] ?? false,
+      // totalPrice: json['totalPrice'].toDouble(),
+      // isAccepted: json['isAccepted'] ?? false,
     );
   }
 
   // Convert BookingModel object to JSON
   Map<String, dynamic> toJson() {
     return {
-      'id': id,
       'bookingType': bookingType,
       'hotelId': hotelId,
       'roomId': roomId,
-      'restaurantId': restaurantId,
       'fullName': fullName,
       'email': email,
       'phoneNumber': phoneNumber,
       'address': address,
-      'checkInDate': checkInDate.toIso8601String(),
-      'checkOutDate': checkOutDate.toIso8601String(),
-      'timeOfArrival': timeOfArrival?.toIso8601String(),
-      'timeOfDeparture': timeOfDeparture?.toIso8601String(),
-      'adults': adults,
+      'checkInDate': checkInDate.toUtc().toIso8601String(), // Ensure UTC format
+      'checkOutDate': checkOutDate.toUtc().toIso8601String(),
+      'timeOfArrival': timeOfArrival?.toUtc().toIso8601String(),
+      'timeOfDeparture': timeOfDeparture?.toUtc().toIso8601String(),
+      'adult': adult, // Change from 'adults' to 'adult'
       'children': children,
-      'totalPrice': totalPrice,
-      'isAccepted': isAccepted,
     };
   }
 }

@@ -3,7 +3,7 @@ import 'package:hotel_flutter/data/model/hotel/rating_model.dart';
 import 'package:hotel_flutter/data/model/hotel/room_model.dart';
 import 'package:hotel_flutter/presentation/widgets/hotel/ratings/hotelRatings.dart';
 import 'package:hotel_flutter/presentation/widgets/hotel/navigation/navigation_row.dart';
-import 'package:hotel_flutter/presentation/widgets/hotel/utils/hotel_input_fields.dart';
+import 'package:hotel_flutter/presentation/widgets/hotel/utils/hotel_input_fields/hotel_input_fields.dart';
 import 'package:hotel_flutter/presentation/widgets/hotel/details/roomDetails.dart';
 
 class ActiveRoom extends StatefulWidget {
@@ -12,6 +12,8 @@ class ActiveRoom extends StatefulWidget {
   final int price;
   final String location;
   final RoomModel room;
+  final String hotelId;
+  final String roomId;
 
   const ActiveRoom({
     super.key,
@@ -20,6 +22,8 @@ class ActiveRoom extends StatefulWidget {
     required this.price,
     required this.location,
     required this.room,
+    required this.hotelId,
+    required this.roomId,
   });
 
   @override
@@ -151,7 +155,11 @@ class _ActiveRoomState extends State<ActiveRoom> {
                 padding: EdgeInsets.only(left: 16, right: 16),
                 child: Column(
                   children: [
-                    if (activeIndex == 1) HotelInputFields(),
+                    if (activeIndex == 1)
+                      HotelInputFields(
+                        hotelId: widget.hotelId,
+                        roomId: widget.roomId,
+                      ),
                     if (activeIndex == 2) Roomdetails(),
                     if (activeIndex == 3)
                       HotelRatingWidget(ratings: filteredRatingList),

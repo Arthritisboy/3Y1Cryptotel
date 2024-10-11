@@ -10,6 +10,7 @@ import 'package:hotel_flutter/data/repositories/booking_repository.dart';
 import 'package:hotel_flutter/data/repositories/hotel_repository.dart';
 import 'package:hotel_flutter/data/repositories/restaurant_repository.dart';
 import 'package:hotel_flutter/logic/bloc/auth/auth_bloc.dart';
+import 'package:hotel_flutter/logic/bloc/booking/booking_bloc.dart';
 import 'package:hotel_flutter/logic/bloc/hotel/hotel_bloc.dart';
 import 'package:hotel_flutter/logic/bloc/restaurant/restaurant_bloc.dart';
 import 'package:hotel_flutter/presentation/screens/homeScreens/splash_screen.dart';
@@ -60,6 +61,11 @@ class MyApp extends StatelessWidget {
           BlocProvider(
             create: (context) => RestaurantBloc(
                 RepositoryProvider.of<RestaurantRepository>(context)),
+          ),
+          BlocProvider(
+            create: (context) => BookingBloc(
+                bookingRepository:
+                    RepositoryProvider.of<BookingRepository>(context)),
           ),
         ],
         child: MaterialApp(
