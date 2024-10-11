@@ -1,4 +1,4 @@
-class BookingRequest {
+class BookingModel {
   final String id;
   final String bookingType; // HotelBooking or RestaurantBooking
   final String? hotelId;
@@ -17,7 +17,7 @@ class BookingRequest {
   final double totalPrice;
   bool isAccepted;
 
-  BookingRequest({
+  BookingModel({
     required this.id,
     required this.bookingType,
     this.hotelId,
@@ -37,9 +37,9 @@ class BookingRequest {
     this.isAccepted = false,
   });
 
-  // Convert JSON to BookingRequest object
-  factory BookingRequest.fromJson(Map<String, dynamic> json) {
-    return BookingRequest(
+  // Convert JSON to BookingModel object
+  factory BookingModel.fromJson(Map<String, dynamic> json) {
+    return BookingModel(
       id: json['id'],
       bookingType: json['bookingType'],
       hotelId: json['hotelId'],
@@ -64,7 +64,7 @@ class BookingRequest {
     );
   }
 
-  // Convert BookingRequest object to JSON
+  // Convert BookingModel object to JSON
   Map<String, dynamic> toJson() {
     return {
       'id': id,
