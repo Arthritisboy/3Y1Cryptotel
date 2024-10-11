@@ -6,6 +6,9 @@ const bookingSchema = new mongoose.Schema({
     required: true,
     enum: ['HotelBooking', 'RestaurantBooking'], // Specify allowed types
   },
+  userId: {
+    type: String,
+  },
   hotelId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Hotel',
