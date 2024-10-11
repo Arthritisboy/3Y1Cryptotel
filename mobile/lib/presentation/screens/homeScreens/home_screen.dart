@@ -40,7 +40,7 @@ class HomeScreen extends StatelessWidget {
                     } else if (state is HotelError) {
                       return Center(child: Text('Error: ${state.error}'));
                     }
-                    return const Center(child: Text('No data available'));
+                    return _buildShimmerLoadingEffect(); // Shimmer Effect
                   },
                 ),
               ),

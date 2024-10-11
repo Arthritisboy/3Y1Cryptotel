@@ -27,7 +27,6 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         final user = await authRepository.login(event.email, event.password);
         emit(AuthenticatedLogin(user)); // Pass the LoginModel directly
       } catch (e) {
-        print("Login Error: $e");
         emit(AuthError('Login failed: ${e.toString()}'));
       }
     });
