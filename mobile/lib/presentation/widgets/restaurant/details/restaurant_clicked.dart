@@ -214,7 +214,10 @@ class _RestaurantClickedState extends State<RestaurantClicked> {
                   Padding(
                       padding: const EdgeInsets.only(
                           left: 16, right: 16, bottom: 10),
-                      child: RestaurantInputFields()),
+                      child: RestaurantInputFields(
+                        restaurantId: widget.restaurantId,
+                        capacity: widget.capacity,
+                      )),
                 if (widget.activeIndex == 1)
                   RestaurantDetails(
                     capacity: widget.capacity,

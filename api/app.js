@@ -90,7 +90,7 @@ app.use('/api/v1/bookings', bookingRouter);
 app.use('/api/v1/hotel', hotelRouter);
 app.use('/api/v1/restaurant', restaurantRouter);
 app.use('/api/v1/ratings', ratingRouter);
-app.use('/dev/v1/update-all', updateRouter)
+app.use('/dev/v1/update-all', updateRouter);
 
 //! Handle all undefined routes
 app.all('*', (req, res, next) => {

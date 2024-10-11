@@ -55,7 +55,6 @@ class _RestaurantClickedState extends State<RestaurantClicked> {
     return BlocBuilder<RestaurantBloc, RestaurantState>(
       builder: (context, state) {
         if (state is RestaurantLoading) {
-          // Display the shimmer effect during loading state
           return const ShimmerHotelClicked();
         } else if (state is RestaurantError) {
           return Center(child: Text(state.error));
@@ -185,10 +184,8 @@ class _RestaurantClickedState extends State<RestaurantClicked> {
                                 color: Color.fromARGB(255, 142, 142, 147),
                                 fontSize: 15,
                               ),
-                              overflow: TextOverflow
-                                  .ellipsis, // Add ellipsis if text is too long
-                              maxLines:
-                                  1, // Limit to 1 line to prevent overflow
+                              overflow: TextOverflow.ellipsis,
+                              maxLines: 1,
                             ),
                           ),
                         ],
@@ -218,7 +215,6 @@ class _RestaurantClickedState extends State<RestaurantClicked> {
                     longitude: widget.longitude,
                   ),
                 if (widget.activeIndex == 3) Center(child: Text('Test'))
-                // HotelRatingWidget(ratings: filteredRatingList),
               ],
             ),
           );
