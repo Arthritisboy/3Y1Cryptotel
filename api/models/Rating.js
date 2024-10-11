@@ -18,13 +18,26 @@ const ratingSchema = new mongoose.Schema({
     },
     roomId: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'Room',  // Room being rated
-        required: true
+        ref: 'Room',
+        required: false  // Room being rated (optional, since we now support restaurantId too)
+    },
+    restaurantId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Restaurant',
+        required: false  // Restaurant being rated (optional)
     },
     createdAt: {
         type: Date,
         default: Date.now
     }
+});
+
+// Custom validation to ensure either roomId or restaurantId is provided
+ratingSchema.pre('validate', function(next) {
+    if (!this.roomId && !this.restaurantId) {
+        return next(new Error('Either roomId or restaurantId must be provided.'));
+    }
+    next();
 });
 
 const Rating = mongoose.model('Rating', ratingSchema);

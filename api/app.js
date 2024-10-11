@@ -25,7 +25,10 @@ const userRoute = require('./routes/userRoute');
 const bookingRouter = require('./routes/bookingRoute.js');
 const hotelRouter = require('./routes/hotel.js');
 const restaurantRouter = require('./routes/restaurantRoute.js');
+const ratingRouter = require('./routes/ratingRoute.js');
 // const web3Router = require('./routes/web3');
+
+const updateRouter = require('./routes/updateRoute.js');
 
 //!Error Handler
 const AppError = require('./utils/appError');
@@ -86,6 +89,8 @@ app.use('/api/v1/users', userRoute);
 app.use('/api/v1/bookings', bookingRouter);
 app.use('/api/v1/hotel', hotelRouter);
 app.use('/api/v1/restaurant', restaurantRouter);
+app.use('/api/v1/ratings', ratingRouter);
+app.use('/dev/v1/update-all', updateRouter)
 
 //! Handle all undefined routes
 app.all('*', (req, res, next) => {
