@@ -6,6 +6,7 @@ class SignUpModel {
   final String confirmPassword;
   final String phoneNumber;
   final String gender;
+  final String roles;
   final String? profilePicture;
 
   SignUpModel({
@@ -15,6 +16,7 @@ class SignUpModel {
     required this.lastName,
     required this.email,
     required this.password,
+    required this.roles,
     required this.confirmPassword,
     this.profilePicture, // Nullable field
   });
@@ -27,6 +29,7 @@ class SignUpModel {
       'password': password,
       'phoneNumber': phoneNumber,
       'gender': gender,
+      'roles': roles,
       'confirmPassword': confirmPassword,
       'profilePicture': profilePicture ?? '', // Optional field
     };

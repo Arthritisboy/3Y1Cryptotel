@@ -16,6 +16,7 @@ class UploadPictureScreen extends StatefulWidget {
     required this.password,
     required this.confirmPassword,
     required this.phoneNumber,
+    required this.roles,
     required this.gender,
   });
 
@@ -26,6 +27,7 @@ class UploadPictureScreen extends StatefulWidget {
   final String confirmPassword;
   final String phoneNumber;
   final String gender;
+  final String roles;
 
   @override
   State<UploadPictureScreen> createState() => _UploadPictureScreenState();
@@ -225,6 +227,7 @@ class _UploadPictureScreenState extends State<UploadPictureScreen> {
       confirmPassword: widget.confirmPassword,
       gender: widget.gender,
       phoneNumber: widget.phoneNumber,
+      roles: widget.roles,
       profilePicture: profilePath,
     );
 

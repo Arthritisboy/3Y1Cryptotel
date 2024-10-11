@@ -21,6 +21,7 @@ class _SignupFormState extends State<SignupForm> {
   final TextEditingController _phoneNumberController = TextEditingController();
 
   String? _selectedGender;
+  String? _selectedRole; // New variable for role selection
 
   bool _isPasswordVisible = false;
   bool _isConfirmPasswordVisible = false;
@@ -73,66 +74,16 @@ class _SignupFormState extends State<SignupForm> {
               },
             ),
 
-            SizedBox(
-              height: 8,
-            ),
-            // Gender Dropdown with matching width and height
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16),
-              child: SizedBox(
-                width: screenWidth *
-                    0.7, // Matching the width of other input fields
-                height: screenWidth *
-                    0.1, // Matching the height of other input fields
-                child: DropdownButtonFormField<String>(
-                  decoration: InputDecoration(
-                    labelText: 'Gender',
-                    labelStyle: const TextStyle(
-                        color: Colors.black), // Matching text color
-                    hintStyle: const TextStyle(
-                        color:
-                            Color.fromARGB(12, 0, 0, 0)), // Matching hint color
-                    border: const OutlineInputBorder(
-                      borderSide: BorderSide(
-                          color: Colors.black), // Matching border color
-                    ),
-                    enabledBorder: const OutlineInputBorder(
-                      borderSide: BorderSide(
-                          color: Colors.black), // Matching enabled border color
-                    ),
-                    contentPadding: const EdgeInsets.symmetric(
-                        horizontal: 12, vertical: 12),
-                  ),
-                  value: _selectedGender,
-                  items: const [
-                    DropdownMenuItem(
-                      value: 'male',
-                      child: Text('Male'),
-                    ),
-                    DropdownMenuItem(
-                      value: 'female',
-                      child: Text('Female'),
-                    ),
-                    DropdownMenuItem(
-                      value: 'other',
-                      child: Text('Other'),
-                    ),
-                  ],
-                  onChanged: (value) {
-                    setState(() {
-                      _selectedGender = value;
-                    });
-                  },
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Please select your gender';
-                    }
-                    return null;
-                  },
-                ),
-              ),
-            ),
             const SizedBox(height: 8),
+
+            // Gender Dropdown
+            _buildGenderDropdown(screenWidth),
+            const SizedBox(height: 8),
+
+            // Role Dropdown
+            _buildRoleDropdown(screenWidth),
+            const SizedBox(height: 8),
+
             // Email Input
             CustomTextFormField(
               label: 'Email',
@@ -191,8 +142,8 @@ class _SignupFormState extends State<SignupForm> {
               width: screenWidth * 0.5,
               child: ElevatedButton(
                 style: ButtonStyle(
-                  backgroundColor: WidgetStateProperty.all(
-                      const Color(0xFF1C3473)), // Updated MaterialStateProperty
+                  backgroundColor:
+                      MaterialStateProperty.all(const Color(0xFF1C3473)),
                 ),
                 onPressed: _isLoading
                     ? null
@@ -209,6 +160,7 @@ class _SignupFormState extends State<SignupForm> {
                                   _confirmPasswordController.text,
                               'phoneNumber': _phoneNumberController.text,
                               'gender': _selectedGender,
+                              'role': _selectedRole, // Pass role here
                             },
                           );
                         }
@@ -229,6 +181,87 @@ class _SignupFormState extends State<SignupForm> {
             const SizedBox(height: 8),
             _buildLoginRedirect(),
           ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildGenderDropdown(double screenWidth) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16),
+      child: SizedBox(
+        width: screenWidth * 0.7,
+        height: screenWidth * 0.1,
+        child: DropdownButtonFormField<String>(
+          decoration: InputDecoration(
+            labelText: 'Gender',
+            labelStyle: const TextStyle(color: Colors.black),
+            border: const OutlineInputBorder(
+              borderSide: BorderSide(color: Colors.black),
+            ),
+            enabledBorder: const OutlineInputBorder(
+              borderSide: BorderSide(color: Colors.black),
+            ),
+            contentPadding:
+                const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+          ),
+          value: _selectedGender,
+          items: const [
+            DropdownMenuItem(value: 'male', child: Text('Male')),
+            DropdownMenuItem(value: 'female', child: Text('Female')),
+            DropdownMenuItem(value: 'other', child: Text('Other')),
+          ],
+          onChanged: (value) {
+            setState(() {
+              _selectedGender = value;
+            });
+          },
+          validator: (value) {
+            if (value == null) {
+              return 'Please select your gender';
+            }
+            return null;
+          },
+        ),
+      ),
+    );
+  }
+
+  Widget _buildRoleDropdown(double screenWidth) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16),
+      child: SizedBox(
+        width: screenWidth * 0.7,
+        height: screenWidth * 0.1,
+        child: DropdownButtonFormField<String>(
+          decoration: InputDecoration(
+            labelText: 'Role',
+            labelStyle: const TextStyle(color: Colors.black),
+            border: const OutlineInputBorder(
+              borderSide: BorderSide(color: Colors.black),
+            ),
+            enabledBorder: const OutlineInputBorder(
+              borderSide: BorderSide(color: Colors.black),
+            ),
+            contentPadding:
+                const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+          ),
+          value: _selectedRole,
+          items: const [
+            DropdownMenuItem(value: 'user', child: Text('User')),
+            DropdownMenuItem(value: 'admin', child: Text('Admin')),
+          ],
+          onChanged: (value) {
+            setState(() {
+              _selectedRole = value;
+            });
+          },
+          validator: (value) {
+            if (value == null) {
+              return 'Please select your role';
+            }
+            return null;
+          },
         ),
       ),
     );

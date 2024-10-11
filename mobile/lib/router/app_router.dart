@@ -128,6 +128,7 @@ class AppRouter {
               confirmPassword: args['confirmPassword'],
               phoneNumber: args['phoneNumber'],
               gender: args['gender'],
+              roles: args['roles'],
             ),
           );
         } else {

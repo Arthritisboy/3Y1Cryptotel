@@ -52,6 +52,7 @@ exports.register = catchAsync(async (req, res, next) => {
     confirmPassword: req.body.confirmPassword,
     gender: req.body.gender,
     phoneNumber: req.body.phoneNumber,
+    roles: req.body.roles,
     profile: profile || undefined,
     hasOnboardingCompleted: req.body.hasOnboardingCompleted,
   });
