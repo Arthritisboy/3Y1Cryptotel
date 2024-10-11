@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:hotel_flutter/presentation/screens/homeScreens/restaurant.dart';
 import 'package:hotel_flutter/presentation/widgets/home/card_widget.dart';
 import 'package:hotel_flutter/logic/bloc/restaurant/restaurant_bloc.dart';
 import 'package:hotel_flutter/logic/bloc/restaurant/restaurant_event.dart';
@@ -60,17 +61,31 @@ class RestaurantScreen extends StatelessWidget {
           return Padding(
             padding: const EdgeInsets.only(right: 10.0),
             child: InkWell(
-              onTap: () {
-                // Handle restaurant details navigation
-                // Example: Navigator.push(context, MaterialPageRoute(...));
+              onTap: () async {
+                List<double> coordinates = await restaurant.getCoordinates();
+                Navigator.push(
+                  // ignore: use_build_context_synchronously
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => Restaurant(
+                      restaurantId: restaurant.id,
+                      restaurantImage: restaurant.restaurantImage,
+                      restaurantName: restaurant.name,
+                      rating: restaurant.rating,
+                      price: restaurant.price,
+                      location: restaurant.location,
+                      time: restaurant.openingHours,
+                      latitude: coordinates[0],
+                      longitude: coordinates[1],
+                    ),
+                  ),
+                );
               },
               child: CardWidget(
-                imagePath: restaurant.restaurantImage,
-                hotelName: restaurant.name,
-                location: restaurant.location,
-                rating: restaurant.rating ??
-                    0.0, // Replace with the actual rating property
-              ),
+                  imagePath: restaurant.restaurantImage,
+                  hotelName: restaurant.name,
+                  location: restaurant.location,
+                  rating: restaurant.rating),
             ),
           );
         }).toList(),

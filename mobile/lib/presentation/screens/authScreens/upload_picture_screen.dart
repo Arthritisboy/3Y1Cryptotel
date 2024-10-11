@@ -201,6 +201,7 @@ class _UploadPictureScreenState extends State<UploadPictureScreen> {
         });
       }
     } catch (e) {
+      // ignore: use_build_context_synchronously
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Error: $e')),
       );
@@ -232,6 +233,7 @@ class _UploadPictureScreenState extends State<UploadPictureScreen> {
     // Wait for the sign-up process to start
     await Future.delayed(const Duration(milliseconds: 500));
 
+    // ignore: use_build_context_synchronously
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(
         content: Text('Verification code is being sent...'),
@@ -242,6 +244,7 @@ class _UploadPictureScreenState extends State<UploadPictureScreen> {
     // Simulate additional loading delay for UX purposes
     await Future.delayed(const Duration(seconds: 2));
 
+    // ignore: use_build_context_synchronously
     Navigator.of(context).pushReplacementNamed(
       '/verifyCode',
       arguments: {'email': widget.email},
