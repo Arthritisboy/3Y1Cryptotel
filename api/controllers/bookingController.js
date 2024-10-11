@@ -77,8 +77,8 @@ exports.createBooking = catchAsync(async (req, res, next) => {
         return next(new AppError('Room or Hotel not found', 404));
       }
 
-      hotelName = hotel.name; // Get the hotel name
-      roomName = room.roomType; // Get the room name
+      hotelName = hotel.name;
+      roomName = room.type;
 
       const nights = Math.ceil((checkOut - checkIn) / (1000 * 60 * 60 * 24));
       totalPrice = room.price * nights;
