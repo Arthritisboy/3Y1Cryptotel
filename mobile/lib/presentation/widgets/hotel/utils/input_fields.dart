@@ -94,6 +94,22 @@ class _InputFieldsState extends State<InputFields> {
     }
   }
 
+  // This function combines the date and time fields into a single DateTime object.
+  DateTime? _combineDateAndTime(String date, String time) {
+    if (date.isEmpty || time.isEmpty) return null;
+    try {
+      final parsedDate = DateTime.parse(date); // Parse the date
+      final parsedTime = TimeOfDay.fromDateTime(
+          DateFormat.jm().parse(time)); // Parse the time (e.g., "9:30 AM")
+
+      return DateTime(parsedDate.year, parsedDate.month, parsedDate.day,
+          parsedTime.hour, parsedTime.minute);
+    } catch (e) {
+      print("Error parsing date or time: $e");
+      return null;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -190,7 +206,17 @@ class _InputFieldsState extends State<InputFields> {
           child: ElevatedButton(
             onPressed: isBookButtonEnabled
                 ? () {
-                    print("Book Now button pressed");
+                    DateTime? arrivalDateTime = _combineDateAndTime(
+                        checkInDateController.text,
+                        timeOfArrivalController.text);
+                    DateTime? departureDateTime = _combineDateAndTime(
+                        checkOutDateController.text,
+                        timeOfDepartureController.text);
+
+                    print("Time of Arrival: $arrivalDateTime");
+                    print("Time of Departure: $departureDateTime");
+
+                    // Send these DateTime objects to the backend
                   }
                 : null, // Disable button when fields are incomplete
             style: ElevatedButton.styleFrom(
