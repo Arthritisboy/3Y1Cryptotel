@@ -5,6 +5,7 @@ const Restaurant = require('../models/Restaurant');
 const Booking = require('../models/Booking');
 const catchAsync = require('../utils/catchAsync');
 const AppError = require('../utils/appError');
+const sendEmail = require('../utils/sendEmail'); // Import the email utility
 
 // Get all bookings for a user
 exports.getBookings = catchAsync(async (req, res, next) => {
@@ -149,6 +150,21 @@ exports.createBooking = catchAsync(async (req, res, next) => {
     });
 
     console.log('Booking created successfully:', newBooking);
+
+    // Send email to the user after the booking is created
+    await sendEmail({
+      email: email, // User's email address
+      subject: 'Booking Confirmation - Your booking is being processed',
+      type: 'booking', // Define this in the email utility
+      bookingDetails: {
+        fullName,
+        hotelId,
+        roomId,
+        checkInDate,
+        checkOutDate,
+        totalPrice,
+      },
+    });
 
     res.status(201).json({
       status: 'success',
