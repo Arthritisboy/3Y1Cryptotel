@@ -27,7 +27,7 @@ exports.getBookings = catchAsync(async (req, res, next) => {
   }
 });
 
-// Create a new booking
+/// Create a new booking
 exports.createBooking = catchAsync(async (req, res, next) => {
   try {
     console.log('Booking request body:', req.body);
@@ -67,6 +67,8 @@ exports.createBooking = catchAsync(async (req, res, next) => {
     let totalPrice;
     let hotelName = '';
     let roomName = '';
+    let numAdults;
+    let numChildren;
 
     if (bookingType === 'HotelBooking') {
       const room = await Room.findById(roomId);
@@ -126,11 +128,22 @@ exports.createBooking = catchAsync(async (req, res, next) => {
         );
       }
 
-      const pricePerPerson = restaurant.pricePerPerson;
-      totalPrice = pricePerPerson * (adult + children);
-    } else {
-      console.log('Invalid booking type');
-      return next(new AppError('Invalid booking type', 400));
+      // Fix the numAdults and numChildren issue
+      numAdults = parseInt(adult, 10); // Convert adult to integer
+      numChildren = parseInt(children, 10); // Convert children to integer
+
+      if (isNaN(numAdults) || isNaN(numChildren)) {
+        console.log('Invalid number of adults or children.');
+        return next(new AppError('Invalid number of adults or children.', 400));
+      }
+
+      const pricePerPerson = restaurant.pricePerPerson || 0; // Default to 0 if not defined
+      totalPrice = pricePerPerson * (numAdults + numChildren);
+
+      if (isNaN(totalPrice)) {
+        console.log('Error: totalPrice calculation resulted in NaN');
+        return next(new AppError('Invalid total price calculation', 400));
+      }
     }
 
     // Create a new booking
@@ -149,8 +162,8 @@ exports.createBooking = catchAsync(async (req, res, next) => {
       checkOutDate,
       timeOfArrival,
       timeOfDeparture,
-      adult,
-      children,
+      adult: numAdults,
+      children: numChildren,
       totalPrice,
       status: 'pending',
     });
