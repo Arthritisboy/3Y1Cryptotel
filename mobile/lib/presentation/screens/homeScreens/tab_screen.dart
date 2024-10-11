@@ -16,6 +16,7 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:hotel_flutter/presentation/widgets/shimmer_loading/tab/shimmer_tab_header.dart';
 import 'package:hotel_flutter/presentation/widgets/shimmer_loading/tab/shimmer_bottom_navigation.dart';
 import 'package:flutter/services.dart';
+import 'package:logging/logging.dart';
 
 class TabScreen extends StatefulWidget {
   const TabScreen({super.key});
@@ -25,6 +26,7 @@ class TabScreen extends StatefulWidget {
 }
 
 class _TabScreenState extends State<TabScreen> {
+  final Logger _logger = Logger('TabScreen');
   final FlutterSecureStorage _secureStorage = const FlutterSecureStorage();
   int _selectedIndex = 0;
   bool _isLoading = true;
@@ -65,6 +67,7 @@ class _TabScreenState extends State<TabScreen> {
       child: BlocBuilder<AuthBloc, AuthState>(
         builder: (context, state) {
           if (state is Authenticated) {
+            print('Authenticated state detected');
             userId = state.user.id ?? '';
             firstName = state.user.firstName ?? '';
             lastName = state.user.lastName ?? '';
@@ -83,15 +86,29 @@ class _TabScreenState extends State<TabScreen> {
             _secureStorage.write(key: 'profile', value: profile);
 
             _storeFetchedUsers(allUsers);
+
+            print('User data saved to secure storage');
+            print('UserId: $userId');
+            print('FirstName: $firstName, LastName: $lastName, Email: $email');
+
+            for (var user in allUsers) {
+              print(
+                  'User: ${user.firstName} ${user.lastName}, Email: ${user.email}');
+            }
           } else if (state is AuthInitial) {
+            _logger.warning(
+                'AuthInitial state detected, redirecting to login screen...');
             WidgetsBinding.instance.addPostFrameCallback((_) {
               Navigator.of(context).pushReplacementNamed('/login');
             });
           } else if (state is AuthError) {
+            _logger.severe('AuthError state detected: ${state.error}');
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(content: Text('Error: ${state.error}')),
             );
           } else if (state is UsersFetched) {
+            print(
+                'UsersFetched state detected: Fetched ${state.users.length} users');
             allUsers = state.users;
             _storeFetchedUsers(allUsers);
           }
