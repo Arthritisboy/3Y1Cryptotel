@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hotel_flutter/logic/bloc/restaurant/restaurant_bloc.dart';
-import 'package:hotel_flutter/logic/bloc/restaurant/restaurant_event.dart';
 import 'package:hotel_flutter/logic/bloc/restaurant/restaurant_state.dart';
-import 'package:hotel_flutter/presentation/widgets/hotel/utils/input_fields.dart';
-import 'package:hotel_flutter/presentation/widgets/restaurant/navigation/restaurant_navigation_row.dart';
+import 'package:hotel_flutter/presentation/widgets/hotel/navigation/navigation_row.dart';
 import 'package:hotel_flutter/presentation/widgets/restaurant/details/restaurant_details.dart';
 import 'package:hotel_flutter/presentation/widgets/shimmer_loading/hotel/hotel_clicked.dart';
+import 'package:hotel_flutter/logic/bloc/restaurant/restaurant_event.dart';
 
 class RestaurantClicked extends StatefulWidget {
   final String restaurantId;
@@ -54,10 +53,12 @@ class _RestaurantClickedState extends State<RestaurantClicked> {
     return BlocBuilder<RestaurantBloc, RestaurantState>(
       builder: (context, state) {
         if (state is RestaurantLoading) {
+          // Display the shimmer effect during loading state
           return const ShimmerHotelClicked();
         } else if (state is RestaurantError) {
           return Center(child: Text(state.error));
         } else if (state is RestaurantDetailsLoaded) {
+          final filteredRatingList = state.restaurant.rating;
           return SingleChildScrollView(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -69,13 +70,20 @@ class _RestaurantClickedState extends State<RestaurantClicked> {
                     width: double.infinity,
                     fit: BoxFit.cover,
                     loadingBuilder: (context, child, loadingProgress) {
-                      if (loadingProgress == null) return child;
-                      return const ShimmerHotelClicked();
+                      if (loadingProgress == null) {
+                        return child;
+                      }
+                      return const Center(
+                        child: CircularProgressIndicator(),
+                      );
                     },
                     errorBuilder: (context, error, stackTrace) {
                       return const Center(
-                        child: Icon(Icons.broken_image,
-                            size: 50, color: Colors.grey),
+                        child: Icon(
+                          Icons.broken_image,
+                          size: 50,
+                          color: Colors.grey,
+                        ), // Fallback if image URL fails
                       );
                     },
                   ),
@@ -161,18 +169,24 @@ class _RestaurantClickedState extends State<RestaurantClicked> {
                       const SizedBox(height: 3),
                       Row(
                         children: [
-                          const Icon(Icons.location_on_outlined,
-                              color: Color.fromARGB(255, 142, 142, 147),
-                              size: 26),
+                          const Icon(
+                            Icons.location_on_outlined,
+                            color: Color.fromARGB(255, 142, 142, 147),
+                            size: 26,
+                          ),
                           const SizedBox(width: 8.0),
                           Expanded(
+                            // Wrap Text with Expanded to allow wrapping
                             child: Text(
                               widget.location,
                               style: const TextStyle(
-                                  color: Color.fromARGB(255, 142, 142, 147),
-                                  fontSize: 15),
-                              overflow: TextOverflow.ellipsis,
-                              maxLines: 1,
+                                color: Color.fromARGB(255, 142, 142, 147),
+                                fontSize: 15,
+                              ),
+                              overflow: TextOverflow
+                                  .ellipsis, // Add ellipsis if text is too long
+                              maxLines:
+                                  1, // Limit to 1 line to prevent overflow
                             ),
                           ),
                         ],
@@ -182,19 +196,15 @@ class _RestaurantClickedState extends State<RestaurantClicked> {
                 ),
                 Padding(
                   padding: const EdgeInsets.only(left: 16),
-                  child: RestaurantNavigationRow(
+                  child: NavigationRow(
                     activeIndex: widget.activeIndex,
                     onTap: widget.onNavTap,
-                    showBook: true,
+                    showBook: false, // Hide the Book option
                   ),
                 ),
                 const Divider(
                     thickness: 2, color: Color.fromARGB(255, 142, 142, 147)),
-                if (widget.activeIndex == 0)
-                  Padding(
-                      padding: EdgeInsets.only(left: 16, right: 16, bottom: 10),
-                      child: InputFields()),
-                if (widget.activeIndex == 1)
+                if (widget.activeIndex == 2)
                   RestaurantDetails(
                     restaurantName: widget.restaurantName,
                     rating: widget.rating,
@@ -204,8 +214,8 @@ class _RestaurantClickedState extends State<RestaurantClicked> {
                     latitude: widget.latitude,
                     longitude: widget.longitude,
                   ),
-                if (widget.activeIndex == 2)
-                  Center(child: Text('Ratings Functionality'))
+                if (widget.activeIndex == 3) Center(child: Text('Test'))
+                // HotelRatingWidget(ratings: filteredRatingList),
               ],
             ),
           );

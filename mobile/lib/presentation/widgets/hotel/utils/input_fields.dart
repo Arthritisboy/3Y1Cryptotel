@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:flutter/services.dart'; // Import for input formatters
+import 'package:flutter/services.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart'; // For secure storage
 
 class InputFields extends StatefulWidget {
   const InputFields({super.key});
@@ -20,10 +21,46 @@ class _InputFieldsState extends State<InputFields> {
   final TextEditingController adultsController = TextEditingController();
   final TextEditingController childrenController = TextEditingController();
 
-  // Add TextEditingControllers for time of arrival and departure
   final TextEditingController timeOfArrivalController = TextEditingController();
   final TextEditingController timeOfDepartureController =
       TextEditingController();
+
+  final FlutterSecureStorage secureStorage = const FlutterSecureStorage();
+
+  bool isBookButtonEnabled = false; // To control the Book Now button
+
+  @override
+  void initState() {
+    super.initState();
+    _loadUserData();
+    _checkFieldsFilled();
+  }
+
+  // Load user data from FlutterSecureStorage
+  Future<void> _loadUserData() async {
+    String? firstName = await secureStorage.read(key: 'firstName') ?? '';
+    String? lastName = await secureStorage.read(key: 'lastName') ?? '';
+    String? storedEmail = await secureStorage.read(key: 'email') ?? '';
+    String? storedPhoneNumber =
+        await secureStorage.read(key: 'phoneNumber') ?? '+63 ';
+
+    setState(() {
+      fullNameController.text = '$firstName $lastName'.trim();
+      emailController.text = storedEmail;
+      phoneNumberController.text = storedPhoneNumber;
+    });
+
+    _checkFieldsFilled();
+  }
+
+  // Check if all required fields are filled
+  void _checkFieldsFilled() {
+    setState(() {
+      isBookButtonEnabled = fullNameController.text.isNotEmpty &&
+          emailController.text.isNotEmpty &&
+          phoneNumberController.text.length >= 11; // Example condition
+    });
+  }
 
   Future<void> _selectDate(
       BuildContext context, TextEditingController controller) async {
@@ -37,11 +74,11 @@ class _InputFieldsState extends State<InputFields> {
       String formattedDate = DateFormat('yyyy-MM-dd').format(picked);
       setState(() {
         controller.text = formattedDate;
+        _checkFieldsFilled();
       });
     }
   }
 
-  // Add function to select time
   Future<void> _selectTime(
       BuildContext context, TextEditingController controller) async {
     final TimeOfDay? picked = await showTimePicker(
@@ -52,6 +89,7 @@ class _InputFieldsState extends State<InputFields> {
       String formattedTime = picked.format(context);
       setState(() {
         controller.text = formattedTime;
+        _checkFieldsFilled();
       });
     }
   }
@@ -150,11 +188,15 @@ class _InputFieldsState extends State<InputFields> {
           width: double.infinity,
           height: 50,
           child: ElevatedButton(
-            onPressed: () {
-              print("Book Now button pressed");
-            },
+            onPressed: isBookButtonEnabled
+                ? () {
+                    print("Book Now button pressed");
+                  }
+                : null, // Disable button when fields are incomplete
             style: ElevatedButton.styleFrom(
-              backgroundColor: const Color.fromARGB(255, 29, 53, 115),
+              backgroundColor: isBookButtonEnabled
+                  ? const Color.fromARGB(255, 29, 53, 115)
+                  : Colors.grey, // Change color if disabled
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(10),
               ),
@@ -205,88 +247,10 @@ class _InputFieldsState extends State<InputFields> {
               contentPadding: const EdgeInsets.symmetric(vertical: 8),
             ),
             onChanged: (value) {
-              if (value.length > 3 && value.substring(0, 3) == "+63") {
-                if (value.length > 15) {
-                  controller.text = value.substring(0, 15);
-                  controller.selection = TextSelection.fromPosition(
-                    TextPosition(offset: controller.text.length),
-                  );
-                }
-              }
+              _checkFieldsFilled(); // Check if fields are filled when input changes
             },
-            style: const TextStyle(color: Colors.grey),
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildLabelledTextField(TextEditingController controller, String label,
-      IconData icon, String placeholder) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          label,
-          style: const TextStyle(
-            color: Color.fromARGB(255, 142, 142, 147),
-            fontSize: 14,
-          ),
-        ),
-        const SizedBox(height: 4),
-        SizedBox(
-          height: 40, // Adjust height here
-          child: TextField(
-            controller: controller,
-            decoration: InputDecoration(
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(10),
-                borderSide: const BorderSide(color: Colors.black),
-              ),
-              prefixIcon: Icon(icon),
-              hintText: placeholder,
-              hintStyle: const TextStyle(color: Colors.grey),
-              contentPadding: const EdgeInsets.symmetric(vertical: 8),
-            ),
-            style: const TextStyle(color: Colors.black),
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildLabelledNumericTextField(TextEditingController controller,
-      String label, IconData icon, String placeholder) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          label,
-          style: const TextStyle(
-            color: Color.fromARGB(255, 142, 142, 147),
-            fontSize: 14,
-          ),
-        ),
-        const SizedBox(height: 4),
-        SizedBox(
-          height: 40,
-          child: TextField(
-            controller: controller,
-            keyboardType: TextInputType.number,
-            inputFormatters: [
-              FilteringTextInputFormatter.digitsOnly,
-            ],
-            decoration: InputDecoration(
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(10),
-                borderSide: const BorderSide(color: Colors.black),
-              ),
-              prefixIcon: Icon(icon),
-              hintText: placeholder,
-              hintStyle: const TextStyle(color: Colors.grey),
-              contentPadding: const EdgeInsets.symmetric(vertical: 8),
-            ),
-            style: const TextStyle(color: Colors.black),
+            style: const TextStyle(
+                color: Colors.black), // Make text black when present
           ),
         ),
       ],
@@ -363,6 +327,84 @@ class _InputFieldsState extends State<InputFields> {
               _selectTime(context, controller);
             },
             style: const TextStyle(color: Colors.black),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildLabelledTextField(TextEditingController controller, String label,
+      IconData icon, String placeholder) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          label,
+          style: const TextStyle(
+            color: Color.fromARGB(255, 142, 142, 147),
+            fontSize: 14,
+          ),
+        ),
+        const SizedBox(height: 4),
+        SizedBox(
+          height: 40,
+          child: TextField(
+            controller: controller,
+            decoration: InputDecoration(
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(10),
+                borderSide: const BorderSide(color: Colors.black),
+              ),
+              prefixIcon: Icon(icon),
+              hintText: placeholder,
+              hintStyle: const TextStyle(color: Colors.grey),
+              contentPadding: const EdgeInsets.symmetric(vertical: 8),
+            ),
+            style: const TextStyle(color: Colors.black),
+            onChanged: (value) {
+              _checkFieldsFilled(); // Check if fields are filled when input changes
+            },
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildLabelledNumericTextField(TextEditingController controller,
+      String label, IconData icon, String placeholder) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          label,
+          style: const TextStyle(
+            color: Color.fromARGB(255, 142, 142, 147),
+            fontSize: 14,
+          ),
+        ),
+        const SizedBox(height: 4),
+        SizedBox(
+          height: 40,
+          child: TextField(
+            controller: controller,
+            keyboardType: TextInputType.number,
+            inputFormatters: [
+              FilteringTextInputFormatter.digitsOnly,
+            ],
+            decoration: InputDecoration(
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(10),
+                borderSide: const BorderSide(color: Colors.black),
+              ),
+              prefixIcon: Icon(icon),
+              hintText: placeholder,
+              hintStyle: const TextStyle(color: Colors.grey),
+              contentPadding: const EdgeInsets.symmetric(vertical: 8),
+            ),
+            style: const TextStyle(color: Colors.black),
+            onChanged: (value) {
+              _checkFieldsFilled(); // Check if fields are filled when input changes
+            },
           ),
         ),
       ],
