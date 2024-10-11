@@ -161,19 +161,19 @@ class MainDrawer extends StatelessWidget {
             ),
             ListTile(
               leading: Image.asset(
-                'assets/images/icons/settings.png',
+                'assets/images/icons/history.png',
                 height: 30,
                 width: 30,
               ),
               title: Text(
-                'Settings',
+                'History',
                 style: Theme.of(context).textTheme.titleSmall!.copyWith(
                       color: Colors.white,
                       fontSize: 22,
                     ),
               ),
               onTap: () {
-                onSelectScreen('settings');
+                onSelectScreen('history');
               },
             ),
             ListTile(

@@ -32,7 +32,6 @@ class HotelDataProvider {
         throw Exception('No hotel data found');
       }
     } else {
-      print('Failed to load hotels: ${response.body}');
       throw Exception('Failed to load hotels: ${response.body}');
     }
   }

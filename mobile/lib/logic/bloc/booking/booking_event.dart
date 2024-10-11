@@ -11,7 +11,7 @@ abstract class BookingEvent extends Equatable {
 class FetchBookings extends BookingEvent {
   final String userId;
 
-  const FetchBookings(this.userId);
+  const FetchBookings({required this.userId});
 
   @override
   List<Object> get props => [userId];
