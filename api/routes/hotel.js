@@ -20,7 +20,7 @@ router
 router
   .route('/:id')
   .get(authController.protect, hotelController.getHotel)
-  .patch(hotelController.updateHotel)
+  .patch(upload.single('image'),hotelController.updateHotel)
   .delete(hotelController.deleteHotel);
 
 // Room routes
@@ -31,7 +31,7 @@ router
 router
   .route('/rooms/:id')
   .get(authController.protect, roomController.getRoom)
-  .patch(roomController.updateRoom)
+  .patch(upload.single('image'),roomController.updateRoom)
   .delete(roomController.deleteRoom);
 
 // Rating routes
