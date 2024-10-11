@@ -11,7 +11,7 @@ class RestaurantModel {
   final double price;
   final int capacity;
   final bool availability;
-  final double rating;
+  final double rating; // Changed from nullable to non-nullable
 
   RestaurantModel({
     required this.id,
@@ -22,7 +22,7 @@ class RestaurantModel {
     required this.price,
     required this.capacity,
     required this.availability,
-    required this.rating,
+    this.rating = 0.0, // Default rating set to 0.0
   });
 
   // Factory method to create RestaurantModel from a map (API response)
@@ -38,9 +38,11 @@ class RestaurantModel {
           : (json['price'] as double),
       capacity: json['capacity'] as int,
       availability: json['availability'] as bool,
-      rating: (json['rating'] is int)
-          ? (json['rating'] as int).toDouble()
-          : (json['rating'] as double),
+      rating: json['rating'] != null
+          ? (json['rating'] is int
+              ? (json['rating'] as int).toDouble()
+              : (json['rating'] as double))
+          : 0.0, // Default to 0.0 if rating is null
     );
   }
 

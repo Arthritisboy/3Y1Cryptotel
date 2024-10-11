@@ -40,7 +40,7 @@ class RestaurantScreen extends StatelessWidget {
                     } else if (state is RestaurantError) {
                       return Center(child: Text('Error: ${state.error}'));
                     }
-                    return const Center(child: Text('No data available'));
+                    return _buildShimmerLoadingEffect(); // Shimmer Effect
                   },
                 ),
               ),
@@ -68,8 +68,8 @@ class RestaurantScreen extends StatelessWidget {
                 imagePath: restaurant.restaurantImage,
                 hotelName: restaurant.name,
                 location: restaurant.location,
-                rating: restaurant
-                    .rating, // Replace with the actual rating property
+                rating: restaurant.rating ??
+                    0.0, // Replace with the actual rating property
               ),
             ),
           );
