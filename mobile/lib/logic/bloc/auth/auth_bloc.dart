@@ -13,8 +13,10 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       emit(AuthLoading());
       try {
         // Pass the profile picture if available
-        final user = await authRepository.register(event.signUpModel,
-            event.profilePicture != null ? File(event.profilePicture!) : null);
+        final user = await authRepository.register(
+          event.signUpModel,
+          event.profilePicture != null ? File(event.profilePicture!) : null,
+        );
         emit(Authenticated(user));
       } catch (e) {
         emit(AuthError('Registration failed: ${e.toString()}'));

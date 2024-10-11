@@ -44,6 +44,11 @@ exports.register = catchAsync(async (req, res, next) => {
     }
   }
 
+  const validRoles = ['user', 'admin'];
+  if (!validRoles.includes(req.body.roles)) {
+    return next(new AppError('Invalid role provided.', 400));
+  }
+
   const newUser = await User.create({
     firstName: req.body.firstName,
     lastName: req.body.lastName,
@@ -52,17 +57,13 @@ exports.register = catchAsync(async (req, res, next) => {
     confirmPassword: req.body.confirmPassword,
     gender: req.body.gender,
     phoneNumber: req.body.phoneNumber,
-    roles: req.body.roles,
+    roles: req.body.roles || 'user', // Provide a default if null
     profile: profile || undefined,
-    hasOnboardingCompleted: req.body.hasOnboardingCompleted,
+    hasCompletedOnboarding: req.body.hasCompletedOnboarding || false,
   });
 
   console.warn('New user created:', newUser);
 
-  // Send a token and user data as a response
-  // createSendToken(newUser, 201, res);
-
-  //! Send verification code after signup
   const verificationCode = newUser.createVerificationCode();
   await newUser.save({ validateBeforeSave: false });
 

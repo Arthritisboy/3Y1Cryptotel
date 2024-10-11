@@ -9,7 +9,8 @@ import 'package:hotel_flutter/data/model/hotel/hotel_model.dart';
 import 'package:shimmer/shimmer.dart';
 
 class HomeScreen extends StatelessWidget {
-  const HomeScreen({super.key});
+  final String hotelName;
+  const HomeScreen({super.key, required this.hotelName});
 
   @override
   Widget build(BuildContext context) {
@@ -21,8 +22,8 @@ class HomeScreen extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Text(
-                'Top Rated Hotels',
+              Text(
+                hotelName,
                 style: TextStyle(
                   fontSize: 24.0,
                   color: Colors.black,
@@ -62,6 +63,7 @@ class HomeScreen extends StatelessWidget {
               onTap: () async {
                 List<double> coordinates = await hotel.getCoordinates();
                 Navigator.push(
+                  // ignore: use_build_context_synchronously
                   context,
                   MaterialPageRoute(
                     builder: (context) => HotelScreen(

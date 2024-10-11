@@ -6,7 +6,7 @@ class SignUpModel {
   final String confirmPassword;
   final String phoneNumber;
   final String gender;
-  final String roles;
+  final String roles; // Ensure this is never null
   final String? profilePicture;
 
   SignUpModel({
@@ -16,9 +16,9 @@ class SignUpModel {
     required this.lastName,
     required this.email,
     required this.password,
-    required this.roles,
+    this.roles = 'user', // Default to 'user' if not specified
     required this.confirmPassword,
-    this.profilePicture, // Nullable field
+    this.profilePicture,
   });
 
   Map<String, dynamic> toJson() {
@@ -29,9 +29,9 @@ class SignUpModel {
       'password': password,
       'phoneNumber': phoneNumber,
       'gender': gender,
-      'roles': roles,
+      'roles': roles, // This should never be null
       'confirmPassword': confirmPassword,
-      'profilePicture': profilePicture ?? '', // Optional field
+      'profilePicture': profilePicture ?? '',
     };
   }
 }

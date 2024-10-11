@@ -23,6 +23,7 @@ const sendEmail = async (options) => {
       checkInDate,
       checkOutDate,
       totalPrice,
+      status,
     } = options.bookingDetails;
     message = `
       <div style="font-family: Arial, sans-serif; margin: 0; padding: 20px; background-color: #f4f4f4;">
@@ -38,8 +39,8 @@ const sendEmail = async (options) => {
                 <li><strong>Check-in Date:</strong> ${new Date(checkInDate).toLocaleDateString()}</li>
                 <li><strong>Check-out Date:</strong> ${new Date(checkOutDate).toLocaleDateString()}</li>
                 <li><strong>Total Price:</strong> ₱${totalPrice}</li>
+                <li><strong>Status:</strong> ${status === 'pending' ? 'Your booking is pending confirmation' : 'Confirmed'}</li>
               </ul>
-              <p>Your booking is being processed and is currently pending confirmation.</p>
               <p>We will notify you once your booking is confirmed. Thank you for choosing us!</p>
             </td>
           </tr>

@@ -149,6 +149,7 @@ class _SignupFormState extends State<SignupForm> {
                     ? null
                     : () {
                         if (_formSignupKey.currentState!.validate()) {
+                          // Ensure role is selected
                           Navigator.of(context).pushReplacementNamed(
                             '/uploadPicture',
                             arguments: {
@@ -160,7 +161,7 @@ class _SignupFormState extends State<SignupForm> {
                                   _confirmPasswordController.text,
                               'phoneNumber': _phoneNumberController.text,
                               'gender': _selectedGender,
-                              'role': _selectedRole, // Pass role here
+                              'roles': _selectedRole, // Pass role here
                             },
                           );
                         }
