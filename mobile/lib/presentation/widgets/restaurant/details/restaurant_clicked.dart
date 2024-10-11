@@ -1,17 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:hotel_flutter/logic/bloc/hotel/hotel_bloc.dart';
-import 'package:hotel_flutter/logic/bloc/hotel/hotel_state.dart';
-import 'package:hotel_flutter/presentation/widgets/hotel/details/hotelDetails.dart';
-import 'package:hotel_flutter/presentation/widgets/hotel/navigation_row.dart';
-import 'package:hotel_flutter/presentation/widgets/hotel/ratings/hotelRatings.dart';
-import 'package:hotel_flutter/logic/bloc/hotel/hotel_event.dart';
-import 'package:hotel_flutter/presentation/widgets/hotel/room/roomSelection.dart';
-import 'package:hotel_flutter/presentation/widgets/shimmer_loading/hotel/hotel_clicked.dart';
+import 'package:hotel_flutter/logic/bloc/restaurant/restaurant_bloc.dart';
+import 'package:hotel_flutter/logic/bloc/restaurant/restaurant_event.dart';
+import 'package:hotel_flutter/logic/bloc/restaurant/restaurant_state.dart';
+import 'package:hotel_flutter/presentation/widgets/restaurant/navigation/restaurant_navigation_row.dart';
+import 'package:hotel_flutter/presentation/widgets/restaurant/details/restaurant_details.dart';
 
-class HotelClicked extends StatefulWidget {
-  final String hotelId;
-  final String hotelName;
+class RestaurantClicked extends StatefulWidget {
+  final String restaurantId;
+  final String restaurantName;
   final double rating;
   final double price;
   final String location;
@@ -20,12 +17,12 @@ class HotelClicked extends StatefulWidget {
   final Function(int) onNavTap;
   final double latitude;
   final double longitude;
-  final String hotelImage;
+  final String restaurantImage;
 
-  const HotelClicked({
+  const RestaurantClicked({
     super.key,
-    required this.hotelId,
-    required this.hotelName,
+    required this.restaurantId,
+    required this.restaurantName,
     required this.rating,
     required this.price,
     required this.location,
@@ -34,58 +31,49 @@ class HotelClicked extends StatefulWidget {
     required this.onNavTap,
     required this.latitude,
     required this.longitude,
-    required this.hotelImage,
+    required this.restaurantImage,
   });
 
   @override
-  State<HotelClicked> createState() => _HotelClickedState();
+  State<RestaurantClicked> createState() => _RestaurantClickedState();
 }
 
-class _HotelClickedState extends State<HotelClicked> {
+class _RestaurantClickedState extends State<RestaurantClicked> {
   @override
   void initState() {
     super.initState();
-    context.read<HotelBloc>().add(FetchHotelDetailsEvent(widget.hotelId));
+    context
+        .read<RestaurantBloc>()
+        .add(FetchRestaurantDetailsEvent(widget.restaurantId));
   }
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<HotelBloc, HotelState>(
+    return BlocBuilder<RestaurantBloc, RestaurantState>(
       builder: (context, state) {
-        if (state is HotelLoading) {
-          // Display the shimmer effect during loading state
-          return const ShimmerHotelClicked();
-        } else if (state is HotelError) {
+        if (state is RestaurantLoading) {
+          return const Center(child: CircularProgressIndicator());
+        } else if (state is RestaurantError) {
           return Center(child: Text(state.error));
-        } else if (state is HotelDetailsLoaded) {
-          final filteredRoomList = state.hotel.rooms;
-          final filteredRatingList =
-              state.hotel.rooms.expand((room) => room.ratings).toList();
+        } else if (state is RestaurantDetailsLoaded) {
           return SingleChildScrollView(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 ClipRRect(
                   child: Image.network(
-                    widget.hotelImage,
+                    widget.restaurantImage,
                     height: 300.0,
                     width: double.infinity,
                     fit: BoxFit.cover,
                     loadingBuilder: (context, child, loadingProgress) {
-                      if (loadingProgress == null) {
-                        return child;
-                      }
-                      return const Center(
-                        child: CircularProgressIndicator(),
-                      );
+                      if (loadingProgress == null) return child;
+                      return const Center(child: CircularProgressIndicator());
                     },
                     errorBuilder: (context, error, stackTrace) {
                       return const Center(
-                        child: Icon(
-                          Icons.broken_image,
-                          size: 50,
-                          color: Colors.grey,
-                        ), // Fallback if image URL fails
+                        child: Icon(Icons.broken_image,
+                            size: 50, color: Colors.grey),
                       );
                     },
                   ),
@@ -98,12 +86,16 @@ class _HotelClickedState extends State<HotelClicked> {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Text(
-                            widget.hotelName,
-                            style: const TextStyle(
-                              fontSize: 25.0,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.black,
+                          Flexible(
+                            child: Text(
+                              widget.restaurantName,
+                              style: const TextStyle(
+                                fontSize: 25.0,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.black,
+                              ),
+                              overflow: TextOverflow.ellipsis,
+                              maxLines: 1,
                             ),
                           ),
                           ClipRRect(
@@ -167,24 +159,18 @@ class _HotelClickedState extends State<HotelClicked> {
                       const SizedBox(height: 3),
                       Row(
                         children: [
-                          const Icon(
-                            Icons.location_on_outlined,
-                            color: Color.fromARGB(255, 142, 142, 147),
-                            size: 26,
-                          ),
+                          const Icon(Icons.location_on_outlined,
+                              color: Color.fromARGB(255, 142, 142, 147),
+                              size: 26),
                           const SizedBox(width: 8.0),
                           Expanded(
-                            // Wrap Text with Expanded to allow wrapping
                             child: Text(
                               widget.location,
                               style: const TextStyle(
-                                color: Color.fromARGB(255, 142, 142, 147),
-                                fontSize: 15,
-                              ),
-                              overflow: TextOverflow
-                                  .ellipsis, // Add ellipsis if text is too long
-                              maxLines:
-                                  1, // Limit to 1 line to prevent overflow
+                                  color: Color.fromARGB(255, 142, 142, 147),
+                                  fontSize: 15),
+                              overflow: TextOverflow.ellipsis,
+                              maxLines: 1,
                             ),
                           ),
                         ],
@@ -194,19 +180,19 @@ class _HotelClickedState extends State<HotelClicked> {
                 ),
                 Padding(
                   padding: const EdgeInsets.only(left: 16),
-                  child: NavigationRow(
+                  child: RestaurantNavigationRow(
                     activeIndex: widget.activeIndex,
                     onTap: widget.onNavTap,
-                    showBook: false, // Hide the Book option
+                    showBook: true,
                   ),
                 ),
                 const Divider(
                     thickness: 2, color: Color.fromARGB(255, 142, 142, 147)),
                 if (widget.activeIndex == 0)
-                  RoomSelection(roomList: filteredRoomList),
-                if (widget.activeIndex == 2)
-                  HotelDetails(
-                    hotelName: widget.hotelName,
+                  Center(child: Text('Book Functionality')),
+                if (widget.activeIndex == 1)
+                  RestaurantDetails(
+                    restaurantName: widget.restaurantName,
                     rating: widget.rating,
                     price: widget.price,
                     location: widget.location,
@@ -214,8 +200,8 @@ class _HotelClickedState extends State<HotelClicked> {
                     latitude: widget.latitude,
                     longitude: widget.longitude,
                   ),
-                if (widget.activeIndex == 3)
-                  HotelRatingWidget(ratings: filteredRatingList),
+                if (widget.activeIndex == 2)
+                  Center(child: Text('Ratings Functionality'))
               ],
             ),
           );

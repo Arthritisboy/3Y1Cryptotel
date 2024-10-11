@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:hotel_flutter/data/model/hotel/rating_model.dart';
 import 'package:hotel_flutter/data/model/hotel/room_model.dart';
 import 'package:hotel_flutter/presentation/widgets/hotel/ratings/hotelRatings.dart';
-import 'package:hotel_flutter/presentation/widgets/hotel/navigation_row.dart';
-import 'package:hotel_flutter/presentation/widgets/hotel/input_fields.dart';
+import 'package:hotel_flutter/presentation/widgets/hotel/navigation/navigation_row.dart';
+import 'package:hotel_flutter/presentation/widgets/hotel/utils/input_fields.dart';
 import 'package:hotel_flutter/presentation/widgets/hotel/details/roomDetails.dart';
 
 class ActiveRoom extends StatefulWidget {

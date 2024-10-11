@@ -1,22 +1,22 @@
 import 'package:flutter/material.dart';
-import 'package:hotel_flutter/presentation/widgets/hotel/details/hotel_clicked.dart';
+import 'package:hotel_flutter/presentation/widgets/restaurant/details/restaurant_clicked.dart';
 
-class HotelScreen extends StatefulWidget {
-  final String hotelImage;
-  final String hotelName;
+class Restaurant extends StatefulWidget {
+  final String restaurantImage;
+  final String restaurantName;
   final double rating;
   final double price;
   final String location;
   final String time;
   final double latitude;
   final double longitude;
-  final String hotelId;
+  final String restaurantId;
 
-  const HotelScreen({
+  const Restaurant({
     super.key,
-    required this.hotelId,
-    required this.hotelImage,
-    required this.hotelName,
+    required this.restaurantId,
+    required this.restaurantImage,
+    required this.restaurantName,
     required this.rating,
     required this.price,
     required this.location,
@@ -27,18 +27,18 @@ class HotelScreen extends StatefulWidget {
 
   @override
   State<StatefulWidget> createState() {
-    return _HotelScreenState();
+    return _RestaurantState();
   }
 }
 
-class _HotelScreenState extends State<HotelScreen> {
+class _RestaurantState extends State<Restaurant> {
   int _activeIndex = 0;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.hotelName),
+        title: Text(widget.restaurantName),
         backgroundColor: Colors.white,
         elevation: 0,
         actions: [
@@ -56,10 +56,10 @@ class _HotelScreenState extends State<HotelScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const SizedBox(height: 10),
-            HotelClicked(
-              hotelId: widget.hotelId,
-              hotelImage: widget.hotelImage,
-              hotelName: widget.hotelName,
+            RestaurantClicked(
+              restaurantId: widget.restaurantId,
+              restaurantImage: widget.restaurantImage,
+              restaurantName: widget.restaurantName,
               rating: widget.rating,
               price: widget.price,
               location: widget.location,
