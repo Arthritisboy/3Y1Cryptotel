@@ -3,8 +3,10 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hotel_flutter/logic/bloc/restaurant/restaurant_bloc.dart';
 import 'package:hotel_flutter/logic/bloc/restaurant/restaurant_event.dart';
 import 'package:hotel_flutter/logic/bloc/restaurant/restaurant_state.dart';
+import 'package:hotel_flutter/presentation/widgets/hotel/utils/input_fields.dart';
 import 'package:hotel_flutter/presentation/widgets/restaurant/navigation/restaurant_navigation_row.dart';
 import 'package:hotel_flutter/presentation/widgets/restaurant/details/restaurant_details.dart';
+import 'package:hotel_flutter/presentation/widgets/shimmer_loading/hotel/hotel_clicked.dart';
 
 class RestaurantClicked extends StatefulWidget {
   final String restaurantId;
@@ -52,7 +54,7 @@ class _RestaurantClickedState extends State<RestaurantClicked> {
     return BlocBuilder<RestaurantBloc, RestaurantState>(
       builder: (context, state) {
         if (state is RestaurantLoading) {
-          return const Center(child: CircularProgressIndicator());
+          return const ShimmerHotelClicked();
         } else if (state is RestaurantError) {
           return Center(child: Text(state.error));
         } else if (state is RestaurantDetailsLoaded) {
@@ -68,7 +70,7 @@ class _RestaurantClickedState extends State<RestaurantClicked> {
                     fit: BoxFit.cover,
                     loadingBuilder: (context, child, loadingProgress) {
                       if (loadingProgress == null) return child;
-                      return const Center(child: CircularProgressIndicator());
+                      return const ShimmerHotelClicked();
                     },
                     errorBuilder: (context, error, stackTrace) {
                       return const Center(
@@ -188,8 +190,7 @@ class _RestaurantClickedState extends State<RestaurantClicked> {
                 ),
                 const Divider(
                     thickness: 2, color: Color.fromARGB(255, 142, 142, 147)),
-                if (widget.activeIndex == 0)
-                  Center(child: Text('Book Functionality')),
+                if (widget.activeIndex == 0) InputFields(),
                 if (widget.activeIndex == 1)
                   RestaurantDetails(
                     restaurantName: widget.restaurantName,
