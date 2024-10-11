@@ -32,8 +32,8 @@ class CryptoWalletTransactions extends StatelessWidget {
             ),
             padding: const EdgeInsets.all(16.0),
             child: hasTransactions
-                ? const CryptoWithTransaction()
-                : const CryptoNoTransaction(),
+                ? const CryptoWithTransaction() 
+                 : const CryptoNoTransaction(),
           ),
           Positioned(
             top: 10.0,
