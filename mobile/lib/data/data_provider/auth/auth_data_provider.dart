@@ -59,6 +59,7 @@ class AuthDataProvider {
     request.fields['phoneNumber'] = signUpModel.phoneNumber;
     request.fields['gender'] = signUpModel.gender;
     request.fields['password'] = signUpModel.password;
+    request.fields['roles'] = signUpModel.roles;
     request.fields['confirmPassword'] = signUpModel.confirmPassword;
 
     // Add file if it exists

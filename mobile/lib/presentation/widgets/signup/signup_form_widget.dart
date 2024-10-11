@@ -148,8 +148,7 @@ class _SignupFormState extends State<SignupForm> {
                 onPressed: _isLoading
                     ? null
                     : () {
-                        if (_formSignupKey.currentState!.validate() &&
-                            _selectedRole != null) {
+                        if (_formSignupKey.currentState!.validate()) {
                           // Ensure role is selected
                           Navigator.of(context).pushReplacementNamed(
                             '/uploadPicture',
@@ -162,14 +161,8 @@ class _SignupFormState extends State<SignupForm> {
                                   _confirmPasswordController.text,
                               'phoneNumber': _phoneNumberController.text,
                               'gender': _selectedGender,
-                              'role': _selectedRole, // Pass role here
+                              'roles': _selectedRole, // Pass role here
                             },
-                          );
-                        } else if (_selectedRole == null) {
-                          // Optional: Show a message if no role is selected
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                                content: Text('Please select a role')),
                           );
                         }
                       },
