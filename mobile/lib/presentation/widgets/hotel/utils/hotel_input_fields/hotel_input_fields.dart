@@ -80,6 +80,27 @@ class _HotelInputFieldsState extends State<HotelInputFields> {
     });
   }
 
+  // Dialog to show when the check-in date is the same as the check-out date
+  void _showDateErrorDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      barrierDismissible: false, // Prevent closing by tapping outside
+      builder: (BuildContext context) {
+        return CustomDialog(
+          title: 'Invalid Date Selection',
+          description:
+              'The check-in date cannot be the same as the check-out date. Please select valid dates to proceed.',
+          buttonText: 'OK',
+          secondButtonText: '',
+          onButtonPressed: () {
+            Navigator.of(context).pop();
+          },
+          onSecondButtonPressed: () {},
+        );
+      },
+    );
+  }
+
   void _showBookingSuccessDialog(BuildContext context) {
     showDialog(
       context: context,
@@ -123,6 +144,15 @@ class _HotelInputFieldsState extends State<HotelInputFields> {
   void _createBooking(BuildContext context) {
     DateTime? checkInDate = DateTime.tryParse(checkInDateController.text);
     DateTime? checkOutDate = DateTime.tryParse(checkOutDateController.text);
+
+    // Check if the check-in date is the same as the check-out date
+    if (checkInDate != null &&
+        checkOutDate != null &&
+        checkInDate.isAtSameMomentAs(checkOutDate)) {
+      _showDateErrorDialog(context);
+      return; // Do not proceed if the date validation fails
+    }
+
     DateTime? arrivalDateTime = combineDateAndTime(
         checkInDateController.text, timeOfArrivalController.text);
     DateTime? departureDateTime = combineDateAndTime(
