@@ -107,7 +107,7 @@ exports.createRoom = catchAsync(async(req, res, next) => {
     console.log('Updated hotel with new room. Current rooms:', hotel.rooms);
 
     // Calculate and update the average price of the hotel
-    const averagePrice = await calculateAveragePrice(hotelId);
+    // const averagePrice = await calculateAveragePrice(hotelId);
     console.log('Updated average price for hotel:', hotel.averagePrice);
 
     // Respond with the new room data and the updated average price
