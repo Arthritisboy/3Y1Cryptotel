@@ -7,7 +7,7 @@ class HotelBloc extends Bloc<HotelEvent, HotelState> {
   final HotelRepository hotelRepository;
 
   HotelBloc(this.hotelRepository) : super(HotelInitial()) {
-    // Fetch all hotels
+    //! Fetch all hotels
     on<FetchHotelsEvent>((event, emit) async {
       emit(HotelLoading());
       try {
@@ -18,7 +18,7 @@ class HotelBloc extends Bloc<HotelEvent, HotelState> {
       }
     });
 
-    // Fetch single hotel by ID
+    //! Fetch single hotel by ID
     on<FetchHotelDetailsEvent>((event, emit) async {
       emit(HotelLoading());
       try {

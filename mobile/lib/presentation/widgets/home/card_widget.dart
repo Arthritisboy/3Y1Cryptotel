@@ -4,14 +4,14 @@ class CardWidget extends StatelessWidget {
   final String imagePath; // URL for network image
   final String hotelName;
   final String location;
-  final double rating;
+  final double? rating; // Nullable rating field
 
   const CardWidget({
     super.key,
     required this.imagePath,
     required this.hotelName,
     required this.location,
-    required this.rating,
+    this.rating, // Nullable rating
   });
 
   @override
@@ -33,11 +33,9 @@ class CardWidget extends StatelessWidget {
                   const BorderRadius.vertical(top: Radius.circular(12.0)),
               child: Image.network(
                 imagePath, // Load image from network URL
-                height:
-                    190.0, // Increase the height of the image section to make it longer
+                height: 190.0, // Increase the height of the image section
                 width: double.infinity,
-                fit: BoxFit
-                    .cover, // BoxFit.cover to ensure the image fits the container without zooming
+                fit: BoxFit.cover, // Ensure the image fits the container
                 loadingBuilder: (context, child, loadingProgress) {
                   if (loadingProgress == null) {
                     return child; // Return the image when fully loaded
@@ -99,7 +97,8 @@ class CardWidget extends StatelessWidget {
                           child: Row(
                             children: [
                               Text(
-                                rating.toString(),
+                                (rating ?? 0.0)
+                                    .toString(), // Default value if rating is null
                                 style: const TextStyle(
                                   fontSize: 14.0,
                                   fontWeight: FontWeight.w600,
