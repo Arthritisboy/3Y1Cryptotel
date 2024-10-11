@@ -12,7 +12,6 @@ class CryptoWallet extends StatefulWidget {
 class _CryptoWalletState extends State<CryptoWallet> {
   void _selectScreen(String identifier) {
     Navigator.of(context).pop();
-    print('Selected screen: $identifier');
   }
 
   @override

@@ -13,7 +13,9 @@ class HistoryScreen extends StatefulWidget {
   const HistoryScreen({super.key});
 
   @override
-  _HistoryScreenState createState() => _HistoryScreenState();
+  State<StatefulWidget> createState() {
+    return _HistoryScreenState();
+  }
 }
 
 class _HistoryScreenState extends State<HistoryScreen> {
@@ -33,6 +35,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
         _userId = userId;
       });
       // Trigger the fetch bookings event when the userId is retrieved
+      // ignore: use_build_context_synchronously
       context.read<BookingBloc>().add(FetchBookings(userId: userId));
     }
   }
@@ -68,11 +71,14 @@ class _HistoryScreenState extends State<HistoryScreen> {
                     final pendingBookings = state.bookings
                         .where((booking) => booking.status == 'pending')
                         .toList();
+                    final acceptedBookings = state.bookings
+                        .where((booking) => booking.status == 'accepted')
+                        .toList();
 
                     return TabBarView(
                       children: [
                         HistoryPendingBody(pendingBookings: pendingBookings),
-                        const HistoryAcceptedBody(),
+                        HistoryAcceptedBody(acceptedBookings: acceptedBookings),
                         const HistoryRateBody(status: 'Rate'),
                       ],
                     );
