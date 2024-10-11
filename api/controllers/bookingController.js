@@ -5,7 +5,7 @@ const Restaurant = require('../models/Restaurant');
 const Booking = require('../models/Booking');
 const catchAsync = require('../utils/catchAsync');
 const AppError = require('../utils/appError');
-const sendEmail = require('../utils/sendEmail'); // Import the email utility
+const sendEmail = require('../utils/email');
 
 // Get all bookings for a user
 exports.getBookings = catchAsync(async (req, res, next) => {
