@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 
-const restaurantRaitingSchema = new mongoose.Schema({
+const restaurantRatingSchema = new mongoose.Schema({
   rating: {
     type: Number,
     min: 1,
@@ -29,6 +29,6 @@ const restaurantRaitingSchema = new mongoose.Schema({
 
 const RestaurantRating = mongoose.model(
   'RestaurantRating',
-  restaurantRaitingSchema,
+  restaurantRatingSchema,
 );
 module.exports = RestaurantRating;
