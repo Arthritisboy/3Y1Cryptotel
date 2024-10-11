@@ -55,6 +55,7 @@ const sendEmail = async (options) => {
     text: options.message,
     html: message,
   };
+
   // ** 3.) Actually send the email
   await transporter.sendMail(mailOptions);
 };
