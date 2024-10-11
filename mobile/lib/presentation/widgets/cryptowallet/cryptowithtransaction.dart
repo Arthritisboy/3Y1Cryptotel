@@ -8,7 +8,7 @@ import 'package:url_launcher/url_launcher.dart';
 class CryptoWithTransaction extends StatefulWidget {
   const CryptoWithTransaction({super.key});
 
-   @override
+  @override
   State<CryptoWithTransaction> createState() => _CryptoWithTransactionState();
 }
 
@@ -141,7 +141,8 @@ class _CryptoWithTransactionState extends State<CryptoWithTransaction> {
                 });
 
                 try {
-                  await sendTransaction(recipient, amount); // Pass the string amount here
+                  await sendTransaction(
+                      recipient, amount); // Pass the string amount here
                 } catch (e) {
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(content: Text('Error: ${e.toString()}')),
@@ -299,12 +300,10 @@ class _CryptoWithTransactionState extends State<CryptoWithTransaction> {
       });
     }
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('My Home Page'),
-      ),
       body: appKitModal == null
           ? const Center(
               child: CircularProgressIndicator(),
@@ -356,6 +355,7 @@ class _CryptoWithTransactionState extends State<CryptoWithTransaction> {
             ),
     );
   }
+
   Widget _buildSimpleButton(BuildContext context, String label,
       {Color color = Colors.blue, required VoidCallback onPressed}) {
     return ElevatedButton(
