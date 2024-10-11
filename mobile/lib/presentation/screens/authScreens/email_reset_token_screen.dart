@@ -38,7 +38,7 @@ class EmailResetTokenScreenState extends State<EmailResetTokenScreen> {
                 Padding(
                   padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.1),
                   child: Text(
-                    'Please enter the token sent to your email to reset your password.',
+                    'Please enter the code sent to your email to reset your password.',
                     style: TextStyle(
                       color: Colors.black,
                       fontSize: screenHeight * 0.018,
@@ -60,8 +60,8 @@ class EmailResetTokenScreenState extends State<EmailResetTokenScreen> {
                                 value; // Update the token as the user types
                           },
                           decoration: InputDecoration(
-                            label: const Text('Token'),
-                            hintText: 'Enter Token',
+                            label: const Text('Code'),
+                            hintText: 'Enter Code',
                             hintStyle: const TextStyle(color: Colors.black26),
                             border: OutlineInputBorder(
                               borderSide:
