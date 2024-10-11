@@ -15,6 +15,7 @@ class BookingModel {
   final int adult;
   final int children;
   final int? tableNumber;
+  final String? status;
 
   BookingModel({
     this.id,
@@ -33,17 +34,20 @@ class BookingModel {
     this.timeOfDeparture,
     required this.adult,
     required this.children,
+    this.status,
   });
 
   // Convert JSON to BookingModel object
   factory BookingModel.fromJson(Map<String, dynamic> json) {
     return BookingModel(
-      id: json['id'],
+      id: json['_id'], // Use "_id" from the JSON
       bookingType: json['bookingType'],
       tableNumber: json['tableNumber'],
-      hotelId: json['hotelId'],
-      roomId: json['roomId'],
-      restaurantId: json['restaurantId'],
+      hotelId: json['hotelId'], // Ensure this matches your API response format
+      status: json['status'],
+      roomId: json['roomId'], // Ensure this matches your API response format
+      restaurantId:
+          json['restaurantId'], // Ensure this matches your API response format
       fullName: json['fullName'],
       email: json['email'],
       phoneNumber: json['phoneNumber'],
@@ -64,6 +68,7 @@ class BookingModel {
   // Convert BookingModel object to JSON
   Map<String, dynamic> toJson() {
     return {
+      '_id': id, // Use "_id" when converting back to JSON
       'bookingType': bookingType,
       'hotelId': hotelId,
       'roomId': roomId,
@@ -79,6 +84,7 @@ class BookingModel {
       'timeOfDeparture': timeOfDeparture?.toUtc().toIso8601String(),
       'adult': adult,
       'children': children,
+      'status': status,
     };
   }
 }
