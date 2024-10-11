@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 
-const raitingSchema = new mongoose.Schema({
+const restaurant = new mongoose.Schema({
   name: {
     type: String,
     required: true,
@@ -37,6 +37,6 @@ const raitingSchema = new mongoose.Schema({
   ],
 });
 
-const Restaurant = mongoose.model('Restaurant', raitingSchema);
+const Restaurant = mongoose.model('Restaurant', restaurant);
 
 module.exports = Restaurant;

@@ -1,4 +1,5 @@
 const Restaurant = require('../models/Restaurant');
+const RestaurantRating = require('../models/RestaurantRating');
 const { uploadEveryImage } = require('../middleware/imageUpload');
 const catchAsync = require('../utils/catchAsync');
 const AppError = require('../utils/appError');
