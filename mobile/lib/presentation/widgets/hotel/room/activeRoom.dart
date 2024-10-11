@@ -157,6 +157,7 @@ class _ActiveRoomState extends State<ActiveRoom> {
                   children: [
                     if (activeIndex == 1)
                       HotelInputFields(
+                        capacity: widget.room.capacity,
                         hotelId: widget.hotelId,
                         roomId: widget.roomId,
                       ),
