@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:hotel_flutter/data/model/booking/booking_model.dart';
 import 'package:hotel_flutter/presentation/widgets/history/history_pendingmodal.dart';
 
 class HistoryPendingBody extends StatelessWidget {
-  const HistoryPendingBody({super.key});
+  final List<BookingModel> pendingBookings;
+
+  const HistoryPendingBody({Key? key, required this.pendingBookings})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -23,12 +27,13 @@ class HistoryPendingBody extends StatelessWidget {
           ),
           padding: const EdgeInsets.all(16.0),
           child: ListView.builder(
-            itemCount: 5, 
+            itemCount: pendingBookings.length,
             itemBuilder: (context, index) {
+              final booking = pendingBookings[index];
               return Card(
                 margin: const EdgeInsets.symmetric(vertical: 8.0),
                 shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(15.0), // Retain border radius for Card
+                  borderRadius: BorderRadius.circular(15.0),
                 ),
                 child: Padding(
                   padding: const EdgeInsets.all(12.0),
@@ -40,25 +45,27 @@ class HistoryPendingBody extends StatelessWidget {
                           Expanded(
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
-                              children: const [
+                              children: [
                                 Text(
-                                  'Monarch Hotel - Deluxe Suite',
-                                  style: TextStyle(
+                                  booking.restaurantId != null
+                                      ? booking.restaurantId!
+                                      : booking.fullName,
+                                  style: const TextStyle(
                                     fontSize: 18,
                                     fontWeight: FontWeight.bold,
                                     color: Colors.black,
                                   ),
                                 ),
-                                SizedBox(height: 8.0),
+                                const SizedBox(height: 8.0),
                                 Text(
-                                  'Check-in: 12th Jan, 2024',
-                                  style: TextStyle(
+                                  'Check-in: ${booking.checkInDate.toLocal().toString().split(' ')[0]}',
+                                  style: const TextStyle(
                                     color: Colors.black,
                                   ),
                                 ),
                                 Text(
-                                  'Check-out: 15th Jan, 2024',
-                                  style: TextStyle(
+                                  'Check-out: ${booking.checkOutDate.toLocal().toString().split(' ')[0]}',
+                                  style: const TextStyle(
                                     color: Colors.black,
                                   ),
                                 ),
@@ -70,7 +77,7 @@ class HistoryPendingBody extends StatelessWidget {
                               showDialog(
                                 context: context,
                                 builder: (BuildContext context) {
-                                  return const PendingModal(); 
+                                  return const PendingModal();
                                 },
                               );
                             },

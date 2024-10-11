@@ -6,6 +6,15 @@ const bookingSchema = new mongoose.Schema({
     required: true,
     enum: ['HotelBooking', 'RestaurantBooking'], // Specify allowed types
   },
+  restaurantName: {
+    type: String,
+  },
+  hotelName: {
+    type: String,
+  },
+  roomName: {
+    type: String,
+  },
   userId: {
     type: String,
   },
