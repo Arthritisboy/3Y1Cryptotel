@@ -57,129 +57,128 @@ class _TabScreenState extends State<TabScreen> {
     context.read<AuthBloc>().add(FetchAllUsersEvent());
   }
 
-  // Function to store users asynchronously
-  Future<void> _storeFetchedUsers(List<UserModel> users) async {
-    // Clear the users in storage before storing the new list
-    await UserStorageHelper.clearUsers();
-    // Store the users in shared preferences
-    await UserStorageHelper.storeUsers(users);
-  }
-
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
       onWillPop: () async {
-        // Show the exit confirmation dialog
         return await _showExitConfirmationDialog(context);
       },
-      child: BlocBuilder<AuthBloc, AuthState>(builder: (context, state) {
-        if (state is Authenticated) {
-          userId = state.user.id ?? '';
-          firstName = state.user.firstName ?? '';
-          lastName = state.user.lastName ?? '';
-          email = state.user.email ?? '';
-          gender = state.user.gender ?? '';
-          phoneNumber = state.user.phoneNumber ?? '';
-          profile = state.user.profilePicture ?? '';
-          _isLoading = false;
+      child: BlocBuilder<AuthBloc, AuthState>(
+        builder: (context, state) {
+          if (state is Authenticated) {
+            userId = state.user.id ?? '';
+            firstName = state.user.firstName ?? '';
+            lastName = state.user.lastName ?? '';
+            email = state.user.email ?? '';
+            gender = state.user.gender ?? '';
+            phoneNumber = state.user.phoneNumber ?? '';
+            profile = state.user.profilePicture ?? '';
+            _isLoading = false;
 
-          // Write user data to secure storage
-          _secureStorage.write(key: 'userId', value: userId);
-          _secureStorage.write(key: 'firstName', value: firstName);
-          _secureStorage.write(key: 'lastName', value: lastName);
-          _secureStorage.write(key: 'email', value: email);
-          _secureStorage.write(key: 'gender', value: gender);
-          _secureStorage.write(key: 'phoneNumber', value: phoneNumber);
-          _secureStorage.write(key: 'profile', value: profile);
+            _secureStorage.write(key: 'userId', value: userId);
+            _secureStorage.write(key: 'firstName', value: firstName);
+            _secureStorage.write(key: 'lastName', value: lastName);
+            _secureStorage.write(key: 'email', value: email);
+            _secureStorage.write(key: 'gender', value: gender);
+            _secureStorage.write(key: 'phoneNumber', value: phoneNumber);
+            _secureStorage.write(key: 'profile', value: profile);
 
-          // Store fetched users
-          _storeFetchedUsers(allUsers);
-        } else if (state is AuthInitial) {
-          // Navigate to login if not authenticated
-          WidgetsBinding.instance.addPostFrameCallback((_) {
-            Navigator.of(context).pushReplacementNamed('/login');
-          });
-        } else if (state is AuthError) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Error: ${state.error}')),
-          );
-        } else if (state is UsersFetched) {
-          // Assign new list of users
-          allUsers = state.users;
-
-          // Call the async function to store the users without await
-          _storeFetchedUsers(allUsers);
-
-          // Print users for confirmation
-          for (var user in allUsers) {
-            _logger.info(
-                'User: ${user.firstName} ${user.lastName}, Email: ${user.email}');
+            _storeFetchedUsers(allUsers);
+          } else if (state is AuthInitial) {
+            WidgetsBinding.instance.addPostFrameCallback((_) {
+              Navigator.of(context).pushReplacementNamed('/login');
+            });
+          } else if (state is AuthError) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text('Error: ${state.error}')),
+            );
+          } else if (state is UsersFetched) {
+            allUsers = state.users;
+            _storeFetchedUsers(allUsers);
           }
-        }
-        return Scaffold(
-          endDrawer: MainDrawer(
-            onSelectScreen: _setScreen,
-            firstName: firstName ?? '',
-            lastName: lastName ?? '',
-            email: email ?? '',
-            profile: profile ?? '',
-          ),
-          body: _isLoading
-              ? Column(
-                  children: const [
-                    ShimmerTabHeader(),
-                    SizedBox(height: 10),
-                    ShimmerBottomNavigation(),
-                    SizedBox(height: 10),
-                    Expanded(child: ShimmerCardWidget()),
-                  ],
-                )
-              : Stack(
-                  children: [
-                    Column(
-                      children: [
-                        TabHeader(
-                          firstName: firstName ?? 'Guest',
-                          lastName: lastName ?? '',
-                        ),
-                        const SizedBox(height: 10),
-                        BottomHomeIconNavigation(
-                          selectedIndex: _selectedIndex,
-                          onIconTapped: _onIconTapped,
-                        ),
-                        Expanded(
-                          child: Container(
-                            decoration: const BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: BorderRadius.vertical(
-                                top: Radius.circular(30.0),
+
+          return Scaffold(
+            endDrawer: MainDrawer(
+              onSelectScreen: _setScreen,
+              firstName: firstName ?? '',
+              lastName: lastName ?? '',
+              email: email ?? '',
+              profile: profile ?? '',
+            ),
+            body: _isLoading
+                ? Column(
+                    children: const [
+                      ShimmerTabHeader(),
+                      SizedBox(height: 10),
+                      ShimmerBottomNavigation(),
+                      SizedBox(height: 10),
+                      Expanded(child: ShimmerCardWidget()),
+                    ],
+                  )
+                : Stack(
+                    children: [
+                      Column(
+                        children: [
+                          TabHeader(
+                            firstName: firstName ?? 'Guest',
+                            lastName: lastName ?? '',
+                          ),
+                          const SizedBox(height: 10),
+                          BottomHomeIconNavigation(
+                            selectedIndex: _selectedIndex,
+                            onIconTapped: _onIconTapped,
+                          ),
+                          Expanded(
+                            child: SingleChildScrollView(
+                              child: Container(
+                                decoration: const BoxDecoration(
+                                  color: Colors.white,
+                                ),
+                                child: Column(
+                                  children: [
+                                    if (_selectedIndex == 0) ...[
+                                      const HomeScreen(
+                                        hotelName: 'Top Rated Hotels',
+                                      ),
+                                      const RestaurantScreen(
+                                        restaurantName: 'Top Rated Restaurants',
+                                      ),
+                                    ],
+                                    if (_selectedIndex == 1)
+                                      const RestaurantScreen(
+                                        restaurantName:
+                                            'All Available Restaurants',
+                                      ),
+                                    if (_selectedIndex == 2)
+                                      const HomeScreen(
+                                        hotelName: 'All Available Hotels',
+                                      ),
+                                  ],
+                                ),
                               ),
                             ),
-                            child: _selectedIndex == 0
-                                ? const HomeScreen()
-                                : const RestaurantScreen(),
                           ),
-                        ),
-                      ],
-                    ),
-                    Positioned(
-                      top: 40.0,
-                      right: 10.0,
-                      child: Builder(
-                        builder: (context) {
-                          return IconButton(
-                            icon: const Icon(Icons.menu, color: Colors.black),
-                            onPressed: () {
-                              Scaffold.of(context).openEndDrawer();
-                            },
-                          );
-                        },
+                        ],
                       ),
-                    ),
-                  ],
-                ),
-        );
-      }),
+                      Positioned(
+                        top: 40.0,
+                        right: 10.0,
+                        child: Builder(
+                          builder: (context) {
+                            return IconButton(
+                              icon: const Icon(Icons.menu, color: Colors.black),
+                              onPressed: () {
+                                Scaffold.of(context).openEndDrawer();
+                              },
+                            );
+                          },
+                        ),
+                      ),
+                    ],
+                  ),
+          );
+        },
+      ),
     );
   }
 
@@ -193,13 +192,13 @@ class _TabScreenState extends State<TabScreen> {
               actions: <Widget>[
                 TextButton(
                   onPressed: () {
-                    Navigator.of(context).pop(false); // Don't exit
+                    Navigator.of(context).pop(false);
                   },
                   child: const Text('Cancel'),
                 ),
                 TextButton(
                   onPressed: () {
-                    SystemNavigator.pop(); // Close the app
+                    SystemNavigator.pop();
                   },
                   child: const Text('Exit'),
                 ),
@@ -207,7 +206,7 @@ class _TabScreenState extends State<TabScreen> {
             );
           },
         ) ??
-        false; // Return false if dialog is dismissed
+        false;
   }
 
   void _onIconTapped(int index) {
@@ -217,7 +216,7 @@ class _TabScreenState extends State<TabScreen> {
   }
 
   void _setScreen(String screen) {
-    Navigator.of(context).pop(); // Close the drawer
+    Navigator.of(context).pop();
 
     switch (screen) {
       case 'homescreen':
@@ -256,6 +255,11 @@ class _TabScreenState extends State<TabScreen> {
     }
   }
 
+  Future<void> _storeFetchedUsers(List<UserModel> users) async {
+    await UserStorageHelper.clearUsers();
+    await UserStorageHelper.storeUsers(users);
+  }
+
   void _showLogoutConfirmationDialog() {
     showDialog(
       context: context,
@@ -265,12 +269,12 @@ class _TabScreenState extends State<TabScreen> {
           description: 'Are you sure you want to logout?',
           buttonText: 'Yes',
           onButtonPressed: () async {
-            await _handleLogout(); // Await the logout handler
-            Navigator.of(context).pop(); // Close the dialog
+            await _handleLogout();
+            Navigator.of(context).pop();
           },
           secondButtonText: 'No',
           onSecondButtonPressed: () {
-            Navigator.of(context).pop(); // Close the dialog
+            Navigator.of(context).pop();
           },
         );
       },
@@ -278,13 +282,10 @@ class _TabScreenState extends State<TabScreen> {
   }
 
   Future<void> _handleLogout() async {
-    // Emit the LogoutEvent without awaiting
     context.read<AuthBloc>().add(LogoutEvent());
 
-    // Delay showing the snackbar to avoid the "during build" error
     await Future.delayed(const Duration(milliseconds: 100));
 
-    // Ensure the widget is still mounted before using context
     if (mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
@@ -293,9 +294,7 @@ class _TabScreenState extends State<TabScreen> {
         ),
       );
 
-      // Navigate to login screen after showing the snackbar
-      await Future.delayed(const Duration(
-          milliseconds: 500)); // Add a short delay for the snackbar
+      await Future.delayed(const Duration(milliseconds: 500));
       Navigator.of(context).pushReplacementNamed('/login');
     }
   }

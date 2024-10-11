@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 class SquareIcon extends StatelessWidget {
   final IconData iconData;
-  final bool isSelected; 
+  final bool isSelected;
   final double size;
   final Color backgroundColor;
   final Color iconColor;
@@ -10,7 +10,7 @@ class SquareIcon extends StatelessWidget {
   const SquareIcon({
     super.key,
     required this.iconData,
-    this.isSelected = false, 
+    this.isSelected = false,
     this.size = 50.0,
     this.backgroundColor = const Color.fromARGB(255, 232, 232, 232),
     this.iconColor = Colors.grey,
@@ -22,16 +22,12 @@ class SquareIcon extends StatelessWidget {
       width: 72,
       height: 62,
       decoration: BoxDecoration(
-        color: isSelected
-            ? const Color(0xFF1C3473)
-            : backgroundColor,
+        color: isSelected ? const Color(0xFF1C3473) : backgroundColor,
         borderRadius: const BorderRadius.all(Radius.circular(12)),
       ),
       child: Icon(
         iconData,
-        color: isSelected
-            ? Colors.white 
-            : iconColor,
+        color: isSelected ? Colors.white : iconColor,
         size: 32,
       ),
     );
