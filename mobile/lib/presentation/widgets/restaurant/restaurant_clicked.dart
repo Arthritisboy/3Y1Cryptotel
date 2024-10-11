@@ -19,9 +19,11 @@ class RestaurantClicked extends StatefulWidget {
   final double latitude;
   final double longitude;
   final String restaurantImage;
+  final int capacity;
 
   const RestaurantClicked({
     super.key,
+    required this.capacity,
     required this.restaurantId,
     required this.restaurantName,
     required this.rating,
@@ -206,6 +208,7 @@ class _RestaurantClickedState extends State<RestaurantClicked> {
                     thickness: 2, color: Color.fromARGB(255, 142, 142, 147)),
                 if (widget.activeIndex == 2)
                   RestaurantDetails(
+                    capacity: widget.capacity,
                     restaurantName: widget.restaurantName,
                     rating: widget.rating,
                     price: widget.price,

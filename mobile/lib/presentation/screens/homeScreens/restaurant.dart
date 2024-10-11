@@ -11,9 +11,11 @@ class Restaurant extends StatefulWidget {
   final double latitude;
   final double longitude;
   final String restaurantId;
+  final int capacity;
 
   const Restaurant({
     super.key,
+    required this.capacity,
     required this.restaurantId,
     required this.restaurantImage,
     required this.restaurantName,
@@ -57,6 +59,7 @@ class _RestaurantState extends State<Restaurant> {
           children: [
             const SizedBox(height: 10),
             RestaurantClicked(
+              capacity: widget.capacity,
               restaurantId: widget.restaurantId,
               restaurantImage: widget.restaurantImage,
               restaurantName: widget.restaurantName,
