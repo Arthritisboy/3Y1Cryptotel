@@ -26,8 +26,8 @@ class BookingDataProvider {
       },
     );
 
-    _logger.info('API response status: ${response.statusCode}');
-    _logger.info('API response body: ${response.body}');
+    print('API response status: ${response.statusCode}');
+    print('API response body: ${response.body}');
 
     if (response.statusCode == 200) {
       final List<dynamic> bookingsJson =
@@ -59,8 +59,8 @@ class BookingDataProvider {
       body: jsonEncode(booking.toJson()),
     );
 
-    _logger.info('API response status: ${response.statusCode}');
-    _logger.info('API response body: ${response.body}');
+    print('API response status: ${response.statusCode}');
+    print('API response body: ${response.body}');
 
     if (response.statusCode == 201) {
       return BookingModel.fromJson(
@@ -90,8 +90,8 @@ class BookingDataProvider {
       body: jsonEncode(booking.toJson()),
     );
 
-    _logger.info('API response status: ${response.statusCode}');
-    _logger.info('API response body: ${response.body}');
+    print('API response status: ${response.statusCode}');
+    print('API response body: ${response.body}');
 
     if (response.statusCode != 200) {
       final errorResponse = json.decode(response.body);
@@ -116,8 +116,8 @@ class BookingDataProvider {
       },
     );
 
-    _logger.info('API response status: ${response.statusCode}');
-    _logger.info('API response body: ${response.body}');
+    print('API response status: ${response.statusCode}');
+    print('API response body: ${response.body}');
 
     if (response.statusCode != 204) {
       final errorResponse = json.decode(response.body);

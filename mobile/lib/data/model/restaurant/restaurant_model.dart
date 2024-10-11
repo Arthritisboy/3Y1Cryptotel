@@ -52,7 +52,7 @@ class RestaurantModel {
       List<Location> locations = await locationFromAddress(location);
       return [locations.first.latitude, locations.first.longitude];
     } catch (e) {
-      _logger.info("Error fetching coordinates for $location: $e");
+      print("Error fetching coordinates for $location: $e");
       return [0.0, 0.0];
     }
   }

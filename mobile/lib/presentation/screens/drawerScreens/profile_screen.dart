@@ -220,14 +220,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
                 // Handle the loading state
                 if (state is AuthLoading || _isLoading) {
-                  _logger.info('State is loading, showing loading animation.');
+                  print('State is loading, showing loading animation.');
                   return _buildLoadingIndicator(); // Show blue background with loading animation
                 }
 
                 // Handle authenticated state
                 if (state is Authenticated) {
-                  _logger.info('User is authenticated.');
-                  _logger.info(
+                  print('User is authenticated.');
+                  print(
                       'Authenticated User: ${state.user.email}, ${state.user.firstName}, ${state.user.lastName}');
 
                   return BottomSection(

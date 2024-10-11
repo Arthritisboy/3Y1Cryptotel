@@ -223,8 +223,8 @@ class _LoginScreenState extends State<LoginScreen> {
   void _login() {
     final email = _emailController.text;
     final password = _passwordController.text;
-    _logger.info('Email: $email');
-    _logger.info('Password: $password');
+    print('Email: $email');
+    print('Password: $password');
 
     context.read<AuthBloc>().add(
           LoginEvent(email: email, password: password),

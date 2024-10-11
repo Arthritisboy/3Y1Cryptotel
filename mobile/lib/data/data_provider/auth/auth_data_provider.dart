@@ -159,27 +159,41 @@ class AuthDataProvider {
     final String url = 'https://3-y1-cryptotel-hazel.vercel.app/api/v1/users';
     final token = await storage.read(key: 'jwt');
 
+    print('Token retrieved: $token'); // Log the JWT token
+
     if (token == null) {
+      _logger
+          .severe('Authorization token is missing'); // Log if token is missing
       throw Exception('Authorization token is missing');
     }
 
-    final response = await http.get(
-      Uri.parse(url),
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer $token',
-      },
-    );
+    try {
+      final response = await http.get(
+        Uri.parse(url),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token',
+        },
+      );
 
-    _logger.info('API response status: ${response.statusCode}');
-    _logger.info('API response body: ${response.body}');
+      print('API response status code: ${response.statusCode}');
+      print('API response body: ${response.body}');
 
-    if (response.statusCode == 200) {
-      final data = json.decode(response.body)['data']['users'] as List;
-      return data.map((userJson) => UserModel.fromJson(userJson)).toList();
-    } else {
-      _logger.info('Error fetching users: ${response.body}');
-      throw Exception('Failed to load users: ${response.body}');
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body)['data']['users'] as List;
+
+        print(
+            'Fetched ${data.length} users from the API'); // Log fetched user count
+        return data.map((userJson) => UserModel.fromJson(userJson)).toList();
+      } else {
+        _logger.severe(
+            'Error fetching users: ${response.body}'); // Log error message from response
+        throw Exception('Failed to load users: ${response.body}');
+      }
+    } catch (error) {
+      _logger
+          .severe('Exception during user fetch: $error'); // Log the exception
+      throw Exception('Failed to fetch users: $error');
     }
   }
 
@@ -276,8 +290,8 @@ class AuthDataProvider {
       },
     );
 
-    _logger.info('Logout response status: ${response.statusCode}');
-    _logger.info('Logout response body: ${response.body}');
+    print('Logout response status: ${response.statusCode}');
+    print('Logout response body: ${response.body}');
 
     if (response.statusCode != 200) {
       throw Exception('Failed to logout: ${response.body}');
