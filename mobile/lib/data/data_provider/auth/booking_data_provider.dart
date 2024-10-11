@@ -6,7 +6,8 @@ import 'package:logging/logging.dart';
 
 class BookingDataProvider {
   final Logger _logger = Logger('BookingDataProvider');
-  final String baseUrl = 'https://3-y1-cryptotel.vercel.app/api/v1/bookings';
+  final String baseUrl =
+      'https://3-y1-cryptotel-hazel.vercel.app/api/v1/bookings';
   final FlutterSecureStorage storage = const FlutterSecureStorage();
 
   //! Fetch All Bookings
