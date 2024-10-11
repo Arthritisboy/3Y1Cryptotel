@@ -26,13 +26,13 @@ class _HistoryModalState extends State<HistoryModal> {
 
   @override
   void dispose() {
-    _commentController.dispose(); 
+    _commentController.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    double _rating = 0;
+    double rating = 0;
 
     return StatefulBuilder(
       builder: (context, setState) {
@@ -100,7 +100,7 @@ class _HistoryModalState extends State<HistoryModal> {
                 ),
                 onRatingUpdate: (rating) {
                   setState(() {
-                    _rating = rating;
+                    rating = rating;
                   });
                 },
               ),
@@ -126,7 +126,7 @@ class _HistoryModalState extends State<HistoryModal> {
                   decoration: const InputDecoration(
                     hintText: 'Leave your comment...',
                     border: InputBorder.none,
-                    counterText: "", 
+                    counterText: "",
                   ),
                 ),
               ),
@@ -150,9 +150,8 @@ class _HistoryModalState extends State<HistoryModal> {
                         '$_currentLength/$_maxLength',
                         style: TextStyle(
                           fontSize: 12.0,
-                          color: _currentLength >= 400
-                              ? Colors.red 
-                              : Colors.grey, 
+                          color:
+                              _currentLength >= 400 ? Colors.red : Colors.grey,
                         ),
                       ),
                     ],
@@ -167,7 +166,8 @@ class _HistoryModalState extends State<HistoryModal> {
                 Navigator.of(context).pop();
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(
-                    content: Text('Rating: $_rating stars submitted for the service'),
+                    content:
+                        Text('Rating: $rating stars submitted for the service'),
                   ),
                 );
               },

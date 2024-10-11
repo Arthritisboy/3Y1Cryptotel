@@ -168,6 +168,31 @@ class _ProfileScreenState extends State<ProfileScreen> {
     }
   }
 
+  // Loading widget with blue background and message
+  Widget _buildLoadingIndicator() {
+    return Stack(
+      children: [
+        const BlueBackground(), // Blue background widget
+        Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: const [
+              CircularProgressIndicator(), // Loading spinner
+              SizedBox(height: 20),
+              Text(
+                "User Account Updating. Please Wait.",
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 18,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -190,9 +215,21 @@ class _ProfileScreenState extends State<ProfileScreen> {
             bottom: 0,
             child: BlocBuilder<AuthBloc, AuthState>(
               builder: (context, state) {
+                _logger
+                    .info('Current Auth State: $state'); // Debugging the state
+
+                // Handle the loading state
+                if (state is AuthLoading || _isLoading) {
+                  _logger.info('State is loading, showing loading animation.');
+                  return _buildLoadingIndicator(); // Show blue background with loading animation
+                }
+
+                // Handle authenticated state
                 if (state is Authenticated) {
+                  _logger.info('User is authenticated.');
                   _logger.info(
-                      '${state.user.email}\n${state.user.firstName}\n${state.user.lastName}\n${state.user.profilePicture}\n${state.user.gender}\n${state.user.phoneNumber}');
+                      'Authenticated User: ${state.user.email}, ${state.user.firstName}, ${state.user.lastName}');
+
                   return BottomSection(
                     firstNameController: firstNameController,
                     lastNameController: lastNameController,
@@ -207,13 +244,31 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     },
                     isLoading: _isLoading, // Pass the loading state
                   );
-                } else {
-                  _logger.info(state);
                 }
-                return Container();
+
+                // Handle unauthenticated or error states
+                if (state is AuthError) {
+                  _logger.severe(
+                    'Error or unauthenticated state encountered: $state',
+                  );
+                  return Center(
+                    child: Text(
+                      'Error: Unable to load user data.\n${state.error}',
+                      style: const TextStyle(color: Colors.red),
+                      textAlign: TextAlign.center,
+                    ),
+                  );
+                }
+
+                // Catch-all for unexpected states
+                _logger.warning('Unexpected state encountered: $state');
+                return const Center(
+                  child: Text('Unexpected error loading user data.'),
+                );
               },
             ),
           ),
+          // Profile picture at the top
           Positioned(
             top: MediaQuery.of(context).size.height * 0.01,
             left: 0,
@@ -241,8 +296,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           : const Icon(
                               Icons.person,
                               size: 80,
-                              color: Color.fromARGB(
-                                  255, 29, 53, 115), // Placeholder icon
+                              color: Color.fromARGB(255, 29, 53, 115),
                             ),
                 ),
               ),

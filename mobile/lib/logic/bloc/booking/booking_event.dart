@@ -11,7 +11,7 @@ abstract class BookingEvent extends Equatable {
 class FetchBookings extends BookingEvent {
   final String userId;
 
-  FetchBookings(this.userId);
+  const FetchBookings(this.userId);
 
   @override
   List<Object> get props => [userId];
@@ -21,7 +21,7 @@ class CreateBooking extends BookingEvent {
   final BookingModel booking;
   final String userId;
 
-  CreateBooking({required this.booking, required this.userId});
+  const CreateBooking({required this.booking, required this.userId});
 
   @override
   List<Object> get props => [booking, userId];
@@ -31,7 +31,7 @@ class UpdateBooking extends BookingEvent {
   final BookingModel booking;
   final String bookingId;
 
-  UpdateBooking({required this.booking, required this.bookingId});
+  const UpdateBooking({required this.booking, required this.bookingId});
 
   @override
   List<Object> get props => [booking, bookingId];
@@ -40,7 +40,7 @@ class UpdateBooking extends BookingEvent {
 class DeleteBooking extends BookingEvent {
   final String bookingId;
 
-  DeleteBooking(this.bookingId);
+  const DeleteBooking(this.bookingId);
 
   @override
   List<Object> get props => [bookingId];

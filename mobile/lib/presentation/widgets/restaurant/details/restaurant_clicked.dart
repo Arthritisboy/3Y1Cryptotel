@@ -3,7 +3,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hotel_flutter/logic/bloc/restaurant/restaurant_bloc.dart';
 import 'package:hotel_flutter/logic/bloc/restaurant/restaurant_event.dart';
 import 'package:hotel_flutter/logic/bloc/restaurant/restaurant_state.dart';
-import 'package:hotel_flutter/presentation/widgets/hotel/utils/hotel_input_fields/hotel_input_fields.dart';
 import 'package:hotel_flutter/presentation/widgets/restaurant/navigation/restaurant_navigation_row.dart';
 import 'package:hotel_flutter/presentation/widgets/restaurant/details/restaurant_details.dart';
 import 'package:hotel_flutter/presentation/widgets/restaurant/utils/restaurant_input_fields.dart';
