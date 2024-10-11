@@ -65,12 +65,10 @@ class RestaurantScreen extends StatelessWidget {
                 // Example: Navigator.push(context, MaterialPageRoute(...));
               },
               child: CardWidget(
-                imagePath: restaurant.restaurantImage,
-                hotelName: restaurant.name,
-                location: restaurant.location,
-                rating: restaurant.rating ??
-                    0.0, // Replace with the actual rating property
-              ),
+                  imagePath: restaurant.restaurantImage,
+                  hotelName: restaurant.name,
+                  location: restaurant.location,
+                  rating: restaurant.rating),
             ),
           );
         }).toList(),

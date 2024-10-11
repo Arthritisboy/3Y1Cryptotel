@@ -2,12 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:hotel_flutter/presentation/screens/admin/admin_header.dart';
 import 'package:hotel_flutter/presentation/screens/admin/admin_modal.dart';
 
-
 class AdminNavigation extends StatefulWidget {
   const AdminNavigation({super.key});
 
   @override
-  _AdminNavigationState createState() => _AdminNavigationState();
+  State<StatefulWidget> createState() {
+    return _AdminNavigationState();
+  }
 }
 
 class _AdminNavigationState extends State<AdminNavigation> {
