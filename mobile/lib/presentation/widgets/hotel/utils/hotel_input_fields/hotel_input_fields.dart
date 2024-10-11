@@ -1,4 +1,3 @@
-// hotel_input_fields.dart
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
@@ -8,14 +7,18 @@ import 'package:hotel_flutter/logic/bloc/booking/booking_state.dart';
 import 'package:hotel_flutter/data/model/booking/booking_model.dart';
 import 'package:hotel_flutter/presentation/widgets/hotel/utils/hotel_input_fields/date_time_helper.dart';
 import 'package:hotel_flutter/presentation/widgets/hotel/utils/hotel_input_fields/input_field_helpers.dart';
+import 'package:hotel_flutter/presentation/widgets/utils_widget/custom_dialog.dart'; // Import the CustomDialog widget
 
 class HotelInputFields extends StatefulWidget {
   final String hotelId;
   final String roomId;
+  final int capacity;
+
   const HotelInputFields({
     super.key,
     required this.hotelId,
     required this.roomId,
+    required this.capacity,
   });
 
   @override
@@ -39,6 +42,7 @@ class _HotelInputFieldsState extends State<HotelInputFields> {
   final FlutterSecureStorage secureStorage = const FlutterSecureStorage();
   bool isBookButtonEnabled = false;
   String? userId;
+  bool isLoading = false; // For button loading state
 
   @override
   void initState() {
@@ -76,6 +80,46 @@ class _HotelInputFieldsState extends State<HotelInputFields> {
     });
   }
 
+  void _showBookingSuccessDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      barrierDismissible: false, // Prevent closing by tapping outside
+      builder: (BuildContext context) {
+        return CustomDialog(
+          title: 'Booking Successful',
+          description:
+              'Your booking has been successfully submitted and is currently being processed. You will be notified once it is confirmed.',
+          buttonText: 'OK',
+          secondButtonText: '',
+          onButtonPressed: () {
+            Navigator.of(context).pop();
+            Navigator.of(context).pushReplacementNamed('/homescreen');
+          },
+          onSecondButtonPressed: () {},
+        );
+      },
+    );
+  }
+
+  void _showCapacityErrorDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return CustomDialog(
+          title: 'Guest Limit Exceeded',
+          description:
+              'You have exceeded the maximum guest capacity for this room. Please reduce the number of guests to proceed.',
+          buttonText: 'Close',
+          onButtonPressed: () {
+            Navigator.of(context).pop(); // Close the dialog
+          },
+          secondButtonText: '', // No second button needed
+          onSecondButtonPressed: () {}, // No action
+        );
+      },
+    );
+  }
+
   void _createBooking(BuildContext context) {
     DateTime? checkInDate = DateTime.tryParse(checkInDateController.text);
     DateTime? checkOutDate = DateTime.tryParse(checkOutDateController.text);
@@ -89,8 +133,16 @@ class _HotelInputFieldsState extends State<HotelInputFields> {
         arrivalDateTime != null &&
         departureDateTime != null &&
         userId != null) {
+      final int totalGuests = (int.tryParse(adultsController.text) ?? 1) +
+          (int.tryParse(childrenController.text) ?? 0);
+
+      // Check if the total number of guests exceeds room capacity
+      if (totalGuests > widget.capacity) {
+        _showCapacityErrorDialog(context); // Show error dialog
+        return; // Do not proceed with booking
+      }
+
       final booking = BookingModel(
-        id: '',
         bookingType: 'HotelBooking',
         hotelId: widget.hotelId,
         roomId: widget.roomId,
@@ -104,26 +156,11 @@ class _HotelInputFieldsState extends State<HotelInputFields> {
         timeOfDeparture: departureDateTime,
         adult: int.tryParse(adultsController.text) ?? 1,
         children: int.tryParse(childrenController.text) ?? 0,
-        // totalPrice: 0.0,
-        // isAccepted: false,
       );
 
-// Print the BookingModel to the console
-      print('BookingModel:');
-      print('User ID: ${userId}');
-      print('Booktype: ${booking.bookingType}');
-      print('Hotel ID: ${booking.hotelId}');
-      print('Room ID: ${booking.roomId}');
-      print('Full Name: ${booking.fullName}');
-      print('Email: ${booking.email}');
-      print('Phone Number: ${booking.phoneNumber}');
-      print('Address: ${booking.address}');
-      print('Check-in Date: ${booking.checkInDate}');
-      print('Check-out Date: ${booking.checkOutDate}');
-      print('Time of Arrival: ${booking.timeOfArrival}');
-      print('Time of Departure: ${booking.timeOfDeparture}');
-      print('Adults: ${booking.adult}');
-      print('Children: ${booking.children}');
+      setState(() {
+        isLoading = true; // Show loading spinner
+      });
 
       context.read<BookingBloc>().add(CreateBooking(
             booking: booking,
@@ -137,10 +174,14 @@ class _HotelInputFieldsState extends State<HotelInputFields> {
     return BlocListener<BookingBloc, BookingState>(
       listener: (context, state) {
         if (state is BookingCreateSuccess) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Booking created successfully!')),
-          );
+          setState(() {
+            isLoading = false; // Hide loading spinner
+          });
+          _showBookingSuccessDialog(context);
         } else if (state is BookingFailure) {
+          setState(() {
+            isLoading = false; // Hide loading spinner
+          });
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(content: Text('Failed to create booking: ${state.error}')),
           );
@@ -244,26 +285,30 @@ class _HotelInputFieldsState extends State<HotelInputFields> {
             width: double.infinity,
             height: 50,
             child: ElevatedButton(
-              onPressed: isBookButtonEnabled
+              onPressed: isBookButtonEnabled && !isLoading
                   ? () {
                       _createBooking(context);
                     }
                   : null,
               style: ElevatedButton.styleFrom(
-                backgroundColor: isBookButtonEnabled
+                backgroundColor: isBookButtonEnabled && !isLoading
                     ? const Color.fromARGB(255, 29, 53, 115)
                     : Colors.grey,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(10),
                 ),
               ),
-              child: const Text(
-                'Book Now',
-                style: TextStyle(
-                  fontSize: 18,
-                  color: Colors.white,
-                ),
-              ),
+              child: isLoading
+                  ? const CircularProgressIndicator(
+                      valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                    )
+                  : const Text(
+                      'Book Now',
+                      style: TextStyle(
+                        fontSize: 18,
+                        color: Colors.white,
+                      ),
+                    ),
             ),
           ),
         ],

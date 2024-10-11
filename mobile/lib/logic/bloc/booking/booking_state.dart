@@ -15,7 +15,7 @@ class BookingLoading extends BookingState {}
 class BookingSuccess extends BookingState {
   final List<BookingModel> bookings;
 
-  BookingSuccess({required this.bookings});
+  const BookingSuccess({required this.bookings});
 
   @override
   List<Object> get props => [bookings];
@@ -24,7 +24,7 @@ class BookingSuccess extends BookingState {
 class BookingCreateSuccess extends BookingState {
   final BookingModel booking;
 
-  BookingCreateSuccess({required this.booking});
+  const BookingCreateSuccess({required this.booking});
 
   @override
   List<Object> get props => [booking];
@@ -37,7 +37,7 @@ class BookingDeleteSuccess extends BookingState {}
 class BookingFailure extends BookingState {
   final String error;
 
-  BookingFailure({required this.error});
+  const BookingFailure({required this.error});
 
   @override
   List<Object> get props => [error];

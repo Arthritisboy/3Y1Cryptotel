@@ -14,6 +14,7 @@ import 'package:hotel_flutter/logic/bloc/booking/booking_bloc.dart';
 import 'package:hotel_flutter/logic/bloc/hotel/hotel_bloc.dart';
 import 'package:hotel_flutter/logic/bloc/restaurant/restaurant_bloc.dart';
 import 'package:hotel_flutter/presentation/screens/homeScreens/splash_screen.dart';
+import 'package:hotel_flutter/presentation/widgets/history/history_screen.dart';
 import 'package:hotel_flutter/router/app_router.dart';
 import 'package:hotel_flutter/data/repositories/auth_repository.dart';
 import 'package:logging/logging.dart';
