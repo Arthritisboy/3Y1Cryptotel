@@ -110,7 +110,7 @@ class _HotelInputFieldsState extends State<HotelInputFields> {
 
 // Print the BookingModel to the console
       print('BookingModel:');
-      print('User ID: ${userId}');
+      print('User ID: $userId');
       print('Booktype: ${booking.bookingType}');
       print('Hotel ID: ${booking.hotelId}');
       print('Room ID: ${booking.roomId}');
