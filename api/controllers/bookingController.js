@@ -10,12 +10,9 @@ const sendEmail = require('../utils/email');
 // ** Get all bookings for a user
 exports.getBookings = catchAsync(async(req, res, next) => {
     try {
-        let { id } = req.params; // Get the id from the URL
-
-        const bookings = await Booking.find({
-            id: req.params.hotelId,
-            id: req.params.userId
-        }).populate('hotelId roomId restaurantId');
+        const bookings = await Booking.find({ userId: req.params.userId }).populate(
+            'hotelId roomId restaurantId',
+        );
 
         res.status(200).json({
             status: 'success',
@@ -24,7 +21,9 @@ exports.getBookings = catchAsync(async(req, res, next) => {
             },
         });
     } catch (error) {
-        return next(new AppError('Error in getting bookings. Please try again.', 500));
+        return next(
+            new AppError('Error in getting bookings. Please try again.', 500),
+        );
     }
 });
 
