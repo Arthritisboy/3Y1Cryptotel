@@ -10,12 +10,12 @@ class CryptoWithTransaction extends StatefulWidget {
   final Function(String, String, bool) onWalletUpdated;
 
   const CryptoWithTransaction({
-    Key? key,
+    super.key,
     required this.isConnected,
     required this.walletAddress,
     required this.balance,
     required this.onWalletUpdated,
-  }) : super(key: key);
+  });
 
   @override
   State<CryptoWithTransaction> createState() => _CryptoWithTransactionState();
@@ -216,8 +216,8 @@ class _CryptoWithTransactionState extends State<CryptoWithTransaction> {
           'Requesting write contract with topic: ${appKitModal!.session!.topic}');
       debugPrint('Chain ID: ${appKitModal!.selectedChain!.chainId}');
       debugPrint('Function Name: transfer');
-      debugPrint('Transaction From: ${senderAddress}, To: $receiver');
-      debugPrint('Value: $txValue, Parameters: ${amountInWei}');
+      debugPrint('Transaction From: $senderAddress, To: $receiver');
+      debugPrint('Value: $txValue, Parameters: $amountInWei');
 
       final result = await appKitModal!.requestWriteContract(
         topic: appKitModal!.session!.topic,

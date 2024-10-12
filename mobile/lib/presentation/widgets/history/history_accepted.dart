@@ -4,8 +4,7 @@ import 'package:hotel_flutter/data/model/booking/booking_model.dart';
 class HistoryAcceptedBody extends StatelessWidget {
   final List<BookingModel> acceptedBookings;
 
-  const HistoryAcceptedBody({Key? key, required this.acceptedBookings})
-      : super(key: key);
+  const HistoryAcceptedBody({super.key, required this.acceptedBookings});
 
   @override
   Widget build(BuildContext context) {
@@ -107,7 +106,7 @@ class HistoryAcceptedBody extends StatelessWidget {
                                   onPressed: () {
                                     // Handle payment button click
                                     print(
-                                        'Pay button pressed for ${displayName}');
+                                        'Pay button pressed for $displayName');
                                   },
                                   style: ElevatedButton.styleFrom(
                                     backgroundColor: const Color(0xFF1C3473),

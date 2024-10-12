@@ -5,8 +5,7 @@ import 'package:hotel_flutter/presentation/widgets/history/history_pendingmodal.
 class HistoryPendingBody extends StatelessWidget {
   final List<BookingModel> pendingBookings;
 
-  const HistoryPendingBody({Key? key, required this.pendingBookings})
-      : super(key: key);
+  const HistoryPendingBody({super.key, required this.pendingBookings});
 
   @override
   Widget build(BuildContext context) {

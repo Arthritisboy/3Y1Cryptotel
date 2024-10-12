@@ -8,12 +8,12 @@ class CryptoWalletTransactions extends StatelessWidget {
   final Function(String, String, bool) onWalletUpdated;
 
   const CryptoWalletTransactions({
-    Key? key,
+    super.key,
     required this.isConnected,
     required this.walletAddress,
     required this.balance,
     required this.onWalletUpdated,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
