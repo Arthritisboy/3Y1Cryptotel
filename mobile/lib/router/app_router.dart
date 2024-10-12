@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:hotel_flutter/presentation/screens/admin/admin_screen.dart';
 import 'package:hotel_flutter/presentation/screens/drawerScreens/history_screen.dart';
 import 'package:hotel_flutter/presentation/screens/homeScreens/onboarding_screen.dart';
 import 'package:hotel_flutter/presentation/screens/drawerScreens/crypto_wallet.dart';
@@ -142,6 +143,11 @@ class AppRouter {
         // Redirect to login screen or welcome screen after logout
         return MaterialPageRoute(
           builder: (_) => const LoginScreen(), // or WelcomeScreen()
+        );
+
+      case '/admin':
+        return MaterialPageRoute(
+          builder: (_) => const AdminScreen(),
         );
       default:
         return null;

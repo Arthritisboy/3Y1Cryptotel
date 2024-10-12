@@ -180,6 +180,7 @@ exports.login = catchAsync(async (req, res, next) => {
   createSendToken(user, 200, res, {
     userId: user._id,
     hasCompletedOnboarding: user.hasCompletedOnboarding,
+    roles: user.roles,
   });
 });
 

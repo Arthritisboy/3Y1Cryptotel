@@ -38,8 +38,16 @@ class _LoginScreenState extends State<LoginScreen> {
               _isLoading = false;
             });
             // Check onboarding status
-            if (state.user.hasCompletedOnboarding) {
+            if (state.user.hasCompletedOnboarding &&
+                state.user.roles == 'user') {
               Navigator.of(context).pushReplacementNamed('/homescreen');
+            } else {
+              Navigator.of(context).pushReplacementNamed('/onboarding');
+            }
+
+            if (state.user.hasCompletedOnboarding &&
+                state.user.roles == 'admin') {
+              Navigator.of(context).pushReplacementNamed('/admin');
             } else {
               Navigator.of(context).pushReplacementNamed('/onboarding');
             }
