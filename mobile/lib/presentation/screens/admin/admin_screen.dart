@@ -1,164 +1,224 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:hotel_flutter/data/model/booking/booking_model.dart';
-import 'package:hotel_flutter/logic/bloc/booking/booking_bloc.dart';
-import 'package:hotel_flutter/logic/bloc/booking/booking_event.dart';
-import 'package:hotel_flutter/logic/bloc/booking/booking_state.dart';
-import 'package:hotel_flutter/presentation/widgets/history/history_pending.dart';
 import 'admin_modal.dart'; // Import BookingDetailsModal
 import 'admin_header.dart'; // Import AdminHeader
 
-class AdminScreen extends StatefulWidget {
+class AdminScreen extends StatelessWidget {
   const AdminScreen({super.key});
 
   @override
-  State<AdminScreen> createState() => _AdminScreenState();
-}
-
-class _AdminScreenState extends State<AdminScreen> {
-  final FlutterSecureStorage _secureStorage =
-      const FlutterSecureStorage(); // Initialize secure storage
-
-  @override
-  void initState() {
-    super.initState();
-    _fetchUserId();
-  }
-
-  Future<void> _fetchUserId() async {
-    // Retrieve the userId from secure storage
-    String? userId = await _secureStorage.read(key: 'hotelId');
-
-    if (userId != null) {
-      // Once userId is retrieved, fetch bookings with the userId
-      context.read<BookingBloc>().add(FetchBookings(userId: userId));
-    } else {
-      // Handle the case where userId is not found
-      print('No userId found in secure storage');
-    }
-  }
-
-  @override
   Widget build(BuildContext context) {
+    // Sample data for each status (Pending, Accepted, Rejected)
+    final List<Map<String, String>> pendingRequests = [
+      {
+        "id": "1",
+        "userName": "John Doe",
+        "hotelName": "Grand Hotel",
+        "roomName": "Suite 101",
+        "date": "Oct 12, 2024",
+        "checkIn": "Oct 12, 2024",
+        "checkOut": "Oct 15, 2024",
+        "timeIn": "2:00 PM",
+        "timeOut": "11:00 AM",
+        "fullName": "Johnathan Doe",
+        "email": "johndoe@example.com",
+        "phoneNumber": "+1234567890",
+        "address": "123 Main St, New York, NY",
+        "adults": "2",
+        "children": "1"
+      },
+    ];
+
+    final List<Map<String, String>> acceptedRequests = [
+      {
+        "id": "2",
+        "userName": "Jane Smith",
+        "hotelName": "Oceanview Resort",
+        "roomName": "Deluxe Ocean View",
+        "date": "Nov 5, 2024",
+        "checkIn": "Nov 5, 2024",
+        "checkOut": "Nov 10, 2024",
+        "timeIn": "3:00 PM",
+        "timeOut": "11:00 AM",
+        "fullName": "Jane Smith",
+        "email": "janesmith@example.com",
+        "phoneNumber": "+1234567890",
+        "address": "456 Park Ave, New York, NY",
+        "adults": "2",
+        "children": "0"
+      },
+    ];
+
+    final List<Map<String, String>> rejectedRequests = [
+      {
+        "id": "3",
+        "userName": "Alice Brown",
+        "hotelName": "Mountain Lodge",
+        "roomName": "Cabin 9",
+        "date": "Oct 20, 2024",
+        "checkIn": "Oct 20, 2024",
+        "checkOut": "Oct 25, 2024",
+        "timeIn": "4:00 PM",
+        "timeOut": "10:00 AM",
+        "fullName": "Alice Brown",
+        "email": "alicebrown@example.com",
+        "phoneNumber": "+9876543210",
+        "address": "789 Elm St, Denver, CO",
+        "adults": "3",
+        "children": "1"
+      },
+    ];
+
     return DefaultTabController(
       length: 3,
       child: Scaffold(
-        appBar: AppBar(
-          backgroundColor: Colors.white,
-          elevation: 0,
-          title: const AdminHeader(),
-          bottom: const TabBar(
-            labelColor: Colors.black,
-            unselectedLabelColor: Colors.grey,
-            indicatorColor: Color(0xFF1C3473),
-            tabs: [
-              Tab(text: 'Pending'),
-              Tab(text: 'Accepted'),
-              Tab(text: 'Rejected'),
-            ],
-          ),
-        ),
-        body: BlocBuilder<BookingBloc, BookingState>(
-          builder: (context, state) {
-            if (state is BookingLoading) {
-              return const Center(child: CircularProgressIndicator());
-            } else if (state is BookingSuccess) {
-              // Filter pending, accepted, and rejected bookings
-              final pendingBookings = state.bookings
-                  .where((booking) => booking.status == 'pending')
-                  .toList();
-              final acceptedBookings = state.bookings
-                  .where((booking) => booking.status == 'accepted')
-                  .toList();
-              final rejectedBookings = state.bookings
-                  .where((booking) => booking.status == 'rejected')
-                  .toList();
-
-              return TabBarView(
-                children: [
-                  // Pass the bookings as named parameters
-                  _buildBookingsTab(bookings: pendingBookings), // Fixed
-                  _buildBookingsTab(bookings: acceptedBookings), // Fixed
-                  _buildBookingsTab(bookings: rejectedBookings), // Fixed
-                ],
-              );
-            } else if (state is BookingFailure) {
-              return Center(child: Text('Error: ${state.error}'));
-            } else {
-              return const Center(child: Text('No bookings found.'));
-            }
-          },
-        ),
-      ),
-    );
-  }
-
-  // Generic builder for Accepted and Rejected bookings
-  Widget _buildBookingsTab({required List<BookingModel> bookings}) {
-    return ListView.builder(
-      itemCount: bookings.length,
-      itemBuilder: (context, index) {
-        final booking = bookings[index];
-
-        return Card(
-          margin: const EdgeInsets.all(8.0),
-          child: Padding(
-            padding: const EdgeInsets.all(12.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  'User: ${booking.fullName}',
-                  style: const TextStyle(color: Colors.black, fontSize: 18),
-                ),
-                const SizedBox(height: 8),
-                Text(
-                  'Hotel: ${booking.hotelName}',
-                  style: const TextStyle(color: Colors.black),
-                ),
-                Text(
-                  'Room: ${booking.roomName}',
-                  style: const TextStyle(color: Colors.black),
-                ),
-                Text(
-                  'Booking Date: ${booking.checkInDate.toLocal().toString().split(' ')[0]}',
-                  style: const TextStyle(color: Colors.black),
-                ),
-                const SizedBox(height: 16),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    // Accept Button
-                    ElevatedButton(
-                      onPressed: () {
-                        // Trigger Accept action
-                        //context.read<BookingBloc>().add(AcceptBooking(booking.id!));
-                      },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.green,
-                      ),
-                      child: const Text('Accept'),
-                    ),
-                    const SizedBox(width: 8), // Small space between buttons
-                    // Reject Button
-                    ElevatedButton(
-                      onPressed: () {
-                        // Trigger Reject action
-                        //context.read<BookingBloc>().add(RejectBooking(booking.id!));
-                      },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.red,
-                      ),
-                      child: const Text('Reject'),
-                    ),
-                  ],
-                ),
+        body: Column(
+          children: [
+            const AdminHeader(),
+            const TabBar(
+              tabs: [
+                Tab(text: 'Pending', icon: Icon(Icons.pending_actions)),
+                Tab(text: 'Accepted', icon: Icon(Icons.check_circle)),
+                Tab(text: 'Rejected', icon: Icon(Icons.cancel)),
               ],
             ),
-          ),
-        );
-      },
+            Expanded(
+              child: TabBarView(
+                children: [
+                  ListView.builder(
+                    itemCount: pendingRequests.length,
+                    itemBuilder: (context, index) {
+                      final request = pendingRequests[index];
+
+                      return Card(
+                        margin: const EdgeInsets.all(8.0),
+                        child: InkWell(
+                          onTap: () {
+                            showDialog(
+                              context: context,
+                              builder: (BuildContext context) {
+                                return BookingDetailsModal(bookingRequest: request);
+                              },
+                            );
+                          },
+                          child: ListTile(
+                            title: Text(
+                              'User: ${request["userName"]}',
+                              style: const TextStyle(color: Colors.black),
+                            ),
+                            subtitle: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  'Hotel: ${request["hotelName"]}',
+                                  style: const TextStyle(color: Colors.black),
+                                ),
+                                Text(
+                                  'Room: ${request["roomName"]}',
+                                  style: const TextStyle(color: Colors.black),
+                                ),
+                                Text(
+                                  'Booking Date: ${request["date"]}',
+                                  style: const TextStyle(color: Colors.black),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      );
+                    },
+                  ),
+                  ListView.builder(
+                    itemCount: acceptedRequests.length,
+                    itemBuilder: (context, index) {
+                      final request = acceptedRequests[index];
+
+                      return Card(
+                        margin: const EdgeInsets.all(8.0),
+                        child: InkWell(
+                          onTap: () {
+                            showDialog(
+                              context: context,
+                              builder: (BuildContext context) {
+                                return BookingDetailsModal(bookingRequest: request);
+                              },
+                            );
+                          },
+                          child: ListTile(
+                            title: Text(
+                              'User: ${request["userName"]}',
+                              style: const TextStyle(color: Colors.black),
+                            ),
+                            subtitle: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  'Hotel: ${request["hotelName"]}',
+                                  style: const TextStyle(color: Colors.black),
+                                ),
+                                Text(
+                                  'Room: ${request["roomName"]}',
+                                  style: const TextStyle(color: Colors.black),
+                                ),
+                                Text(
+                                  'Booking Date: ${request["date"]}',
+                                  style: const TextStyle(color: Colors.black),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      );
+                    },
+                  ),
+                  ListView.builder(
+                    itemCount: rejectedRequests.length,
+                    itemBuilder: (context, index) {
+                      final request = rejectedRequests[index];
+
+                      return Card(
+                        margin: const EdgeInsets.all(8.0),
+                        child: InkWell(
+                          onTap: () {
+                            showDialog(
+                              context: context,
+                              builder: (BuildContext context) {
+                                return BookingDetailsModal(bookingRequest: request);
+                              },
+                            );
+                          },
+                          child: ListTile(
+                            title: Text(
+                              'User: ${request["userName"]}',
+                              style: const TextStyle(color: Colors.black),
+                            ),
+                            subtitle: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  'Hotel: ${request["hotelName"]}',
+                                  style: const TextStyle(color: Colors.black),
+                                ),
+                                Text(
+                                  'Room: ${request["roomName"]}',
+                                  style: const TextStyle(color: Colors.black),
+                                ),
+                                Text(
+                                  'Booking Date: ${request["date"]}',
+                                  style: const TextStyle(color: Colors.black),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      );
+                    },
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }
