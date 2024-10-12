@@ -19,6 +19,7 @@ class AdminScreen extends StatefulWidget {
 class _AdminScreenState extends State<AdminScreen> {
   final FlutterSecureStorage _secureStorage =
       const FlutterSecureStorage(); // Initialize secure storage
+    late String hotelId;
 
   @override
   void initState() {
@@ -28,15 +29,10 @@ class _AdminScreenState extends State<AdminScreen> {
 
   Future<void> _fetchUserId() async {
     // Retrieve the userId from secure storage
-    String? userId = await _secureStorage.read(key: 'hotelId');
 
-    if (userId != null) {
-      // Once userId is retrieved, fetch bookings with the userId
+
+      String userId = (await _secureStorage.read(key: 'hotelId'))!; 
       context.read<BookingBloc>().add(FetchBookings(userId: userId));
-    } else {
-      // Handle the case where userId is not found
-      print('No userId found in secure storage');
-    }
   }
 
   @override
@@ -130,16 +126,30 @@ class _AdminScreenState extends State<AdminScreen> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     // Accept Button
-                    ElevatedButton(
-                      onPressed: () {
-                        // Trigger Accept action
-                        //context.read<BookingBloc>().add(AcceptBooking(booking.id!));
-                      },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.green,
-                      ),
-                      child: const Text('Accept'),
-                    ),
+ElevatedButton(
+  onPressed: () async {
+    // Fetch the userId asynchronously
+    String? hotelId = await _secureStorage.read(key: 'hotelId');
+
+    if (hotelId != null) {
+      // Create a new BookingModel instance with updated status
+      BookingModel updatedBooking = booking.copyWith(status: 'accepted');
+
+      context.read<BookingBloc>().add(UpdateBooking(
+        bookingId: booking.id!,
+        booking: updatedBooking, // Use the BookingModel instance
+      ));
+    } else {
+      // Handle the case where userId is not found
+      print('No hotelId found in secure storage');
+    }
+  },
+  style: ElevatedButton.styleFrom(
+    backgroundColor: Colors.green,
+  ),
+  child: const Text('Accept'),
+),
+
                     const SizedBox(width: 8), // Small space between buttons
                     // Reject Button
                     ElevatedButton(
