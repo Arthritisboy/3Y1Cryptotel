@@ -7,7 +7,7 @@ const catchAsync = require('../utils/catchAsync');
 const AppError = require('../utils/appError');
 
 // Get a hotel by ID or all hotels (with rooms)
-exports.getHotel = catchAsync(async(req, res, next) => {
+exports.getHotel = catchAsync(async (req, res, next) => {
     const hotelId = req.params.id;
     let hotel;
 
@@ -39,7 +39,7 @@ exports.getHotel = catchAsync(async(req, res, next) => {
 });
 
 // Create a hotel with optional rooms
-exports.createHotel = catchAsync(async(req, res, next) => {
+exports.createHotel = catchAsync(async (req, res, next) => {
     const { name, location, openingHours, rooms } = req.body;
 
     let hotelImage = undefined;
@@ -92,9 +92,9 @@ exports.createHotel = catchAsync(async(req, res, next) => {
 });
 
 // Update a hotel and optionally its rooms
-exports.updateHotel = catchAsync(async(req, res, next) => {
+exports.updateHotel = catchAsync(async (req, res, next) => {
     const hotelId = req.params.id;
-    const updateData = {...req.body };
+    const updateData = { ...req.body };
     const { rooms } = req.body;
 
     // Handle image upload if a file is provided during update
@@ -134,7 +134,7 @@ exports.updateHotel = catchAsync(async(req, res, next) => {
                 }
             } else {
                 // If the room does not exist, create it and add to hotel
-                const newRoom = await Room.create({...room, hotel: hotelId });
+                const newRoom = await Room.create({ ...room, hotel: hotelId });
                 updatedHotel.rooms.push(newRoom._id);
             }
         }
@@ -163,7 +163,7 @@ exports.updateHotel = catchAsync(async(req, res, next) => {
 
 
 // Delete a hotel by ID
-exports.deleteHotel = catchAsync(async(req, res, next) => {
+exports.deleteHotel = catchAsync(async (req, res, next) => {
     const hotelId = req.params.id;
 
     const hotel = await Hotel.findById(hotelId);

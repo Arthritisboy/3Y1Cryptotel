@@ -43,31 +43,6 @@ class BookingModel {
     this.status,
   });
 
-   BookingModel copyWith({String? status}) {
-    return BookingModel(
-      id: id,
-      bookingType: bookingType,
-      hotelId: hotelId,
-      restaurantName: restaurantName,
-      hotelName: hotelName,
-      roomName: roomName,
-      roomId: roomId,
-      restaurantId: restaurantId,
-      fullName: fullName,
-      email: email,
-      phoneNumber: phoneNumber,
-      address: address,
-      checkInDate: checkInDate,
-      checkOutDate: checkOutDate,
-      timeOfArrival: timeOfArrival,
-      timeOfDeparture: timeOfDeparture,
-      adult: adult,
-      children: children,
-      tableNumber: tableNumber,
-      status: status ?? this.status, // Use the existing status if not provided
-    );
-  }
-
   // Convert JSON to BookingModel object
   factory BookingModel.fromJson(Map<String, dynamic> json) {
     return BookingModel(
