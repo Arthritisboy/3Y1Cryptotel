@@ -30,11 +30,9 @@ class AuthDataProvider {
       String userId = data['userId'];
       bool hasCompletedOnboarding = data['hasCompletedOnboarding'] ?? false;
       String roles = data['roles'];
-      String hotelId = data['hotelId'];
 
       await storage.write(key: 'jwt', value: token);
       await storage.write(key: 'userId', value: userId);
-      await storage.write(key: 'hotelId', value: hotelId);
 
       return {
         'token': token,
