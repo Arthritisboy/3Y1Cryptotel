@@ -41,37 +41,6 @@ class BookingDataProvider {
     }
   }
 
-  //! Fetch All Bookings for a Hotel (Admin)
-  Future<List<BookingModel>> fetchBookingsForHotel(String hotelId) async {
-    final token = await storage.read(key: 'jwt');
-
-    if (token == null) {
-      throw Exception('Authorization token is missing');
-    }
-
-    final response = await http.get(
-      Uri.parse('$baseUrl/admin/bookings/$hotelId'),
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer $token',
-      },
-    );
-
-    print('API response status: ${response.statusCode}');
-    print('API response body: ${response.body}');
-
-    if (response.statusCode == 200) {
-      final List<dynamic> bookingsJson =
-          jsonDecode(response.body)['data']['bookings'];
-      return bookingsJson.map((json) => BookingModel.fromJson(json)).toList();
-    } else {
-      final errorResponse = json.decode(response.body);
-      String errorMessage =
-          errorResponse['message'] ?? 'Failed to load bookings';
-      throw Exception(errorMessage);
-    }
-  }
-
   //! Create a Booking
   Future<BookingModel> createBooking(
       BookingModel booking, String userId) async {
