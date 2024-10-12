@@ -21,6 +21,16 @@ class BookingRepository {
     }
   }
 
+  //! Fetch all bookings for a specific hotel (for admin)
+  Future<List<BookingModel>> fetchBookingsForHotel(String hotelId) async {
+    try {
+      final bookings = await dataProvider.fetchBookingsForHotel(hotelId);
+      return bookings;
+    } catch (e) {
+      throw Exception('Failed to load hotel bookings: $e');
+    }
+  }
+
   //! Create a Booking (Clear cache after creation)
   Future<BookingModel> createBooking(
       BookingModel booking, String userId) async {
