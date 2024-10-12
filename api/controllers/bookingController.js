@@ -158,7 +158,7 @@ exports.createBooking = catchAsync(async(req, res, next) => {
 
 // ** Update an existing booking (e.g., change dates)
 exports.updateBooking = catchAsync(async(req, res, next) => {
-    const id = req.params.hotelId;
+    const id = req.params.bookingId;
     try {
         const {
             checkInDate,
