@@ -17,6 +17,15 @@ class FetchBookings extends BookingEvent {
   List<Object> get props => [userId];
 }
 
+class AdminFetchBookings extends BookingEvent {
+  final String hotelId;
+
+  const AdminFetchBookings({required this.hotelId});
+
+  @override
+  List<Object> get props => [hotelId];
+}
+
 class CreateBooking extends BookingEvent {
   final BookingModel booking;
   final String userId;
