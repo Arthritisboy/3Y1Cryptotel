@@ -12,7 +12,6 @@ const sendEmail = async (options) => {
       pass: process.env.USER_PASSWORD,
     },
   });
-
   // ** Message
   let message;
 
@@ -87,6 +86,7 @@ const sendEmail = async (options) => {
 
   // Email Verification Template
   if (options.type === 'verification') {
+    console.log(options.verificationCode);
     message = `
       <div style="font-family: Arial, sans-serif; margin: 0; padding: 20px; background-color: #f4f4f4;">
         <table style="border: 2px solid #4CAF50; border-radius: 5px; padding: 10px; max-width: 600px; margin: auto; border-collapse: collapse; background-color: #ffffff;">

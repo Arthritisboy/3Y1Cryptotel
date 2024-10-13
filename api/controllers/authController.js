@@ -62,6 +62,7 @@ exports.register = catchAsync(async (req, res, next) => {
     profile: profile || undefined,
     hasCompletedOnboarding: req.body.hasCompletedOnboarding || false,
     handleId: req.body.roles === 'admin' ? null : undefined,
+    favoriteId: null,
   };
 
   const newUser = await User.create(userData);
