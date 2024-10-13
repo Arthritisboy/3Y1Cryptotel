@@ -84,6 +84,19 @@ class _TabScreenState extends State<TabScreen> {
       child: BlocListener<AuthBloc, AuthState>(
         listener: (context, state) {
           _handleBlocState(context, state);
+          if (state is AuthSuccess) {
+            // Show a SnackBar with the success message
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text(state.message),
+                duration:
+                    const Duration(seconds: 2), // Duration to show the SnackBar
+                backgroundColor: Colors.lightGreen,
+                behavior: SnackBarBehavior
+                    .floating, // Optional: makes it float above other content
+              ),
+            );
+          }
         },
         child: BlocBuilder<AuthBloc, AuthState>(
           builder: (context, state) {
