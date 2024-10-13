@@ -178,7 +178,7 @@ class _HotelInputFieldsState extends State<HotelInputFields> {
         roomId: widget.roomId,
         fullName: fullNameController.text,
         email: emailController.text,
-        phoneNumber: phoneNumberController.text,
+        phoneNumber: phoneNumberController.text.trim(),
         address: addressController.text,
         checkInDate: checkInDate,
         checkOutDate: checkOutDate,
@@ -187,6 +187,24 @@ class _HotelInputFieldsState extends State<HotelInputFields> {
         adult: int.tryParse(adultsController.text) ?? 1,
         children: int.tryParse(childrenController.text) ?? 0,
       );
+
+      // Print all the booking details in the console
+      print('''
+Booking Details:
+  Booking Type: ${booking.bookingType}
+  Hotel ID: ${booking.hotelId}
+  Room ID: ${booking.roomId}
+  Full Name: ${booking.fullName}
+  Email: ${booking.email}
+  Phone Number: ${booking.phoneNumber}
+  Address: ${booking.address}
+  Check-in Date: ${booking.checkInDate}
+  Check-out Date: ${booking.checkOutDate}
+  Time of Arrival: ${booking.timeOfArrival}
+  Time of Departure: ${booking.timeOfDeparture}
+  Adults: ${booking.adult}
+  Children: ${booking.children}
+''');
 
       setState(() {
         isLoading = true; // Show loading spinner
