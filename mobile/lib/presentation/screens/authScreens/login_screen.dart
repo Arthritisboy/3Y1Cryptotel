@@ -19,7 +19,7 @@ class _LoginScreenState extends State<LoginScreen> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   bool _isLoading = false;
-  bool _isPasswordVisible = false; // New variable for password visibility
+  bool _isPasswordVisible = false;
 
   @override
   Widget build(BuildContext context) {
@@ -30,19 +30,22 @@ class _LoginScreenState extends State<LoginScreen> {
       body: BlocListener<AuthBloc, AuthState>(
         listener: (context, state) {
           if (state is AuthenticatedLogin) {
-            // Check if the user has completed onboarding
+            setState(() {
+              _isLoading = false; // Stop loading
+            });
+
             if (!state.hasCompletedOnboarding) {
-              // Navigate to home screen
               Navigator.pushReplacementNamed(context, '/onboarding');
             } else if (state.hasCompletedOnboarding && state.roles == 'admin') {
-              // Navigate to onboarding screen
               Navigator.pushReplacementNamed(context, '/admin');
             } else {
-              // Navigate to onboarding screen
               Navigator.pushReplacementNamed(context, '/homescreen');
             }
           } else if (state is AuthError) {
-            // Show error message
+            setState(() {
+              _isLoading = false; // Stop loading on error
+            });
+
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(content: Text(state.error)),
             );
@@ -110,12 +113,14 @@ class _LoginScreenState extends State<LoginScreen> {
                         ),
                       ),
                       SizedBox(height: screenHeight * 0.02),
-
-                      const Text('LOG IN',
-                          style: TextStyle(
-                              fontFamily: 'HammerSmith',
-                              fontSize: 20,
-                              color: Colors.black)),
+                      const Text(
+                        'LOG IN',
+                        style: TextStyle(
+                          fontFamily: 'HammerSmith',
+                          fontSize: 20,
+                          color: Colors.black,
+                        ),
+                      ),
                       SizedBox(height: screenHeight * 0.02),
                       CustomTextFormField(
                         label: 'Email',
@@ -129,18 +134,15 @@ class _LoginScreenState extends State<LoginScreen> {
                         },
                       ),
                       SizedBox(height: screenHeight * 0.03),
-                      // Updated Password Field with suffixIcon
                       CustomTextFormField(
                         label: 'Password',
                         hint: 'Enter Password',
                         controller: _passwordController,
-                        isObscure: true, // Set to true for password field
-                        showPassword:
-                            _isPasswordVisible, // Show password based on visibility
+                        isObscure: !_isPasswordVisible,
+                        showPassword: _isPasswordVisible,
                         toggleShowPassword: () {
                           setState(() {
-                            _isPasswordVisible =
-                                !_isPasswordVisible; // Toggle password visibility
+                            _isPasswordVisible = !_isPasswordVisible;
                           });
                         },
                         validator: (value) {
@@ -215,10 +217,12 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   void _login() {
+    setState(() {
+      _isLoading = true; // Start loading
+    });
+
     final email = _emailController.text;
     final password = _passwordController.text;
-    print('Email: $email');
-    print('Password: $password');
 
     context.read<AuthBloc>().add(
           LoginEvent(email: email, password: password),
@@ -226,13 +230,10 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   void _showErrorDialog(String message) {
-    String friendlyMessage;
-
-    if (message.contains('Invalid') || message.contains('Email')) {
-      friendlyMessage = 'Invalid Email or Password. Please try again';
-    } else {
-      friendlyMessage = 'Invalid Email or Password. Please try again';
-    }
+    String friendlyMessage =
+        message.contains('Invalid') || message.contains('Email')
+            ? 'Invalid Email or Password. Please try again'
+            : 'Something went wrong. Please try again';
 
     showDialog(
       context: context,

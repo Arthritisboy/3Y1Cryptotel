@@ -74,7 +74,7 @@ class RestaurantScreen extends StatelessWidget {
                       restaurantId: restaurant.id,
                       restaurantImage: restaurant.restaurantImage,
                       restaurantName: restaurant.name,
-                      rating: restaurant.rating,
+                      rating: restaurant.averageRating,
                       price: restaurant.price,
                       location: restaurant.location,
                       time: restaurant.openingHours,
@@ -88,7 +88,7 @@ class RestaurantScreen extends StatelessWidget {
                   imagePath: restaurant.restaurantImage,
                   hotelName: restaurant.name,
                   location: restaurant.location,
-                  rating: restaurant.rating),
+                  rating: restaurant.averageRating),
             ),
           );
         }).toList(),

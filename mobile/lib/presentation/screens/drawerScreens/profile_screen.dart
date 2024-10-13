@@ -17,16 +17,16 @@ class ProfileScreen extends StatefulWidget {
     required this.lastName,
     required this.email,
     required this.profile,
-    required this.phoneNumber, // Added Phone Number
-    required this.gender, // Added Gender
+    required this.phoneNumber,
+    required this.gender,
   });
 
   final String firstName;
   final String lastName;
   final String email;
   String profile;
-  final String phoneNumber; // Added Phone Number
-  final String gender; // Added Gender
+  final String phoneNumber;
+  final String gender;
 
   @override
   State<StatefulWidget> createState() {
