@@ -15,9 +15,9 @@ class HotelModel {
     required this.id,
     required this.name,
     required this.location,
-    required this.averageRating,
     required this.openingHours,
     required this.hotelImage,
+    required this.averageRating,
     required this.rooms,
     required this.averagePrice,
   });
@@ -31,11 +31,11 @@ class HotelModel {
       hotelImage: json['hotelImage'] ?? 'https://via.placeholder.com/150',
       averageRating: (json['averageRating'] ?? 0).toDouble(),
       averagePrice: (json['averagePrice'] ?? 0).toDouble(),
-      rooms: (json['rooms'] != null && json['rooms'] is List)
-          ? (json['rooms'] as List)
+      rooms: (json['rooms'] is List)
+          ? (json['rooms'] as List<dynamic>)
               .map((roomJson) => RoomModel.fromJson(roomJson))
               .toList()
-          : <RoomModel>[],
+          : <RoomModel>[], // Default to empty list if not a list
     );
   }
 
@@ -49,9 +49,7 @@ class HotelModel {
       'hotelImage': hotelImage,
       'averageRating': averageRating,
       'averagePrice': averagePrice,
-      'rooms': rooms
-          .map((room) => room.toJson())
-          .toList(), // Assuming RoomModel has a toJson() method
+      'rooms': rooms.map((room) => room.toJson()).toList(),
     };
   }
 

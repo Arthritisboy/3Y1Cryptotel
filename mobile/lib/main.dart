@@ -71,7 +71,6 @@ class MyApp extends StatelessWidget {
           title: 'Cryptotel',
           onGenerateRoute: AppRouter(bookingBloc).onGenerateRoute,
           theme: _buildAppTheme(context),
-          home: const AdminScreen(),
         ),
       ),
     );

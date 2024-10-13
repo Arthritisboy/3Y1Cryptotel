@@ -30,6 +30,22 @@ class RestaurantRepository {
     }
   }
 
+  //! Fetch Multiple Restaurants by IDs
+  Future<List<RestaurantModel>> fetchRestaurantsByIds(
+      List<String> restaurantIds) async {
+    try {
+      final List<RestaurantModel> restaurants = [];
+      for (var id in restaurantIds) {
+        final restaurant =
+            await fetchRestaurantById(id); // Fetch by ID using existing method
+        restaurants.add(restaurant);
+      }
+      return restaurants;
+    } catch (e) {
+      throw Exception('Failed to load restaurants by IDs: $e');
+    }
+  }
+
   //! Clear Restaurant Cache
   void clearRestaurantCache() {
     _cachedRestaurants = null;

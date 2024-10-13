@@ -19,10 +19,20 @@ class FavoriteDataProvider {
       },
     );
 
+    print('Response status: ${response.statusCode}');
+    print('Response body: ${response.body}');
+
     if (response.statusCode == 200) {
       final jsonResponse = json.decode(response.body);
-      // Ensure we are accessing the correct path in the response
-      return FavoriteModel.fromJson(jsonResponse['data']['favorite']);
+
+      // Ensure you access the correct path in the response
+      // Adjust according to your actual response structure
+      if (jsonResponse['data'] != null &&
+          jsonResponse['data']['favorite'] != null) {
+        return FavoriteModel.fromJson(jsonResponse['data']['favorite']);
+      } else {
+        throw Exception('Favorite data not found in the response');
+      }
     } else {
       final errorResponse = json.decode(response.body);
       String errorMessage =
