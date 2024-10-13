@@ -57,11 +57,11 @@ exports.register = catchAsync(async (req, res, next) => {
     confirmPassword: req.body.confirmPassword,
     gender: req.body.gender,
     phoneNumber: req.body.phoneNumber,
-    roles: req.body.roles || 'user', 
-    profile: profile || undefined,    
+    favoriteId: null,
+    roles: req.body.roles || 'user', // Provide a default if null
+    profile: profile || undefined,
     hasCompletedOnboarding: req.body.hasCompletedOnboarding || false,
     handleId: req.body.roles === 'admin' ? null : undefined,
-    favoriteId: req.body.roles === 'user' ? null : undefined,
   };
 
   const newUser = await User.create(userData);

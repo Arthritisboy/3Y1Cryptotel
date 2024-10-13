@@ -4,10 +4,10 @@ import 'package:hotel_flutter/logic/bloc/hotel/hotel_bloc.dart';
 import 'package:hotel_flutter/logic/bloc/hotel/hotel_state.dart';
 import 'package:hotel_flutter/presentation/widgets/hotel/details/hotelDetails.dart';
 import 'package:hotel_flutter/presentation/widgets/hotel/navigation/navigation_row.dart';
-import 'package:hotel_flutter/presentation/widgets/hotel/ratings/hotelRatings.dart';
+import 'package:hotel_flutter/presentation/widgets/hotel/ratings/hotel_rating_widget.dart';
 import 'package:hotel_flutter/logic/bloc/hotel/hotel_event.dart';
 import 'package:hotel_flutter/presentation/widgets/hotel/room/roomSelection.dart';
-import 'package:hotel_flutter/presentation/widgets/shimmer_loading/hotel/hotel_clicked.dart';
+import 'package:hotel_flutter/presentation/widgets/shimmer_loading/hotel/shimmer_hotel_clicked.dart';
 
 class HotelClicked extends StatefulWidget {
   final String hotelId;
@@ -196,16 +196,11 @@ class _HotelClickedState extends State<HotelClicked> {
                     ],
                   ),
                 ),
-                Padding(
-                  padding: const EdgeInsets.only(left: 16),
-                  child: NavigationRow(
-                    activeIndex: widget.activeIndex,
-                    onTap: widget.onNavTap,
-                    showBook: false, // Hide the Book option
-                  ),
+                NavigationRow(
+                  activeIndex: widget.activeIndex,
+                  onTap: widget.onNavTap,
+                  showBook: false, // Hide the Book option
                 ),
-                const Divider(
-                    thickness: 2, color: Color.fromARGB(255, 142, 142, 147)),
                 if (widget.activeIndex == 0)
                   RoomSelection(
                     roomList: filteredRoomList,

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:hotel_flutter/presentation/screens/admin/admin_header.dart';
-import 'package:hotel_flutter/presentation/screens/admin/admin_modal.dart';
+import 'package:hotel_flutter/presentation/widgets/admin/admin_header.dart';
+import 'package:hotel_flutter/presentation/widgets/admin/admin_modal.dart';
 
 class AdminNavigation extends StatefulWidget {
   const AdminNavigation({super.key});

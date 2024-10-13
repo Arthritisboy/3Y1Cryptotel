@@ -19,15 +19,15 @@ class BookingModel {
   final int children;
   final int? tableNumber;
   final String? status;
+  final int? totalPrice;
 
   BookingModel({
-    this.roomName,
-    this.hotelName,
-    this.restaurantName,
     this.id,
-    this.tableNumber,
     required this.bookingType,
     this.hotelId,
+    this.restaurantName,
+    this.hotelName,
+    this.roomName,
     this.roomId,
     this.restaurantId,
     required this.fullName,
@@ -40,23 +40,69 @@ class BookingModel {
     this.timeOfDeparture,
     required this.adult,
     required this.children,
+    this.tableNumber,
     this.status,
+    this.totalPrice,
   });
 
-  // Convert JSON to BookingModel object
+  // Add the copyWith method
+  BookingModel copyWith({
+    String? id,
+    String? bookingType,
+    String? hotelId,
+    String? restaurantName,
+    String? hotelName,
+    String? roomName,
+    String? roomId,
+    String? restaurantId,
+    String? fullName,
+    String? email,
+    String? phoneNumber,
+    String? address,
+    DateTime? checkInDate,
+    DateTime? checkOutDate,
+    DateTime? timeOfArrival,
+    DateTime? timeOfDeparture,
+    int? adult,
+    int? children,
+    int? tableNumber,
+    String? status,
+    int? totalPrice,
+  }) {
+    return BookingModel(
+      id: id ?? this.id,
+      bookingType: bookingType ?? this.bookingType,
+      hotelId: hotelId ?? this.hotelId,
+      restaurantName: restaurantName ?? this.restaurantName,
+      hotelName: hotelName ?? this.hotelName,
+      roomName: roomName ?? this.roomName,
+      roomId: roomId ?? this.roomId,
+      restaurantId: restaurantId ?? this.restaurantId,
+      fullName: fullName ?? this.fullName,
+      email: email ?? this.email,
+      phoneNumber: phoneNumber ?? this.phoneNumber,
+      address: address ?? this.address,
+      checkInDate: checkInDate ?? this.checkInDate,
+      checkOutDate: checkOutDate ?? this.checkOutDate,
+      timeOfArrival: timeOfArrival ?? this.timeOfArrival,
+      timeOfDeparture: timeOfDeparture ?? this.timeOfDeparture,
+      adult: adult ?? this.adult,
+      children: children ?? this.children,
+      tableNumber: tableNumber ?? this.tableNumber,
+      status: status ?? this.status,
+      totalPrice: totalPrice ?? this.totalPrice,
+    );
+  }
+
   factory BookingModel.fromJson(Map<String, dynamic> json) {
     return BookingModel(
-      // id: json['_id'],
+      id: json['_id'],
       bookingType: json['bookingType'],
-      tableNumber: json['tableNumber'],
       restaurantName: json['restaurantName'],
       hotelName: json['hotelName'],
       roomName: json['roomName'],
-      // hotelId: json['hotelId'],
-      status: json['status'],
-      // roomId: json['roomId'],
-      // restaurantId:
-      //     json['restaurantId'],
+      hotelId: json['hotelId']?['_id'],
+      roomId: json['roomId']?['_id'],
       fullName: json['fullName'],
       email: json['email'],
       phoneNumber: json['phoneNumber'],
@@ -71,13 +117,14 @@ class BookingModel {
           : null,
       adult: json['adult'],
       children: json['children'],
+      tableNumber: json['tableNumber'],
+      status: json['status'],
+      totalPrice: json['totalPrice'],
     );
   }
 
-  // Convert BookingModel object to JSON
   Map<String, dynamic> toJson() {
     return {
-      // '_id': id, // Use "_id" when converting back to JSON
       'bookingType': bookingType,
       'hotelId': hotelId,
       'roomId': roomId,
@@ -94,6 +141,7 @@ class BookingModel {
       'adult': adult,
       'children': children,
       'status': status,
+      'totalPrice': totalPrice,
     };
   }
 }

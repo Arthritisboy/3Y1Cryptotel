@@ -158,18 +158,20 @@ exports.createBooking = catchAsync(async (req, res, next) => {
 // ** Update an existing booking (e.g., change dates)
 exports.updateBooking = catchAsync(async (req, res, next) => {
   try {
+    const { bookingId } = req.params;
+
     const {
-      bookingId,
       checkInDate,
       checkOutDate,
       timeOfArrival,
       timeOfDeparture,
+      status,
     } = req.body;
 
     // Find the booking and update the details
     const updatedBooking = await Booking.findByIdAndUpdate(
       bookingId,
-      { checkInDate, checkOutDate, timeOfArrival, timeOfDeparture },
+      { checkInDate, checkOutDate, timeOfArrival, timeOfDeparture, status },
       { new: true, runValidators: true },
     );
 

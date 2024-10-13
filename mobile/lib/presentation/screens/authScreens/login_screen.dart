@@ -19,7 +19,7 @@ class _LoginScreenState extends State<LoginScreen> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   bool _isLoading = false;
-  bool _isPasswordVisible = false; // New variable for password visibility
+  bool _isPasswordVisible = false;
 
   @override
   Widget build(BuildContext context) {
@@ -29,35 +29,26 @@ class _LoginScreenState extends State<LoginScreen> {
     return Scaffold(
       body: BlocListener<AuthBloc, AuthState>(
         listener: (context, state) {
-          if (state is AuthLoading) {
+          if (state is AuthenticatedLogin) {
             setState(() {
-              _isLoading = true;
+              _isLoading = false; // Stop loading
             });
-          } else if (state is AuthenticatedLogin) {
-            setState(() {
-              _isLoading = false;
-            });
-            // Check onboarding status
-            if (state.user.hasCompletedOnboarding &&
-                state.user.roles == 'user') {
-              Navigator.of(context).pushReplacementNamed('/homescreen');
-            } else {
-              Navigator.of(context).pushReplacementNamed('/onboarding');
-            }
 
-            if (state.user.hasCompletedOnboarding &&
-                state.user.roles == 'admin') {
-              Navigator.of(context).pushReplacementNamed('/admin');
+            if (!state.hasCompletedOnboarding) {
+              Navigator.pushReplacementNamed(context, '/onboarding');
+            } else if (state.hasCompletedOnboarding && state.roles == 'admin') {
+              Navigator.pushReplacementNamed(context, '/admin');
             } else {
-              Navigator.of(context).pushReplacementNamed('/onboarding');
+              Navigator.pushReplacementNamed(context, '/homescreen');
             }
           } else if (state is AuthError) {
             setState(() {
-              _isLoading = false;
+              _isLoading = false; // Stop loading on error
             });
-            if (state.error.isNotEmpty) {
-              _showErrorDialog(state.error);
-            }
+
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text(state.error)),
+            );
           }
         },
         child: Stack(
@@ -122,12 +113,14 @@ class _LoginScreenState extends State<LoginScreen> {
                         ),
                       ),
                       SizedBox(height: screenHeight * 0.02),
-
-                      const Text('LOG IN',
-                          style: TextStyle(
-                              fontFamily: 'HammerSmith',
-                              fontSize: 20,
-                              color: Colors.black)),
+                      const Text(
+                        'LOG IN',
+                        style: TextStyle(
+                          fontFamily: 'HammerSmith',
+                          fontSize: 20,
+                          color: Colors.black,
+                        ),
+                      ),
                       SizedBox(height: screenHeight * 0.02),
                       CustomTextFormField(
                         label: 'Email',
@@ -141,18 +134,15 @@ class _LoginScreenState extends State<LoginScreen> {
                         },
                       ),
                       SizedBox(height: screenHeight * 0.03),
-                      // Updated Password Field with suffixIcon
                       CustomTextFormField(
                         label: 'Password',
                         hint: 'Enter Password',
                         controller: _passwordController,
-                        isObscure: true, // Set to true for password field
-                        showPassword:
-                            _isPasswordVisible, // Show password based on visibility
+                        isObscure: !_isPasswordVisible,
+                        showPassword: _isPasswordVisible,
                         toggleShowPassword: () {
                           setState(() {
-                            _isPasswordVisible =
-                                !_isPasswordVisible; // Toggle password visibility
+                            _isPasswordVisible = !_isPasswordVisible;
                           });
                         },
                         validator: (value) {
@@ -227,10 +217,12 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   void _login() {
+    setState(() {
+      _isLoading = true; // Start loading
+    });
+
     final email = _emailController.text;
     final password = _passwordController.text;
-    print('Email: $email');
-    print('Password: $password');
 
     context.read<AuthBloc>().add(
           LoginEvent(email: email, password: password),
@@ -238,13 +230,10 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   void _showErrorDialog(String message) {
-    String friendlyMessage;
-
-    if (message.contains('Invalid') || message.contains('Email')) {
-      friendlyMessage = 'Invalid Email or Password. Please try again';
-    } else {
-      friendlyMessage = 'Invalid Email or Password. Please try again';
-    }
+    String friendlyMessage =
+        message.contains('Invalid') || message.contains('Email')
+            ? 'Invalid Email or Password. Please try again'
+            : 'Something went wrong. Please try again';
 
     showDialog(
       context: context,

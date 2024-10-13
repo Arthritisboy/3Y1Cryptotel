@@ -123,8 +123,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       (event, emit) async {
         emit(AuthLoading());
         try {
-          await authRepository.logout(); // Assuming this is an API call
-          // Optionally, you could clear user data from local storage here
+          await authRepository.logout();
           emit(const AuthSuccess(
               'Logged out successfully!')); // Provide user feedback
           await Future.delayed(

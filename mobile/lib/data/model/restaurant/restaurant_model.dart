@@ -1,4 +1,5 @@
 import 'package:geocoding/geocoding.dart';
+import 'package:hotel_flutter/data/model/hotel/rating_model.dart';
 import 'package:logging/logging.dart';
 
 class RestaurantModel {
@@ -11,8 +12,9 @@ class RestaurantModel {
   final double price;
   final int capacity;
   final bool availability;
-  final double rating; // Changed from nullable to non-nullable
+  final List<RatingModel> ratings; // List of ratings
 
+  // Constructor with default values
   RestaurantModel({
     required this.id,
     required this.name,
@@ -22,11 +24,18 @@ class RestaurantModel {
     required this.price,
     required this.capacity,
     required this.availability,
-    this.rating = 0.0, // Default rating set to 0.0
+    this.ratings = const [], // Default to an empty list
   });
 
-  // Factory method to create RestaurantModel from a map (API response)
   factory RestaurantModel.fromJson(Map<String, dynamic> json) {
+    print("Parsing restaurant: ${json['name']}");
+
+    var ratingsList = (json['ratings'] as List<dynamic>)
+        .map((rating) => RatingModel.fromJson(rating))
+        .toList();
+
+    print("Ratings for ${json['name']}: ${ratingsList.length}");
+
     return RestaurantModel(
       id: json['_id'] as String,
       name: json['name'] as String,
@@ -38,12 +47,15 @@ class RestaurantModel {
           : (json['price'] as double),
       capacity: json['capacity'] as int,
       availability: json['availability'] as bool,
-      rating: json['rating'] != null
-          ? (json['rating'] is int
-              ? (json['rating'] as int).toDouble()
-              : (json['rating'] as double))
-          : 0.0, // Default to 0.0 if rating is null
+      ratings: ratingsList,
     );
+  }
+
+  // Calculate the average rating from the list of ratings
+  double get averageRating {
+    if (ratings.isEmpty) return 0.0;
+    double total = ratings.fold(0.0, (sum, rating) => sum + rating.rating);
+    return total / ratings.length;
   }
 
   // Fetch coordinates based on the location string
@@ -52,7 +64,7 @@ class RestaurantModel {
       List<Location> locations = await locationFromAddress(location);
       return [locations.first.latitude, locations.first.longitude];
     } catch (e) {
-      print("Error fetching coordinates for $location: $e");
+      _logger.severe("Error fetching coordinates for $location: $e");
       return [0.0, 0.0];
     }
   }

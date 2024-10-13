@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:hotel_flutter/data/model/booking/booking_model.dart';
-import 'package:hotel_flutter/presentation/widgets/history/history_accepted_modal.dart';
+import 'package:hotel_flutter/presentation/widgets/history/history_cancel_modal.dart';
 import 'package:intl/intl.dart';
 
-class HistoryAcceptedBody extends StatelessWidget {
-  final List<BookingModel> acceptedBookings;
+class HistoryCancelBody extends StatelessWidget {
+  final List<BookingModel> canceledBookings;
 
-  const HistoryAcceptedBody({super.key, required this.acceptedBookings});
+  const HistoryCancelBody({super.key, required this.canceledBookings});
 
   @override
   Widget build(BuildContext context) {
@@ -26,13 +26,13 @@ class HistoryAcceptedBody extends StatelessWidget {
             ],
           ),
           padding: const EdgeInsets.all(16.0),
-          child: acceptedBookings.isNotEmpty
+          child: canceledBookings.isNotEmpty
               ? ListView.builder(
-                  itemCount: acceptedBookings.length,
+                  itemCount: canceledBookings.length,
                   itemBuilder: (context, index) {
-                    final booking = acceptedBookings[index];
+                    final booking = canceledBookings[index];
 
-                    // Determine the display name
+                    // Determine the display name for the booking.
                     String displayName = (booking.restaurantName != null &&
                             booking.restaurantName!.isNotEmpty)
                         ? booking.restaurantName!
@@ -57,19 +57,18 @@ class HistoryAcceptedBody extends StatelessWidget {
                                       crossAxisAlignment:
                                           CrossAxisAlignment.start,
                                       children: [
-                                        Padding(
-                                          padding:
-                                              const EdgeInsets.only(left: 10.0),
+                                        Align(
+                                          alignment: Alignment.centerLeft,
                                           child: Container(
                                             padding: const EdgeInsets.symmetric(
                                                 horizontal: 8.0, vertical: 4.0),
                                             decoration: BoxDecoration(
-                                              color: const Color(0xFF1C3473),
+                                              color: Colors.redAccent,
                                               borderRadius:
                                                   BorderRadius.circular(8.0),
                                             ),
                                             child: const Text(
-                                              'Status: Accepted',
+                                              'Status: Canceled',
                                               style: TextStyle(
                                                 color: Colors.white,
                                                 fontWeight: FontWeight.bold,
@@ -88,14 +87,16 @@ class HistoryAcceptedBody extends StatelessWidget {
                                         ),
                                         const SizedBox(height: 8.0),
                                         Text(
-                                          'Check-in: ${DateFormat.yMMMd().format(booking.checkInDate)}',
+                                          'Check-in: ${booking.checkInDate.toLocal().toString().split(' ')[0]}',
                                           style: const TextStyle(
-                                              color: Colors.black),
+                                            color: Colors.black,
+                                          ),
                                         ),
                                         Text(
-                                          'Check-out: ${DateFormat.yMMMd().format(booking.checkOutDate)}',
+                                          'Check-out: ${booking.checkOutDate.toLocal().toString().split(' ')[0]}',
                                           style: const TextStyle(
-                                              color: Colors.black),
+                                            color: Colors.black,
+                                          ),
                                         ),
                                         Text(
                                           'Arrival Time: ${booking.timeOfArrival != null ? DateFormat.jm().format(booking.timeOfArrival!) : 'N/A'}',
@@ -111,37 +112,19 @@ class HistoryAcceptedBody extends StatelessWidget {
                                     ),
                                   ),
                                   const SizedBox(width: 10),
-                                  Column(
-                                    children: [
-                                      ElevatedButton(
-                                        onPressed: () {
-                                          showDialog(
-                                            context: context,
-                                            builder: (BuildContext context) {
-                                              return DetailsModal(
-                                                booking: booking,
-                                              );
-                                            },
-                                          );
+                                  ElevatedButton(
+                                    onPressed: () {
+                                      showDialog(
+                                        context: context,
+                                        builder: (BuildContext context) {
+                                          return CancelModal(booking: booking);
                                         },
-                                        style: ElevatedButton.styleFrom(
-                                          backgroundColor:
-                                              const Color(0xFF1C3473),
-                                        ),
-                                        child: const Text('Details'),
-                                      ),
-                                      const SizedBox(height: 8),
-                                      ElevatedButton(
-                                        onPressed: () {
-                                          Navigator.of(context)
-                                              .pushNamed('/cryptoTransaction');
-                                        },
-                                        style: ElevatedButton.styleFrom(
-                                          backgroundColor: Colors.green,
-                                        ),
-                                        child: const Text('Pay'),
-                                      ),
-                                    ],
+                                      );
+                                    },
+                                    style: ElevatedButton.styleFrom(
+                                      backgroundColor: Colors.redAccent,
+                                    ),
+                                    child: const Text('Details'),
                                   ),
                                 ],
                               ),
@@ -154,13 +137,12 @@ class HistoryAcceptedBody extends StatelessWidget {
                 )
               : const Center(
                   child: Text(
-                    'No accepted bookings available. Book a reservation now!',
+                    'No canceled bookings available.',
                     style: TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
                       color: Colors.black54,
                     ),
-                    textAlign: TextAlign.center,
                   ),
                 ),
         ),

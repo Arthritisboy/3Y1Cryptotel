@@ -30,11 +30,13 @@ class CreateBooking extends BookingEvent {
 class UpdateBooking extends BookingEvent {
   final BookingModel booking;
   final String bookingId;
+  final String userId; // Add the userId here to fetch updated bookings.
 
-  const UpdateBooking({required this.booking, required this.bookingId});
-
-  @override
-  List<Object> get props => [booking, bookingId];
+  UpdateBooking({
+    required this.booking,
+    required this.bookingId,
+    required this.userId,
+  });
 }
 
 class DeleteBooking extends BookingEvent {

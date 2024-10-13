@@ -91,7 +91,7 @@ app.use('/api/v1/hotel', hotelRouter);
 app.use('/api/v1/restaurant', restaurantRouter);
 app.use('/api/v1/favorites', favoriteRouter);
 
-app.use('/dev/v1/update-all', updateRouter)
+app.use('/dev/v1/update-all', updateRouter);
 
 //! Handle all undefined routes
 app.all('*', (req, res, next) => {

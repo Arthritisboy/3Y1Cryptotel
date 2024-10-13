@@ -3,53 +3,65 @@ import 'package:flutter/material.dart';
 class RestaurantNavigationRow extends StatelessWidget {
   final int activeIndex;
   final ValueChanged<int> onTap;
+  final bool showRoom;
   final bool showBook;
 
   const RestaurantNavigationRow({
     super.key,
     required this.activeIndex,
     required this.onTap,
+    this.showRoom = true,
     this.showBook = true,
   });
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.start,
-      children: [
-        if (showBook) ...[
-          _buildNavItem('Book', 0), // Change the first item to "Book"
-          const SizedBox(width: 20),
+    return Container(
+      decoration: const BoxDecoration(
+        border: Border(
+          bottom: BorderSide(color: Colors.grey, width: 0.5), // Divider line
+        ),
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.start, // Align to the start
+        children: [
+          if (showBook) _buildNavItemWithPadding('Book', 0),
+          _buildNavItemWithPadding('Details', 1),
+          _buildNavItemWithPadding('Ratings', 2),
         ],
-        _buildNavItem('Details', 1), // Add "Details"
-        const SizedBox(width: 20),
-        _buildNavItem('Ratings', 2), // Add "Ratings"
-      ],
+      ),
+    );
+  }
+
+  Widget _buildNavItemWithPadding(String title, int index) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 12.0), // Adjust padding
+      child: _buildNavItem(title, index),
     );
   }
 
   Widget _buildNavItem(String title, int index) {
+    final bool isActive = activeIndex == index;
+
     return GestureDetector(
       onTap: () => onTap(index),
       child: Column(
+        mainAxisSize: MainAxisSize.min,
         children: [
           Text(
             title,
             style: TextStyle(
-              fontSize: 17,
-              color: activeIndex == index
-                  ? const Color.fromARGB(255, 29, 53, 115)
-                  : Colors.black,
-              fontWeight:
-                  activeIndex == index ? FontWeight.bold : FontWeight.normal,
+              fontSize: 16,
+              fontWeight: isActive ? FontWeight.bold : FontWeight.normal,
+              color: isActive ? Colors.black : Colors.grey,
             ),
           ),
-          if (activeIndex == index)
-            Container(
-              height: 2,
-              width: title.length * 10.0,
-              color: const Color.fromARGB(255, 29, 53, 115),
-            ),
+          const SizedBox(height: 4.0), // Space between text and indicator
+          Container(
+            height: 2.0,
+            width: isActive ? title.length * 8.0 : 0.0, // Dynamic width
+            color: isActive ? const Color(0xFF1C3473) : Colors.transparent,
+          ),
         ],
       ),
     );

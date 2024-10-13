@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:hotel_flutter/presentation/screens/admin/admin_screen.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:hotel_flutter/logic/bloc/booking/booking_bloc.dart';
+import 'package:hotel_flutter/presentation/admin/admin_screen.dart';
 import 'package:hotel_flutter/presentation/screens/drawerScreens/history_screen.dart';
 import 'package:hotel_flutter/presentation/screens/homeScreens/onboarding_screen.dart';
 import 'package:hotel_flutter/presentation/screens/drawerScreens/crypto_wallet.dart';
@@ -18,35 +20,29 @@ import 'package:hotel_flutter/presentation/screens/drawerScreens/profile_screen.
 import 'package:hotel_flutter/presentation/screens/drawerScreens/favorite_screen.dart';
 
 class AppRouter {
+  final BookingBloc bookingBloc; // Pass BookingBloc to the router
+
+  AppRouter(this.bookingBloc);
+
   Route<dynamic>? onGenerateRoute(RouteSettings routeSettings) {
     switch (routeSettings.name) {
       case '/':
-        return MaterialPageRoute(
-          builder: (_) => const WelcomeScreen(),
-        );
+        return MaterialPageRoute(builder: (_) => const WelcomeScreen());
 
       case '/login':
-        return MaterialPageRoute(
-          builder: (_) => const LoginScreen(),
-        );
+        return MaterialPageRoute(builder: (_) => const LoginScreen());
 
       case '/signup':
-        return MaterialPageRoute(
-          builder: (_) => const SignupScreen(),
-        );
+        return MaterialPageRoute(builder: (_) => const SignupScreen());
+
       case '/homescreen':
-        return MaterialPageRoute(
-          builder: (_) => TabScreen(),
-        );
+        return MaterialPageRoute(builder: (_) => TabScreen());
 
       case '/forgotPassword':
-        return MaterialPageRoute(
-          builder: (_) => const ForgotPassword(),
-        );
+        return MaterialPageRoute(builder: (_) => const ForgotPassword());
+
       case '/emailResetToken':
-        return MaterialPageRoute(
-          builder: (_) => const EmailResetTokenScreen(),
-        );
+        return MaterialPageRoute(builder: (_) => const EmailResetTokenScreen());
 
       case '/resetPassword':
         final args = routeSettings.arguments as Map<String, dynamic>;
@@ -57,69 +53,57 @@ class AppRouter {
         );
 
       case '/profile':
-        final args = routeSettings.arguments
-            as Map<String, dynamic>?; // Make it nullable
+        final args = routeSettings.arguments as Map<String, dynamic>?;
 
         if (args != null) {
-          final String firstName = args['firstName'];
-          final String lastName = args['lastName'];
-          final String email = args['email'];
-          final String profile = args['profile'];
-          final String phoneNumber = args['phoneNumber'];
-          final String gender = args['gender'];
-
           return MaterialPageRoute(
             builder: (_) => ProfileScreen(
-              firstName: firstName,
-              lastName: lastName,
-              email: email,
-              profile: profile,
-              phoneNumber: phoneNumber,
-              gender: gender,
+              firstName: args['firstName'] ?? 'Guest',
+              lastName: args['lastName'] ?? '',
+              email: args['email'] ?? '',
+              profile: args['profile'] ?? '',
+              phoneNumber: args['phoneNumber'] ?? '',
+              gender: args['gender'] ?? 'Male',
             ),
           );
         } else {
           return null;
         }
+
       case '/cryptoTransaction':
-        return MaterialPageRoute(
-          builder: (_) => CryptoWallet(),
-        );
+        return MaterialPageRoute(builder: (_) => CryptoWallet());
+
       case '/verifyCode':
         final args = routeSettings.arguments as Map<String, dynamic>?;
 
         if (args != null && args.containsKey('email')) {
-          final String email = args['email'];
-
           return MaterialPageRoute(
-            builder: (_) => VerificationCodeScreen(email: email),
+            builder: (_) => VerificationCodeScreen(email: args['email']),
           );
         } else {
           return null;
         }
 
       case '/updatePassword':
-        return MaterialPageRoute(
-          builder: (_) => UpdatePasswordScreen(),
-        );
+        return MaterialPageRoute(builder: (_) => UpdatePasswordScreen());
 
       case '/favorite':
-        return MaterialPageRoute(
-          builder: (_) => FavoriteScreen(),
-        );
+        return MaterialPageRoute(builder: (_) => FavoriteScreen());
 
       case '/help':
-        return MaterialPageRoute(
-          builder: (_) => HelpSupportScreen(),
-        );
+        return MaterialPageRoute(builder: (_) => HelpSupportScreen());
+
       case '/history':
         return MaterialPageRoute(
-          builder: (_) => HistoryScreen(),
+          builder: (_) => BlocProvider.value(
+            value: bookingBloc,
+            child: const HistoryScreen(),
+          ),
         );
+
       case '/onboarding':
-        return MaterialPageRoute(
-          builder: (_) => OnboardingScreen(),
-        );
+        return MaterialPageRoute(builder: (_) => OnboardingScreen());
+
       case '/uploadPicture':
         final args = routeSettings.arguments as Map<String, dynamic>?;
 
@@ -139,16 +123,13 @@ class AppRouter {
         } else {
           return null;
         }
+
       case '/logout':
-        // Redirect to login screen or welcome screen after logout
-        return MaterialPageRoute(
-          builder: (_) => const LoginScreen(), // or WelcomeScreen()
-        );
+        return MaterialPageRoute(builder: (_) => const LoginScreen());
 
       case '/admin':
-        return MaterialPageRoute(
-          builder: (_) => const AdminScreen(),
-        );
+        return MaterialPageRoute(builder: (_) => const AdminScreen());
+
       default:
         return null;
     }

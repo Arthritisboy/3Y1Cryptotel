@@ -4,12 +4,21 @@ const authController = require('../controllers/authController');
 
 const router = express.Router();
 
-router.use(authController.protect); // Uncomment this line to enforce authentication
+// Route to add to favorites (for both hotel and restaurant)
+router.post(
+  '/add/:userId',
+  authController.protect,
+  favoriteController.addToFavorites,
+);
 
-router.post('/add/:userId', favoriteController.addToFavorites);
+// Route to remove from favorites (for both hotel and restaurant)
+router.delete(
+  '/remove/:userId',
+  authController.protect,
+  favoriteController.removeFromFavorites,
+); // Use DELETE method
 
-router.delete('/remove/:userId', favoriteController.removeFromFavorites); // Use DELETE method
-
-router.get('/:userId', favoriteController.getFavorites);
+// Route to get all favorites for the logged-in user
+router.get('/:userId', authController.protect, favoriteController.getFavorites);
 
 module.exports = router;

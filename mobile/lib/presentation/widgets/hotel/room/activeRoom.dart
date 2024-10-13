@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:hotel_flutter/data/model/hotel/rating_model.dart';
 import 'package:hotel_flutter/data/model/hotel/room_model.dart';
-import 'package:hotel_flutter/presentation/widgets/hotel/ratings/hotelRatings.dart';
+import 'package:hotel_flutter/presentation/widgets/hotel/ratings/hotel_rating_widget.dart';
 import 'package:hotel_flutter/presentation/widgets/hotel/navigation/navigation_row.dart';
 import 'package:hotel_flutter/presentation/widgets/hotel/utils/hotel_input_fields/hotel_input_fields.dart';
 import 'package:hotel_flutter/presentation/widgets/hotel/details/roomDetails.dart';
@@ -138,21 +138,16 @@ class _ActiveRoomState extends State<ActiveRoom> {
                   ),
 
                   const SizedBox(height: 10),
-
-                  NavigationRow(
-                    activeIndex: activeIndex,
-                    onTap: onNavTap,
-                    showRoom: false,
-                  ),
                 ],
               ),
             ),
-            const Divider(
-              thickness: 2,
-              color: Color.fromARGB(255, 142, 142, 147),
+            NavigationRow(
+              activeIndex: activeIndex,
+              onTap: onNavTap,
+              showRoom: false,
             ),
             Padding(
-                padding: EdgeInsets.only(left: 16, right: 16),
+                padding: EdgeInsets.only(left: 16, right: 16, top: 12),
                 child: Column(
                   children: [
                     if (activeIndex == 1)
