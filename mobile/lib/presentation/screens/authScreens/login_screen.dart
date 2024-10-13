@@ -136,20 +136,14 @@ class _LoginScreenState extends State<LoginScreen> {
                       SizedBox(height: screenHeight * 0.03),
                       CustomTextFormField(
                         label: 'Password',
-                        hint: 'Enter Password',
+                        hint: 'Enter your password',
                         controller: _passwordController,
-                        isObscure: !_isPasswordVisible,
+                        isObscure: true,
                         showPassword: _isPasswordVisible,
                         toggleShowPassword: () {
                           setState(() {
                             _isPasswordVisible = !_isPasswordVisible;
                           });
-                        },
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return 'Please enter your password';
-                          }
-                          return null;
                         },
                       ),
                       SizedBox(height: screenHeight * 0.01),
