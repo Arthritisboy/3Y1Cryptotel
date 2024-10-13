@@ -64,6 +64,10 @@ class _AdminNavigationState extends State<AdminNavigation> {
       bottomNavigationBar: BottomNavigationBar(
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(
+            icon: Icon(Icons.person),
+            label: 'Jem',
+          ),
+          BottomNavigationBarItem(
             icon: Icon(Icons.pending_actions),
             label: 'Pending',
           ),
@@ -88,10 +92,13 @@ class _AdminNavigationState extends State<AdminNavigation> {
     final filteredBookings = bookings.where((booking) {
       switch (_selectedIndex) {
         case 0:
-          return booking.status == 'pending';
+          // Add logic for 'Jem' if needed
+          return true; // Assuming it displays all bookings
         case 1:
-          return booking.status == 'accepted';
+          return booking.status == 'pending';
         case 2:
+          return booking.status == 'accepted';
+        case 3:
           return booking.status == 'rejected';
         default:
           return false;

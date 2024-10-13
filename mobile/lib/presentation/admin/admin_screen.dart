@@ -45,13 +45,14 @@ class _AdminScreenState extends State<AdminScreen> {
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
-      length: 3,
+      length: 4,
       child: Scaffold(
         body: Column(
           children: [
             const AdminHeader(),
             const TabBar(
               tabs: [
+                Tab(text: 'Jem', icon: Icon(Icons.hotel)),
                 Tab(text: 'Pending', icon: Icon(Icons.pending_actions)),
                 Tab(text: 'Accepted', icon: Icon(Icons.check_circle)),
                 Tab(text: 'Rejected', icon: Icon(Icons.cancel)),
