@@ -282,21 +282,14 @@ class AuthDataProvider {
     }
   }
 
-  //! Logout
+//!
   Future<void> logout() async {
-    final response = await http.post(
-      Uri.parse('$baseUrl/logout'), // Replace with your actual logout URL
-      headers: {
-        'Authorization':
-            'Bearer ${await storage.read(key: 'jwt')}', // Ensure to include the JWT token if needed
-      },
-    );
-
-    print('Logout response status: ${response.statusCode}');
-    print('Logout response body: ${response.body}');
-
-    if (response.statusCode != 200) {
-      throw Exception('Failed to logout: ${response.body}');
+    try {
+      await storage.deleteAll(); // Clear all stored data
+      print('All storage data cleared successfully.');
+    } catch (e) {
+      print('Error clearing storage: $e');
+      throw Exception('Failed to clear storage: $e');
     }
   }
 
