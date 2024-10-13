@@ -199,7 +199,7 @@ class _HotelClickedState extends State<HotelClicked> {
                 NavigationRow(
                   activeIndex: widget.activeIndex,
                   onTap: widget.onNavTap,
-                  showBook: false, // Hide the Book option
+                  showBook: false,
                 ),
                 if (widget.activeIndex == 0)
                   RoomSelection(

@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:hotel_flutter/data/model/booking/booking_model.dart';
-import 'package:hotel_flutter/presentation/widgets/history/history_accepted_modal.dart';
+import 'package:hotel_flutter/presentation/widgets/history/history_rejected_modal.dart';
 import 'package:intl/intl.dart';
 
-class HistoryAcceptedBody extends StatelessWidget {
-  final List<BookingModel> acceptedBookings;
+class HistoryRejectedBody extends StatelessWidget {
+  final List<BookingModel> rejectedBookings;
 
-  const HistoryAcceptedBody({super.key, required this.acceptedBookings});
+  const HistoryRejectedBody({super.key, required this.rejectedBookings});
 
   @override
   Widget build(BuildContext context) {
@@ -26,11 +26,11 @@ class HistoryAcceptedBody extends StatelessWidget {
             ],
           ),
           padding: const EdgeInsets.all(16.0),
-          child: acceptedBookings.isNotEmpty
+          child: rejectedBookings.isNotEmpty
               ? ListView.builder(
-                  itemCount: acceptedBookings.length,
+                  itemCount: rejectedBookings.length,
                   itemBuilder: (context, index) {
-                    final booking = acceptedBookings[index];
+                    final booking = rejectedBookings[index];
 
                     // Determine the display name
                     String displayName = (booking.restaurantName != null &&
@@ -118,7 +118,7 @@ class HistoryAcceptedBody extends StatelessWidget {
                                           showDialog(
                                             context: context,
                                             builder: (BuildContext context) {
-                                              return DetailsModal(
+                                              return HistoryRejectedModal(
                                                 booking: booking,
                                               );
                                             },
@@ -152,15 +152,50 @@ class HistoryAcceptedBody extends StatelessWidget {
                     );
                   },
                 )
-              : const Center(
-                  child: Text(
-                    'No accepted bookings available. Book a reservation now!',
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.black54,
-                    ),
-                    textAlign: TextAlign.center,
+              : Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Image.asset(
+                        'assets/images/icons/booknow.png', // Corrected the path
+                        width: 100, // Adjust size as needed
+                        height: 100,
+                      ),
+                      SizedBox(height: 16),
+                      Text(
+                        'No Rejected, yet!',
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.black,
+                        ),
+                      ),
+                      SizedBox(height: 8),
+                      Text(
+                        'Make a booking with CRYPTOTEL & enjoy your stay',
+                        style: TextStyle(
+                          fontSize: 14,
+                          color: Colors.black54,
+                        ),
+                      ),
+                      SizedBox(height: 16),
+                      ElevatedButton(
+                        onPressed: () {
+                          Navigator.pushNamed(
+                              context, '/homescreen'); // Navigate to homescreen
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: const Color(0xFF1C3473),
+                          foregroundColor: Colors.white,
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 32, vertical: 12),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                        ),
+                        child: const Text('Book Now'),
+                      ),
+                    ],
                   ),
                 ),
         ),
