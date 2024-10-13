@@ -6,6 +6,8 @@ import 'package:logging/logging.dart';
 import 'package:hotel_flutter/data/model/auth/user_model.dart';
 import 'package:hotel_flutter/logic/bloc/auth/auth_bloc.dart';
 import 'package:hotel_flutter/logic/bloc/auth/auth_event.dart';
+import 'package:hotel_flutter/presentation/widgets/tabscreen/user_storage_helper.dart';
+
 import 'package:hotel_flutter/logic/bloc/auth/auth_state.dart';
 import 'package:hotel_flutter/presentation/screens/homeScreens/home_screen.dart';
 import 'package:hotel_flutter/presentation/screens/homeScreens/restaurant_screen.dart';
@@ -43,6 +45,7 @@ class _TabScreenState extends State<TabScreen> {
   void initState() {
     super.initState();
     _initializeUserData();
+    _fetchAllUsers();
   }
 
   Future<void> _initializeUserData() async {
@@ -62,6 +65,16 @@ class _TabScreenState extends State<TabScreen> {
     _logger.info('Retrieved userId: $userId');
     if (userId != null) {
       context.read<AuthBloc>().add(GetUserEvent(userId));
+    }
+  }
+
+  Future<void> _fetchAllUsers() async {
+    final token = await _secureStorage.read(key: 'jwt');
+    _logger.info('Retrieved token: $token');
+    if (token != null) {
+      context.read<AuthBloc>().add(FetchAllUsersEvent());
+    } else {
+      _logger.warning('Token is missing. Skipping user fetch.');
     }
   }
 
@@ -104,6 +117,13 @@ class _TabScreenState extends State<TabScreen> {
   void _handleBlocState(BuildContext context, AuthState state) {
     if (state is Authenticated) {
       _storeUserData(state.user);
+    } else if (state is UsersFetched) {
+      allUsers = state.users;
+      _storeFetchedUsers(allUsers);
+    } else if (state is AuthInitial) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        Navigator.of(context).pushReplacementNamed('/login');
+      });
     } else if (state is AuthError) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -111,6 +131,11 @@ class _TabScreenState extends State<TabScreen> {
         );
       });
     }
+  }
+
+  Future<void> _storeFetchedUsers(List<UserModel> users) async {
+    await UserStorageHelper.clearUsers();
+    await UserStorageHelper.storeUsers(users);
   }
 
   Widget _buildShimmerLoading() {
