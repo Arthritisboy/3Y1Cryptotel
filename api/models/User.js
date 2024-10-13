@@ -66,6 +66,12 @@ const userSchema = new mongoose.Schema(
       enum: ['user', 'admin'],
       default: 'user',
     },
+    handleId: {
+      type: mongoose.Schema.Types.ObjectId,
+    },
+    favoriteId: {
+      type: mongoose.Schema.Types.ObjectId,
+    },
     passwordChangedAt: {
       type: Date,
     },
@@ -87,10 +93,6 @@ const userSchema = new mongoose.Schema(
       type: Boolean,
       default: false,
     },
-    // favoriteId: {
-    //   type: mongoose.Schema.Types.ObjectId,
-    //   ref: 'Favorite',
-    // }
   },
   { timestamps: true },
 );

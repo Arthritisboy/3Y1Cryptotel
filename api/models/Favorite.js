@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 
-const favouriteSchema = new mongoose.Schema({
+const favoriteSchema = new mongoose.Schema({
   hotels: [
     {
       type: mongoose.Schema.Types.ObjectId,
@@ -15,4 +15,4 @@ const favouriteSchema = new mongoose.Schema({
   ],
 });
 
-module.exports = mongoose.model('Favourite', favouriteSchema);
+module.exports = mongoose.model('Favorite', favoriteSchema);

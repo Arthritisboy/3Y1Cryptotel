@@ -28,7 +28,7 @@ const createSendToken = (user, statusCode, res, additionalData = {}) => {
   });
 };
 
-// ** Register controller
+// ** Register Controller
 exports.register = catchAsync(async (req, res, next) => {
   let profile = undefined;
 
@@ -49,7 +49,7 @@ exports.register = catchAsync(async (req, res, next) => {
     return next(new AppError('Invalid role provided.', 400));
   }
 
-  const newUser = await User.create({
+  const userData = {
     firstName: req.body.firstName,
     lastName: req.body.lastName,
     email: req.body.email,
@@ -57,10 +57,14 @@ exports.register = catchAsync(async (req, res, next) => {
     confirmPassword: req.body.confirmPassword,
     gender: req.body.gender,
     phoneNumber: req.body.phoneNumber,
-    roles: req.body.roles || 'user', // Provide a default if null
-    profile: profile || undefined,
+    roles: req.body.roles || 'user', 
+    profile: profile || undefined,    
     hasCompletedOnboarding: req.body.hasCompletedOnboarding || false,
-  });
+    handleId: req.body.roles === 'admin' ? null : undefined,
+    favoriteId: req.body.roles === 'user' ? null : undefined,
+  };
+
+  const newUser = await User.create(userData);
 
   console.warn('New user created:', newUser);
 
@@ -89,6 +93,7 @@ exports.register = catchAsync(async (req, res, next) => {
     );
   }
 });
+
 
 exports.sendVerificationCode = catchAsync(async (req, res, next) => {
   const user = await User.findOne({ email: req.body.email });

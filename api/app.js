@@ -26,7 +26,7 @@ const bookingRouter = require('./routes/bookingRoute.js');
 const hotelRouter = require('./routes/hotel.js');
 const restaurantRouter = require('./routes/restaurantRoute.js');
 // const web3Router = require('./routes/web3');
-const favouriteRouter = require('./routes/favouriteRoute.js');
+const favoriteRouter = require('./routes/favoriteRoute.js');
 
 const updateRouter = require('./routes/updateRoute.js');
 
@@ -89,7 +89,7 @@ app.use('/api/v1/users', userRoute);
 app.use('/api/v1/bookings', bookingRouter);
 app.use('/api/v1/hotel', hotelRouter);
 app.use('/api/v1/restaurant', restaurantRouter);
-app.use('/api/v1/favourites', favouriteRouter);
+app.use('/api/v1/favorites', favoriteRouter);
 
 app.use('/dev/v1/update-all', updateRouter)
 
