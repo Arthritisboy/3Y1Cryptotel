@@ -5,6 +5,7 @@ import 'package:hotel_flutter/data/model/booking/booking_model.dart';
 import 'package:hotel_flutter/logic/bloc/booking/booking_bloc.dart';
 import 'package:hotel_flutter/logic/bloc/booking/booking_event.dart';
 import 'package:hotel_flutter/logic/bloc/booking/booking_state.dart';
+import 'package:hotel_flutter/presentation/admin/createRoom.dart'; // Import the CreateRoom screen
 import 'package:intl/intl.dart';
 import '../widgets/admin/admin_modal.dart';
 import '../widgets/admin/admin_header.dart';
@@ -29,12 +30,8 @@ class _AdminScreenState extends State<AdminScreen> {
   // Function to fetch bookings using Flutter Secure Storage
   Future<void> _fetchBookings() async {
     try {
-      // Get the handleId from secure storage
       handleId = await _secureStorage.read(key: 'handleId');
-      print(handleId);
-
       if (handleId != null) {
-        // Dispatch the FetchBookings event with the retrieved ID
         context.read<BookingBloc>().add(FetchBookings(userId: handleId!));
       }
     } catch (e) {
@@ -49,51 +46,31 @@ class _AdminScreenState extends State<AdminScreen> {
       child: Scaffold(
         body: Column(
           children: [
-            const AdminHeader(),
+            AdminHeader(
+              onCreateRoomPressed: () {
+                // Navigate to Create Room screen when the button is pressed
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const CreateRoom()),
+                );
+              },
+            ),
             const TabBar(
               tabs: [
-                Tab(text: 'Jem', icon: Icon(Icons.hotel)),
+                Tab(text: 'Rooms', icon: Icon(Icons.hotel)),
                 Tab(text: 'Pending', icon: Icon(Icons.pending_actions)),
                 Tab(text: 'Accepted', icon: Icon(Icons.check_circle)),
                 Tab(text: 'Rejected', icon: Icon(Icons.cancel)),
               ],
             ),
             Expanded(
-              child: BlocBuilder<BookingBloc, BookingState>(
-                builder: (context, state) {
-                  if (state is BookingLoading) {
-                    return const Center(child: CircularProgressIndicator());
-                  } else if (state is BookingSuccess) {
-                    final bookings = state.bookings;
-
-                    return TabBarView(
-                      children: [
-                        _buildBookingList(
-                          bookings
-                              .where(
-                                  (b) => b.status?.toLowerCase() == 'pending')
-                              .toList(),
-                        ),
-                        _buildBookingList(
-                          bookings
-                              .where(
-                                  (b) => b.status?.toLowerCase() == 'accepted')
-                              .toList(),
-                        ),
-                        _buildBookingList(
-                          bookings
-                              .where(
-                                  (b) => b.status?.toLowerCase() == 'rejected')
-                              .toList(),
-                        ),
-                      ],
-                    );
-                  } else if (state is BookingFailure) {
-                    return Center(child: Text('Error: ${state.error}'));
-                  } else {
-                    return const Center(child: Text('No bookings available.'));
-                  }
-                },
+              child: TabBarView(
+                children: [
+                  _buildRoomsTab(context), // The "Rooms" tab content
+                  _buildBookingList(_filterBookings(context, 'pending')),
+                  _buildBookingList(_filterBookings(context, 'accepted')),
+                  _buildBookingList(_filterBookings(context, 'rejected')),
+                ],
               ),
             ),
           ],
@@ -102,8 +79,38 @@ class _AdminScreenState extends State<AdminScreen> {
     );
   }
 
+  // Widget for the "Rooms" tab
+  Widget _buildRoomsTab(BuildContext context) {
+    // Now directly showing room list without a button
+    return BlocBuilder<BookingBloc, BookingState>(
+      builder: (context, state) {
+        if (state is BookingSuccess && state.bookings.isNotEmpty) {
+          return _buildBookingList(state.bookings);
+        } else {
+          return const Center(
+            child: Text('No bookings available.'),
+          );
+        }
+      },
+    );
+  }
+
+  // Filter bookings based on status
+  List<BookingModel> _filterBookings(BuildContext context, String status) {
+    final state = context.read<BookingBloc>().state;
+    if (state is BookingSuccess) {
+      return state.bookings
+          .where((b) => b.status?.toLowerCase() == status)
+          .toList();
+    }
+    return [];
+  }
+
   // Widget to build a list of bookings
   Widget _buildBookingList(List<BookingModel> bookings) {
+    if (bookings.isEmpty) {
+      return const Center(child: Text('No bookings available.'));
+    }
     return ListView.builder(
       itemCount: bookings.length,
       itemBuilder: (context, index) {
