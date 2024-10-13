@@ -34,7 +34,7 @@ class RestaurantDetails extends StatelessWidget {
           const Text(
             'Details',
             style: TextStyle(
-              fontSize: 25.0,
+              fontSize: 22.0,
               fontWeight: FontWeight.bold,
               color: Colors.black,
             ),

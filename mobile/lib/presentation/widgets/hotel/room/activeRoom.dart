@@ -138,21 +138,16 @@ class _ActiveRoomState extends State<ActiveRoom> {
                   ),
 
                   const SizedBox(height: 10),
-
-                  NavigationRow(
-                    activeIndex: activeIndex,
-                    onTap: onNavTap,
-                    showRoom: false,
-                  ),
                 ],
               ),
             ),
-            const Divider(
-              thickness: 2,
-              color: Color.fromARGB(255, 142, 142, 147),
+            NavigationRow(
+              activeIndex: activeIndex,
+              onTap: onNavTap,
+              showRoom: false,
             ),
             Padding(
-                padding: EdgeInsets.only(left: 16, right: 16),
+                padding: EdgeInsets.only(left: 16, right: 16, top: 12),
                 child: Column(
                   children: [
                     if (activeIndex == 1)
