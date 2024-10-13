@@ -12,7 +12,7 @@ class RestaurantModel {
   final double price;
   final int capacity;
   final bool availability;
-  final List<RatingModel> ratings; // List of ratings
+  final List<RatingModel> ratings;
 
   // Constructor with default values
   RestaurantModel({
@@ -24,17 +24,13 @@ class RestaurantModel {
     required this.price,
     required this.capacity,
     required this.availability,
-    this.ratings = const [], // Default to an empty list
+    this.ratings = const [],
   });
 
   factory RestaurantModel.fromJson(Map<String, dynamic> json) {
-    print("Parsing restaurant: ${json['name']}");
-
     var ratingsList = (json['ratings'] as List<dynamic>)
         .map((rating) => RatingModel.fromJson(rating))
         .toList();
-
-    print("Ratings for ${json['name']}: ${ratingsList.length}");
 
     return RestaurantModel(
       id: json['_id'] as String,
@@ -49,6 +45,23 @@ class RestaurantModel {
       availability: json['availability'] as bool,
       ratings: ratingsList,
     );
+  }
+
+  // Method to convert RestaurantModel to JSON
+  Map<String, dynamic> toJson() {
+    return {
+      '_id': id,
+      'name': name,
+      'location': location,
+      'openingHours': openingHours,
+      'restaurantImage': restaurantImage,
+      'price': price,
+      'capacity': capacity,
+      'availability': availability,
+      'ratings': ratings
+          .map((rating) => rating.toJson())
+          .toList(), // Assuming RatingModel has a toJson() method
+    };
   }
 
   // Calculate the average rating from the list of ratings

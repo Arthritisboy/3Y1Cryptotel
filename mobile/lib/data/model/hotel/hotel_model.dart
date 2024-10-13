@@ -1,9 +1,7 @@
 import 'package:geocoding/geocoding.dart';
 import 'package:hotel_flutter/data/model/hotel/room_model.dart';
-import 'package:logging/logging.dart';
 
 class HotelModel {
-  final Logger _logger = Logger('HotelModel');
   final String id;
   final String name;
   final String location;
@@ -37,8 +35,24 @@ class HotelModel {
           ? (json['rooms'] as List)
               .map((roomJson) => RoomModel.fromJson(roomJson))
               .toList()
-          : <RoomModel>[], // Default to an empty list if rooms is null or not a List
+          : <RoomModel>[],
     );
+  }
+
+  // Method to convert HotelModel to JSON
+  Map<String, dynamic> toJson() {
+    return {
+      '_id': id,
+      'name': name,
+      'location': location,
+      'openingHours': openingHours,
+      'hotelImage': hotelImage,
+      'averageRating': averageRating,
+      'averagePrice': averagePrice,
+      'rooms': rooms
+          .map((room) => room.toJson())
+          .toList(), // Assuming RoomModel has a toJson() method
+    };
   }
 
   // Fetch coordinates based on the location string

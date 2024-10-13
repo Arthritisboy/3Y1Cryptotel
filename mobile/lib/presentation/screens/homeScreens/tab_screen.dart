@@ -267,7 +267,16 @@ class _TabScreenState extends State<TabScreen> {
         Navigator.of(context).pushNamed('/history');
         break;
       case 'favorite':
-        Navigator.of(context).pushNamed('/favorite');
+        if (userId != null) {
+          Navigator.of(context).pushNamed(
+            '/favorite',
+            arguments: {'userId': userId}, // Pass userId here
+          );
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('User ID is missing.')),
+          );
+        }
         break;
       case 'logout':
         _showLogoutConfirmationDialog();

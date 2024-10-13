@@ -37,4 +37,20 @@ class RoomModel {
           : <RatingModel>[], // Default to an empty list if ratings is null or not a List
     );
   }
+
+  // Method to convert RoomModel to JSON
+  Map<String, dynamic> toJson() {
+    return {
+      '_id': id,
+      'roomNumber': roomNumber,
+      'roomImage': roomImage,
+      'type': type,
+      'price': price,
+      'capacity': capacity,
+      'availability': availability,
+      'ratings': ratings
+          .map((rating) => rating.toJson())
+          .toList(), // Assuming RatingModel has a toJson() method
+    };
+  }
 }
