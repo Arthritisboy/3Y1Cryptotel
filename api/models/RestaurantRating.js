@@ -27,8 +27,5 @@ const restaurantRatingSchema = new mongoose.Schema({
   },
 });
 
-const RestaurantRating = mongoose.model(
-  'RestaurantRating',
-  restaurantRatingSchema,
-);
+const RestaurantRating = mongoose.model('RestaurantRating', restaurantRatingSchema);
 module.exports = RestaurantRating;

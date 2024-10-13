@@ -4,32 +4,30 @@ const { uploadEveryImage } = require('../middleware/imageUpload');
 const catchAsync = require('../utils/catchAsync');
 const AppError = require('../utils/appError');
 
-// Get a restaurant by ID or all restaurants
+// Get a restaurant by ID or all restaurants (with ratings)
 exports.getRestaurant = catchAsync(async (req, res, next) => {
   const restaurantId = req.params.id;
   let restaurant;
 
-  console.log(`Fetching restaurant with ID: ${restaurantId}`);
-
   if (restaurantId) {
-    restaurant = await Restaurant.findById(restaurantId).populate('ratings');
-    if (!restaurant) {
-      console.log('Restaurant not found.');
-      return next(new AppError('Restaurant not found with this ID.', 404));
-    }
-    console.log('Restaurant found:', restaurant);
+      // Fetch a specific restaurant by ID and populate ratings
+      restaurant = await Restaurant.findById(restaurantId).populate('ratings');
+      if (!restaurant) {
+          return next(new AppError('Restaurant not found with this ID.', 404));
+      }
   } else {
-    restaurant = await Restaurant.find(); // Get all restaurants if no ID is provided
-    console.log('All restaurants fetched:', restaurant);
+      // Get all restaurants if no ID is provided and populate ratings
+      restaurant = await Restaurant.find().populate('ratings');
   }
 
   res.status(200).json({
-    status: 'success',
-    data: {
-      restaurant,
-    },
+      status: 'success',
+      data: {
+          restaurant,
+      },
   });
 });
+
 
 // Create a restaurant
 exports.createRestaurant = catchAsync(async (req, res, next) => {
