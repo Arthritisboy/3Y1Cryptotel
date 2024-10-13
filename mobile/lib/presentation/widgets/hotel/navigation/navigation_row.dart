@@ -68,3 +68,64 @@ class NavigationRow extends StatelessWidget {
     );
   }
 }
+
+class NavigationRowWithSwipe extends StatefulWidget {
+  const NavigationRowWithSwipe({super.key});
+
+  @override
+  _NavigationRowWithSwipeState createState() => _NavigationRowWithSwipeState();
+}
+
+class _NavigationRowWithSwipeState extends State<NavigationRowWithSwipe> {
+  int _activeIndex = 0; // Track the active index
+  final PageController _pageController = PageController();
+
+  void _onNavTap(int index) {
+    setState(() {
+      _activeIndex = index;
+    });
+    _pageController.animateToPage(
+      index,
+      duration: const Duration(milliseconds: 300),
+      curve: Curves.easeInOut,
+    );
+  }
+
+  void _onPageChanged(int index) {
+    setState(() {
+      _activeIndex = index;
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        backgroundColor: Colors.white,
+        elevation: 0,
+        title: const Text(
+          'Hotel Navigation',
+          style: TextStyle(color: Colors.black),
+        ),
+        bottom: PreferredSize(
+          preferredSize: const Size.fromHeight(48.0),
+          child: NavigationRow(
+            activeIndex: _activeIndex,
+            onTap: _onNavTap,
+            showBook: false,
+          ),
+        ),
+      ),
+      body: PageView(
+        controller: _pageController,
+        onPageChanged: _onPageChanged,
+        children: const [
+          Center(child: Text('Room')),
+          Center(child: Text('Book')),
+          Center(child: Text('Details')),
+          Center(child: Text('Ratings')),
+        ],
+      ),
+    );
+  }
+}
