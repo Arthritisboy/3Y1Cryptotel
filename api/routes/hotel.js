@@ -13,8 +13,11 @@ router.route('/update-all-averages').patch(updateAllHotelsAverage);
 
 // Hotel routes
 router
-  .route('/:userId')
+  .route('/')
   .get(authController.protect, hotelController.getHotel)
+
+router
+  .route('/:userId')
   .post(upload.single('image'), hotelController.createHotel);
 
 router

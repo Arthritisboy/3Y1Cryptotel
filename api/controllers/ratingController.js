@@ -63,7 +63,7 @@ exports.getRating = catchAsync(async (req, res, next) => {
 exports.createRating = catchAsync(async (req, res, next) => {
     const { rating, message, userId } = req.body;
     const { roomId } = req.params;
-
+    console.log("ROOM")
     // Log received data
     console.log('Received rating data:', { rating, message, roomId });
     console.log('User ID:', userId);
