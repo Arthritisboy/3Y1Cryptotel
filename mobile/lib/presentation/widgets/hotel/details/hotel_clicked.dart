@@ -7,7 +7,7 @@ import 'package:hotel_flutter/presentation/widgets/hotel/navigation/navigation_r
 import 'package:hotel_flutter/presentation/widgets/hotel/ratings/hotel_rating_widget.dart';
 import 'package:hotel_flutter/logic/bloc/hotel/hotel_event.dart';
 import 'package:hotel_flutter/presentation/widgets/hotel/room/roomSelection.dart';
-import 'package:hotel_flutter/presentation/widgets/shimmer_loading/hotel/hotel_clicked.dart';
+import 'package:hotel_flutter/presentation/widgets/shimmer_loading/hotel/shimmer_hotel_clicked.dart';
 
 class HotelClicked extends StatefulWidget {
   final String hotelId;

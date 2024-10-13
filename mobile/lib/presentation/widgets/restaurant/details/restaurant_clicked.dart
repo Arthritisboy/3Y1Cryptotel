@@ -6,8 +6,9 @@ import 'package:hotel_flutter/logic/bloc/restaurant/restaurant_state.dart';
 import 'package:hotel_flutter/presentation/widgets/restaurant/navigation/restaurant_navigation_row.dart';
 import 'package:hotel_flutter/presentation/widgets/restaurant/details/restaurant_details.dart';
 import 'package:hotel_flutter/presentation/widgets/restaurant/utils/restaurant_input_fields.dart';
-import 'package:hotel_flutter/presentation/widgets/shimmer_loading/hotel/hotel_clicked.dart';
+import 'package:hotel_flutter/presentation/widgets/shimmer_loading/hotel/shimmer_hotel_clicked.dart';
 import 'package:hotel_flutter/presentation/widgets/restaurant/ratings/RestaurantRatingWidget.dart';
+import 'package:hotel_flutter/presentation/widgets/shimmer_loading/restaurant/shimmer_restaurant_clicked.dart';
 
 class RestaurantClicked extends StatefulWidget {
   final String restaurantId;
@@ -57,7 +58,7 @@ class _RestaurantClickedState extends State<RestaurantClicked> {
     return BlocBuilder<RestaurantBloc, RestaurantState>(
       builder: (context, state) {
         if (state is RestaurantLoading) {
-          return const ShimmerHotelClicked();
+          return const ShimmerRestaurantClicked();
         } else if (state is RestaurantError) {
           return Center(child: Text(state.error));
         } else if (state is RestaurantDetailsLoaded) {

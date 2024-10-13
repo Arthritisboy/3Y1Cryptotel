@@ -1,123 +1,189 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:hotel_flutter/data/model/booking/booking_model.dart';
+import 'package:hotel_flutter/logic/bloc/booking/booking_bloc.dart';
+import 'package:hotel_flutter/logic/bloc/booking/booking_event.dart';
 import 'package:intl/intl.dart';
 
 class PendingModal extends StatefulWidget {
-  const PendingModal({super.key});
+  final BookingModel booking;
+
+  const PendingModal({super.key, required this.booking});
 
   @override
   _PendingModalState createState() => _PendingModalState();
 }
 
 class _PendingModalState extends State<PendingModal> {
-  DateTime? _checkInDate; 
+  DateTime? _checkInDate;
   TimeOfDay? _checkInTime;
-  DateTime? _checkOutDate; 
-  TimeOfDay? _checkOutTime; 
+  DateTime? _checkOutDate;
+  TimeOfDay? _checkOutTime;
 
-
-  String formatDate(DateTime date) {
-    return DateFormat('yyyy-MM-dd').format(date); 
+  @override
+  void initState() {
+    super.initState();
+    _checkInDate = widget.booking.checkInDate;
+    _checkOutDate = widget.booking.checkOutDate;
   }
 
+  String formatDate(DateTime date) {
+    return DateFormat('yyyy-MM-dd').format(date);
+  }
+
+  String formatTime(TimeOfDay time) {
+    final now = DateTime.now();
+    final dateTime =
+        DateTime(now.year, now.month, now.day, time.hour, time.minute);
+    return DateFormat('HH:mm').format(dateTime);
+  }
 
   Future<void> _selectCheckInDate(BuildContext context) async {
-    final DateTime? picked = await showDatePicker(
+    final picked = await showDatePicker(
       context: context,
       initialDate: DateTime.now().add(const Duration(days: 1)),
       firstDate: DateTime.now().add(const Duration(days: 1)),
-      lastDate: DateTime(2101), 
+      lastDate: DateTime(2101),
     );
-    if (picked != null && picked != _checkInDate) {
+    if (picked != null) {
       setState(() {
         _checkInDate = picked;
       });
     }
   }
 
-
   Future<void> _selectCheckInTime(BuildContext context) async {
-    final TimeOfDay? picked = await showTimePicker(
+    final picked = await showTimePicker(
       context: context,
       initialTime: const TimeOfDay(hour: 12, minute: 0),
-      builder: (BuildContext context, Widget? child) {
-        return MediaQuery(
-          data: MediaQuery.of(context).copyWith(alwaysUse24HourFormat: false),
-          child: child!,
-        );
-      },
     );
-    if (picked != null && picked != _checkInTime) {
+    if (picked != null) {
       setState(() {
-        _checkInTime = picked; 
+        _checkInTime = picked;
       });
     }
   }
-
 
   Future<void> _selectCheckOutDate(BuildContext context) async {
-    final DateTime? picked = await showDatePicker(
+    final picked = await showDatePicker(
       context: context,
-      initialDate: _checkInDate != null ? _checkInDate!.add(const Duration(days: 1)) : DateTime.now().add(const Duration(days: 2)),
-      firstDate: _checkInDate != null ? _checkInDate!.add(const Duration(days: 1)) : DateTime.now().add(const Duration(days: 2)), 
+      initialDate: _checkInDate!.add(const Duration(days: 1)),
+      firstDate: _checkInDate!.add(const Duration(days: 1)),
       lastDate: DateTime(2101),
     );
-    if (picked != null && picked != _checkOutDate) {
+    if (picked != null) {
       setState(() {
-        _checkOutDate = picked; 
+        _checkOutDate = picked;
       });
     }
   }
 
-
   Future<void> _selectCheckOutTime(BuildContext context) async {
-    final TimeOfDay? picked = await showTimePicker(
+    final picked = await showTimePicker(
       context: context,
       initialTime: const TimeOfDay(hour: 12, minute: 0),
-      builder: (BuildContext context, Widget? child) {
-        return MediaQuery(
-          data: MediaQuery.of(context).copyWith(alwaysUse24HourFormat: false),
-          child: child!,
-        );
-      },
     );
-    if (picked != null && picked != _checkOutTime) {
+    if (picked != null) {
       setState(() {
         _checkOutTime = picked;
       });
     }
   }
 
-  Future<void> _confirmCancel(BuildContext context) async {
-    final bool? result = await showDialog<bool>(
+  Future<void> _confirmReschedule() async {
+    final result = await showDialog<bool>(
       context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text('Cancel Booking'),
-          content: const Text('Are you sure you want to cancel your booking?'),
-          actions: [
-            ElevatedButton(
-              onPressed: () {
-                Navigator.of(context).pop(false);
-              },
-              child: const Text('No'),
-            ),
-            ElevatedButton(
-              onPressed: () {
-                Navigator.of(context).pop(true);
-              },
-              child: const Text('Yes'),
-            ),
-          ],
-        );
-      },
+      builder: (context) => AlertDialog(
+        title: const Text('Confirm Reschedule'),
+        content:
+            const Text('Are you sure you want to reschedule this booking?'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(false),
+            child: const Text('No'),
+          ),
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(true),
+            child: const Text('Yes'),
+          ),
+        ],
+      ),
     );
 
     if (result == true) {
+      _handleReschedule();
+    }
+  }
+
+  Future<void> _confirmCancel() async {
+    final result = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Confirm Cancellation'),
+        content: const Text('Are you sure you want to cancel this booking?'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(false),
+            child: const Text('No'),
+          ),
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(true),
+            child: const Text('Yes'),
+          ),
+        ],
+      ),
+    );
+
+    if (result == true) {
+      _handleCancel();
+    }
+  }
+
+  void _handleReschedule() {
+    if (_checkInDate != null &&
+        _checkInTime != null &&
+        _checkOutDate != null &&
+        _checkOutTime != null) {
+      final updatedBooking = widget.booking.copyWith(
+        checkInDate: _checkInDate!,
+        checkOutDate: _checkOutDate!,
+      );
+
+      context.read<BookingBloc>().add(
+            UpdateBooking(
+              booking: updatedBooking,
+              bookingId: widget.booking.id!,
+            ),
+          );
+
       Navigator.of(context).pop();
+
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Booking Cancelled')),
+        SnackBar(
+          content: Text(
+            'Booking rescheduled to ${formatDate(_checkInDate!)} - '
+            '${formatDate(_checkOutDate!)} at ${formatTime(_checkInTime!)}',
+          ),
+        ),
       );
     }
+  }
+
+  void _handleCancel() {
+    final cancelledBooking = widget.booking.copyWith(status: 'cancelled');
+
+    context.read<BookingBloc>().add(
+          UpdateBooking(
+            booking: cancelledBooking,
+            bookingId: widget.booking.id!,
+          ),
+        );
+
+    Navigator.of(context).pop();
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('Booking has been cancelled.')),
+    );
   }
 
   @override
@@ -126,144 +192,101 @@ class _PendingModalState extends State<PendingModal> {
       title: const Text('Manage Booking'),
       content: SingleChildScrollView(
         child: Column(
-          mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text('Would you like to cancel or reschedule this booking?'),
+            const Text('Reschedule or cancel your booking:'),
             const SizedBox(height: 20.0),
-            const Text(
-              'Check-in Date and Time:',
-              style: TextStyle(fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 8.0),
-            Row(
-              children: [
-                Expanded(
-                  child: Text(
-                    _checkInDate != null
-                        ? 'Check-in: ${formatDate(_checkInDate!)}'
-                        : 'No check-in date selected',
-                    style: const TextStyle(fontSize: 16.0),
-                  ),
-                ),
-                IconButton(
-                  icon: const Icon(Icons.calendar_today),
-                  onPressed: () {
-                    _selectCheckInDate(context); 
-                  },
-                ),
-              ],
-            ),
-            Row(
-              children: [
-                Expanded(
-                  child: Text(
-                    _checkInTime != null
-                        ? 'Time: ${_checkInTime!.format(context)}'
-                        : 'No check-in time selected',
-                    style: const TextStyle(fontSize: 16.0),
-                  ),
-                ),
-                IconButton(
-                  icon: const Icon(Icons.access_time),
-                  onPressed: () {
-                    _selectCheckInTime(context);
-                  },
-                ),
-              ],
+            _buildDateTimeRow(
+              label: 'Check-in Date and Time:',
+              dateText: _checkInDate != null
+                  ? formatDate(_checkInDate!)
+                  : 'No check-in date selected',
+              timeText: _checkInTime != null
+                  ? formatTime(_checkInTime!)
+                  : 'No check-in time selected',
+              onSelectDate: () => _selectCheckInDate(context),
+              onSelectTime: () => _selectCheckInTime(context),
             ),
             const SizedBox(height: 20.0),
-            const Text(
-              'Check-out Date and Time:',
-              style: TextStyle(fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 8.0),
-            Row(
-              children: [
-                Expanded(
-                  child: Text(
-                    _checkOutDate != null
-                        ? 'Check-out: ${formatDate(_checkOutDate!)}'
-                        : 'No check-out date selected',
-                    style: const TextStyle(fontSize: 16.0),
-                  ),
-                ),
-                IconButton(
-                  icon: const Icon(Icons.calendar_today),
-                  onPressed: () {
-                    _selectCheckOutDate(context); 
-                  },
-                ),
-              ],
-            ),
-            Row(
-              children: [
-                Expanded(
-                  child: Text(
-                    _checkOutTime != null
-                        ? 'Time: ${_checkOutTime!.format(context)}'
-                        : 'No check-out time selected',
-                    style: const TextStyle(fontSize: 16.0),
-                  ),
-                ),
-                IconButton(
-                  icon: const Icon(Icons.access_time),
-                  onPressed: () {
-                    _selectCheckOutTime(context); 
-                  },
-                ),
-              ],
+            _buildDateTimeRow(
+              label: 'Check-out Date and Time:',
+              dateText: _checkOutDate != null
+                  ? formatDate(_checkOutDate!)
+                  : 'No check-out date selected',
+              timeText: _checkOutTime != null
+                  ? formatTime(_checkOutTime!)
+                  : 'No check-out time selected',
+              onSelectDate: () => _selectCheckOutDate(context),
+              onSelectTime: () => _selectCheckOutTime(context),
             ),
           ],
         ),
       ),
       actions: [
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 8.0),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Expanded(
+                child: ElevatedButton(
+                  onPressed: _confirmReschedule,
+                  style: ElevatedButton.styleFrom(backgroundColor: Colors.blue),
+                  child: const Text('Reschedule'),
+                ),
+              ),
+              const SizedBox(width: 10),
+              Expanded(
+                child: ElevatedButton(
+                  onPressed: _confirmCancel,
+                  style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
+                  child: const Text('Cancel Booking'),
+                ),
+              ),
+            ],
+          ),
+        ),
+        TextButton(
+          onPressed: () => Navigator.of(context).pop(),
+          child: const Text('Close'),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildDateTimeRow({
+    required String label,
+    required String dateText,
+    required String timeText,
+    required VoidCallback onSelectDate,
+    required VoidCallback onSelectTime,
+  }) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(label, style: const TextStyle(fontWeight: FontWeight.bold)),
+        const SizedBox(height: 8.0),
         Row(
-          mainAxisAlignment: MainAxisAlignment.center, 
           children: [
-            ElevatedButton(
-              onPressed: () {
-                if (_checkInDate != null && _checkInTime != null && _checkOutDate != null && _checkOutTime != null) {
-                  Navigator.of(context).pop();
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      content: Text(
-                        'Booking rescheduled from ${formatDate(_checkInDate!)} at ${_checkInTime!.format(context)}'
-                            ' to ${formatDate(_checkOutDate!)} at ${_checkOutTime!.format(context)}',
-                      ),
-                    ),
-                  );
-                } else {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('Please select both check-in and check-out dates and times')),
-                  );
-                }
-              },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.blue,
-              ),
-              child: const Text('Reschedule'),
+            Expanded(
+              child: Text(dateText, style: const TextStyle(fontSize: 16.0)),
             ),
-            const SizedBox(width: 10), 
-            ElevatedButton(
-              onPressed: () {
-                _confirmCancel(context); 
-              },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.red,
-              ),
-              child: const Text('Cancel Booking'),
+            IconButton(
+              icon: const Icon(Icons.calendar_today),
+              onPressed: onSelectDate,
             ),
           ],
         ),
-        const Divider(),
-        Center(
-          child: TextButton(
-            onPressed: () {
-              Navigator.of(context).pop();
-            },
-            child: const Text('Close'),
-          ),
+        Row(
+          children: [
+            Expanded(
+              child: Text(timeText, style: const TextStyle(fontSize: 16.0)),
+            ),
+            IconButton(
+              icon: const Icon(Icons.access_time),
+              onPressed: onSelectTime,
+            ),
+          ],
         ),
       ],
     );

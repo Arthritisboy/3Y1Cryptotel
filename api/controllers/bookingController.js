@@ -164,12 +164,13 @@ exports.updateBooking = catchAsync(async (req, res, next) => {
       checkOutDate,
       timeOfArrival,
       timeOfDeparture,
+      status,
     } = req.body;
 
     // Find the booking and update the details
     const updatedBooking = await Booking.findByIdAndUpdate(
       bookingId,
-      { checkInDate, checkOutDate, timeOfArrival, timeOfDeparture },
+      { checkInDate, checkOutDate, timeOfArrival, timeOfDeparture, status },
       { new: true, runValidators: true },
     );
 
