@@ -69,12 +69,12 @@ const sendEmail = async (options) => {
                 <p style="font-size: 16px;">Dear ${fullName},</p>
                 <p>Thank you for booking a table with us. Your booking details are as follows:</p>
                 <ul>
+                  <li><strong>Status:</strong> ${status === 'pending' ? 'Your booking is pending confirmation' : 'Accepted'}</li>
                   <li><strong>Restaurant:</strong> ${restaurantName}</li>
                   <li><strong>Table Number:</strong> ${tableNumber}</li>
                   <li><strong>Check-in Date:</strong> ${new Date(checkInDate).toLocaleDateString()}</li>
                   <li><strong>Check-out Date:</strong> ${new Date(checkOutDate).toLocaleDateString()}</li>
                   <li><strong>Total Price:</strong> ₱${totalPrice}</li>
-                  <li><strong>Status:</strong> ${status === 'pending' ? 'Your booking is pending confirmation' : 'Confirmed'}</li>
                 </ul>
                 <p>We will notify you once your booking is confirmed. Thank you for dining with us!</p>
               </td>
