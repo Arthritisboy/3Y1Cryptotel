@@ -84,8 +84,6 @@ const userSchema = new mongoose.Schema(
     },
     profile: {
       type: String,
-      default:
-        'https://res.cloudinary.com/djuvg4di0/image/upload/v1728833875/burui8vcrcqrvedo39yt.png',
     },
     hasCompletedOnboarding: {
       type: Boolean,

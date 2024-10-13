@@ -34,10 +34,10 @@ const hotelSchema = new mongoose.Schema({
   //   type: String,
   //   required: true,
   // },
-  // cryptoWalletAddress: {
-  //   type: String,
-  //   required: true,
-  // },
+  walletAddress: {
+    type: String,
+    required: true,
+  },
 
   rooms: [
     {
