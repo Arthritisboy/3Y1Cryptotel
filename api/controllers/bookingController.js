@@ -7,12 +7,29 @@ const catchAsync = require('../utils/catchAsync');
 const AppError = require('../utils/appError');
 const sendEmail = require('../utils/email');
 
-// ** Get all bookings for a user
+// ** Get bookings by userId, hotelId, or restaurantId
 exports.getBookings = catchAsync(async (req, res, next) => {
   try {
-    const bookings = await Booking.find({ userId: req.params.userId }).populate(
+    const { id } = req.params;
+
+    // Attempt to find bookings by userId
+    let bookings = await Booking.find({ userId: id }).populate(
       'hotelId roomId restaurantId',
     );
+
+    // If not found by userId, attempt to find by hotelId
+    if (!bookings || bookings.length === 0) {
+      bookings = await Booking.find({ hotelId: id }).populate(
+        'hotelId roomId restaurantId',
+      );
+    }
+
+    // If not found by hotelId, attempt to find by restaurantId
+    if (!bookings || bookings.length === 0) {
+      bookings = await Booking.find({ restaurantId: id }).populate(
+        'hotelId roomId restaurantId',
+      );
+    }
 
     res.status(200).json({
       status: 'success',

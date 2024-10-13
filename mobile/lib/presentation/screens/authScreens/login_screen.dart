@@ -36,7 +36,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
             if (!state.hasCompletedOnboarding) {
               Navigator.pushReplacementNamed(context, '/onboarding');
-            } else if (state.hasCompletedOnboarding && state.roles == 'admin') {
+            } else if (state.roles == 'admin') {
               Navigator.pushReplacementNamed(context, '/admin');
             } else {
               Navigator.pushReplacementNamed(context, '/homescreen');

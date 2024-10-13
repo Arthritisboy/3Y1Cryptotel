@@ -5,7 +5,7 @@ const router = express.Router();
 
 // Booking routes
 router
-  .route('/:userId')
+  .route('/:id')
   .get(authController.protect, bookingController.getBookings) // Get all bookings for the user
   .post(authController.protect, bookingController.createBooking); // Create a new booking
 
