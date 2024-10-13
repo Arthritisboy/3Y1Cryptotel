@@ -82,7 +82,7 @@ exports.register = catchAsync(async (req, res, next) => {
     });
     res.status(201).json({
       status: 'success',
-      message: 'User registered! Verification code sent to email.',
+      message: 'User registered! Verification code sent to email.', verificationCode,
     });
   } catch (error) {
     newUser.verificationCode = undefined;

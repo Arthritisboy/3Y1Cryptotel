@@ -8,6 +8,10 @@ const restaurant = new mongoose.Schema({
   restaurantImage: {
     type: String,
   },
+  averageRating: {
+    type: Number,
+    default: 0, // Automatic
+  },
   price: {
     type: Number,
     required: true,
@@ -29,6 +33,9 @@ const restaurant = new mongoose.Schema({
     type: Boolean,
     default: true,
   },
+  // cryptoWalletAddress: {
+  //   type: String, // New field for a cryptocurrency wallet address
+  // },
   ratings: [
     {
       type: mongoose.Schema.Types.ObjectId,
