@@ -172,7 +172,7 @@ exports.createBooking = catchAsync(async (req, res, next) => {
   }
 });
 
-// ** Update an existing booking (e.g., change dates)
+// ** Update an existing booking (e.g., change dates or status)
 exports.updateBooking = catchAsync(async (req, res, next) => {
   try {
     const { bookingId } = req.params;
@@ -195,6 +195,25 @@ exports.updateBooking = catchAsync(async (req, res, next) => {
     if (!updatedBooking) {
       return next(new AppError('Booking not found', 404));
     }
+
+    // Send an email after successfully updating the booking
+    await sendEmail({
+      email: updatedBooking.email,
+      subject: `Booking Status Updated - ${updatedBooking.status.toUpperCase()}`,
+      type: 'booking',
+      bookingDetails: {
+        bookingType: updatedBooking.bookingType,
+        fullName: updatedBooking.fullName,
+        hotelName: updatedBooking.hotelName,
+        roomName: updatedBooking.roomName,
+        restaurantName: updatedBooking.restaurantName,
+        tableNumber: updatedBooking.tableNumber,
+        checkInDate: updatedBooking.checkInDate,
+        checkOutDate: updatedBooking.checkOutDate,
+        totalPrice: updatedBooking.totalPrice,
+        status: updatedBooking.status,
+      },
+    });
 
     res.status(200).json({
       status: 'success',
