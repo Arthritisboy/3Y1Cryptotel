@@ -8,7 +8,7 @@ const router = express.Router();
 
 // Restaurant routes
 router
-  .route('/')
+  .route('/:userId')
   .get(authController.protect, restaurantController.getRestaurant)
   .post(upload.single('image'), restaurantController.createRestaurant);
 

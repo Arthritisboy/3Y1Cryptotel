@@ -40,6 +40,29 @@ exports.getHotel = catchAsync(async (req, res, next) => {
 
 // Create a hotel with optional rooms
 exports.createHotel = catchAsync(async (req, res, next) => {
+
+    const userId = req.params.userId; // Get userId from params
+
+    console.log('User ID from params:', userId);
+
+    // Ensure userId is provided
+    if (!userId) {
+        return next(new AppError('User ID is required.', 400));
+    }
+
+    const user = await User.findById(userId);
+    if (!user) {
+        return next(new AppError('User not found.', 404));
+    }
+    console.log(user);
+    if (!user.roles === 'admin') {
+        return next(new AppError('User is not an Admin,', 400))
+    }
+    // Check if the user already has a handleId
+    if (user.handleId) {
+        return next(new AppError('User already is already assigned.', 400));
+    }
+
     const { name, location, openingHours, rooms } = req.body;
 
     let hotelImage = undefined;
@@ -68,6 +91,18 @@ exports.createHotel = catchAsync(async (req, res, next) => {
         openingHours,
         hotelImage: hotelImage || undefined,
     });
+
+
+    const updatedUser = await User.findByIdAndUpdate(
+        userId,
+        { handleId: newHotel._id },
+        { new: true, runValidators: true }
+    );
+
+    if (!updatedUser) {
+        console.log('User not found for handleId update.');
+        return next(new AppError('User not found.', 404));
+    }
 
     // If rooms are provided and not empty, create them and associate them with the hotel
     if (rooms && rooms.length > 0) {

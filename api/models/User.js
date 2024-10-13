@@ -65,6 +65,9 @@ const userSchema = new mongoose.Schema(
       enum: ['user', 'admin'],
       default: 'user',
     },
+    handleId: {
+      type: mongoose.Schema.Types.ObjectId,
+    },
     passwordChangedAt: {
       type: Date,
     },
