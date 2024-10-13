@@ -61,12 +61,12 @@ class AppRouter {
             as Map<String, dynamic>?; // Make it nullable
 
         if (args != null) {
-          final String firstName = args['firstName'];
-          final String lastName = args['lastName'];
-          final String email = args['email'];
-          final String profile = args['profile'];
-          final String phoneNumber = args['phoneNumber'];
-          final String gender = args['gender'];
+          final String firstName = args['firstName'] ?? 'Guest';
+          final String lastName = args['lastName'] ?? '';
+          final String email = args['email'] ?? '';
+          final String profile = args['profile'] ?? '';
+          final String phoneNumber = args['phoneNumber'] ?? '';
+          final String gender = args['gender'] ?? 'Male';
 
           return MaterialPageRoute(
             builder: (_) => ProfileScreen(
