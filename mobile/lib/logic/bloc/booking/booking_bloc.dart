@@ -6,7 +6,7 @@ import 'package:hotel_flutter/logic/bloc/booking/booking_state.dart';
 class BookingBloc extends Bloc<BookingEvent, BookingState> {
   final BookingRepository bookingRepository;
 
-  BookingBloc({required this.bookingRepository}) : super(BookingInitial()) {
+  BookingBloc(this.bookingRepository) : super(BookingInitial()) {
     on<FetchBookings>(_onFetchBookings);
     on<CreateBooking>(_onCreateBooking);
     on<UpdateBooking>(_onUpdateBooking);
@@ -41,7 +41,10 @@ class BookingBloc extends Bloc<BookingEvent, BookingState> {
     emit(BookingLoading());
     try {
       await bookingRepository.updateBooking(event.booking, event.bookingId);
-      emit(BookingUpdateSuccess());
+
+      // Fetch updated bookings list after update
+      final bookings = await bookingRepository.fetchBookings(event.userId);
+      emit(BookingSuccess(bookings: bookings));
     } catch (e) {
       emit(BookingFailure(error: e.toString()));
     }

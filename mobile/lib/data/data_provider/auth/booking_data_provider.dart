@@ -73,7 +73,7 @@ class BookingDataProvider {
     }
   }
 
-  //! Update a Booking
+  //! Update a Booking with all fields
   Future<void> updateBooking(BookingModel booking, String bookingId) async {
     final token = await storage.read(key: 'jwt');
 
@@ -87,7 +87,7 @@ class BookingDataProvider {
         'Content-Type': 'application/json',
         'Authorization': 'Bearer $token',
       },
-      body: jsonEncode(booking.toJson()),
+      body: jsonEncode(booking.toJson()), // Use toJson() to send all fields
     );
 
     print('API response status: ${response.statusCode}');

@@ -19,15 +19,15 @@ class BookingModel {
   final int children;
   final int? tableNumber;
   final String? status;
+  final int? totalPrice;
 
   BookingModel({
-    this.roomName,
-    this.hotelName,
-    this.restaurantName,
     this.id,
-    this.tableNumber,
     required this.bookingType,
     this.hotelId,
+    this.restaurantName,
+    this.hotelName,
+    this.roomName,
     this.roomId,
     this.restaurantId,
     required this.fullName,
@@ -40,7 +40,9 @@ class BookingModel {
     this.timeOfDeparture,
     required this.adult,
     required this.children,
+    this.tableNumber,
     this.status,
+    this.totalPrice,
   });
 
   // Add the copyWith method
@@ -65,6 +67,7 @@ class BookingModel {
     int? children,
     int? tableNumber,
     String? status,
+    int? totalPrice,
   }) {
     return BookingModel(
       id: id ?? this.id,
@@ -87,17 +90,19 @@ class BookingModel {
       children: children ?? this.children,
       tableNumber: tableNumber ?? this.tableNumber,
       status: status ?? this.status,
+      totalPrice: totalPrice ?? this.totalPrice,
     );
   }
 
   factory BookingModel.fromJson(Map<String, dynamic> json) {
     return BookingModel(
+      id: json['_id'],
       bookingType: json['bookingType'],
-      tableNumber: json['tableNumber'],
       restaurantName: json['restaurantName'],
       hotelName: json['hotelName'],
       roomName: json['roomName'],
-      status: json['status'],
+      hotelId: json['hotelId']?['_id'],
+      roomId: json['roomId']?['_id'],
       fullName: json['fullName'],
       email: json['email'],
       phoneNumber: json['phoneNumber'],
@@ -112,6 +117,9 @@ class BookingModel {
           : null,
       adult: json['adult'],
       children: json['children'],
+      tableNumber: json['tableNumber'],
+      status: json['status'],
+      totalPrice: json['totalPrice'],
     );
   }
 
@@ -133,6 +141,7 @@ class BookingModel {
       'adult': adult,
       'children': children,
       'status': status,
+      'totalPrice': totalPrice,
     };
   }
 }

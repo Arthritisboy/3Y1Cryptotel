@@ -3,12 +3,18 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hotel_flutter/data/model/booking/booking_model.dart';
 import 'package:hotel_flutter/logic/bloc/booking/booking_bloc.dart';
 import 'package:hotel_flutter/logic/bloc/booking/booking_event.dart';
+import 'package:hotel_flutter/presentation/widgets/utils_widget/custom_dialog.dart';
 import 'package:intl/intl.dart';
 
 class PendingModal extends StatefulWidget {
   final BookingModel booking;
+  final String userId;
 
-  const PendingModal({super.key, required this.booking});
+  const PendingModal({
+    super.key,
+    required this.booking,
+    required this.userId,
+  });
 
   @override
   _PendingModalState createState() => _PendingModalState();
@@ -42,7 +48,7 @@ class _PendingModalState extends State<PendingModal> {
     final picked = await showDatePicker(
       context: context,
       initialDate: DateTime.now().add(const Duration(days: 1)),
-      firstDate: DateTime.now().add(const Duration(days: 1)),
+      firstDate: DateTime.now(),
       lastDate: DateTime(2101),
     );
     if (picked != null) {
@@ -68,7 +74,7 @@ class _PendingModalState extends State<PendingModal> {
     final picked = await showDatePicker(
       context: context,
       initialDate: _checkInDate!.add(const Duration(days: 1)),
-      firstDate: _checkInDate!.add(const Duration(days: 1)),
+      firstDate: _checkInDate!,
       lastDate: DateTime(2101),
     );
     if (picked != null) {
@@ -91,6 +97,11 @@ class _PendingModalState extends State<PendingModal> {
   }
 
   Future<void> _confirmReschedule() async {
+    if (_checkInDate == _checkOutDate) {
+      _showValidationError();
+      return;
+    }
+
     final result = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
@@ -115,58 +126,45 @@ class _PendingModalState extends State<PendingModal> {
     }
   }
 
-  Future<void> _confirmCancel() async {
-    final result = await showDialog<bool>(
+  Future<void> _showValidationError() async {
+    showDialog(
       context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Confirm Cancellation'),
-        content: const Text('Are you sure you want to cancel this booking?'),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(false),
-            child: const Text('No'),
-          ),
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(true),
-            child: const Text('Yes'),
-          ),
-        ],
+      builder: (context) => CustomDialog(
+        title: 'Invalid Dates',
+        description: 'Check-in and check-out cannot be on the same day.',
+        buttonText: 'Close',
+        secondButtonText: '',
+        onButtonPressed: () => Navigator.of(context).pop(),
+        onSecondButtonPressed: () {},
       ),
     );
-
-    if (result == true) {
-      _handleCancel();
-    }
   }
 
   void _handleReschedule() {
-    if (_checkInDate != null &&
-        _checkInTime != null &&
-        _checkOutDate != null &&
-        _checkOutTime != null) {
-      final updatedBooking = widget.booking.copyWith(
-        checkInDate: _checkInDate!,
-        checkOutDate: _checkOutDate!,
-      );
+    final updatedBooking = widget.booking.copyWith(
+      checkInDate: _checkInDate!,
+      checkOutDate: _checkOutDate!,
+    );
 
-      context.read<BookingBloc>().add(
-            UpdateBooking(
-              booking: updatedBooking,
-              bookingId: widget.booking.id!,
-            ),
-          );
-
-      Navigator.of(context).pop();
-
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(
-            'Booking rescheduled to ${formatDate(_checkInDate!)} - '
-            '${formatDate(_checkOutDate!)} at ${formatTime(_checkInTime!)}',
+    context.read<BookingBloc>().add(
+          UpdateBooking(
+            booking: updatedBooking,
+            bookingId: widget.booking.id!,
+            userId: widget.userId,
           ),
+        );
+
+    // Dispatch FetchBookings to reload the updated list
+    context.read<BookingBloc>().add(FetchBookings(userId: widget.userId));
+
+    Navigator.of(context).pop();
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(
+          'Booking rescheduled to ${formatDate(_checkInDate!)} - ${formatDate(_checkOutDate!)}',
         ),
-      );
-    }
+      ),
+    );
   }
 
   void _handleCancel() {
@@ -176,11 +174,14 @@ class _PendingModalState extends State<PendingModal> {
           UpdateBooking(
             booking: cancelledBooking,
             bookingId: widget.booking.id!,
+            userId: widget.userId,
           ),
         );
 
-    Navigator.of(context).pop();
+    // Dispatch FetchBookings to reload the updated list
+    context.read<BookingBloc>().add(FetchBookings(userId: widget.userId));
 
+    Navigator.of(context).pop();
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(content: Text('Booking has been cancelled.')),
     );
@@ -223,28 +224,25 @@ class _PendingModalState extends State<PendingModal> {
         ),
       ),
       actions: [
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 8.0),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Expanded(
-                child: ElevatedButton(
-                  onPressed: _confirmReschedule,
-                  style: ElevatedButton.styleFrom(backgroundColor: Colors.blue),
-                  child: const Text('Reschedule'),
-                ),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Expanded(
+              child: ElevatedButton(
+                onPressed: _confirmReschedule,
+                style: ElevatedButton.styleFrom(backgroundColor: Colors.blue),
+                child: const Text('Reschedule'),
               ),
-              const SizedBox(width: 10),
-              Expanded(
-                child: ElevatedButton(
-                  onPressed: _confirmCancel,
-                  style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
-                  child: const Text('Cancel Booking'),
-                ),
+            ),
+            const SizedBox(width: 10),
+            Expanded(
+              child: ElevatedButton(
+                onPressed: _handleCancel,
+                style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
+                child: const Center(child: Text('Cancel Booking')),
               ),
-            ],
-          ),
+            ),
+          ],
         ),
         TextButton(
           onPressed: () => Navigator.of(context).pop(),
@@ -269,23 +267,18 @@ class _PendingModalState extends State<PendingModal> {
         Row(
           children: [
             Expanded(
-              child: Text(dateText, style: const TextStyle(fontSize: 16.0)),
-            ),
+                child: Text(dateText, style: const TextStyle(fontSize: 16.0))),
             IconButton(
-              icon: const Icon(Icons.calendar_today),
-              onPressed: onSelectDate,
-            ),
+                icon: const Icon(Icons.calendar_today),
+                onPressed: onSelectDate),
           ],
         ),
         Row(
           children: [
             Expanded(
-              child: Text(timeText, style: const TextStyle(fontSize: 16.0)),
-            ),
+                child: Text(timeText, style: const TextStyle(fontSize: 16.0))),
             IconButton(
-              icon: const Icon(Icons.access_time),
-              onPressed: onSelectTime,
-            ),
+                icon: const Icon(Icons.access_time), onPressed: onSelectTime),
           ],
         ),
       ],

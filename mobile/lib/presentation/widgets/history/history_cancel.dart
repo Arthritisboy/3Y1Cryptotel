@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:hotel_flutter/data/model/booking/booking_model.dart';
 import 'package:hotel_flutter/presentation/widgets/history/history_cancel_modal.dart';
+import 'package:intl/intl.dart';
 
 class HistoryCancelBody extends StatelessWidget {
   final List<BookingModel> canceledBookings;
@@ -51,13 +52,11 @@ class HistoryCancelBody extends StatelessWidget {
                             children: [
                               Row(
                                 children: [
-                                  // Expanded widget to take available space properly
                                   Expanded(
                                     child: Column(
                                       crossAxisAlignment:
                                           CrossAxisAlignment.start,
                                       children: [
-                                        // Use Align for better control over alignment
                                         Align(
                                           alignment: Alignment.centerLeft,
                                           child: Container(
@@ -99,11 +98,20 @@ class HistoryCancelBody extends StatelessWidget {
                                             color: Colors.black,
                                           ),
                                         ),
+                                        Text(
+                                          'Arrival Time: ${booking.timeOfArrival != null ? DateFormat.jm().format(booking.timeOfArrival!) : 'N/A'}',
+                                          style: const TextStyle(
+                                              color: Colors.black),
+                                        ),
+                                        Text(
+                                          'Departure Time: ${booking.timeOfDeparture != null ? DateFormat.jm().format(booking.timeOfDeparture!) : 'N/A'}',
+                                          style: const TextStyle(
+                                              color: Colors.black),
+                                        ),
                                       ],
                                     ),
                                   ),
-                                  const SizedBox(
-                                      width: 10), // Space between elements
+                                  const SizedBox(width: 10),
                                   ElevatedButton(
                                     onPressed: () {
                                       showDialog(

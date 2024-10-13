@@ -1,11 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:hotel_flutter/data/model/booking/booking_model.dart';
 import 'package:hotel_flutter/presentation/widgets/history/history_pendingmodal.dart';
+import 'package:intl/intl.dart';
 
 class HistoryPendingBody extends StatelessWidget {
   final List<BookingModel> pendingBookings;
+  final String userId; // Receive userId from HistoryScreen
 
-  const HistoryPendingBody({super.key, required this.pendingBookings});
+  const HistoryPendingBody({
+    super.key,
+    required this.pendingBookings,
+    required this.userId,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -96,6 +102,16 @@ class HistoryPendingBody extends StatelessWidget {
                                           style: const TextStyle(
                                               color: Colors.black),
                                         ),
+                                        Text(
+                                          'Arrival Time: ${booking.timeOfArrival != null ? DateFormat.jm().format(booking.timeOfArrival!) : 'N/A'}',
+                                          style: const TextStyle(
+                                              color: Colors.black),
+                                        ),
+                                        Text(
+                                          'Departure Time: ${booking.timeOfDeparture != null ? DateFormat.jm().format(booking.timeOfDeparture!) : 'N/A'}',
+                                          style: const TextStyle(
+                                              color: Colors.black),
+                                        ),
                                       ],
                                     ),
                                   ),
@@ -104,7 +120,10 @@ class HistoryPendingBody extends StatelessWidget {
                                       showDialog(
                                         context: context,
                                         builder: (BuildContext context) {
-                                          return PendingModal(booking: booking);
+                                          return PendingModal(
+                                            booking: booking,
+                                            userId: userId, // Pass userId here
+                                          );
                                         },
                                       );
                                     },
