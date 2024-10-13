@@ -1,9 +1,73 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:hotel_flutter/data/model/booking/booking_model.dart';
+import 'package:hotel_flutter/logic/bloc/booking/booking_bloc.dart';
+import 'package:hotel_flutter/logic/bloc/booking/booking_event.dart';
+import 'package:hotel_flutter/logic/bloc/booking/booking_state.dart';
+import 'package:intl/intl.dart';
 
-class BookingDetailsModal extends StatelessWidget {
-  final Map<String, String> bookingRequest;
+class AdminModal extends StatefulWidget {
+  final BookingModel booking;
+  final String userId;
 
-  const BookingDetailsModal({super.key, required this.bookingRequest});
+  const AdminModal({
+    super.key,
+    required this.booking,
+    required this.userId,
+  });
+
+  @override
+  _AdminModalState createState() => _AdminModalState();
+}
+
+class _AdminModalState extends State<AdminModal> {
+  bool _isUpdating = false;
+
+  // Helper function to format the date
+  String formatDate(DateTime date) {
+    return DateFormat('MMMM d, y').format(date); // E.g., October 13, 2024
+  }
+
+  // Helper function to format the time
+  String formatTime(DateTime? time) {
+    if (time == null) return 'N/A';
+    return DateFormat.jm().format(time); // E.g., 2:30 PM
+  }
+
+  // Function to update the booking status and dispatch the event
+  Future<void> _updateBookingStatus(String status) async {
+    setState(() {
+      _isUpdating = true; // Show loading state
+    });
+
+    final updatedBooking = widget.booking.copyWith(status: status);
+
+    // Dispatch the UpdateBooking event through the Bloc
+    context.read<BookingBloc>().add(
+          UpdateBooking(
+            booking: updatedBooking,
+            bookingId: widget.booking.id!,
+            userId: widget.userId,
+          ),
+        );
+
+    // Wait for the state to update before closing the dialog
+    context.read<BookingBloc>().stream.listen((state) {
+      if (state is BookingSuccess) {
+        Navigator.of(context).pop(); // Close the dialog
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Booking ${status.capitalize()}')),
+        );
+      } else if (state is BookingFailure) {
+        setState(() {
+          _isUpdating = false; // Stop loading on error
+        });
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Failed to update booking: ${state.error}')),
+        );
+      }
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -17,43 +81,40 @@ class BookingDetailsModal extends StatelessWidget {
           ),
           IconButton(
             icon: const Icon(Icons.close),
-            onPressed: () {
-              Navigator.of(context).pop();
-            },
+            onPressed: () => Navigator.of(context).pop(),
           ),
         ],
       ),
       content: SingleChildScrollView(
         child: Column(
-          mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'Booking by: ${bookingRequest["userName"]}',
+              'Booking by: ${widget.booking.fullName}',
               style: const TextStyle(color: Colors.black),
             ),
             const SizedBox(height: 8),
             Text(
-              'Hotel: ${bookingRequest["hotelName"]}',
+              widget.booking.hotelName != null
+                  ? 'Hotel: ${widget.booking.hotelName}'
+                  : 'Restaurant: ${widget.booking.restaurantName ?? ''}',
               style: const TextStyle(color: Colors.black),
             ),
             const SizedBox(height: 8),
             Text(
-              'Room: ${bookingRequest["roomName"]}',
+              widget.booking.hotelName != null
+                  ? 'Room: ${widget.booking.roomName ?? 'N/A'}'
+                  : 'Table Number: ${widget.booking.tableNumber ?? 'N/A'}',
               style: const TextStyle(color: Colors.black),
             ),
             const SizedBox(height: 8),
-            Text(
-              'Date: ${bookingRequest["date"]}',
-              style: const TextStyle(color: Colors.black),
-            ),
-            const SizedBox(height: 16),
             const Text(
               'Check-in/out:',
               style: TextStyle(fontWeight: FontWeight.bold),
             ),
             Text(
-              'Check-in: ${bookingRequest["checkIn"]} / Check-out: ${bookingRequest["checkOut"]}',
+              'Check-in: ${formatDate(widget.booking.checkInDate)} / '
+              'Check-out: ${formatDate(widget.booking.checkOutDate)}',
               style: const TextStyle(color: Colors.black),
             ),
             const SizedBox(height: 8),
@@ -62,43 +123,29 @@ class BookingDetailsModal extends StatelessWidget {
               style: TextStyle(fontWeight: FontWeight.bold),
             ),
             Text(
-              'Time-in: ${bookingRequest["timeIn"]} / Time-out: ${bookingRequest["timeOut"]}',
+              'Time-in: ${formatTime(widget.booking.timeOfArrival)} / '
+              'Time-out: ${formatTime(widget.booking.timeOfDeparture)}',
               style: const TextStyle(color: Colors.black),
             ),
             const SizedBox(height: 8),
             const Text(
-              'Full Name:',
+              'Contact Information:',
               style: TextStyle(fontWeight: FontWeight.bold),
             ),
             Text(
-              '${bookingRequest["fullName"]}',
+              'Full Name: ${widget.booking.fullName}',
               style: const TextStyle(color: Colors.black),
             ),
-            const SizedBox(height: 8),
-            const Text(
-              'Email Address:',
-              style: TextStyle(fontWeight: FontWeight.bold),
-            ),
             Text(
-              '${bookingRequest["email"]}',
+              'Email Address: ${widget.booking.email}',
               style: const TextStyle(color: Colors.black),
             ),
-            const SizedBox(height: 8),
-            const Text(
-              'Phone Number:',
-              style: TextStyle(fontWeight: FontWeight.bold),
-            ),
             Text(
-              '${bookingRequest["phoneNumber"]}',
+              'Phone Number: ${widget.booking.phoneNumber}',
               style: const TextStyle(color: Colors.black),
             ),
-            const SizedBox(height: 8),
-            const Text(
-              'Address:',
-              style: TextStyle(fontWeight: FontWeight.bold),
-            ),
             Text(
-              '${bookingRequest["address"]}',
+              'Address: ${widget.booking.address}',
               style: const TextStyle(color: Colors.black),
             ),
             const SizedBox(height: 8),
@@ -107,49 +154,45 @@ class BookingDetailsModal extends StatelessWidget {
               style: TextStyle(fontWeight: FontWeight.bold),
             ),
             Text(
-              'Adults: ${bookingRequest["adults"]}, Children: ${bookingRequest["children"]}',
+              'Adults: ${widget.booking.adult}, Children: ${widget.booking.children}',
               style: const TextStyle(color: Colors.black),
             ),
           ],
         ),
       ),
       actions: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            ElevatedButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                      content: Text(
-                          'Accepted booking by ${bookingRequest["userName"]}')),
-                );
-              },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.green,
+        if (_isUpdating)
+          const CircularProgressIndicator() // Show a loading indicator
+        else
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              ElevatedButton(
+                onPressed: () => _updateBookingStatus('accepted'),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.green,
+                ),
+                child: const Text('Accept'),
               ),
-              child: const Text('Accept'),
-            ),
-            const SizedBox(width: 20),
-            ElevatedButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                      content: Text(
-                          'Rejected booking by ${bookingRequest["userName"]}')),
-                );
-              },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.red,
+              const SizedBox(width: 20),
+              ElevatedButton(
+                onPressed: () => _updateBookingStatus('rejected'),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.red,
+                ),
+                child: const Text('Reject'),
               ),
-              child: const Text('Reject'),
-            ),
-          ],
-        ),
+            ],
+          ),
       ],
       backgroundColor: Colors.white,
     );
+  }
+}
+
+// Extension to capitalize the first letter of a string
+extension StringExtension on String {
+  String capitalize() {
+    return "${this[0].toUpperCase()}${substring(1)}";
   }
 }
