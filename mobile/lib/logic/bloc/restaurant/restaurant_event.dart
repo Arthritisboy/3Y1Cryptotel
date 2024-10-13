@@ -17,3 +17,12 @@ class FetchRestaurantDetailsEvent extends RestaurantEvent {
   @override
   List<Object?> get props => [restaurantId];
 }
+
+class SearchRestaurantsEvent extends RestaurantEvent {
+  final String query;
+
+  const SearchRestaurantsEvent(this.query);
+
+  @override
+  List<Object?> get props => [query];
+}
