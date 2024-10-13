@@ -1,73 +1,47 @@
 import 'package:flutter/material.dart';
-import '../widgets/admin/admin_modal.dart'; // Import BookingDetailsModal
-import '../widgets/admin/admin_header.dart'; // Import AdminHeader
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:hotel_flutter/data/model/booking/booking_model.dart';
+import 'package:hotel_flutter/logic/bloc/booking/booking_bloc.dart';
+import 'package:hotel_flutter/logic/bloc/booking/booking_event.dart';
+import 'package:hotel_flutter/logic/bloc/booking/booking_state.dart';
+import '../widgets/admin/admin_modal.dart';
+import '../widgets/admin/admin_header.dart';
 
-class AdminScreen extends StatelessWidget {
-  const AdminScreen({super.key});
+class AdminScreen extends StatefulWidget {
+  const AdminScreen({Key? key}) : super(key: key);
+
+  @override
+  _AdminScreenState createState() => _AdminScreenState();
+}
+
+class _AdminScreenState extends State<AdminScreen> {
+  final FlutterSecureStorage _secureStorage = const FlutterSecureStorage();
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchBookings();
+  }
+
+  // Function to fetch bookings using Flutter Secure Storage
+  Future<void> _fetchBookings() async {
+    try {
+      // Get the ID from secure storage (userId, hotelId, or restaurantId)
+      final id = await _secureStorage.read(key: 'handleId');
+      print(id);
+
+      if (id != null) {
+        // Dispatch the FetchBookings event with the retrieved ID
+        context.read<BookingBloc>().add(FetchBookings(userId: id));
+      }
+    } catch (e) {
+      print('Error fetching ID from secure storage: $e');
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
-    // Sample data for each status (Pending, Accepted, Rejected)
-    final List<Map<String, String>> pendingRequests = [
-      {
-        "id": "1",
-        "userName": "John Doe",
-        "hotelName": "Grand Hotel",
-        "roomName": "Suite 101",
-        "date": "Oct 12, 2024",
-        "checkIn": "Oct 12, 2024",
-        "checkOut": "Oct 15, 2024",
-        "timeIn": "2:00 PM",
-        "timeOut": "11:00 AM",
-        "fullName": "Johnathan Doe",
-        "email": "johndoe@example.com",
-        "phoneNumber": "+1234567890",
-        "address": "123 Main St, New York, NY",
-        "adults": "2",
-        "children": "1"
-      },
-    ];
-
-    final List<Map<String, String>> acceptedRequests = [
-      {
-        "id": "2",
-        "userName": "Jane Smith",
-        "hotelName": "Oceanview Resort",
-        "roomName": "Deluxe Ocean View",
-        "date": "Nov 5, 2024",
-        "checkIn": "Nov 5, 2024",
-        "checkOut": "Nov 10, 2024",
-        "timeIn": "3:00 PM",
-        "timeOut": "11:00 AM",
-        "fullName": "Jane Smith",
-        "email": "janesmith@example.com",
-        "phoneNumber": "+1234567890",
-        "address": "456 Park Ave, New York, NY",
-        "adults": "2",
-        "children": "0"
-      },
-    ];
-
-    final List<Map<String, String>> rejectedRequests = [
-      {
-        "id": "3",
-        "userName": "Alice Brown",
-        "hotelName": "Mountain Lodge",
-        "roomName": "Cabin 9",
-        "date": "Oct 20, 2024",
-        "checkIn": "Oct 20, 2024",
-        "checkOut": "Oct 25, 2024",
-        "timeIn": "4:00 PM",
-        "timeOut": "10:00 AM",
-        "fullName": "Alice Brown",
-        "email": "alicebrown@example.com",
-        "phoneNumber": "+9876543210",
-        "address": "789 Elm St, Denver, CO",
-        "adults": "3",
-        "children": "1"
-      },
-    ];
-
     return DefaultTabController(
       length: 3,
       child: Scaffold(
@@ -82,146 +56,101 @@ class AdminScreen extends StatelessWidget {
               ],
             ),
             Expanded(
-              child: TabBarView(
-                children: [
-                  ListView.builder(
-                    itemCount: pendingRequests.length,
-                    itemBuilder: (context, index) {
-                      final request = pendingRequests[index];
+              child: BlocBuilder<BookingBloc, BookingState>(
+                builder: (context, state) {
+                  if (state is BookingLoading) {
+                    return const Center(child: CircularProgressIndicator());
+                  } else if (state is BookingSuccess) {
+                    final bookings = state.bookings;
 
-                      return Card(
-                        margin: const EdgeInsets.all(8.0),
-                        child: InkWell(
-                          onTap: () {
-                            showDialog(
-                              context: context,
-                              builder: (BuildContext context) {
-                                return BookingDetailsModal(
-                                    bookingRequest: request);
-                              },
-                            );
-                          },
-                          child: ListTile(
-                            title: Text(
-                              'User: ${request["userName"]}',
-                              style: const TextStyle(color: Colors.black),
-                            ),
-                            subtitle: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  'Hotel: ${request["hotelName"]}',
-                                  style: const TextStyle(color: Colors.black),
-                                ),
-                                Text(
-                                  'Room: ${request["roomName"]}',
-                                  style: const TextStyle(color: Colors.black),
-                                ),
-                                Text(
-                                  'Booking Date: ${request["date"]}',
-                                  style: const TextStyle(color: Colors.black),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                      );
-                    },
-                  ),
-                  ListView.builder(
-                    itemCount: acceptedRequests.length,
-                    itemBuilder: (context, index) {
-                      final request = acceptedRequests[index];
-
-                      return Card(
-                        margin: const EdgeInsets.all(8.0),
-                        child: InkWell(
-                          onTap: () {
-                            showDialog(
-                              context: context,
-                              builder: (BuildContext context) {
-                                return BookingDetailsModal(
-                                    bookingRequest: request);
-                              },
-                            );
-                          },
-                          child: ListTile(
-                            title: Text(
-                              'User: ${request["userName"]}',
-                              style: const TextStyle(color: Colors.black),
-                            ),
-                            subtitle: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  'Hotel: ${request["hotelName"]}',
-                                  style: const TextStyle(color: Colors.black),
-                                ),
-                                Text(
-                                  'Room: ${request["roomName"]}',
-                                  style: const TextStyle(color: Colors.black),
-                                ),
-                                Text(
-                                  'Booking Date: ${request["date"]}',
-                                  style: const TextStyle(color: Colors.black),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                      );
-                    },
-                  ),
-                  ListView.builder(
-                    itemCount: rejectedRequests.length,
-                    itemBuilder: (context, index) {
-                      final request = rejectedRequests[index];
-
-                      return Card(
-                        margin: const EdgeInsets.all(8.0),
-                        child: InkWell(
-                          onTap: () {
-                            showDialog(
-                              context: context,
-                              builder: (BuildContext context) {
-                                return BookingDetailsModal(
-                                    bookingRequest: request);
-                              },
-                            );
-                          },
-                          child: ListTile(
-                            title: Text(
-                              'User: ${request["userName"]}',
-                              style: const TextStyle(color: Colors.black),
-                            ),
-                            subtitle: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  'Hotel: ${request["hotelName"]}',
-                                  style: const TextStyle(color: Colors.black),
-                                ),
-                                Text(
-                                  'Room: ${request["roomName"]}',
-                                  style: const TextStyle(color: Colors.black),
-                                ),
-                                Text(
-                                  'Booking Date: ${request["date"]}',
-                                  style: const TextStyle(color: Colors.black),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                      );
-                    },
-                  ),
-                ],
+                    return TabBarView(
+                      children: [
+                        _buildBookingList(bookings
+                            .where((b) => b.status == 'Pending')
+                            .toList()),
+                        _buildBookingList(bookings
+                            .where((b) => b.status == 'Accepted')
+                            .toList()),
+                        _buildBookingList(bookings
+                            .where((b) => b.status == 'Rejected')
+                            .toList()),
+                      ],
+                    );
+                  } else if (state is BookingFailure) {
+                    return Center(child: Text('Error: ${state.error}'));
+                  } else {
+                    return const Center(child: Text('No bookings available.'));
+                  }
+                },
               ),
             ),
           ],
         ),
       ),
+    );
+  }
+
+  // Widget to build a list of bookings
+  Widget _buildBookingList(List<BookingModel> bookings) {
+    return ListView.builder(
+      itemCount: bookings.length,
+      itemBuilder: (context, index) {
+        final booking = bookings[index];
+
+        return Card(
+          margin: const EdgeInsets.all(8.0),
+          child: InkWell(
+            onTap: () {
+              showDialog(
+                context: context,
+                builder: (BuildContext context) {
+                  return BookingDetailsModal(bookingRequest: {
+                    'userName': booking.fullName,
+                    'hotelName': booking.hotelName ?? 'N/A',
+                    'roomName': booking.roomName ?? 'N/A',
+                    'date':
+                        booking.checkInDate.toLocal().toString().split(' ')[0],
+                    'checkIn': booking.checkInDate.toLocal().toString(),
+                    'checkOut': booking.checkOutDate.toLocal().toString(),
+                    'timeIn':
+                        booking.timeOfArrival?.toLocal().toString() ?? 'N/A',
+                    'timeOut':
+                        booking.timeOfDeparture?.toLocal().toString() ?? 'N/A',
+                    'email': booking.email,
+                    'phoneNumber': booking.phoneNumber,
+                    'address': booking.address,
+                    'adults': booking.adult.toString(),
+                    'children': booking.children.toString(),
+                  });
+                },
+              );
+            },
+            child: ListTile(
+              title: Text(
+                'User: ${booking.fullName}',
+                style: const TextStyle(color: Colors.black),
+              ),
+              subtitle: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Hotel: ${booking.hotelName ?? 'N/A'}',
+                    style: const TextStyle(color: Colors.black),
+                  ),
+                  Text(
+                    'Room: ${booking.roomName ?? 'N/A'}',
+                    style: const TextStyle(color: Colors.black),
+                  ),
+                  Text(
+                    'Booking Date: ${booking.checkInDate.toLocal().toString().split(' ')[0]}',
+                    style: const TextStyle(color: Colors.black),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        );
+      },
     );
   }
 }

@@ -95,7 +95,6 @@ exports.register = catchAsync(async (req, res, next) => {
   }
 });
 
-
 exports.sendVerificationCode = catchAsync(async (req, res, next) => {
   const user = await User.findOne({ email: req.body.email });
 
@@ -187,6 +186,7 @@ exports.login = catchAsync(async (req, res, next) => {
     userId: user._id,
     hasCompletedOnboarding: user.hasCompletedOnboarding,
     roles: user.roles,
+    handleId: user.handleId,
   });
 });
 
