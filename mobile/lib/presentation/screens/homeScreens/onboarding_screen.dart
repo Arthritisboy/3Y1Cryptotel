@@ -44,7 +44,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
       // Listen for the state change to navigate
       context.read<AuthBloc>().stream.listen((state) {
         if (state is AuthSuccess) {
-          Navigator.of(context).pushNamed('/homescreen');
+          Navigator.of(context).pushReplacementNamed('/homescreen');
         } else if (state is AuthError) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(content: Text(state.error)),

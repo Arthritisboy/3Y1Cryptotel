@@ -302,19 +302,6 @@ class _TabScreenState extends State<TabScreen> {
   }
 
   Future<void> _handleLogout() async {
-    await _secureStorage.deleteAll();
-    setState(() {
-      firstName = null;
-      lastName = null;
-      email = null;
-      profile = null;
-      gender = null;
-      phoneNumber = null;
-      userId = null;
-      allUsers = [];
-      _isLoading = true;
-    });
-
     context.read<AuthBloc>().add(LogoutEvent());
     Navigator.of(context).pushReplacementNamed('/login');
   }

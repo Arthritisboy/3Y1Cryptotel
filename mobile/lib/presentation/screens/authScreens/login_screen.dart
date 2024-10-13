@@ -29,35 +29,23 @@ class _LoginScreenState extends State<LoginScreen> {
     return Scaffold(
       body: BlocListener<AuthBloc, AuthState>(
         listener: (context, state) {
-          if (state is AuthLoading) {
-            setState(() {
-              _isLoading = true;
-            });
-          } else if (state is AuthenticatedLogin) {
-            setState(() {
-              _isLoading = false;
-            });
-            // Check onboarding status
-            if (state.user.hasCompletedOnboarding &&
-                state.user.roles == 'user') {
-              Navigator.of(context).pushReplacementNamed('/homescreen');
+          if (state is AuthenticatedLogin) {
+            // Check if the user has completed onboarding
+            if (!state.hasCompletedOnboarding) {
+              // Navigate to home screen
+              Navigator.pushReplacementNamed(context, '/onboarding');
+            } else if (state.hasCompletedOnboarding && state.roles == 'admin') {
+              // Navigate to onboarding screen
+              Navigator.pushReplacementNamed(context, '/admin');
             } else {
-              Navigator.of(context).pushReplacementNamed('/onboarding');
-            }
-
-            if (state.user.hasCompletedOnboarding &&
-                state.user.roles == 'admin') {
-              Navigator.of(context).pushReplacementNamed('/admin');
-            } else {
-              Navigator.of(context).pushReplacementNamed('/onboarding');
+              // Navigate to onboarding screen
+              Navigator.pushReplacementNamed(context, '/homescreen');
             }
           } else if (state is AuthError) {
-            setState(() {
-              _isLoading = false;
-            });
-            if (state.error.isNotEmpty) {
-              _showErrorDialog(state.error);
-            }
+            // Show error message
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text(state.error)),
+            );
           }
         },
         child: Stack(

@@ -16,10 +16,12 @@ class AuthLoading extends AuthState {}
 class AuthenticatedLogin extends AuthState {
   final LoginModel user;
 
-  final bool hasCompletedOnboarding;
+  AuthenticatedLogin(this.user);
 
-  AuthenticatedLogin(this.user)
-      : hasCompletedOnboarding = user.hasCompletedOnboarding;
+  bool get hasCompletedOnboarding => user.hasCompletedOnboarding;
+  String get roles => user.roles;
+  @override
+  List<Object> get props => [user];
 }
 
 class Authenticated extends AuthState {
