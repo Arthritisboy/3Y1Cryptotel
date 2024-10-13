@@ -89,22 +89,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 profilePicture: _selectedImage?.path,
               ),
             );
-
-        // Listen to the AuthBloc for state changes to update the UI
-        context.read<AuthBloc>().stream.listen((state) {
-          if (state is Authenticated) {
-            setState(() {
-              widget.profile = state.user.profilePicture ??
-                  ''; // Provide a default value if null
-            });
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(
-                content: Text('Profile picture updated successfully!'),
-                backgroundColor: Colors.green,
-              ),
-            );
-          }
-        });
       }
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -117,7 +101,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     }
   }
 
-// Update user data method
+  // Update user data method
   Future<void> updateUserData() async {
     setState(() {
       _isLoading = true; // Start loading when the update process begins
@@ -138,22 +122,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
               profilePicture: _selectedImage?.path,
             ),
           );
-
-      // Listen for changes
-      context.read<AuthBloc>().stream.listen((state) {
-        if (state is Authenticated) {
-          setState(() {
-            widget.profile = state.user.profilePicture ??
-                ''; // Provide a default value if null
-          });
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('User data updated successfully!'),
-              backgroundColor: Colors.green,
-            ),
-          );
-        }
-      });
     } catch (error) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
@@ -213,59 +181,76 @@ class _ProfileScreenState extends State<ProfileScreen> {
             left: 0,
             right: 0,
             bottom: 0,
-            child: BlocBuilder<AuthBloc, AuthState>(
-              builder: (context, state) {
-                _logger
-                    .info('Current Auth State: $state'); // Debugging the state
-
-                // Handle the loading state
-                if (state is AuthLoading || _isLoading) {
-                  print('State is loading, showing loading animation.');
-                  return _buildLoadingIndicator(); // Show blue background with loading animation
-                }
-
-                // Handle authenticated state
+            child: BlocListener<AuthBloc, AuthState>(
+              listener: (context, state) {
                 if (state is Authenticated) {
-                  print('User is authenticated.');
-                  print(
-                      'Authenticated User: ${state.user.email}, ${state.user.firstName}, ${state.user.lastName}');
-
-                  return BottomSection(
-                    firstNameController: firstNameController,
-                    lastNameController: lastNameController,
-                    emailController: emailController,
-                    phoneNumberController: phoneNumberController,
-                    gender: gender ?? 'Male',
-                    updateUserData: updateUserData,
-                    onGenderChanged: (selectedGender) {
-                      setState(() {
-                        gender = selectedGender;
-                      });
-                    },
-                    isLoading: _isLoading, // Pass the loading state
+                  // Handle successful profile update
+                  setState(() {
+                    widget.profile = state.user.profilePicture ??
+                        ''; // Update profile picture
+                  });
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text('Profile updated successfully!'),
+                      backgroundColor: Colors.green,
+                    ),
                   );
-                }
-
-                // Handle unauthenticated or error states
-                if (state is AuthError) {
-                  _logger.severe(
-                    'Error or unauthenticated state encountered: $state',
-                  );
-                  return Center(
-                    child: Text(
-                      'Error: Unable to load user data.\n${state.error}',
-                      style: const TextStyle(color: Colors.red),
-                      textAlign: TextAlign.center,
+                } else if (state is AuthError) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text('Error: ${state.error}'),
+                      backgroundColor: Colors.red,
                     ),
                   );
                 }
-
-                // Catch-all for unexpected states
-                _logger.warning('Unexpected state encountered: $state');
-                return const Center(
-                  child: Text('Unexpected error loading user data.'),
-                );
               },
+              child: BlocBuilder<AuthBloc, AuthState>(
+                builder: (context, state) {
+                  _logger.info('Current Auth State: $state');
+
+                  if (state is AuthLoading || _isLoading) {
+                    return _buildLoadingIndicator(); // Show loading animation
+                  }
+
+                  if (state is Authenticated) {
+                    // Ensure you're working with a single authenticated user, not a list
+                    final user = state.user;
+                    print('User is authenticated.');
+                    print(
+                        'Authenticated User: ${user.email}, ${user.firstName}, ${user.lastName}');
+
+                    return BottomSection(
+                      firstNameController: firstNameController,
+                      lastNameController: lastNameController,
+                      emailController: emailController,
+                      phoneNumberController: phoneNumberController,
+                      gender: gender ?? 'Male',
+                      updateUserData: updateUserData,
+                      onGenderChanged: (selectedGender) {
+                        setState(() {
+                          gender = selectedGender;
+                        });
+                      },
+                      isLoading: _isLoading,
+                    );
+                  }
+
+                  if (state is AuthError) {
+                    return Center(
+                      child: Text(
+                        'Error: Unable to load user data.\n${state.error}',
+                        style: const TextStyle(color: Colors.red),
+                        textAlign: TextAlign.center,
+                      ),
+                    );
+                  }
+
+                  _logger.warning('Unexpected state encountered: $state');
+                  return const Center(
+                    child: Text('Unexpected error loading user data.'),
+                  );
+                },
+              ),
             ),
           ),
           // Profile picture at the top

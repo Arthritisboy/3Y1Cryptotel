@@ -11,21 +11,22 @@ class UserModel {
   final String? phoneNumber;
   bool? hasCompletedOnboarding;
   final bool? active;
+  final String? favoriteId;
 
-  UserModel({
-    this.id,
-    this.firstName,
-    this.lastName,
-    this.phoneNumber,
-    this.gender,
-    this.email,
-    this.token,
-    this.profilePicture,
-    this.verified,
-    this.roles,
-    this.hasCompletedOnboarding,
-    this.active,
-  });
+  UserModel(
+      {this.id,
+      this.firstName,
+      this.lastName,
+      this.phoneNumber,
+      this.gender,
+      this.email,
+      this.token,
+      this.profilePicture,
+      this.verified,
+      this.roles,
+      this.hasCompletedOnboarding,
+      this.active,
+      this.favoriteId});
 
   // From JSON
   factory UserModel.fromJson(Map<String, dynamic> json) {
@@ -42,6 +43,7 @@ class UserModel {
       roles: json['roles'],
       hasCompletedOnboarding: json['hasCompletedOnboarding'],
       active: json['active'],
+      favoriteId: json['favoriteId'],
     );
   }
   // To JSON
@@ -52,6 +54,7 @@ class UserModel {
       'lastName': lastName,
       'email': email,
       'profile': profilePicture,
+      'favoriteId': favoriteId
     };
   }
 }
