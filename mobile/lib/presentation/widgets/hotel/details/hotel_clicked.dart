@@ -196,16 +196,11 @@ class _HotelClickedState extends State<HotelClicked> {
                     ],
                   ),
                 ),
-                Padding(
-                  padding: const EdgeInsets.only(left: 16),
-                  child: NavigationRow(
-                    activeIndex: widget.activeIndex,
-                    onTap: widget.onNavTap,
-                    showBook: false, // Hide the Book option
-                  ),
+                NavigationRow(
+                  activeIndex: widget.activeIndex,
+                  onTap: widget.onNavTap,
+                  showBook: false, // Hide the Book option
                 ),
-                const Divider(
-                    thickness: 2, color: Color.fromARGB(255, 142, 142, 147)),
                 if (widget.activeIndex == 0)
                   RoomSelection(
                     roomList: filteredRoomList,

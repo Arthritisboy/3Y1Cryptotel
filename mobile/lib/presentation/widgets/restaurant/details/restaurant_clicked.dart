@@ -200,20 +200,15 @@ class _RestaurantClickedState extends State<RestaurantClicked> {
                     ],
                   ),
                 ),
-                Padding(
-                  padding: const EdgeInsets.only(left: 16),
-                  child: RestaurantNavigationRow(
-                    activeIndex: widget.activeIndex,
-                    onTap: widget.onNavTap,
-                    showBook: true,
-                  ),
+                RestaurantNavigationRow(
+                  activeIndex: widget.activeIndex,
+                  onTap: widget.onNavTap,
+                  showBook: true,
                 ),
-                const Divider(
-                    thickness: 2, color: Color.fromARGB(255, 142, 142, 147)),
                 if (widget.activeIndex == 0)
                   Padding(
                       padding: const EdgeInsets.only(
-                          left: 16, right: 16, bottom: 10),
+                          left: 16, right: 16, bottom: 10, top: 15),
                       child: RestaurantInputFields(
                         restaurantId: widget.restaurantId,
                         capacity: widget.capacity,

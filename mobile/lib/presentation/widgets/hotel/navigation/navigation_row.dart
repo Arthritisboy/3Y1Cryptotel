@@ -16,46 +16,53 @@ class NavigationRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.start,
-      children: [
-        if (showRoom) ...[
-          _buildNavItem('Room', 0),
-          const SizedBox(width: 20),
+    return Container(
+      decoration: const BoxDecoration(
+        border: Border(
+          bottom: BorderSide(color: Colors.grey, width: 0.5), // Divider line
+        ),
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.start, // Align to the start
+        children: [
+          if (showRoom) _buildNavItemWithPadding('Room', 0),
+          if (showBook) _buildNavItemWithPadding('Book', 1),
+          _buildNavItemWithPadding('Details', 2),
+          _buildNavItemWithPadding('Ratings', 3),
         ],
-        if (showBook) ...[
-          _buildNavItem('Book', 1),
-          const SizedBox(width: 20),
-        ],
-        _buildNavItem('Details', 2),
-        const SizedBox(width: 20),
-        _buildNavItem('Ratings', 3),
-      ],
+      ),
+    );
+  }
+
+  Widget _buildNavItemWithPadding(String title, int index) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 12.0), // Adjust padding
+      child: _buildNavItem(title, index),
     );
   }
 
   Widget _buildNavItem(String title, int index) {
+    final bool isActive = activeIndex == index;
+
     return GestureDetector(
       onTap: () => onTap(index),
       child: Column(
+        mainAxisSize: MainAxisSize.min,
         children: [
           Text(
             title,
             style: TextStyle(
-              fontSize: 17,
-              color: activeIndex == index
-                  ? const Color.fromARGB(255, 29, 53, 115)
-                  : Colors.black,
-              fontWeight:
-                  activeIndex == index ? FontWeight.bold : FontWeight.normal,
+              fontSize: 16,
+              fontWeight: isActive ? FontWeight.bold : FontWeight.normal,
+              color: isActive ? Colors.black : Colors.grey,
             ),
           ),
-          if (activeIndex == index)
-            Container(
-              height: 2,
-              width: title.length * 10.0,
-              color: const Color.fromARGB(255, 29, 53, 115),
-            ),
+          const SizedBox(height: 4.0), // Space between text and indicator
+          Container(
+            height: 2.0,
+            width: isActive ? title.length * 8.0 : 0.0, // Dynamic width
+            color: isActive ? const Color(0xFF1C3473) : Colors.transparent,
+          ),
         ],
       ),
     );
