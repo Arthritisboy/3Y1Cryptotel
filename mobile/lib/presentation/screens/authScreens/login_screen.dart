@@ -30,6 +30,9 @@ class _LoginScreenState extends State<LoginScreen> {
       body: BlocListener<AuthBloc, AuthState>(
         listener: (context, state) {
           if (state is AuthenticatedLogin) {
+            setState(() {
+              _isLoading = false; // Reset loading state
+            });
             // Check if the user has completed onboarding
             if (!state.hasCompletedOnboarding) {
               // Navigate to home screen
@@ -42,10 +45,17 @@ class _LoginScreenState extends State<LoginScreen> {
               Navigator.pushReplacementNamed(context, '/homescreen');
             }
           } else if (state is AuthError) {
+            setState(() {
+              _isLoading = false; // Reset loading state
+            });
             // Show error message
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(content: Text(state.error)),
             );
+          } else if (state is AuthLoading) {
+            setState(() {
+              _isLoading = true; // Set loading state
+            });
           }
         },
         child: Stack(
