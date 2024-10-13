@@ -60,7 +60,7 @@ class _HotelRatingWidgetState extends State<HotelRatingWidget> {
       children: [
         // Sorting dropdown button
         Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+          padding: const EdgeInsets.only(left: 16, top: 20, bottom: 20),
           child: Row(
             children: [
               const Text(
@@ -126,11 +126,9 @@ class _HotelRatingWidgetState extends State<HotelRatingWidget> {
               return const SizedBox.shrink(); // Do not display anything
             }
             return Card(
+              color: const Color.fromARGB(255, 238, 237, 237),
               margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
               elevation: 2,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(10),
-              ),
               child: Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: Row(

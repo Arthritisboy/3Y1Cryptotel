@@ -66,6 +66,7 @@ exports.createRestaurant = catchAsync(async (req, res, next) => {
     capacity,
     ratingId,
     location,
+    walletAddress,
     openingHours,
   } = req.body;
 
@@ -92,6 +93,7 @@ exports.createRestaurant = catchAsync(async (req, res, next) => {
     price,
     capacity,
     location,
+    walletAddress,
     openingHours,
     ratings: ratingId && ratingId.length ? ratingId : [],
   });

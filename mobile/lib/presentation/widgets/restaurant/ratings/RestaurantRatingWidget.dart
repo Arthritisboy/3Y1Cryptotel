@@ -50,7 +50,7 @@ class _RestaurantratingwidgetState extends State<Restaurantratingwidget> {
       children: [
         // Sorting dropdown button
         Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+          padding: const EdgeInsets.only(left: 16, top: 20, bottom: 20),
           child: Row(
             children: [
               const Text(
@@ -113,6 +113,7 @@ class _RestaurantratingwidgetState extends State<Restaurantratingwidget> {
             }
 
             return Card(
+              color: const Color.fromARGB(255, 238, 237, 237),
               margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
               elevation: 2,
               shape: RoundedRectangleBorder(
