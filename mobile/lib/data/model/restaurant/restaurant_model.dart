@@ -68,7 +68,10 @@ class RestaurantModel {
   double get averageRating {
     if (ratings.isEmpty) return 0.0;
     double total = ratings.fold(0.0, (sum, rating) => sum + rating.rating);
-    return total / ratings.length;
+    double average = total / ratings.length;
+
+    // Format to 1 decimal place
+    return double.parse(average.toStringAsFixed(1));
   }
 
   // Fetch coordinates based on the location string
