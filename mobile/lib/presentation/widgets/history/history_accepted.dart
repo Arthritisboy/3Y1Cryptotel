@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:hotel_flutter/data/model/booking/booking_model.dart';
+import 'package:hotel_flutter/presentation/widgets/history/history_accepted_modal.dart';
+import 'package:intl/intl.dart';
 
 class HistoryAcceptedBody extends StatelessWidget {
   final List<BookingModel> acceptedBookings;
@@ -86,28 +88,60 @@ class HistoryAcceptedBody extends StatelessWidget {
                                         ),
                                         const SizedBox(height: 8.0),
                                         Text(
-                                          'Check-in: ${booking.checkInDate.toLocal().toString().split(' ')[0]}',
+                                          'Check-in: ${DateFormat.yMMMd().format(booking.checkInDate)}',
                                           style: const TextStyle(
                                               color: Colors.black),
                                         ),
                                         Text(
-                                          'Check-out: ${booking.checkOutDate.toLocal().toString().split(' ')[0]}',
+                                          'Check-out: ${DateFormat.yMMMd().format(booking.checkOutDate)}',
+                                          style: const TextStyle(
+                                              color: Colors.black),
+                                        ),
+                                        Text(
+                                          'Arrival Time: ${booking.timeOfArrival != null ? DateFormat.jm().format(booking.timeOfArrival!) : 'N/A'}',
+                                          style: const TextStyle(
+                                              color: Colors.black),
+                                        ),
+                                        Text(
+                                          'Departure Time: ${booking.timeOfDeparture != null ? DateFormat.jm().format(booking.timeOfDeparture!) : 'N/A'}',
                                           style: const TextStyle(
                                               color: Colors.black),
                                         ),
                                       ],
                                     ),
                                   ),
-                                  ElevatedButton(
-                                    onPressed: () {
-                                      // Handle payment button click
-                                      print(
-                                          'Pay button pressed for $displayName');
-                                    },
-                                    style: ElevatedButton.styleFrom(
-                                      backgroundColor: const Color(0xFF1C3473),
-                                    ),
-                                    child: const Text('Pay'),
+                                  const SizedBox(width: 10),
+                                  Column(
+                                    children: [
+                                      ElevatedButton(
+                                        onPressed: () {
+                                          showDialog(
+                                            context: context,
+                                            builder: (BuildContext context) {
+                                              return DetailsModal(
+                                                booking: booking,
+                                              );
+                                            },
+                                          );
+                                        },
+                                        style: ElevatedButton.styleFrom(
+                                          backgroundColor:
+                                              const Color(0xFF1C3473),
+                                        ),
+                                        child: const Text('Details'),
+                                      ),
+                                      const SizedBox(height: 8),
+                                      ElevatedButton(
+                                        onPressed: () {
+                                          Navigator.of(context)
+                                              .pushNamed('/cryptoTransaction');
+                                        },
+                                        style: ElevatedButton.styleFrom(
+                                          backgroundColor: Colors.green,
+                                        ),
+                                        child: const Text('Pay'),
+                                      ),
+                                    ],
                                   ),
                                 ],
                               ),

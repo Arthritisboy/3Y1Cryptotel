@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:hotel_flutter/data/model/booking/booking_model.dart';
 import 'package:hotel_flutter/presentation/widgets/history/history_pendingmodal.dart';
+import 'package:intl/intl.dart';
 
 class HistoryPendingBody extends StatelessWidget {
   final List<BookingModel> pendingBookings;
@@ -98,6 +99,16 @@ class HistoryPendingBody extends StatelessWidget {
                                         ),
                                         Text(
                                           'Check-out: ${booking.checkOutDate.toLocal().toString().split(' ')[0]}',
+                                          style: const TextStyle(
+                                              color: Colors.black),
+                                        ),
+                                        Text(
+                                          'Arrival Time: ${booking.timeOfArrival != null ? DateFormat.jm().format(booking.timeOfArrival!) : 'N/A'}',
+                                          style: const TextStyle(
+                                              color: Colors.black),
+                                        ),
+                                        Text(
+                                          'Departure Time: ${booking.timeOfDeparture != null ? DateFormat.jm().format(booking.timeOfDeparture!) : 'N/A'}',
                                           style: const TextStyle(
                                               color: Colors.black),
                                         ),
