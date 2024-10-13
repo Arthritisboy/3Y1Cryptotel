@@ -57,12 +57,11 @@ exports.register = catchAsync(async (req, res, next) => {
     confirmPassword: req.body.confirmPassword,
     gender: req.body.gender,
     phoneNumber: req.body.phoneNumber,
-    favoriteId: null,
-    roles: req.body.roles || 'user', // Provide a default if null
-    profile: profile || undefined,
+    favoriteId: req.body.roles === 'user' ? null : undefined,
+    roles: req.body.roles || 'user', 
+    profile: profile || 'https://res.cloudinary.com/djuvg4di0/image/upload/v1728833875/burui8vcrcqrvedo39yt.png',
     hasCompletedOnboarding: req.body.hasCompletedOnboarding || false,
     handleId: req.body.roles === 'admin' ? null : undefined,
-    favoriteId: null,
   };
 
   const newUser = await User.create(userData);

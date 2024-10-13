@@ -33,9 +33,10 @@ const restaurant = new mongoose.Schema({
     type: Boolean,
     default: true,
   },
-  // cryptoWalletAddress: {
-  //   type: String, // New field for a cryptocurrency wallet address
-  // },
+  walletAddress: {
+    type: String,
+    required: true,
+  },
   ratings: [
     {
       type: mongoose.Schema.Types.ObjectId,
