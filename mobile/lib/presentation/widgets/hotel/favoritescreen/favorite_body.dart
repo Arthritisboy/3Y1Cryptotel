@@ -11,17 +11,53 @@ class FavoriteBody extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Expanded(
-      child: BlocBuilder<FavoriteBloc, FavoriteState>(
-        builder: (context, state) {
-          if (state is FavoriteLoading) {
-            return _buildShimmerLoadingEffect();
-          } else if (state is FavoritesFetched) {
-            return _buildFavoriteList(state.favorites);
-          } else if (state is FavoriteError) {
-            return Center(child: Text('Error: ${state.error}'));
-          }
-          return Container(); // For initial state
-        },
+      child: Column(
+        children: [
+          Padding(
+            padding: const EdgeInsets.only(left: 16.0, top: 16.0),
+            child: Row(
+              children: [
+                Flexible(
+                  flex: 1,
+                  child: IconButton(
+                    icon: const Icon(Icons.arrow_back),
+                    onPressed: () {
+                      Navigator.pop(context); // Navigate back
+                    },
+                  ),
+                ),
+                Flexible(
+                  flex: 3,
+                  child: Center(
+                    child: const Text(
+                      'Favorites',
+                      style:
+                          TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                    ),
+                  ),
+                ),
+                Flexible(
+                  flex: 1,
+                  child: Container(), // Empty space to keep layout symmetrical
+                ),
+              ],
+            ),
+          ),
+          Expanded(
+            child: BlocBuilder<FavoriteBloc, FavoriteState>(
+              builder: (context, state) {
+                if (state is FavoriteLoading) {
+                  return _buildShimmerLoadingEffect();
+                } else if (state is FavoritesFetched) {
+                  return _buildFavoriteList(state.favorites);
+                } else if (state is FavoriteError) {
+                  return Center(child: Text('Error: ${state.error}'));
+                }
+                return Container(); // For initial state
+              },
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -34,8 +70,14 @@ class FavoriteBody extends StatelessWidget {
         return Card(
           child: ListTile(
             leading: Image.network(favorite.imageUrl),
-            title: Text(favorite.name),
-            subtitle: Text(favorite.location),
+            title: Text(
+              favorite.name,
+              style: const TextStyle(color: Colors.black),
+            ),
+            subtitle: Text(
+              favorite.location,
+              style: const TextStyle(color: Colors.black),
+            ),
           ),
         );
       },
