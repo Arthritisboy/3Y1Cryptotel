@@ -87,6 +87,10 @@ const userSchema = new mongoose.Schema(
       type: Boolean,
       default: false,
     },
+    favoriteId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Favorite',
+    }
   },
   { timestamps: true },
 );
