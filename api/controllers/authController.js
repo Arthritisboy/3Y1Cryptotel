@@ -57,6 +57,7 @@ exports.register = catchAsync(async (req, res, next) => {
     confirmPassword: req.body.confirmPassword,
     gender: req.body.gender,
     phoneNumber: req.body.phoneNumber,
+    favoriteId: null,
     roles: req.body.roles || 'user', // Provide a default if null
     profile: profile || undefined,
     hasCompletedOnboarding: req.body.hasCompletedOnboarding || false,
