@@ -141,15 +141,50 @@ class HistoryPendingBody extends StatelessWidget {
                     );
                   },
                 )
-              : const Center(
-                  child: Text(
-                    'No pending bookings available. Book a reservation now!',
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.black54,
-                    ),
-                    textAlign: TextAlign.center,
+              : Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Image.asset(
+                        'assets/images/icons/booknow.png', // Corrected the path
+                        width: 100, // Adjust size as needed
+                        height: 100,
+                      ),
+                      SizedBox(height: 16),
+                      Text(
+                        'No Pending, yet!',
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.black,
+                        ),
+                      ),
+                      SizedBox(height: 8),
+                      Text(
+                        'Make a booking with CRYPTOTEL & enjoy your stay',
+                        style: TextStyle(
+                          fontSize: 14,
+                          color: Colors.black54,
+                        ),
+                      ),
+                      SizedBox(height: 16),
+                      ElevatedButton(
+                        onPressed: () {
+                          Navigator.pushNamed(
+                              context, '/homescreen'); // Navigate to homescreen
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: const Color(0xFF1C3473),
+                          foregroundColor: Colors.white,
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 32, vertical: 12),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                        ),
+                        child: const Text('Book Now'),
+                      ),
+                    ],
                   ),
                 ),
         ),

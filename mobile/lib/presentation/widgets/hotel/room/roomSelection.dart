@@ -78,8 +78,7 @@ class RoomSelection extends StatelessWidget {
                 );
               },
               child: Card(
-                color: const Color.fromARGB(
-                    255, 238, 237, 237), // Keep neutral background
+                color: const Color.fromARGB(255, 238, 237, 237),
                 margin: const EdgeInsets.symmetric(vertical: 10),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.zero, // No border radius

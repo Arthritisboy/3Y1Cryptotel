@@ -7,7 +7,7 @@ import 'package:hotel_flutter/logic/bloc/booking/booking_state.dart';
 import 'package:hotel_flutter/presentation/widgets/history/history_cancel.dart';
 import 'package:hotel_flutter/presentation/widgets/history/history_header.dart';
 import 'package:hotel_flutter/presentation/widgets/history/history_pending.dart';
-import 'package:hotel_flutter/presentation/widgets/history/history_accepted.dart';
+import 'package:hotel_flutter/presentation/widgets/history/history_rejected.dart';
 import 'package:hotel_flutter/presentation/widgets/history/history_rate.dart';
 
 class HistoryScreen extends StatefulWidget {
@@ -53,7 +53,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
             tabs: [
               Tab(text: 'Cancel'),
               Tab(text: 'Pending'),
-              Tab(text: 'Accepted'),
+              Tab(text: 'Rejected'),
               Tab(text: 'Rate'),
             ],
           ),
@@ -76,8 +76,8 @@ class _HistoryScreenState extends State<HistoryScreen> {
                 final pendingBookings = state.bookings
                     .where((booking) => booking.status == 'pending')
                     .toList();
-                final acceptedBookings = state.bookings
-                    .where((booking) => booking.status == 'accepted')
+                final rejectedBookings = state.bookings
+                    .where((booking) => booking.status == 'rejected')
                     .toList();
                 final cancelBookings = state.bookings
                     .where((booking) => booking.status == 'cancelled')
@@ -90,7 +90,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
                       pendingBookings: pendingBookings,
                       userId: _userId!,
                     ),
-                    HistoryAcceptedBody(acceptedBookings: acceptedBookings),
+                    HistoryRejectedBody(rejectedBookings: rejectedBookings),
                     const HistoryRateBody(status: 'Rate'),
                   ],
                 );

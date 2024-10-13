@@ -146,7 +146,7 @@ class HistoryCancelBody extends StatelessWidget {
                       ),
                       SizedBox(height: 16),
                       Text(
-                        'No transaction, yet!',
+                        'No Cancelled, yet!',
                         style: TextStyle(
                           fontSize: 18,
                           fontWeight: FontWeight.bold,
@@ -155,7 +155,7 @@ class HistoryCancelBody extends StatelessWidget {
                       ),
                       SizedBox(height: 8),
                       Text(
-                        'Make a booking with CRYPTOTEL & start kineme',
+                        'Make a booking with CRYPTOTEL & enjoy your stay',
                         style: TextStyle(
                           fontSize: 14,
                           color: Colors.black54,

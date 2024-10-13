@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:hotel_flutter/data/model/booking/booking_model.dart';
 import 'package:intl/intl.dart';
 
-class DetailsModal extends StatelessWidget {
+class HistoryRejectedModal extends StatelessWidget {
   final BookingModel booking;
 
-  const DetailsModal({super.key, required this.booking});
+  const HistoryRejectedModal({super.key, required this.booking});
 
   @override
   Widget build(BuildContext context) {
