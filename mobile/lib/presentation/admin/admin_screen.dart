@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'admin_modal.dart'; // Import BookingDetailsModal
-import 'admin_header.dart'; // Import AdminHeader
+import '../widgets/admin/admin_modal.dart'; // Import BookingDetailsModal
+import '../widgets/admin/admin_header.dart'; // Import AdminHeader
 
 class AdminScreen extends StatelessWidget {
   const AdminScreen({super.key});
@@ -96,7 +96,8 @@ class AdminScreen extends StatelessWidget {
                             showDialog(
                               context: context,
                               builder: (BuildContext context) {
-                                return BookingDetailsModal(bookingRequest: request);
+                                return BookingDetailsModal(
+                                    bookingRequest: request);
                               },
                             );
                           },
@@ -139,7 +140,8 @@ class AdminScreen extends StatelessWidget {
                             showDialog(
                               context: context,
                               builder: (BuildContext context) {
-                                return BookingDetailsModal(bookingRequest: request);
+                                return BookingDetailsModal(
+                                    bookingRequest: request);
                               },
                             );
                           },
@@ -182,7 +184,8 @@ class AdminScreen extends StatelessWidget {
                             showDialog(
                               context: context,
                               builder: (BuildContext context) {
-                                return BookingDetailsModal(bookingRequest: request);
+                                return BookingDetailsModal(
+                                    bookingRequest: request);
                               },
                             );
                           },
