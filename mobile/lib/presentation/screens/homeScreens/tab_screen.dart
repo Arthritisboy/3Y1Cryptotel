@@ -288,6 +288,10 @@ class _TabScreenState extends State<TabScreen> {
     await _secureStorage.write(key: 'userId', value: userId);
     await _secureStorage.write(key: 'firstName', value: firstName);
     await _secureStorage.write(key: 'lastName', value: lastName);
+    await _secureStorage.write(key: 'email', value: email);
+    await _secureStorage.write(key: 'gender', value: gender);
+    await _secureStorage.write(key: 'phoneNumber', value: phoneNumber);
+    await _secureStorage.write(key: 'profile', value: profile);
   }
 
   Future<void> _storeFetchedUsers(List<UserModel> users) async {

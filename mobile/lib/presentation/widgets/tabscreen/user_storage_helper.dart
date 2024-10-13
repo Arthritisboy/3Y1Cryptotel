@@ -5,16 +5,18 @@ import 'package:hotel_flutter/data/model/auth/user_model.dart';
 class UserStorageHelper {
   static const String _usersKey = 'storedUsers';
 
+  /// Store a list of users in SharedPreferences
   static Future<void> storeUsers(List<UserModel> users) async {
-    final SharedPreferences prefs = await SharedPreferences.getInstance();
-    final List<String> jsonUsers =
+    final prefs = await SharedPreferences.getInstance();
+    List<String> jsonUsers =
         users.map((user) => jsonEncode(user.toJson())).toList();
     await prefs.setStringList(_usersKey, jsonUsers);
   }
 
+  /// Retrieve a list of users from SharedPreferences
   static Future<List<UserModel>> getUsers() async {
-    final SharedPreferences prefs = await SharedPreferences.getInstance();
-    final List<String>? jsonUsers = prefs.getStringList(_usersKey);
+    final prefs = await SharedPreferences.getInstance();
+    List<String>? jsonUsers = prefs.getStringList(_usersKey);
     if (jsonUsers != null) {
       return jsonUsers
           .map((jsonUser) => UserModel.fromJson(jsonDecode(jsonUser)))
@@ -23,9 +25,9 @@ class UserStorageHelper {
     return [];
   }
 
+  /// Clear the stored users from SharedPreferences
   static Future<void> clearUsers() async {
-    final SharedPreferences prefs = await SharedPreferences.getInstance();
-    await prefs
-        .remove(_usersKey); // This removes the key from SharedPreferences
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.remove(_usersKey);
   }
 }

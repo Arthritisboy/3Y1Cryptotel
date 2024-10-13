@@ -7,6 +7,7 @@ import 'package:hotel_flutter/presentation/widgets/restaurant/navigation/restaur
 import 'package:hotel_flutter/presentation/widgets/restaurant/details/restaurant_details.dart';
 import 'package:hotel_flutter/presentation/widgets/restaurant/utils/restaurant_input_fields.dart';
 import 'package:hotel_flutter/presentation/widgets/shimmer_loading/hotel/hotel_clicked.dart';
+import 'package:hotel_flutter/presentation/widgets/restaurant/ratings/RestaurantRatingWidget.dart';
 
 class RestaurantClicked extends StatefulWidget {
   final String restaurantId;
@@ -20,11 +21,11 @@ class RestaurantClicked extends StatefulWidget {
   final double latitude;
   final double longitude;
   final String restaurantImage;
-  final int capacity; // Capacity added
+  final int capacity;
 
   const RestaurantClicked({
     super.key,
-    required this.capacity, // Capacity required
+    required this.capacity,
     required this.restaurantId,
     required this.restaurantName,
     required this.rating,
@@ -60,172 +61,20 @@ class _RestaurantClickedState extends State<RestaurantClicked> {
         } else if (state is RestaurantError) {
           return Center(child: Text(state.error));
         } else if (state is RestaurantDetailsLoaded) {
+          print("Loaded restaurant: ${state.restaurant.name}");
+          print("Ratings count: ${state.restaurant.ratings.length}");
           return SingleChildScrollView(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                ClipRRect(
-                  child: Image.network(
-                    widget.restaurantImage,
-                    height: 300.0,
-                    width: double.infinity,
-                    fit: BoxFit.cover,
-                    loadingBuilder: (context, child, loadingProgress) {
-                      if (loadingProgress == null) return child;
-                      return const ShimmerHotelClicked();
-                    },
-                    errorBuilder: (context, error, stackTrace) {
-                      return const Center(
-                        child: Icon(Icons.broken_image,
-                            size: 50, color: Colors.grey),
-                      );
-                    },
-                  ),
-                ),
+                _buildRestaurantImage(),
                 const SizedBox(height: 10),
-                Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: Column(
-                    children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Flexible(
-                            child: Text(
-                              widget.restaurantName,
-                              style: const TextStyle(
-                                fontSize: 25.0,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.black,
-                              ),
-                              overflow: TextOverflow.ellipsis,
-                              maxLines: 1,
-                            ),
-                          ),
-                          ClipRRect(
-                            borderRadius: BorderRadius.circular(5.0),
-                            child: Container(
-                              padding: const EdgeInsets.symmetric(
-                                  horizontal: 6.0, vertical: 5.0),
-                              color: const Color.fromARGB(255, 29, 53, 115),
-                              child: Row(
-                                children: [
-                                  Text(
-                                    widget.rating.toString(),
-                                    style: const TextStyle(
-                                      fontSize: 14.0,
-                                      fontWeight: FontWeight.w600,
-                                      color: Colors.white,
-                                    ),
-                                  ),
-                                  const SizedBox(width: 4.0),
-                                  const Icon(Icons.star, color: Colors.amber),
-                                ],
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 5),
-                      Row(
-                        children: [
-                          const Icon(Icons.attach_money,
-                              color: Color.fromARGB(255, 142, 142, 147),
-                              size: 26),
-                          const SizedBox(width: 8.0),
-                          Text(
-                            '₱${widget.price} and over',
-                            style: const TextStyle(
-                              fontSize: 15,
-                              fontWeight: FontWeight.w400,
-                              color: Color.fromARGB(255, 142, 142, 147),
-                            ),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 3),
-                      Row(
-                        children: [
-                          const Icon(Icons.access_time,
-                              color: Color.fromARGB(255, 142, 142, 147),
-                              size: 26),
-                          const SizedBox(width: 8.0),
-                          Text(
-                            "Open Hours: ${widget.time}",
-                            style: const TextStyle(
-                              fontSize: 15,
-                              fontWeight: FontWeight.w400,
-                              color: Color.fromARGB(255, 142, 142, 147),
-                            ),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 3),
-                      Row(
-                        children: [
-                          const Icon(Icons.location_on_outlined,
-                              color: Color.fromARGB(255, 142, 142, 147),
-                              size: 26),
-                          const SizedBox(width: 8.0),
-                          Expanded(
-                            child: Text(
-                              widget.location,
-                              style: const TextStyle(
-                                  color: Color.fromARGB(255, 142, 142, 147),
-                                  fontSize: 15),
-                              overflow: TextOverflow.ellipsis,
-                              maxLines: 1,
-                            ),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 3),
-                      // Capacity information added
-                      Row(
-                        children: [
-                          const Icon(Icons.group_outlined,
-                              color: Color.fromARGB(255, 142, 142, 147),
-                              size: 26),
-                          const SizedBox(width: 8.0),
-                          Text(
-                            "Capacity: ${widget.capacity} people",
-                            style: const TextStyle(
-                              fontSize: 15,
-                              fontWeight: FontWeight.w400,
-                              color: Color.fromARGB(255, 142, 142, 147),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                ),
-                RestaurantNavigationRow(
-                  activeIndex: widget.activeIndex,
-                  onTap: widget.onNavTap,
-                  showBook: true,
-                ),
-                if (widget.activeIndex == 0)
-                  Padding(
-                      padding: const EdgeInsets.only(
-                          left: 16, right: 16, bottom: 10, top: 15),
-                      child: RestaurantInputFields(
-                        restaurantId: widget.restaurantId,
-                        capacity: widget.capacity,
-                      )),
-                if (widget.activeIndex == 1)
-                  RestaurantDetails(
-                    capacity: widget.capacity,
-                    restaurantName: widget.restaurantName,
-                    rating: widget.rating,
-                    price: widget.price,
-                    location: widget.location,
-                    time: widget.time,
-                    latitude: widget.latitude,
-                    longitude: widget.longitude,
-                  ),
+                _buildRestaurantInfo(),
+                _buildNavigationRow(),
+                if (widget.activeIndex == 0) _buildInputFields(),
+                if (widget.activeIndex == 1) _buildRestaurantDetails(state),
                 if (widget.activeIndex == 2)
-                  Center(child: Text('Ratings Functionality'))
+                  Restaurantratingwidget(ratings: state.restaurant.ratings),
               ],
             ),
           );
@@ -233,6 +82,132 @@ class _RestaurantClickedState extends State<RestaurantClicked> {
           return const SizedBox();
         }
       },
+    );
+  }
+
+  Widget _buildRestaurantImage() {
+    return ClipRRect(
+      child: Image.network(
+        widget.restaurantImage,
+        height: 300.0,
+        width: double.infinity,
+        fit: BoxFit.cover,
+        loadingBuilder: (context, child, loadingProgress) {
+          if (loadingProgress == null) return child;
+          return const ShimmerHotelClicked();
+        },
+        errorBuilder: (context, error, stackTrace) {
+          return const Center(
+            child: Icon(Icons.broken_image, size: 50, color: Colors.grey),
+          );
+        },
+      ),
+    );
+  }
+
+  Widget _buildRestaurantInfo() {
+    return Padding(
+      padding: const EdgeInsets.all(16.0),
+      child: Column(
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Flexible(
+                child: Text(
+                  widget.restaurantName,
+                  style: const TextStyle(
+                    fontSize: 25.0,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black,
+                  ),
+                  overflow: TextOverflow.ellipsis,
+                  maxLines: 1,
+                ),
+              ),
+              ClipRRect(
+                borderRadius: BorderRadius.circular(5.0),
+                child: Container(
+                  padding: const EdgeInsets.symmetric(
+                      horizontal: 6.0, vertical: 5.0),
+                  color: const Color.fromARGB(255, 29, 53, 115),
+                  child: Row(
+                    children: [
+                      Text(
+                        widget.rating.toString(),
+                        style: const TextStyle(
+                          fontSize: 14.0,
+                          fontWeight: FontWeight.w600,
+                          color: Colors.white,
+                        ),
+                      ),
+                      const SizedBox(width: 4.0),
+                      const Icon(Icons.star, color: Colors.amber),
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 5),
+          _buildRow(Icons.attach_money, '₱${widget.price} and over'),
+          _buildRow(Icons.access_time, 'Open Hours: ${widget.time}'),
+          _buildRow(Icons.location_on_outlined, widget.location),
+          _buildRow(
+              Icons.group_outlined, 'Capacity: ${widget.capacity} people'),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildRow(IconData icon, String text) {
+    return Row(
+      children: [
+        Icon(icon, size: 26, color: Colors.grey),
+        const SizedBox(width: 8.0),
+        Expanded(
+          child: Text(
+            text,
+            style: const TextStyle(
+              fontSize: 15,
+              fontWeight: FontWeight.w400,
+            ),
+            overflow: TextOverflow.ellipsis,
+            maxLines: 1,
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildNavigationRow() {
+    return RestaurantNavigationRow(
+      activeIndex: widget.activeIndex,
+      onTap: widget.onNavTap,
+      showBook: true,
+    );
+  }
+
+  Widget _buildInputFields() {
+    return Padding(
+      padding: const EdgeInsets.only(top: 10, left: 16, right: 16, bottom: 10),
+      child: RestaurantInputFields(
+        restaurantId: widget.restaurantId,
+        capacity: widget.capacity,
+      ),
+    );
+  }
+
+  Widget _buildRestaurantDetails(RestaurantState state) {
+    return RestaurantDetails(
+      capacity: widget.capacity,
+      restaurantName: widget.restaurantName,
+      rating: widget.rating,
+      price: widget.price,
+      location: widget.location,
+      time: widget.time,
+      latitude: widget.latitude,
+      longitude: widget.longitude,
     );
   }
 }

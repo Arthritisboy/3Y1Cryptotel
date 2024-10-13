@@ -4,7 +4,7 @@ import 'package:hotel_flutter/logic/bloc/hotel/hotel_bloc.dart';
 import 'package:hotel_flutter/logic/bloc/hotel/hotel_state.dart';
 import 'package:hotel_flutter/presentation/widgets/hotel/details/hotelDetails.dart';
 import 'package:hotel_flutter/presentation/widgets/hotel/navigation/navigation_row.dart';
-import 'package:hotel_flutter/presentation/widgets/hotel/ratings/hotelRatings.dart';
+import 'package:hotel_flutter/presentation/widgets/hotel/ratings/hotel_rating_widget.dart';
 import 'package:hotel_flutter/logic/bloc/hotel/hotel_event.dart';
 import 'package:hotel_flutter/presentation/widgets/hotel/room/roomSelection.dart';
 import 'package:hotel_flutter/presentation/widgets/shimmer_loading/hotel/hotel_clicked.dart';
