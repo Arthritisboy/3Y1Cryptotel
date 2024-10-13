@@ -2,11 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter/services.dart';
-import 'package:hotel_flutter/presentation/widgets/tabscreen/user_storage_helper.dart';
 import 'package:logging/logging.dart';
 import 'package:hotel_flutter/data/model/auth/user_model.dart';
 import 'package:hotel_flutter/logic/bloc/auth/auth_bloc.dart';
 import 'package:hotel_flutter/logic/bloc/auth/auth_event.dart';
+import 'package:hotel_flutter/presentation/widgets/tabscreen/user_storage_helper.dart';
+
 import 'package:hotel_flutter/logic/bloc/auth/auth_state.dart';
 import 'package:hotel_flutter/presentation/screens/homeScreens/home_screen.dart';
 import 'package:hotel_flutter/presentation/screens/homeScreens/restaurant_screen.dart';
@@ -44,12 +45,12 @@ class _TabScreenState extends State<TabScreen> {
   void initState() {
     super.initState();
     _initializeUserData();
+    _fetchAllUsers();
   }
 
   Future<void> _initializeUserData() async {
     try {
       await _getUserData();
-      await _fetchAllUsers();
     } catch (e) {
       _logger.severe('Error initializing user data: $e');
     } finally {
@@ -85,15 +86,12 @@ class _TabScreenState extends State<TabScreen> {
         listener: (context, state) {
           _handleBlocState(context, state);
           if (state is AuthSuccess) {
-            // Show a SnackBar with the success message
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
                 content: Text(state.message),
-                duration:
-                    const Duration(seconds: 2), // Duration to show the SnackBar
+                duration: const Duration(seconds: 2),
                 backgroundColor: Colors.lightGreen,
-                behavior: SnackBarBehavior
-                    .floating, // Optional: makes it float above other content
+                behavior: SnackBarBehavior.floating,
               ),
             );
           }
@@ -133,6 +131,11 @@ class _TabScreenState extends State<TabScreen> {
         );
       });
     }
+  }
+
+  Future<void> _storeFetchedUsers(List<UserModel> users) async {
+    await UserStorageHelper.clearUsers();
+    await UserStorageHelper.storeUsers(users);
   }
 
   Widget _buildShimmerLoading() {
@@ -264,7 +267,16 @@ class _TabScreenState extends State<TabScreen> {
         Navigator.of(context).pushNamed('/history');
         break;
       case 'favorite':
-        Navigator.of(context).pushNamed('/favorite');
+        if (userId != null) {
+          Navigator.of(context).pushNamed(
+            '/favorite',
+            arguments: {'userId': userId}, // Pass userId here
+          );
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('User ID is missing.')),
+          );
+        }
         break;
       case 'logout':
         _showLogoutConfirmationDialog();
@@ -292,11 +304,6 @@ class _TabScreenState extends State<TabScreen> {
     await _secureStorage.write(key: 'gender', value: gender);
     await _secureStorage.write(key: 'phoneNumber', value: phoneNumber);
     await _secureStorage.write(key: 'profile', value: profile);
-  }
-
-  Future<void> _storeFetchedUsers(List<UserModel> users) async {
-    await UserStorageHelper.clearUsers();
-    await UserStorageHelper.storeUsers(users);
   }
 
   void _showLogoutConfirmationDialog() {
