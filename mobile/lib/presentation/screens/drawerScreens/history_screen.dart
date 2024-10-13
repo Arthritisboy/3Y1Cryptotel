@@ -14,9 +14,7 @@ class HistoryScreen extends StatefulWidget {
   const HistoryScreen({super.key});
 
   @override
-  State<StatefulWidget> createState() {
-    return _HistoryScreenState();
-  }
+  State<StatefulWidget> createState() => _HistoryScreenState();
 }
 
 class _HistoryScreenState extends State<HistoryScreen> {
@@ -60,44 +58,47 @@ class _HistoryScreenState extends State<HistoryScreen> {
             ],
           ),
         ),
-        body: BlocBuilder<BookingBloc, BookingState>(
-          builder: (context, state) {
-            if (state is BookingLoading) {
-              return const Center(child: CircularProgressIndicator());
-            } else if (state is BookingSuccess) {
-              final pendingBookings = state.bookings
-                  .where((booking) => booking.status == 'pending')
-                  .toList();
-              final acceptedBookings = state.bookings
-                  .where((booking) => booking.status == 'accepted')
-                  .toList();
-              final cancelBookings = state.bookings
-                  .where((booking) => booking.status == 'cancelled')
-                  .toList();
-
-              return TabBarView(
-                children: [
-                  HistoryCancelBody(
-                    key: ValueKey(cancelBookings),
-                    canceledBookings: cancelBookings,
-                  ),
-                  HistoryPendingBody(
-                    key: ValueKey(pendingBookings),
-                    pendingBookings: pendingBookings,
-                  ),
-                  HistoryAcceptedBody(
-                    key: ValueKey(acceptedBookings),
-                    acceptedBookings: acceptedBookings,
-                  ),
-                  const HistoryRateBody(status: 'Rate'),
-                ],
-              );
+        body: BlocListener<BookingBloc, BookingState>(
+          listener: (context, state) {
+            if (state is BookingSuccess) {
+              // If needed, perform actions upon success
             } else if (state is BookingFailure) {
-              return Center(child: Text('Error: ${state.error}'));
-            } else {
-              return const Center(child: Text('No bookings found.'));
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(content: Text('Error: ${state.error}')),
+              );
             }
           },
+          child: BlocBuilder<BookingBloc, BookingState>(
+            builder: (context, state) {
+              if (state is BookingLoading) {
+                return const Center(child: CircularProgressIndicator());
+              } else if (state is BookingSuccess) {
+                final pendingBookings = state.bookings
+                    .where((booking) => booking.status == 'pending')
+                    .toList();
+                final acceptedBookings = state.bookings
+                    .where((booking) => booking.status == 'accepted')
+                    .toList();
+                final cancelBookings = state.bookings
+                    .where((booking) => booking.status == 'cancelled')
+                    .toList();
+
+                return TabBarView(
+                  children: [
+                    HistoryCancelBody(canceledBookings: cancelBookings),
+                    HistoryPendingBody(
+                      pendingBookings: pendingBookings,
+                      userId: _userId!,
+                    ),
+                    HistoryAcceptedBody(acceptedBookings: acceptedBookings),
+                    const HistoryRateBody(status: 'Rate'),
+                  ],
+                );
+              } else {
+                return const Center(child: Text('No bookings found.'));
+              }
+            },
+          ),
         ),
       ),
     );

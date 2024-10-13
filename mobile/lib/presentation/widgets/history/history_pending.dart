@@ -4,8 +4,13 @@ import 'package:hotel_flutter/presentation/widgets/history/history_pendingmodal.
 
 class HistoryPendingBody extends StatelessWidget {
   final List<BookingModel> pendingBookings;
+  final String userId; // Receive userId from HistoryScreen
 
-  const HistoryPendingBody({super.key, required this.pendingBookings});
+  const HistoryPendingBody({
+    super.key,
+    required this.pendingBookings,
+    required this.userId,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -104,7 +109,10 @@ class HistoryPendingBody extends StatelessWidget {
                                       showDialog(
                                         context: context,
                                         builder: (BuildContext context) {
-                                          return PendingModal(booking: booking);
+                                          return PendingModal(
+                                            booking: booking,
+                                            userId: userId, // Pass userId here
+                                          );
                                         },
                                       );
                                     },
