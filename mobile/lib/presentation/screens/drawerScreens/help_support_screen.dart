@@ -153,18 +153,10 @@ class _HelpSupportScreenState extends State<HelpSupportScreen> {
                         ),
                       ),
                     ),
-                    SizedBox(
-                      width: double.infinity,
-                      child: Divider(
-                        height: 40,
-                        thickness: 1,
-                        color: const Color.fromARGB(255, 213, 210, 210),
-                      ),
-                    ),
                     // Footer Section
                     Padding(
                       padding:
-                          const EdgeInsets.only(left: 40, top: 0, bottom: 20),
+                          const EdgeInsets.only(left: 40, top: 20, bottom: 20),
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         crossAxisAlignment: CrossAxisAlignment.center,

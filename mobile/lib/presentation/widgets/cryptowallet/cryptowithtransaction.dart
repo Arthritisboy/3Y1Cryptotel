@@ -236,14 +236,14 @@ class _CryptoWithTransactionState extends State<CryptoWithTransaction> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        booking.hotelName ?? 'Unknown Hotel',
-                        style: const TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
-                        ),
+                        booking.hotelName != null
+                            ? 'Hotel: ${booking.hotelName}'
+                            : 'Restaurant: ${booking.restaurantName ?? ''}',
                       ),
                       const SizedBox(height: 8),
-                      Text('Room: ${booking.roomName ?? 'Unknown Room'}'),
+                      Text(booking.hotelName != null
+                          ? 'Room: ${booking.roomName ?? 'N/A'}'
+                          : 'Table Number: ${booking.tableNumber ?? 'N/A'}'),
                       const SizedBox(height: 8),
                       Text(
                           'Check-in: ${booking.checkInDate} at ${booking.timeOfArrival}'),
