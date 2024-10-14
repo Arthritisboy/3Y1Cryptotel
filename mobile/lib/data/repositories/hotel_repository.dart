@@ -30,6 +30,21 @@ class HotelRepository {
     }
   }
 
+  //! Fetch Multiple Hotels by IDs
+  Future<List<HotelModel>> fetchHotelsByIds(List<String> hotelIds) async {
+    try {
+      final List<HotelModel> hotels = [];
+      for (var id in hotelIds) {
+        final hotel =
+            await fetchHotelById(id); // Fetch hotel by ID using existing method
+        hotels.add(hotel);
+      }
+      return hotels;
+    } catch (e) {
+      throw Exception('Failed to load hotels by IDs: $e');
+    }
+  }
+
   //! Clear Hotel Cache
   void clearHotelCache() {
     _cachedHotels = null;

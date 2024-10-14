@@ -12,7 +12,7 @@ class RestaurantModel {
   final double price;
   final int capacity;
   final bool availability;
-  final List<RatingModel> ratings; // List of ratings
+  final List<RatingModel> ratings;
 
   // Constructor with default values
   RestaurantModel({
@@ -24,31 +24,45 @@ class RestaurantModel {
     required this.price,
     required this.capacity,
     required this.availability,
-    this.ratings = const [], // Default to an empty list
+    this.ratings = const [],
   });
 
   factory RestaurantModel.fromJson(Map<String, dynamic> json) {
-    print("Parsing restaurant: ${json['name']}");
-
-    var ratingsList = (json['ratings'] as List<dynamic>)
-        .map((rating) => RatingModel.fromJson(rating))
-        .toList();
-
-    print("Ratings for ${json['name']}: ${ratingsList.length}");
+    var ratingsList = (json['ratings'] is List)
+        ? (json['ratings'] as List<dynamic>)
+            .map((rating) => RatingModel.fromJson(rating))
+            .toList()
+        : <RatingModel>[]; // Default to empty list if not a list
 
     return RestaurantModel(
-      id: json['_id'] as String,
-      name: json['name'] as String,
-      openingHours: json['openingHours'] as String,
-      location: json['location'] as String,
-      restaurantImage: json['restaurantImage'] as String,
+      id: json['_id'] ?? 'Unknown ID',
+      name: json['name'] ?? 'Unknown Restaurant',
+      openingHours: json['openingHours'] ?? 'Unknown Hours',
+      location: json['location'] ?? 'Unknown Location',
+      restaurantImage:
+          json['restaurantImage'] ?? 'https://via.placeholder.com/150',
       price: (json['price'] is int)
           ? (json['price'] as int).toDouble()
           : (json['price'] as double),
-      capacity: json['capacity'] as int,
-      availability: json['availability'] as bool,
+      capacity: json['capacity'] ?? 0,
+      availability: json['availability'] ?? false,
       ratings: ratingsList,
     );
+  }
+
+  // Method to convert RestaurantModel to JSON
+  Map<String, dynamic> toJson() {
+    return {
+      '_id': id,
+      'name': name,
+      'location': location,
+      'openingHours': openingHours,
+      'restaurantImage': restaurantImage,
+      'price': price,
+      'capacity': capacity,
+      'availability': availability,
+      'ratings': ratings.map((rating) => rating.toJson()).toList(),
+    };
   }
 
   // Calculate the average rating from the list of ratings
@@ -68,7 +82,7 @@ class RestaurantModel {
       return [locations.first.latitude, locations.first.longitude];
     } catch (e) {
       _logger.severe("Error fetching coordinates for $location: $e");
-      return [0.0, 0.0];
+      return [0.0, 0.0]; // Return [0.0, 0.0] if there is an error
     }
   }
 }

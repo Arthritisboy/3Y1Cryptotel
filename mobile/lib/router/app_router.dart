@@ -88,7 +88,16 @@ class AppRouter {
         return MaterialPageRoute(builder: (_) => UpdatePasswordScreen());
 
       case '/favorite':
-        return MaterialPageRoute(builder: (_) => FavoriteScreen());
+        final args = routeSettings.arguments as Map<String, dynamic>?;
+
+        if (args != null && args.containsKey('userId')) {
+          return MaterialPageRoute(
+            builder: (_) => FavoriteScreen(userId: args['userId']),
+          );
+        } else {
+          // Handle the case when userId is not provided
+          return null; // Or show an error or redirect as needed
+        }
 
       case '/help':
         return MaterialPageRoute(builder: (_) => HelpSupportScreen());

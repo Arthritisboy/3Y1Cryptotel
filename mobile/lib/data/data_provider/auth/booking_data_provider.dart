@@ -2,10 +2,8 @@ import 'dart:convert';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:http/http.dart' as http;
 import 'package:hotel_flutter/data/model/booking/booking_model.dart';
-import 'package:logging/logging.dart';
 
 class BookingDataProvider {
-  final Logger _logger = Logger('BookingDataProvider');
   final String baseUrl =
       'https://3-y1-cryptotel-hazel.vercel.app/api/v1/bookings';
   final FlutterSecureStorage storage = const FlutterSecureStorage();

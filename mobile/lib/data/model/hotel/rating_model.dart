@@ -1,8 +1,8 @@
 class RatingModel {
-  final String id;
-  final int rating;
-  final String message;
-  final String userId;
+  final String id; // Unique identifier for the rating
+  final int rating; // Rating value (1-5, etc.)
+  final String message; // Optional message from the user
+  final String userId; // Identifier for the user who made the rating
 
   // Constructor for RatingModel
   RatingModel({
@@ -20,5 +20,15 @@ class RatingModel {
       rating: json['rating'] as int,
       message: json['message'] as String,
     );
+  }
+
+  // Method to convert RatingModel to JSON
+  Map<String, dynamic> toJson() {
+    return {
+      '_id': id,
+      'userId': userId,
+      'rating': rating,
+      'message': message,
+    };
   }
 }

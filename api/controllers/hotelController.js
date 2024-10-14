@@ -63,7 +63,7 @@ exports.createHotel = catchAsync(async (req, res, next) => {
         return next(new AppError('User already is already assigned.', 400));
     }
 
-    const { name, location, openingHours, rooms } = req.body;
+    const { name, location, openingHours, rooms, walletAddress  } = req.body;
 
     let hotelImage = undefined;
 
@@ -89,6 +89,7 @@ exports.createHotel = catchAsync(async (req, res, next) => {
         name,
         location,
         openingHours,
+        walletAddress,
         hotelImage: hotelImage || undefined,
     });
 
