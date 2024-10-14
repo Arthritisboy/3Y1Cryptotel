@@ -49,10 +49,16 @@ class _HotelInputFieldsState extends State<HotelInputFields> {
     super.initState();
     _loadUserData();
     _checkFieldsFilled();
+    _fetchUserId();
+  }
+
+  Future<void> _fetchUserId() async {
+    userId = await secureStorage.read(key: 'userId');
+    setState(() {}); // Rebuild the widget tree when userId is fetched
+    print(userId);
   }
 
   Future<void> _loadUserData() async {
-    userId = await secureStorage.read(key: 'userId');
     String? firstName = await secureStorage.read(key: 'firstName') ?? '';
     String? lastName = await secureStorage.read(key: 'lastName') ?? '';
     String? storedEmail = await secureStorage.read(key: 'email') ?? '';
@@ -188,26 +194,6 @@ class _HotelInputFieldsState extends State<HotelInputFields> {
         adult: int.tryParse(adultsController.text) ?? 1,
         children: int.tryParse(childrenController.text) ?? 0,
       );
-
-      // Print all the booking details in the console
-      print('''
-Booking Details:
-
-  Booking Type: ${booking.bookingType}
-  Booking Type: ${booking.userId}
-  Hotel ID: ${booking.hotelId}
-  Room ID: ${booking.roomId}
-  Full Name: ${booking.fullName}
-  Email: ${booking.email}
-  Phone Number: ${booking.phoneNumber}
-  Address: ${booking.address}
-  Check-in Date: ${booking.checkInDate}
-  Check-out Date: ${booking.checkOutDate}
-  Time of Arrival: ${booking.timeOfArrival}
-  Time of Departure: ${booking.timeOfDeparture}
-  Adults: ${booking.adult}
-  Children: ${booking.children}
-''');
 
       setState(() {
         isLoading = true; // Show loading spinner
