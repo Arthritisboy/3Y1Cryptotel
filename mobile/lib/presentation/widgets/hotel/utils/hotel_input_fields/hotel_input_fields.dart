@@ -49,10 +49,16 @@ class _HotelInputFieldsState extends State<HotelInputFields> {
     super.initState();
     _loadUserData();
     _checkFieldsFilled();
+    _fetchUserId();
+  }
+
+  Future<void> _fetchUserId() async {
+    userId = await secureStorage.read(key: 'userId');
+    setState(() {}); // Rebuild the widget tree when userId is fetched
+    print(userId);
   }
 
   Future<void> _loadUserData() async {
-    userId = await secureStorage.read(key: 'userId');
     String? firstName = await secureStorage.read(key: 'firstName') ?? '';
     String? lastName = await secureStorage.read(key: 'lastName') ?? '';
     String? storedEmail = await secureStorage.read(key: 'email') ?? '';
@@ -176,9 +182,10 @@ class _HotelInputFieldsState extends State<HotelInputFields> {
         bookingType: 'HotelBooking',
         hotelId: widget.hotelId,
         roomId: widget.roomId,
+        userId: userId,
         fullName: fullNameController.text,
         email: emailController.text,
-        phoneNumber: phoneNumberController.text,
+        phoneNumber: phoneNumberController.text.trim(),
         address: addressController.text,
         checkInDate: checkInDate,
         checkOutDate: checkOutDate,

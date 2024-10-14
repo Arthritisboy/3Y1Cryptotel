@@ -6,6 +6,7 @@ class BookingModel {
   final String? hotelName;
   final String? roomName;
   final String? roomId;
+  final String? userId;
   final String? restaurantId;
   final String fullName;
   final String email;
@@ -29,6 +30,7 @@ class BookingModel {
     this.hotelName,
     this.roomName,
     this.roomId,
+    this.userId,
     this.restaurantId,
     required this.fullName,
     required this.email,
@@ -48,6 +50,7 @@ class BookingModel {
   // Add the copyWith method
   BookingModel copyWith({
     String? id,
+    String? userId,
     String? bookingType,
     String? hotelId,
     String? restaurantName,
@@ -71,6 +74,7 @@ class BookingModel {
   }) {
     return BookingModel(
       id: id ?? this.id,
+      userId: userId ?? this.userId,
       bookingType: bookingType ?? this.bookingType,
       hotelId: hotelId ?? this.hotelId,
       restaurantName: restaurantName ?? this.restaurantName,
@@ -96,17 +100,19 @@ class BookingModel {
 
   factory BookingModel.fromJson(Map<String, dynamic> json) {
     return BookingModel(
-      id: json['_id'],
-      bookingType: json['bookingType'],
+      id: json['_id'] ?? '',
+      userId: json['userId'] ?? '',
+      bookingType: json['bookingType'] ?? '',
       restaurantName: json['restaurantName'],
       hotelName: json['hotelName'],
       roomName: json['roomName'],
-      hotelId: json['hotelId']?['_id'],
-      roomId: json['roomId']?['_id'],
-      fullName: json['fullName'],
-      email: json['email'],
-      phoneNumber: json['phoneNumber'],
-      address: json['address'],
+      hotelId:
+          json['hotelId'] is Map ? json['hotelId']['_id'] : json['hotelId'],
+      roomId: json['roomId'] is Map ? json['roomId']['_id'] : json['roomId'],
+      fullName: json['fullName'] ?? '',
+      email: json['email'] ?? '',
+      phoneNumber: json['phoneNumber'] ?? '',
+      address: json['address'] ?? '',
       checkInDate: DateTime.parse(json['checkInDate']),
       checkOutDate: DateTime.parse(json['checkOutDate']),
       timeOfArrival: json['timeOfArrival'] != null
@@ -115,17 +121,22 @@ class BookingModel {
       timeOfDeparture: json['timeOfDeparture'] != null
           ? DateTime.parse(json['timeOfDeparture'])
           : null,
-      adult: json['adult'],
-      children: json['children'],
-      tableNumber: json['tableNumber'],
+      adult: int.tryParse(json['adult'].toString()) ?? 1,
+      children: int.tryParse(json['children'].toString()) ?? 0,
+      tableNumber: json['tableNumber'] != null
+          ? int.tryParse(json['tableNumber'].toString())
+          : null,
       status: json['status'],
-      totalPrice: json['totalPrice'],
+      totalPrice: json['totalPrice'] != null
+          ? int.tryParse(json['totalPrice'].toString())
+          : null,
     );
   }
 
   Map<String, dynamic> toJson() {
     return {
       'bookingType': bookingType,
+      'userId': userId,
       'hotelId': hotelId,
       'roomId': roomId,
       'restaurantId': restaurantId,

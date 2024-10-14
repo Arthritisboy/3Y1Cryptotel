@@ -10,23 +10,23 @@ const sendEmail = require('../utils/email');
 // ** Get bookings by userId, hotelId, or restaurantId
 exports.getBookings = catchAsync(async (req, res, next) => {
   try {
-    const { id } = req.params;
+    const { userId } = req.params;
 
     // Attempt to find bookings by userId
-    let bookings = await Booking.find({ userId: id }).populate(
+    let bookings = await Booking.find({ userId: userId }).populate(
       'hotelId roomId restaurantId',
     );
 
     // If not found by userId, attempt to find by hotelId
     if (!bookings || bookings.length === 0) {
-      bookings = await Booking.find({ hotelId: id }).populate(
+      bookings = await Booking.find({ hotelId: userId }).populate(
         'hotelId roomId restaurantId',
       );
     }
 
     // If not found by hotelId, attempt to find by restaurantId
     if (!bookings || bookings.length === 0) {
-      bookings = await Booking.find({ restaurantId: id }).populate(
+      bookings = await Booking.find({ restaurantId: userId }).populate(
         'hotelId roomId restaurantId',
       );
     }

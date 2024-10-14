@@ -4,18 +4,16 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hotel_flutter/data/data_provider/auth/auth_data_provider.dart';
 import 'package:hotel_flutter/data/data_provider/auth/booking_data_provider.dart';
-import 'package:hotel_flutter/data/data_provider/auth/favorite_data_provider.dart';
 import 'package:hotel_flutter/data/data_provider/auth/hotel_data_provider.dart';
 import 'package:hotel_flutter/data/data_provider/auth/restaurant_data_provider.dart';
 import 'package:hotel_flutter/data/repositories/booking_repository.dart';
-import 'package:hotel_flutter/data/repositories/favorite_repository.dart';
 import 'package:hotel_flutter/data/repositories/hotel_repository.dart';
 import 'package:hotel_flutter/data/repositories/restaurant_repository.dart';
 import 'package:hotel_flutter/logic/bloc/auth/auth_bloc.dart';
 import 'package:hotel_flutter/logic/bloc/booking/booking_bloc.dart';
 import 'package:hotel_flutter/logic/bloc/hotel/hotel_bloc.dart';
 import 'package:hotel_flutter/logic/bloc/restaurant/restaurant_bloc.dart';
-import 'package:hotel_flutter/presentation/admin/admin_screen.dart';
+import 'package:hotel_flutter/presentation/screens/drawerScreens/crypto_wallet.dart';
 import 'package:hotel_flutter/presentation/screens/homeScreens/splash_screen.dart';
 import 'package:hotel_flutter/router/app_router.dart';
 import 'package:hotel_flutter/data/repositories/auth_repository.dart';
@@ -50,8 +48,6 @@ class MyApp extends StatelessWidget {
                 RestaurantRepository(RestaurantDataProvider())),
         RepositoryProvider(
             create: (context) => BookingRepository(BookingDataProvider())),
-        RepositoryProvider(
-            create: (context) => FavoriteRepository(FavoriteDataProvider())),
       ],
       child: MultiBlocProvider(
         providers: [
@@ -71,6 +67,7 @@ class MyApp extends StatelessWidget {
           title: 'Cryptotel',
           onGenerateRoute: AppRouter(bookingBloc).onGenerateRoute,
           theme: _buildAppTheme(context),
+          home: const SplashScreen(),
         ),
       ),
     );

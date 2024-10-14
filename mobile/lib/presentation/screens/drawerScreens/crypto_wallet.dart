@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:hotel_flutter/presentation/widgets/cryptowallet/cryptonotransaction.dart';
 import 'package:hotel_flutter/presentation/widgets/cryptowallet/cryptowallet_header.dart';
 import 'package:hotel_flutter/presentation/widgets/cryptowallet/cryptowallet_transactions.dart';
 
@@ -25,19 +26,23 @@ class _CryptoWalletState extends State<CryptoWallet> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Column(
-        children: [
-          CryptowalletHeader(
-            onWalletUpdated: updateWalletInfo,
-          ),
-          const SizedBox(height: 20),
-          CryptoWalletTransactions(
-            isConnected: isConnected,
-            walletAddress: walletAddress,
-            balance: balance,
-            onWalletUpdated: updateWalletInfo,
-          ),
-        ],
+      body: SafeArea(
+        child: Column(
+          children: [
+            CryptowalletHeader(
+              onWalletUpdated: updateWalletInfo,
+            ),
+            const SizedBox(height: 20),
+            Expanded(
+              child: CryptoWalletTransactions(
+                isConnected: isConnected,
+                walletAddress: walletAddress,
+                balance: balance,
+                onWalletUpdated: updateWalletInfo,
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

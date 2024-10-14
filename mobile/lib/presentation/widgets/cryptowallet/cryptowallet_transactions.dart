@@ -18,34 +18,21 @@ class CryptoWalletTransactions extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Expanded(
-      child: Stack(
-        children: [
-          Container(
-            width: double.infinity,
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: const BorderRadius.only(
-                topLeft: Radius.circular(40.0),
-                topRight: Radius.circular(40.0),
-              ),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withOpacity(0.5),
-                  spreadRadius: 3,
-                  blurRadius: 10,
-                  offset: const Offset(0, 4),
-                ),
-              ],
+      child: Container(
+        decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.only(
+              topLeft: Radius.circular(30.0),
+              topRight: Radius.circular(30.0),
             ),
-            padding: const EdgeInsets.all(16.0),
-            child: CryptoWithTransaction(
-              isConnected: isConnected,
-              walletAddress: walletAddress,
-              balance: balance,
-              onWalletUpdated: onWalletUpdated,
-            ),
-          ),
-        ],
+            border:
+                Border.all(color: const Color.fromARGB(255, 209, 207, 207))),
+        child: CryptoWithTransaction(
+          isConnected: isConnected,
+          walletAddress: walletAddress,
+          balance: balance,
+          onWalletUpdated: onWalletUpdated,
+        ),
       ),
     );
   }
