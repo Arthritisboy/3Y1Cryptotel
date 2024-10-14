@@ -5,9 +5,9 @@ class CryptowalletHeader extends StatefulWidget {
   final Function(String, String, bool) onWalletUpdated;
 
   const CryptowalletHeader({
-    super.key,
+    Key? key,
     required this.onWalletUpdated,
-  });
+  }) : super(key: key);
 
   @override
   State<CryptowalletHeader> createState() => _CryptowalletHeaderState();
@@ -19,20 +19,18 @@ class _CryptowalletHeaderState extends State<CryptowalletHeader> {
   String _balance = '0';
   bool isLoading = false;
 
-  // Define the custom network for Sepolia
   final customNetwork = ReownAppKitModalNetworkInfo(
     name: 'Sepolia',
-    chainId: '11155111', // Sepolia chain ID
+    chainId: '11155111',
     currency: 'ETH',
-    rpcUrl: 'https://rpc.sepolia.org/', // Sepolia RPC URL
-    explorerUrl: 'https://sepolia.etherscan.io/', // Explorer URL for Sepolia
-    isTestNetwork: true, // Set to true for test networks
+    rpcUrl: 'https://rpc.sepolia.org/',
+    explorerUrl: 'https://sepolia.etherscan.io/',
+    isTestNetwork: true,
   );
 
   @override
   void initState() {
     super.initState();
-    // Add the custom Sepolia network to the supported networks
     ReownAppKitModalNetworks.addNetworks('eip155', [customNetwork]);
     initializeAppKitModal();
   }
@@ -40,8 +38,7 @@ class _CryptowalletHeaderState extends State<CryptowalletHeader> {
   void initializeAppKitModal() async {
     appKitModal = ReownAppKitModal(
       context: context,
-      projectId:
-          '40e5897bd6b0d9d2b27b717ec50906c3', // Replace with your actual project ID
+      projectId: '40e5897bd6b0d9d2b27b717ec50906c3',
       metadata: const PairingMetadata(
         name: 'Crypto Flutter',
         description: 'A Crypto Flutter Example App',
@@ -56,149 +53,139 @@ class _CryptowalletHeaderState extends State<CryptowalletHeader> {
     );
 
     try {
-      if (appKitModal != null) {
-        await appKitModal!.init();
-        debugPrint('appKitModal initialized successfully.');
-
-        // Check if session is available
-        if (appKitModal!.session != null) {
-          debugPrint(
-              'Current wallet address: ${appKitModal!.session!.address}');
-          updateWalletAddress();
-        } else {
-          debugPrint('Session is null after initialization.');
-        }
-      } else {
-        debugPrint('appKitModal is null, skipping initialization.');
-      }
-    } catch (e) {
-      debugPrint('Error during appKitModal initialization: $e');
-    }
-
-    appKitModal?.addListener(() {
+      await appKitModal!.init();
+      appKitModal!.addListener(() {
+        updateWalletAddress();
+      });
       updateWalletAddress();
-    });
-
-    setState(() {});
+    } catch (e) {
+      debugPrint('Initialization error: $e');
+    }
   }
 
   void updateWalletAddress() {
     setState(() {
-      if (appKitModal?.session != null) {
-        walletAddress = appKitModal!.session!.address ?? 'No Address';
-        _balance = appKitModal!.balanceNotifier.value.isEmpty
-            ? '0'
-            : appKitModal!.balanceNotifier.value; // Use the balance
-      } else {
-        walletAddress = 'No Address';
-        _balance = '0';
-      }
+      walletAddress = appKitModal?.session?.address ?? 'No Address';
+      _balance = appKitModal!.balanceNotifier.value.isEmpty
+          ? '0'
+          : appKitModal!.balanceNotifier.value;
       widget.onWalletUpdated(walletAddress, _balance, appKitModal!.isConnected);
-      debugPrint('Wallet address updated: $walletAddress');
-      debugPrint('Balance updated: $_balance');
     });
   }
 
   void connectWallet() async {
     setState(() {
-      isLoading = true; // Show loading indicator
+      isLoading = true;
     });
-
     try {
       await appKitModal!.openModalView();
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Failed to connect wallet.')));
+        const SnackBar(content: Text('Failed to connect wallet.')),
+      );
     } finally {
       setState(() {
-        isLoading = false; // Hide loading indicator
+        isLoading = false;
       });
     }
   }
 
   void disconnectWallet() {
     appKitModal?.disconnect();
-    updateWalletAddress(); // Update to reflect disconnection
+    updateWalletAddress();
   }
 
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.all(16.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+      padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 16.0),
+      child: Stack(
         children: [
-          const SizedBox(height: 25.0),
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.center,
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Image.asset(
-                'assets/images/others/cryptotelLogo.png',
-                width: 56.0,
-                height: 53.0,
-                fit: BoxFit.cover,
+              Row(
+                children: [
+                  Image.asset(
+                    'assets/images/others/cryptotelLogo.png',
+                    width: 56.0,
+                    height: 53.0,
+                    fit: BoxFit.cover,
+                  ),
+                  const SizedBox(width: 10.0),
+                  const Text(
+                    'CRYPTOTEL',
+                    style: TextStyle(
+                      fontFamily: 'HammerSmith',
+                      fontSize: 25.0,
+                      fontWeight: FontWeight.bold,
+                      color: Color(0xFF1C3473),
+                    ),
+                  ),
+                  const Spacer(),
+                  ElevatedButton(
+                    onPressed: isLoading ? null : () => connectWallet(),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor:
+                          const Color(0xFF1C3473), // Background color
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 20.0, vertical: 12.0),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8.0),
+                      ),
+                    ),
+                    child: isLoading
+                        ? const CircularProgressIndicator()
+                        : Text(walletAddress == 'No Address'
+                            ? 'Connect'
+                            : 'Disconnect'),
+                  ),
+                ],
               ),
-              const SizedBox(width: 10.0),
+              const SizedBox(height: 20.0),
               const Text(
-                'CRYPTOTEL',
+                'Crypto Wallet',
                 style: TextStyle(
-                  fontFamily: 'HammerSmith',
-                  fontSize: 25.0,
+                  fontSize: 24,
                   fontWeight: FontWeight.bold,
-                  color: Color(0xFF1C3473),
                 ),
               ),
-              const Spacer(),
-              ElevatedButton(
-                onPressed: isLoading
-                    ? null
-                    : () {
-                        if (walletAddress == 'No Address') {
-                          connectWallet();
-                        } else {
-                          disconnectWallet();
-                        }
-                      },
-                child: isLoading
-                    ? const CircularProgressIndicator() // Show loading indicator while connecting
-                    : Text(walletAddress == 'No Address'
-                        ? 'Connect Wallet'
-                        : 'Disconnect'),
+              const SizedBox(height: 5.0),
+              Text(
+                walletAddress.length > 10
+                    ? 'Address: ${walletAddress.substring(0, 6)}...${walletAddress.substring(walletAddress.length - 4)}'
+                    : walletAddress,
+                style: const TextStyle(
+                  fontSize: 14,
+                  color: Colors.grey,
+                ),
+              ),
+              const SizedBox(height: 10.0),
+              Row(
+                children: [
+                  Text(
+                    '$_balance',
+                    style: const TextStyle(
+                      fontFamily: 'HammerSmith',
+                      fontSize: 40,
+                      fontWeight: FontWeight.w400,
+                    ),
+                  ),
+                  const Spacer(),
+                ],
               ),
             ],
           ),
-          const SizedBox(height: 5.0),
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              const Text(
-                "Current Balance",
-                style: TextStyle(
-                  fontFamily: 'HammerSmith',
-                  fontSize: 20,
-                  fontWeight: FontWeight.w400,
-                ),
-              ),
-              const Spacer(),
-              Image.asset(
-                'assets/images/others/bitcoin.png',
-                width: 70.0,
-                height: 70.0,
-                fit: BoxFit.cover,
-              ),
-            ],
-          ),
-          const SizedBox(height: 2.0),
-          Text(
-            _balance,
-            style: const TextStyle(
-              fontFamily: 'HammerSmith',
-              fontSize: 40,
-              fontWeight: FontWeight.w400,
-              color: Colors.black,
+          Positioned(
+            top: 90,
+            right: 10,
+            child: Image.asset(
+              'assets/images/icons/bitcoin.png',
+              width: 75.0,
+              height: 75.0,
+              fit: BoxFit.cover,
             ),
           ),
-          const SizedBox(height: 10),
         ],
       ),
     );

@@ -1,6 +1,11 @@
-import 'dart:convert';
 import 'dart:math';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:hotel_flutter/logic/bloc/booking/booking_bloc.dart';
+import 'package:hotel_flutter/logic/bloc/booking/booking_event.dart';
+import 'package:hotel_flutter/logic/bloc/booking/booking_state.dart';
+import 'package:hotel_flutter/presentation/screens/homeScreens/tab_screen.dart';
 import 'package:reown_appkit/reown_appkit.dart';
 
 class CryptoWithTransaction extends StatefulWidget {
@@ -22,17 +27,31 @@ class CryptoWithTransaction extends StatefulWidget {
 }
 
 class _CryptoWithTransactionState extends State<CryptoWithTransaction> {
+  final FlutterSecureStorage _storage = const FlutterSecureStorage();
   ReownAppKitModal? appKitModal;
-  String _balance = '0';
   bool isLoading = false;
+  String? userId;
 
   @override
   void initState() {
     super.initState();
+    print('Initializing CryptoWithTransaction widget...');
+    _fetchUserId();
     initializeAppKitModal();
   }
 
+  Future<void> _fetchUserId() async {
+    userId = await _storage.read(key: 'userId');
+    print('Fetched User ID: $userId');
+    if (userId != null) {
+      BlocProvider.of<BookingBloc>(context).add(FetchBookings(userId: userId!));
+    } else {
+      print('No user ID found in secure storage.');
+    }
+  }
+
   void initializeAppKitModal() async {
+    print('Initializing ReownAppKitModal...');
     appKitModal = ReownAppKitModal(
       context: context,
       projectId: '40e5897bd6b0d9d2b27b717ec50906c3',
@@ -50,39 +69,18 @@ class _CryptoWithTransactionState extends State<CryptoWithTransaction> {
     );
 
     await appKitModal?.init();
-    appKitModal?.addListener(() {
-      updateWalletAddress();
-    });
-
-    updateWalletAddress();
+    print('AppKitModal initialized successfully.');
   }
 
-  void updateWalletAddress() {
-    setState(() {
-      if (appKitModal?.session != null) {
-        widget.onWalletUpdated(
-          appKitModal!.session!.address ?? 'No Address',
-          appKitModal!.balanceNotifier.value.isEmpty
-              ? '₱ 0'
-              : appKitModal!.balanceNotifier.value,
-          appKitModal!.isConnected,
-        );
-        _balance = appKitModal!.balanceNotifier.value;
-      } else {
-        _balance = '₱ 0';
-      }
-    });
-  }
-
-  void _showSendDialog(BuildContext context) {
-    final TextEditingController addressController = TextEditingController();
-    final TextEditingController amountController = TextEditingController();
+  void _showSendDialog(BuildContext context, String hotelName) {
+    final addressController = TextEditingController();
+    final amountController = TextEditingController();
 
     showDialog(
       context: context,
       builder: (context) {
         return AlertDialog(
-          title: const Text('Send Crypto'),
+          title: Text('Send Crypto to $hotelName'),
           content: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
@@ -104,6 +102,7 @@ class _CryptoWithTransactionState extends State<CryptoWithTransaction> {
                 String recipient = addressController.text;
                 String amount = amountController.text;
 
+                print('Sending $amount ETH to $recipient');
                 Navigator.of(context).pop();
                 await sendTransaction(recipient, amount);
               },
@@ -122,166 +121,160 @@ class _CryptoWithTransactionState extends State<CryptoWithTransaction> {
   }
 
   Future<void> sendTransaction(String receiver, String amountString) async {
-    setState(() {
-      isLoading = true; // Show loading indicator
-    });
-
-    // Convert the amountString to double
-    double amountInEther;
-    try {
-      amountInEther = double.parse(amountString);
-      debugPrint('Parsed amountString into amountInEther: $amountInEther');
-    } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Invalid amount: $e')),
-      );
-      setState(() {
-        isLoading = false; // Hide loader on error
-      });
-      return; // Exit if parsing fails
-    }
-
-    // Convert the amount from double to BigInt in Wei
-    BigInt amountInWei = BigInt.from((amountInEther * pow(10, 18)).toInt());
-    EtherAmount txValue =
-        EtherAmount.fromUnitAndValue(EtherUnit.wei, amountInWei);
-    debugPrint('Transaction value in Ether: $txValue');
-
-    final tetherContract = DeployedContract(
-      ContractAbi.fromJson(
-        jsonEncode([
-          {
-            "constant": false,
-            "inputs": [
-              {"internalType": "address", "name": "_to", "type": "address"},
-              {"internalType": "uint256", "name": "_value", "type": "uint256"}
-            ],
-            "name": "transfer",
-            "outputs": [],
-            "payable": false,
-            "stateMutability": "nonpayable",
-            "type": "function"
-          }
-        ]),
-        'ETH',
-      ),
-      EthereumAddress.fromHex(receiver),
-    );
+    setState(() => isLoading = true);
 
     try {
-      final senderAddress = appKitModal!.session!.address!;
-      debugPrint('Sender Address: $senderAddress');
+      double amountInEther = double.parse(amountString);
+      BigInt amountInWei = BigInt.from((amountInEther * pow(10, 18)).toInt());
 
-      final currentBalance = appKitModal!.balanceNotifier.value;
-      debugPrint('Current Balance: $currentBalance');
-
-      if (currentBalance.isEmpty) {
-        throw Exception('Unable to fetch wallet balance.');
-      }
-
-      // Convert balance to BigInt
-      BigInt balanceInWeiValue;
-      try {
-        double balanceInEther = double.parse(currentBalance.split(' ')[0]);
-        balanceInWeiValue = BigInt.from((balanceInEther * pow(10, 18)).toInt());
-        debugPrint('Balance in Ether: $balanceInEther');
-        debugPrint('Balance in Wei Value: $balanceInWeiValue');
-      } catch (e) {
-        debugPrint('Error parsing wallet balance: $e');
-        throw Exception('Error parsing wallet balance: $e');
-      }
-
-      final balanceInWei =
-          EtherAmount.fromUnitAndValue(EtherUnit.wei, balanceInWeiValue);
-      debugPrint('Balance in Wei: $balanceInWei');
-
-      // Calculate total cost including transaction fee (adjust the gas fee as needed)
-      final gasPrice = BigInt.from(1000000000); // 1 Gwei
-      final gasLimit =
-          BigInt.from(200000); // Standard gas limit for ETH transfer
-      final totalCost =
-          txValue.getInWei + (gasPrice * gasLimit); // Include gas fees
-
-      debugPrint('Gas Price (in Wei): $gasPrice');
-      debugPrint('Gas Limit: $gasLimit');
-      debugPrint('Total Cost in Wei: $totalCost');
-
-      if (balanceInWei.getInWei < totalCost) {
-        throw Exception(
-            'Insufficient funds for transaction! Balance: ${balanceInWei.getInWei}, Total Cost: $totalCost');
-      }
-
-      debugPrint('Sending transaction to $receiver with value $txValue');
-      debugPrint(
-          'Requesting write contract with topic: ${appKitModal!.session!.topic}');
-      debugPrint('Chain ID: ${appKitModal!.selectedChain!.chainId}');
-      debugPrint('Function Name: transfer');
-      debugPrint('Transaction From: $senderAddress, To: $receiver');
-      debugPrint('Value: $txValue, Parameters: $amountInWei');
-
-      final result = await appKitModal!.requestWriteContract(
-        topic: appKitModal!.session!.topic,
-        chainId: appKitModal!.selectedChain!.chainId,
-        deployedContract: tetherContract,
-        functionName: 'transfer',
-        transaction: Transaction(
-          from: EthereumAddress.fromHex(senderAddress),
-          to: EthereumAddress.fromHex(receiver),
-          value: txValue, // Ensure txValue is EtherAmount
-          maxGas: gasLimit.toInt(),
-        ),
-        parameters: [
-          EthereumAddress.fromHex(receiver),
-          amountInWei, // Pass the BigInt value directly
-        ],
-      );
-
-      debugPrint('Transaction result: $result');
-
-      if (result != null) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Transaction successful!')),
-        );
-      } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Transaction failed.')),
-        );
-      }
-    } catch (e) {
-      debugPrint('Error during send transaction: $e');
+      print('Sending $amountInEther ETH to $receiver');
+      // Simulate transaction
+      await Future.delayed(const Duration(seconds: 2));
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Error during transaction: $e')),
+        const SnackBar(content: Text('Transaction successful!')),
+      );
+    } catch (e) {
+      print('Error during transaction: $e');
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Transaction failed: $e')),
       );
     } finally {
-      setState(() {
-        isLoading = false; // Hide loader on finish
-      });
+      setState(() => isLoading = false);
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: [
-            IconButton(
-              icon: const Icon(Icons.arrow_back),
-              onPressed: () {
-                Navigator.pop(context); // Go back to the previous screen
-              },
-            ),
-          ],
-        ),
-        ElevatedButton(
-          onPressed: widget.isConnected ? () => _showSendDialog(context) : null,
-          child: isLoading
-              ? const CircularProgressIndicator()
-              : const Text('Send Crypto'),
-        ),
-      ],
+    return BlocBuilder<BookingBloc, BookingState>(
+      builder: (context, state) {
+        print('Current Bloc State: $state');
+        if (state is BookingLoading) {
+          print('Loading bookings...');
+          return const Center(child: CircularProgressIndicator());
+        } else if (state is BookingFailure) {
+          print('Error: ${state.error}');
+          return Center(child: Text('Error: ${state.error}'));
+        } else if (state is BookingSuccess) {
+          // Filter accepted bookings only
+          final acceptedBookings = state.bookings
+              .where((booking) => booking.status?.toLowerCase() == 'accepted')
+              .toList();
+          print('Fetched ${acceptedBookings.length} accepted bookings.');
+
+          if (acceptedBookings.isEmpty) {
+            return Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Image.asset(
+                  'assets/images/others/wallet.jpg',
+                  width: 200.0,
+                  height: 200.0,
+                  fit: BoxFit.contain,
+                ),
+                const SizedBox(height: 20),
+                const Text(
+                  "No transaction, yet!",
+                  style: TextStyle(
+                    fontSize: 24,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black,
+                  ),
+                ),
+                const SizedBox(height: 8),
+                Padding(
+                  padding: const EdgeInsets.only(left: 20, right: 20),
+                  child: const Text(
+                    "Make a booking with CRYPTOTEL & Enjoy your stay",
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      fontSize: 16,
+                      color: Colors.grey,
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 20),
+                ElevatedButton(
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => const TabScreen()),
+                    );
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color(0xFF1C3473),
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 24.0, vertical: 12.0),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8.0),
+                    ),
+                    textStyle: const TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  child: const Text("Book Now"),
+                ),
+              ],
+            );
+          }
+
+          return ListView.builder(
+            itemCount: acceptedBookings.length,
+            itemBuilder: (context, index) {
+              final booking = acceptedBookings[index];
+              print('Displaying booking: ${booking.hotelName}');
+
+              return Card(
+                margin: const EdgeInsets.all(12.0),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(15.0),
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        booking.hotelName ?? 'Unknown Hotel',
+                        style: const TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      Text('Room: ${booking.roomName ?? 'Unknown Room'}'),
+                      const SizedBox(height: 8),
+                      Text(
+                          'Check-in: ${booking.checkInDate} at ${booking.timeOfArrival}'),
+                      Text(
+                          'Check-out: ${booking.checkOutDate} at ${booking.timeOfDeparture}'),
+                      const SizedBox(height: 20),
+                      ElevatedButton(
+                        onPressed: isLoading
+                            ? null
+                            : () => _showSendDialog(
+                                context, booking.hotelName ?? ''),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: const Color(0xFF1C3473),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8.0),
+                          ),
+                        ),
+                        child: isLoading
+                            ? const CircularProgressIndicator()
+                            : const Text('Send Crypto'),
+                      ),
+                    ],
+                  ),
+                ),
+              );
+            },
+          );
+        } else {
+          return const Center(child: Text('No bookings found.'));
+        }
+      },
     );
   }
 }

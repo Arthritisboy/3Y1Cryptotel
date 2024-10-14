@@ -176,6 +176,7 @@ class _HotelInputFieldsState extends State<HotelInputFields> {
         bookingType: 'HotelBooking',
         hotelId: widget.hotelId,
         roomId: widget.roomId,
+        userId: userId,
         fullName: fullNameController.text,
         email: emailController.text,
         phoneNumber: phoneNumberController.text.trim(),
@@ -191,7 +192,9 @@ class _HotelInputFieldsState extends State<HotelInputFields> {
       // Print all the booking details in the console
       print('''
 Booking Details:
+
   Booking Type: ${booking.bookingType}
+  Booking Type: ${booking.userId}
   Hotel ID: ${booking.hotelId}
   Room ID: ${booking.roomId}
   Full Name: ${booking.fullName}
