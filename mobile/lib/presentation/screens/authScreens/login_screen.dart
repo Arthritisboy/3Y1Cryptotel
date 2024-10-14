@@ -45,10 +45,10 @@ class _LoginScreenState extends State<LoginScreen> {
             setState(() {
               _isLoading = false; // Stop loading on error
             });
-
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text(state.error)),
-            );
+            _showErrorDialog(state.error);
+            // ScaffoldMessenger.of(context).showSnackBar(
+            //   SnackBar(content: Text(state.error)),
+            // );
           }
         },
         child: Stack(
