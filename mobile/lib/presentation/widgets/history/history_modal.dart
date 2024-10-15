@@ -5,7 +5,9 @@ class HistoryModal extends StatefulWidget {
   const HistoryModal({super.key});
 
   @override
-  _HistoryModalState createState() => _HistoryModalState();
+  State<StatefulWidget> createState() {
+    return _HistoryModalState();
+  }
 }
 
 class _HistoryModalState extends State<HistoryModal> {

@@ -5,7 +5,7 @@ import 'package:hotel_flutter/data/model/booking/booking_model.dart';
 import 'package:hotel_flutter/logic/bloc/booking/booking_bloc.dart';
 import 'package:hotel_flutter/logic/bloc/booking/booking_event.dart';
 import 'package:hotel_flutter/logic/bloc/booking/booking_state.dart';
-import 'package:hotel_flutter/presentation/admin/createRoom.dart';
+import 'package:hotel_flutter/presentation/widgets/admin/createRoom.dart';
 import 'package:hotel_flutter/presentation/widgets/admin/admin_header.dart';
 import 'package:hotel_flutter/presentation/widgets/admin/admin_modal.dart';
 
@@ -35,9 +35,7 @@ class _AdminNavigationState extends State<AdminNavigation> {
       if (handleId != null) {
         context.read<BookingBloc>().add(FetchBookings(userId: handleId!));
       }
-    } catch (e) {
-      print('Error fetching ID from secure storage: $e');
-    }
+    } catch (e) {}
   }
 
   @override

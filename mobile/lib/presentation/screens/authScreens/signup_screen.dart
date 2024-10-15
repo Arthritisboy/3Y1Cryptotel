@@ -11,31 +11,28 @@ class SignupScreen extends StatelessWidget {
     double screenHeight = MediaQuery.of(context).size.height;
 
     return Scaffold(
-      body: Stack(
-        children: [
-          Container(color: Colors.white),
-          const Column(
+      body: SafeArea(
+        child: SingleChildScrollView(
+          child: Column(
             children: [
-              HeaderWidget(title: 'CRYPTOTEL'),
-              ImageWidget(imagePath: 'assets/images/others/temp_image.png'),
-              Expanded(child: SizedBox()),
+              const HeaderWidget(title: 'CRYPTOTEL'),
+              const SizedBox(height: 16),
+              const ImageWidget(
+                  imagePath: 'assets/images/others/temp_image.png'),
+              const SizedBox(height: 16),
+              Container(
+                padding: EdgeInsets.fromLTRB(
+                  16,
+                  screenHeight * 0.05,
+                  16,
+                  screenHeight * 0.02,
+                ),
+                decoration: const BoxDecoration(color: Colors.white),
+                child: const SignupForm(),
+              ),
             ],
           ),
-          Align(
-            alignment: Alignment.bottomCenter,
-            child: Container(
-              padding: EdgeInsets.fromLTRB(
-                16,
-                screenHeight * 0.05,
-                16,
-                screenHeight * 0.02,
-              ),
-              height: screenHeight * 0.55,
-              decoration: const BoxDecoration(color: Colors.white),
-              child: const SignupForm(),
-            ),
-          ),
-        ],
+        ),
       ),
     );
   }

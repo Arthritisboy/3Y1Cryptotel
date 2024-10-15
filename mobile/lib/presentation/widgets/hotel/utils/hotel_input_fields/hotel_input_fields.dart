@@ -55,7 +55,6 @@ class _HotelInputFieldsState extends State<HotelInputFields> {
   Future<void> _fetchUserId() async {
     userId = await secureStorage.read(key: 'userId');
     setState(() {}); // Rebuild the widget tree when userId is fetched
-    print(userId);
   }
 
   Future<void> _loadUserData() async {
@@ -148,17 +147,63 @@ class _HotelInputFieldsState extends State<HotelInputFields> {
   }
 
   void _createBooking(BuildContext context) {
-    DateTime? checkInDate = DateTime.tryParse(checkInDateController.text);
-    DateTime? checkOutDate = DateTime.tryParse(checkOutDateController.text);
+    // Close the keyboard to prevent interference with dialogs
+    FocusScope.of(context).unfocus();
 
-    // Check if the check-in date is the same as the check-out date
-    if (checkInDate != null &&
-        checkOutDate != null &&
-        checkInDate.isAtSameMomentAs(checkOutDate)) {
-      _showDateErrorDialog(context);
-      return; // Do not proceed if the date validation fails
+    // Parse dates from the input controllers
+    DateTime? checkInDate = _parseDate(checkInDateController.text);
+    DateTime? checkOutDate = _parseDate(checkOutDateController.text);
+    DateTime now = DateTime.now();
+
+    // Debugging the parsed dates
+    print('Check-in Date: $checkInDate, Check-out Date: $checkOutDate');
+
+    // Ensure the number of adults is at least 1
+    int adults = int.tryParse(adultsController.text) ?? 0;
+    int children = int.tryParse(childrenController.text) ?? 0;
+
+    if (adults == 0 && children == 0) {
+      _showErrorDialog(
+          context, 'Please fill in all the details to ensure the booking.');
+      return;
     }
 
+    if (adults == 0) {
+      _showErrorDialog(
+          context, 'At least one adult is required to make a booking.');
+      return;
+    }
+
+    // Check if the check-out date is before the check-in date
+    if (checkInDate != null &&
+        checkOutDate != null &&
+        checkOutDate.isBefore(checkInDate)) {
+      print('Error: Check-out date cannot be before the check-in date.');
+      _showErrorDialog(
+          context, 'Check-out date cannot be before the check-in date.');
+      return;
+    }
+
+    // Ensure the check-in date is not in the past
+    if (checkInDate != null && checkInDate.isBefore(now)) {
+      print('Error: Check-in date cannot be in the past.');
+      _showErrorDialog(context, 'Check-in date cannot be in the past.');
+      return;
+    }
+
+    // Limit same-day bookings to 12 hours in advance
+    if (checkInDate != null && checkInDate.day == now.day) {
+      Duration timeDifference = checkInDate.difference(now);
+      print(
+          'Same-day booking time difference: ${timeDifference.inHours} hours');
+      if (timeDifference.inHours < 12) {
+        _showErrorDialog(context,
+            'Same-day bookings must be made at least 12 hours in advance.');
+        return;
+      }
+    }
+
+    // Proceed with the booking if all validations pass
     DateTime? arrivalDateTime = combineDateAndTime(
         checkInDateController.text, timeOfArrivalController.text);
     DateTime? departureDateTime = combineDateAndTime(
@@ -169,13 +214,12 @@ class _HotelInputFieldsState extends State<HotelInputFields> {
         arrivalDateTime != null &&
         departureDateTime != null &&
         userId != null) {
-      final int totalGuests = (int.tryParse(adultsController.text) ?? 1) +
-          (int.tryParse(childrenController.text) ?? 0);
+      final int totalGuests = adults + children;
 
       // Check if the total number of guests exceeds room capacity
       if (totalGuests > widget.capacity) {
-        _showCapacityErrorDialog(context); // Show error dialog
-        return; // Do not proceed with booking
+        _showCapacityErrorDialog(context);
+        return;
       }
 
       final booking = BookingModel(
@@ -191,8 +235,8 @@ class _HotelInputFieldsState extends State<HotelInputFields> {
         checkOutDate: checkOutDate,
         timeOfArrival: arrivalDateTime,
         timeOfDeparture: departureDateTime,
-        adult: int.tryParse(adultsController.text) ?? 1,
-        children: int.tryParse(childrenController.text) ?? 0,
+        adult: adults,
+        children: children,
       );
 
       setState(() {
@@ -204,6 +248,35 @@ class _HotelInputFieldsState extends State<HotelInputFields> {
             userId: userId!,
           ));
     }
+  }
+
+  DateTime? _parseDate(String date) {
+    try {
+      return DateTime.parse(date);
+    } catch (e) {
+      print('Date parsing error: $e');
+      return null;
+    }
+  }
+
+  void _showErrorDialog(BuildContext context, String message) {
+    print('Showing Error Dialog: $message'); // Debug print
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return CustomDialog(
+          title: 'Booking Invalid',
+          description: message,
+          buttonText: 'OK',
+          secondButtonText: '',
+          onButtonPressed: () {
+            Navigator.of(context).pop(); // Close the dialog
+          },
+          onSecondButtonPressed: () {},
+        );
+      },
+    );
   }
 
   @override

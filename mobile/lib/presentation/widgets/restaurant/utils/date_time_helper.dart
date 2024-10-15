@@ -46,7 +46,6 @@ DateTime? combineDateAndTime(String date, String time) {
     return DateTime(parsedDate.year, parsedDate.month, parsedDate.day,
         parsedTime.hour, parsedTime.minute);
   } catch (e) {
-    print("Error parsing date or time: $e");
     return null;
   }
 }

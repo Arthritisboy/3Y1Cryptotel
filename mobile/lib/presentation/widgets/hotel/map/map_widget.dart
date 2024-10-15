@@ -17,7 +17,6 @@ class MapWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return InkWell(
       onTap: () {
-        print('Navigating to full screen map'); // Debugging
         Navigator.push(
           context,
           MaterialPageRoute(
