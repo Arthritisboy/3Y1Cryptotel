@@ -17,7 +17,11 @@ class _HotelFormScreenState extends State<HotelFormScreen> {
   final TextEditingController _openingHoursController = TextEditingController();
   final TextEditingController _averagePriceController = TextEditingController();
 
-  File? _selectedImage; // For storing the selected image
+  final TextEditingController _managerNameController = TextEditingController();
+  final TextEditingController _managerEmailController = TextEditingController();
+  final TextEditingController _managerPasswordController = TextEditingController();
+
+  File? _selectedImage;
 
   final ImagePicker _picker = ImagePicker();
 
@@ -30,6 +34,14 @@ class _HotelFormScreenState extends State<HotelFormScreen> {
       });
     }
   }
+
+  void _createHotelAndAdmin() {
+    if (_formKey.currentState?.validate() ?? false) {
+      print("Hotel Created: ${_nameController.text}");
+      print("Admin Created: ${_managerNameController.text}");
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -39,15 +51,14 @@ class _HotelFormScreenState extends State<HotelFormScreen> {
           child: Form(
             key: _formKey,
             child: ListView(
-              padding: EdgeInsets.zero, // Remove extra padding
+              padding: EdgeInsets.zero,
               children: [
-                // Header with back button and title
                 Row(
                   children: [
                     IconButton(
                       icon: const Icon(Icons.arrow_back),
                       onPressed: () {
-                        Navigator.pop(context); // Go back to previous screen
+                        Navigator.pop(context);
                       },
                     ),
                     const Text(
@@ -68,6 +79,12 @@ class _HotelFormScreenState extends State<HotelFormScreen> {
                     labelText: 'Hotel Name',
                     border: OutlineInputBorder(),
                   ),
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Please enter hotel name';
+                    }
+                    return null;
+                  },
                 ),
                 const SizedBox(height: 20),
 
@@ -78,20 +95,28 @@ class _HotelFormScreenState extends State<HotelFormScreen> {
                     labelText: 'Location',
                     border: OutlineInputBorder(),
                   ),
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Please enter location';
+                    }
+                    return null;
+                  },
                 ),
                 const SizedBox(height: 20),
-
-                // Opening Hours
                 TextFormField(
                   controller: _openingHoursController,
                   decoration: const InputDecoration(
                     labelText: 'Opening Hours',
                     border: OutlineInputBorder(),
                   ),
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Please enter opening hours';
+                    }
+                    return null;
+                  },
                 ),
                 const SizedBox(height: 20),
-
-                // Average Price
                 TextFormField(
                   controller: _averagePriceController,
                   decoration: const InputDecoration(
@@ -99,10 +124,15 @@ class _HotelFormScreenState extends State<HotelFormScreen> {
                     border: OutlineInputBorder(),
                   ),
                   keyboardType: TextInputType.number,
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Please enter average price';
+                    }
+                    return null;
+                  },
                 ),
                 const SizedBox(height: 20),
 
-                // Image Upload
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -128,24 +158,70 @@ class _HotelFormScreenState extends State<HotelFormScreen> {
                       onPressed: _pickImage,
                       child: const Text('Pick Image'),
                       style: ElevatedButton.styleFrom(
-                        backgroundColor:
-                            const Color(0xFF1C3473), // Set button color
+                        backgroundColor: const Color(0xFF1C3473),
                       ),
                     ),
                   ],
                 ),
                 const SizedBox(height: 20),
-
-                // UI-only Submit Button
-                ElevatedButton(
-                  onPressed: () {
-                    // No functionality, UI only
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor:
-                        const Color(0xFF1C3473), // Set button color
+                const Text(
+                  'Manager Account Information',
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
                   ),
-                  child: const Text('Create Hotel'),
+                ),
+                const SizedBox(height: 20),
+                TextFormField(
+                  controller: _managerNameController,
+                  decoration: const InputDecoration(
+                    labelText: 'Manager Name',
+                    border: OutlineInputBorder(),
+                  ),
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Please enter manager name';
+                    }
+                    return null;
+                  },
+                ),
+                const SizedBox(height: 20),
+                TextFormField(
+                  controller: _managerEmailController,
+                  decoration: const InputDecoration(
+                    labelText: 'Manager Email',
+                    border: OutlineInputBorder(),
+                  ),
+                  keyboardType: TextInputType.emailAddress,
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Please enter manager email';
+                    }
+                    return null;
+                  },
+                ),
+                const SizedBox(height: 20),
+                TextFormField(
+                  controller: _managerPasswordController,
+                  decoration: const InputDecoration(
+                    labelText: 'Manager Password',
+                    border: OutlineInputBorder(),
+                  ),
+                  obscureText: true,
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Please enter manager password';
+                    }
+                    return null;
+                  },
+                ),
+                const SizedBox(height: 30),
+                ElevatedButton(
+                  onPressed: _createHotelAndAdmin,
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color(0xFF1C3473),
+                  ),
+                  child: const Text('Create'),
                 ),
               ],
             ),
