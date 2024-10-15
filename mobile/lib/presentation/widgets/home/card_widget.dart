@@ -1,26 +1,28 @@
 import 'package:flutter/material.dart';
 
 class CardWidget extends StatelessWidget {
-  final String imagePath; // URL for network image
+  final String imagePath;
   final String hotelName;
   final String location;
-  final double? rating; // Nullable rating field
+  final double? rating;
+  final double? width;
 
   const CardWidget({
     super.key,
     required this.imagePath,
     required this.hotelName,
     required this.location,
+    required this.width,
     this.rating, // Nullable rating
   });
 
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.only(right: 20),
+      padding: const EdgeInsets.only(right: 10, top: 10),
       child: SizedBox(
-        width: 300.0, // Set a fixed width for the card
-        height: 500.0, // Set a longer height to make the card taller
+        width: width, // Set a fixed width for the card
+        height: 300.0, // Set a longer height to make the card taller
         child: Card(
           color: Colors.white,
           shape: RoundedRectangleBorder(

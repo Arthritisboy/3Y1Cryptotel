@@ -2,6 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter/services.dart';
+import 'package:hotel_flutter/logic/bloc/hotel/hotel_bloc.dart';
+import 'package:hotel_flutter/logic/bloc/hotel/hotel_event.dart';
+import 'package:hotel_flutter/logic/bloc/restaurant/restaurant_bloc.dart';
+import 'package:hotel_flutter/logic/bloc/restaurant/restaurant_event.dart';
 import 'package:logging/logging.dart';
 import 'package:hotel_flutter/data/model/auth/user_model.dart';
 import 'package:hotel_flutter/logic/bloc/auth/auth_bloc.dart';
@@ -31,6 +35,7 @@ class _TabScreenState extends State<TabScreen> {
   final FlutterSecureStorage _secureStorage = const FlutterSecureStorage();
   int _selectedIndex = 0;
   bool _isLoading = true;
+  String _searchQuery = ""; // Add a search query state
 
   String? firstName;
   String? lastName;
@@ -46,6 +51,12 @@ class _TabScreenState extends State<TabScreen> {
     super.initState();
     _initializeUserData();
     _fetchAllUsers();
+  }
+
+  void _onSearchChanged(String query) {
+    setState(() {
+      _searchQuery = query; // Update the search query
+    });
   }
 
   Future<void> _initializeUserData() async {
@@ -154,39 +165,24 @@ class _TabScreenState extends State<TabScreen> {
     return Stack(
       children: [
         Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             TabHeader(
               firstName: firstName ?? 'Guest',
               lastName: lastName ?? '',
+              onSearchChanged: _onSearchChanged, // Pass the callback
             ),
             const SizedBox(height: 10),
             Padding(
               padding: const EdgeInsets.only(bottom: 10),
-              child: BottomHomeIconNavigation(
+              child: BottomTabIconNavigation(
                 selectedIndex: _selectedIndex,
                 onIconTapped: _onIconTapped,
               ),
             ),
             Expanded(
-              child: SingleChildScrollView(
-                child: Container(
-                  decoration: const BoxDecoration(color: Colors.white),
-                  child: Column(
-                    children: [
-                      if (_selectedIndex == 0) ...[
-                        const HomeScreen(hotelName: 'Top Rated Hotels'),
-                        const RestaurantScreen(
-                            restaurantName: 'Top Rated Restaurants'),
-                      ],
-                      if (_selectedIndex == 1)
-                        const RestaurantScreen(
-                            restaurantName: 'All Available Restaurants'),
-                      if (_selectedIndex == 2)
-                        const HomeScreen(hotelName: 'All Available Hotels'),
-                    ],
-                  ),
-                ),
-              ),
+              child: _buildTabContent(), // Extract Tab Content Logic
             ),
           ],
         ),
@@ -203,6 +199,52 @@ class _TabScreenState extends State<TabScreen> {
           ),
         ),
       ],
+    );
+  }
+
+  Widget _buildTabContent() {
+    return SingleChildScrollView(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          if (_selectedIndex == 0) ...[
+            BlocProvider<HotelBloc>(
+              create: (context) =>
+                  HotelBloc(context.read())..add(FetchHotelsEvent()),
+              child: HomeScreen(
+                searchQuery: _searchQuery,
+                scrollDirection: Axis.horizontal,
+                rowOrColumn: 'row',
+                width: 300,
+              ),
+            ),
+            BlocProvider<RestaurantBloc>(
+              create: (context) =>
+                  RestaurantBloc(context.read())..add(FetchRestaurantsEvent()),
+              child: RestaurantScreen(
+                searchQuery: _searchQuery,
+                scrollDirection: Axis.horizontal,
+                rowOrColumn: 'row',
+                width: 300,
+              ),
+            ),
+          ],
+          if (_selectedIndex == 1)
+            RestaurantScreen(
+              searchQuery: _searchQuery,
+              scrollDirection: Axis.vertical,
+              rowOrColumn: 'column',
+              width: 380,
+            ),
+          if (_selectedIndex == 2)
+            HomeScreen(
+              searchQuery: _searchQuery,
+              scrollDirection: Axis.vertical,
+              rowOrColumn: 'column',
+              width: 380,
+            ),
+        ],
+      ),
     );
   }
 

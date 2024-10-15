@@ -1,7 +1,8 @@
+import 'package:equatable/equatable.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:hotel_flutter/data/model/hotel/room_model.dart';
 
-class HotelModel {
+class HotelModel extends Equatable {
   final String id;
   final String name;
   final String location;
@@ -35,11 +36,11 @@ class HotelModel {
           ? (json['rooms'] as List<dynamic>)
               .map((roomJson) => RoomModel.fromJson(roomJson))
               .toList()
-          : <RoomModel>[], // Default to empty list if not a list
+          : <RoomModel>[], // Default to an empty list if not a list
     );
   }
 
-  // Method to convert HotelModel to JSON
+  // Convert HotelModel to JSON
   Map<String, dynamic> toJson() {
     return {
       '_id': id,
@@ -62,4 +63,16 @@ class HotelModel {
       return [0.0, 0.0]; // Return [0.0, 0.0] if there is an error
     }
   }
+
+  @override
+  List<Object?> get props => [
+        id,
+        name,
+        location,
+        openingHours,
+        hotelImage,
+        averageRating,
+        averagePrice,
+        rooms,
+      ];
 }
