@@ -3,8 +3,14 @@ import 'package:flutter/material.dart';
 class TabHeader extends StatelessWidget {
   final String firstName;
   final String lastName;
+  final ValueChanged<String> onSearchChanged; // Add a callback
 
-  const TabHeader({super.key, required this.firstName, required this.lastName});
+  const TabHeader({
+    super.key,
+    required this.firstName,
+    required this.lastName,
+    required this.onSearchChanged,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -50,6 +56,8 @@ class TabHeader extends StatelessWidget {
         borderRadius: BorderRadius.circular(30.0),
       ),
       child: TextField(
+        onChanged: onSearchChanged, // Trigger callback on change
+
         decoration: InputDecoration(
           prefixIcon: const Icon(Icons.search, color: Colors.black),
           hintText: 'Search',
