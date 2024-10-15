@@ -1,6 +1,3 @@
-import 'package:hotel_flutter/data/model/hotel/hotel_model.dart'; // Import your hotel model
-import 'package:hotel_flutter/data/model/restaurant/restaurant_model.dart'; // Import your restaurant model
-
 class FavoriteModel {
   final List<String> hotelIds; // List of favorite hotel IDs
   final List<String> restaurantIds; // List of favorite restaurant IDs

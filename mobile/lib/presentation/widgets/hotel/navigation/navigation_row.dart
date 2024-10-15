@@ -73,7 +73,9 @@ class NavigationRowWithSwipe extends StatefulWidget {
   const NavigationRowWithSwipe({super.key});
 
   @override
-  _NavigationRowWithSwipeState createState() => _NavigationRowWithSwipeState();
+  State<StatefulWidget> createState() {
+    return _NavigationRowWithSwipeState();
+  }
 }
 
 class _NavigationRowWithSwipeState extends State<NavigationRowWithSwipe> {

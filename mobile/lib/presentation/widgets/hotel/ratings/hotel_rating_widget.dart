@@ -9,7 +9,9 @@ class HotelRatingWidget extends StatefulWidget {
   const HotelRatingWidget({super.key, required this.ratings});
 
   @override
-  _HotelRatingWidgetState createState() => _HotelRatingWidgetState();
+  State<StatefulWidget> createState() {
+    return _HotelRatingWidgetState();
+  }
 }
 
 class _HotelRatingWidgetState extends State<HotelRatingWidget> {
@@ -29,15 +31,11 @@ class _HotelRatingWidgetState extends State<HotelRatingWidget> {
     if (users.isNotEmpty) {
       setState(() {
         allUsers = users;
-        print("Loaded ${allUsers.length} users from SharedPreferences");
       });
-    } else {
-      print("No users found in SharedPreferences");
-    }
+    } else {}
   }
 
   List<RatingModel> _sortRatings(List<RatingModel> ratings) {
-    print("Sorting ratings by $selectedSort");
     if (selectedSort == "Highest") {
       ratings.sort((a, b) => b.rating.compareTo(a.rating));
     } else {
@@ -53,8 +51,6 @@ class _HotelRatingWidgetState extends State<HotelRatingWidget> {
     }
 
     List<RatingModel> sortedRatings = _sortRatings(widget.ratings);
-
-    print("Displaying ${sortedRatings.length} sorted ratings");
 
     return Column(
       children: [
@@ -114,15 +110,11 @@ class _HotelRatingWidgetState extends State<HotelRatingWidget> {
           itemCount: sortedRatings.length,
           itemBuilder: (context, index) {
             final rating = sortedRatings[index];
-            print("Rendering rating with score ${rating.rating}");
-
             UserModel? user = allUsers.firstWhere(
               (u) => u.id == rating.userId,
               orElse: () => UserModel(), // Returns empty UserModel if not found
             );
             if (user.firstName == null || user.lastName == null) {
-              print(
-                  "User not found or invalid for rating with score ${rating.rating}");
               return const SizedBox.shrink(); // Do not display anything
             }
             return Card(

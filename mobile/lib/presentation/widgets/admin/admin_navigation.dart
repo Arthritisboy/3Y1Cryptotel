@@ -35,9 +35,7 @@ class _AdminNavigationState extends State<AdminNavigation> {
       if (handleId != null) {
         context.read<BookingBloc>().add(FetchBookings(userId: handleId!));
       }
-    } catch (e) {
-      print('Error fetching ID from secure storage: $e');
-    }
+    } catch (e) {}
   }
 
   @override

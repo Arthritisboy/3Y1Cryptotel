@@ -55,7 +55,6 @@ class _HotelInputFieldsState extends State<HotelInputFields> {
   Future<void> _fetchUserId() async {
     userId = await secureStorage.read(key: 'userId');
     setState(() {}); // Rebuild the widget tree when userId is fetched
-    print(userId);
   }
 
   Future<void> _loadUserData() async {

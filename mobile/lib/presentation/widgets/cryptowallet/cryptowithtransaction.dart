@@ -42,16 +42,12 @@ class _CryptoWithTransactionState extends State<CryptoWithTransaction> {
 
   Future<void> _fetchUserId() async {
     userId = await _storage.read(key: 'userId');
-    print('Fetched User ID: $userId');
     if (userId != null) {
       BlocProvider.of<BookingBloc>(context).add(FetchBookings(userId: userId!));
-    } else {
-      print('No user ID found in secure storage.');
-    }
+    } else {}
   }
 
   void initializeAppKitModal() async {
-    print('Initializing ReownAppKitModal...');
     appKitModal = ReownAppKitModal(
       context: context,
       projectId: '40e5897bd6b0d9d2b27b717ec50906c3',
