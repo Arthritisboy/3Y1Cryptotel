@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:hotel_flutter/presentation/widgets/history/history_modal.dart';
 
 class HistoryRateBody extends StatelessWidget {
-  final String status; 
+  final String status;
 
   const HistoryRateBody({super.key, required this.status});
 
@@ -25,7 +25,7 @@ class HistoryRateBody extends StatelessWidget {
           ),
           padding: const EdgeInsets.all(16.0),
           child: ListView.builder(
-            itemCount: status == 'Pending' ? 5 : 3, 
+            itemCount: status == 'Pending' ? 5 : 3,
             itemBuilder: (context, index) {
               return Card(
                 margin: const EdgeInsets.symmetric(vertical: 8.0),
@@ -75,7 +75,7 @@ class HistoryRateBody extends StatelessWidget {
                                 );
                               },
                               style: ElevatedButton.styleFrom(
-                                backgroundColor: const Color(0xFF1C3473), 
+                                backgroundColor: const Color(0xFF1C3473),
                               ),
                               child: const Text('Rate'),
                             ),
