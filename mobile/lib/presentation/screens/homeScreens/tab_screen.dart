@@ -11,7 +11,6 @@ import 'package:hotel_flutter/data/model/auth/user_model.dart';
 import 'package:hotel_flutter/logic/bloc/auth/auth_bloc.dart';
 import 'package:hotel_flutter/logic/bloc/auth/auth_event.dart';
 import 'package:hotel_flutter/presentation/widgets/tabscreen/user_storage_helper.dart';
-
 import 'package:hotel_flutter/logic/bloc/auth/auth_state.dart';
 import 'package:hotel_flutter/presentation/screens/homeScreens/home_screen.dart';
 import 'package:hotel_flutter/presentation/screens/homeScreens/restaurant_screen.dart';
@@ -351,7 +350,7 @@ class _TabScreenState extends State<TabScreen> {
               'profile': profile,
               'gender': gender,
               'phoneNumber': phoneNumber,
-              'userId': userId
+              'userId': userId,
             },
           );
         } else {

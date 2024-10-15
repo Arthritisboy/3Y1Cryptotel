@@ -88,13 +88,13 @@ class AuthRepository {
     }
   }
 
-  //! Update Password
-  Future<void> updatePassword(String currentPassword, String newPassword,
-      String confirmPassword) async {
-    final response = await dataProvider.updatePassword(
-        currentPassword, newPassword, confirmPassword);
-    return response;
-  }
+  // //! Update Password
+  // Future<void> updatePassword(String currentPassword, String newPassword,
+  //     String confirmPassword) async {
+  //   final response = await dataProvider.updatePassword(
+  //       currentPassword, newPassword, confirmPassword);
+  //   return response;
+  // }
 
   //! Logout
   Future<void> logout() async {

@@ -97,6 +97,12 @@ class AuthDataProvider {
     return users.map((user) => UserModel.fromJson(user)).toList();
   }
 
+  //! Delete Account
+  Future<void> deleteAccount() async {
+    await _delete('$_baseUrl/users/deleteMe');
+    await _storage.deleteAll();
+  }
+
   //! Update User Profile Data
   Future<UserModel> updateUserData({
     String? firstName,
@@ -197,5 +203,23 @@ class AuthDataProvider {
       'Content-Type': 'application/json',
       if (token != null) 'Authorization': 'Bearer $token',
     };
+  }
+
+  //! Update User Onboarding
+  Future<void> completeOnboarding() async {
+    final token = await _storage.read(key: 'jwt');
+    final response = await http.put(
+      Uri.parse(
+          'https://3-y1-cryptotel-hazel.vercel.app/api/v1/users/updateHasCompletedOnboarding'),
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token',
+      },
+    );
+    if (response.statusCode != 200) {
+      final errorResponse = json.decode(response.body);
+      String errorMessage = errorResponse['message'] ?? 'An error occurred';
+      throw Exception('Failed to complete onboarding: $errorMessage');
+    }
   }
 }

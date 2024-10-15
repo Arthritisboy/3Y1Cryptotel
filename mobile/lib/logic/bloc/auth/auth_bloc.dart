@@ -89,19 +89,19 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       }
     });
 
-    on<ChangePasswordEvent>((event, emit) async {
-      emit(AuthLoading());
-      try {
-        await authRepository.updatePassword(
-          event.oldPassword,
-          event.newPassword,
-          event.confirmPassword,
-        );
-        emit(const AuthSuccess('Password changed successfully'));
-      } catch (e) {
-        emit(AuthError('Failed to change password: ${e.toString()}'));
-      }
-    });
+    // on<ChangePasswordEvent>((event, emit) async {
+    //   emit(AuthLoading());
+    //   try {
+    //     await authRepository.updatePassword(
+    //       event.oldPassword,
+    //       event.newPassword,
+    //       event.confirmPassword,
+    //     );
+    //     emit(const AuthSuccess('Password changed successfully'));
+    //   } catch (e) {
+    //     emit(AuthError('Failed to change password: ${e.toString()}'));
+    //   }
+    // });
 
     on<UpdateUserEvent>((event, emit) async {
       emit(AuthLoading());
