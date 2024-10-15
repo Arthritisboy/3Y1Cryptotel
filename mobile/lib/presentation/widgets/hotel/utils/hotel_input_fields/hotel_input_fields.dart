@@ -165,10 +165,6 @@ class _HotelInputFieldsState extends State<HotelInputFields> {
       timeOfDepartureController.text,
     );
 
-    // Debugging the parsed dates and times
-    print(
-        'Check-in DateTime: $arrivalDateTime, Check-out DateTime: $departureDateTime');
-
     // Ensure the number of adults is at least 1
     int adults = int.tryParse(adultsController.text) ?? 0;
     int children = int.tryParse(childrenController.text) ?? 0;
@@ -189,8 +185,6 @@ class _HotelInputFieldsState extends State<HotelInputFields> {
     if (arrivalDateTime != null &&
         departureDateTime != null &&
         departureDateTime.isBefore(arrivalDateTime)) {
-      print(
-          'Error: Check-out date and time cannot be before check-in date and time.');
       _showErrorDialog(context,
           'Check-out date and time cannot be before check-in date and time.');
       return;
@@ -204,15 +198,19 @@ class _HotelInputFieldsState extends State<HotelInputFields> {
       return;
     }
 
-    // Limit same-day bookings to 12 hours in advance using arrival time
-    if (arrivalDateTime != null && arrivalDateTime.day == now.day) {
-      Duration timeDifference = arrivalDateTime.difference(now);
-      print(
-          'Same-day booking time difference: ${timeDifference.inHours} hours');
-      if (timeDifference.inHours < 12) {
-        _showErrorDialog(context,
-            'Same-day bookings must be made at least 12 hours in advance.');
-        return;
+// **Same-day booking with 12-hour difference validation**
+    if (arrivalDateTime != null && departureDateTime != null) {
+      if (arrivalDateTime.day == departureDateTime.day) {
+        Duration timeDifference = departureDateTime.difference(arrivalDateTime);
+        print('Time difference: ${timeDifference.inHours} hours');
+
+        if (timeDifference.inHours < 12) {
+          _showErrorDialog(
+            context,
+            'For same-day bookings, there must be at least 12 hours between time of arrival and time of checkout.',
+          );
+          return;
+        }
       }
     }
 
