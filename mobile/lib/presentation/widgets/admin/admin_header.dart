@@ -24,7 +24,6 @@ class AdminHeader extends StatelessWidget {
               const Text(
                 'CRYPTOTEL',
                 style: TextStyle(
-                  fontFamily: 'HammerSmith',
                   fontSize: 25.0,
                   fontWeight: FontWeight.bold,
                   color: Color(0xFF1C3473),
@@ -38,7 +37,6 @@ class AdminHeader extends StatelessWidget {
           const Text(
             "Admin Panel",
             style: TextStyle(
-              fontFamily: 'HammerSmith',
               fontSize: 30,
               fontWeight: FontWeight.w400,
             ),

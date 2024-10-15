@@ -59,7 +59,6 @@ class HotelModel {
       List<Location> locations = await locationFromAddress(location);
       return [locations.first.latitude, locations.first.longitude];
     } catch (e) {
-      print("Error fetching coordinates for $location: $e");
       return [0.0, 0.0]; // Return [0.0, 0.0] if there is an error
     }
   }

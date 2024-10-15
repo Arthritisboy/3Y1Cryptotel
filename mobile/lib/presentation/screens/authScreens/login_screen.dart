@@ -67,7 +67,6 @@ class _LoginScreenState extends State<LoginScreen> {
                         child: Text(
                           'CRYPTOTEL',
                           style: TextStyle(
-                            fontFamily: 'HammerSmith',
                             fontSize: screenHeight * 0.03,
                             color: const Color(0xFF1C3473),
                           ),
@@ -102,9 +101,8 @@ class _LoginScreenState extends State<LoginScreen> {
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
                         Text(
-                          'HELLO! ACCESS AMAZING DEALS BY \nLOGGING IN NOW!.',
+                          'HELLO! ACCESS AMAZING DEALS BY \nLOGGING IN NOW!',
                           style: TextStyle(
-                            fontFamily: 'HammerSmith',
                             fontSize: screenHeight * 0.02,
                             color: Colors.black,
                           ),
@@ -113,7 +111,6 @@ class _LoginScreenState extends State<LoginScreen> {
                         const Text(
                           'LOG IN',
                           style: TextStyle(
-                            fontFamily: 'HammerSmith',
                             fontSize: 20,
                             color: Colors.black,
                           ),

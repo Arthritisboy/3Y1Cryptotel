@@ -80,49 +80,74 @@ flutter_icons:
 # The following section is specific to Flutter packages.
 flutter:
   assets:
+    - assets/fonts/helvetica/
     - assets/images/
-    - assets/images/foods/
     - assets/images/rooms/
     - assets/images/others/
     - assets/images/icons/
     - assets/images/restaurant/
-    - assets/images/hotels/
-    - assets/images/hotels/monarchHotel.jpg
-    - assets/images/hotels/starPlaza.jpg
-    - assets/images/hotels/lenoxHotel.jpg
     - assets/images/onboarding/
     - assets/images/rooms/MonarchHotel/deluxedoublebedroom1.jpg
     - assets/images/rooms/MonarchHotel/deluxedoublebedroom2.jpg
     - assets/images/rooms/MonarchHotel/deluxedoublebedroom3.jpg
     - assets/images/rooms/MonarchHotel/deluxedoublebedroom4.jpg
 
-    # - assets/images/others/hotel.png
-    # - assets/images/others/Vinna.jpg
-    # - assets/images/others/logowhite.png
-    # - assets/images/others/homepage.jpg
-    # - assets/images/rooms/hotelroom_1.png
-    # - assets/images/rooms/hotelroom_2.png
-    # - assets/images/foods/food.png
-    # - assets/images/foods/service_food.png
-    # - assets/images/rooms/hotelroom_3.jpg
-    # - assets/images/foods/special_food.png
-    # - assets/images/foods/pancake.png
-    # - assets/images/foods/steak.png
-    # - assets/images/foods/shrimp_pasta.png
-    # - assets/images/foods/spanish_latte.png
-    # - assets/images/foods/avocado.png
-    # - assets/images/foods/eggbreakfast.png
-    # - assets/images/foods/hamegg.png
-    # - assets/images/foods/pancake2.png
-    # - assets/images/foods/steak2.png
-    # - assets/images/foods/pasta.png
-    # - assets/images/foods/salad.png
-    # - assets/images/foods/cordon_blue.png
-
   fonts:
-    - family: HammerSmith
+    # - family: HelveticaNeue
+    #   fonts:
+    #     - asset: assets/fonts/helvetica/HelveticaNeueUltraLight.otf
+    #       weight: 100
+    #     - asset: assets/fonts/helvetica/HelveticaNeueUltraLightItalic.otf
+    #       weight: 100
+    #       style: italic
+    #     - asset: assets/fonts/helvetica/HelveticaNeueThin.otf
+    #       weight: 200
+    #     - asset: assets/fonts/helvetica/HelveticaNeueThinItalic.otf
+    #       weight: 200
+    #       style: italic
+    #     - asset: assets/fonts/helvetica/HelveticaNeueLight.otf
+    #       weight: 300
+    #     - asset: assets/fonts/helvetica/HelveticaNeueLightItalic.otf
+    #       weight: 300
+    #       style: italic
+    #     - asset: assets/fonts/helvetica/HelveticaNeueRoman.otf
+    #       weight: 400
+    #     - asset: assets/fonts/helvetica/HelveticaNeueItalic.ttf
+    #       weight: 400
+    #       style: italic
+    #     - asset: assets/fonts/helvetica/HelveticaNeueMedium.otf
+    #       weight: 500
+    #     - asset: assets/fonts/helvetica/HelveticaNeueMediumItalic.otf
+    #       weight: 500
+    #       style: italic
+    #     - asset: assets/fonts/helvetica/HelveticaNeueBold.otf
+    #       weight: 700
+    #     - asset: assets/fonts/helvetica/HelveticaNeueBoldItalic.otf
+    #       weight: 700
+    #       style: italic
+    #     - asset: assets/fonts/helvetica/HelveticaNeueHeavy.otf
+    #       weight: 800
+    #     - asset: assets/fonts/helvetica/HelveticaNeueHeavyItalic.otf
+    #       weight: 800
+    #       style: italic
+    #     - asset: assets/fonts/helvetica/HelveticaNeueBlack.otf
+    #       weight: 900
+    #     - asset: assets/fonts/helvetica/HelveticaNeueBlackItalic.otf
+    #       weight: 900
+    #       style: italic
+    #       fonts:
+    - family: SFPro
       fonts:
-        - asset: custom_fonts/HammersmithOne.ttf
+        - asset: assets/fonts/sf-pro/SFProDisplayRegular.otf
+        - asset: assets/fonts/sf-pro/SFProDisplayMedium.otf
+        - asset: assets/fonts/sf-pro/SFProDisplayBold.otf
+        - asset: assets/fonts/sf-pro/SFProDisplayLightItalic.otf
+        - asset: assets/fonts/sf-pro/SFProDisplayThinItalic.otf
+        - asset: assets/fonts/sf-pro/SFProDisplayHeavyItalic.otf
+        - asset: assets/fonts/sf-pro/SFProDisplayUltraLightItalic.otf
+        - asset: assets/fonts/sf-pro/SFProDisplaySemiBoldItalic.otf
+        - asset: assets/fonts/sf-pro/SFProDisplayBlackItalic.otf
+
   # The following line ensures that the Material Icons font is
   # included with your application, so that you can use the icons in
   # the material Icons class.

@@ -110,7 +110,6 @@ class RoomSelection extends StatelessWidget {
                                 fontSize: 18.0,
                                 fontWeight: FontWeight.bold,
                                 color: Colors.black,
-                                fontFamily: 'Hammersmith',
                               ),
                             ),
                             const SizedBox(height: 5),
@@ -119,7 +118,6 @@ class RoomSelection extends StatelessWidget {
                               style: const TextStyle(
                                 fontSize: 16.0,
                                 color: Colors.black,
-                                fontFamily: 'Hammersmith',
                               ),
                             ),
                             const SizedBox(height: 5),
@@ -128,7 +126,6 @@ class RoomSelection extends StatelessWidget {
                               style: const TextStyle(
                                 fontSize: 16.0,
                                 color: Colors.black,
-                                fontFamily: 'Hammersmith',
                               ),
                             ),
                             const SizedBox(height: 5),

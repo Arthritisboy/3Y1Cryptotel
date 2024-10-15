@@ -164,8 +164,6 @@ class AuthDataProvider {
     final String url = 'https://3-y1-cryptotel-hazel.vercel.app/api/v1/users';
     final token = await storage.read(key: 'jwt');
 
-    print('Token retrieved: $token'); // Log the JWT token
-
     if (token == null) {
       _logger
           .severe('Authorization token is missing'); // Log if token is missing
@@ -180,9 +178,6 @@ class AuthDataProvider {
           'Authorization': 'Bearer $token',
         },
       );
-
-      print('API response status code: ${response.statusCode}');
-      print('API response body: ${response.body}');
 
       if (response.statusCode == 200) {
         final data = json.decode(response.body)['data']['users'] as List;
@@ -296,15 +291,11 @@ class AuthDataProvider {
         },
       );
 
-      print('Logout response status: ${response.statusCode}');
-      print('Logout response body: ${response.body}');
       await storage.deleteAll(); // Clear all stored data
-      print('All storage data cleared successfully.');
       if (response.statusCode != 200) {
         throw Exception('Failed to logout: ${response.body}');
       }
     } catch (e) {
-      print('Error clearing storage: $e');
       throw Exception('Failed to clear storage: $e');
     }
   }

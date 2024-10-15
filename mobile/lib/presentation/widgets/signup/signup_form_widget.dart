@@ -37,15 +37,12 @@ class _SignupFormState extends State<SignupForm> {
         children: [
           const Text(
             'HELLO! CREATE AN ACCOUNT TO ACCESS AMAZING DEALS.',
-            style: TextStyle(
-                fontFamily: 'HammerSmith', fontSize: 20, color: Colors.black),
+            textAlign: TextAlign.center,
+            style: TextStyle(fontSize: 20, color: Colors.black),
           ),
           const SizedBox(height: 16),
           const Text('SIGN UP',
-              style: TextStyle(
-                  fontFamily: 'HammerSmith',
-                  fontSize: 20,
-                  color: Colors.black)),
+              style: TextStyle(fontSize: 20, color: Colors.black)),
           const SizedBox(height: 16),
           CustomTextFormField(
             label: 'First Name',
@@ -77,10 +74,6 @@ class _SignupFormState extends State<SignupForm> {
 
           // Gender Dropdown
           _buildGenderDropdown(screenWidth),
-          const SizedBox(height: 8),
-
-          // Role Dropdown
-          _buildRoleDropdown(screenWidth),
           const SizedBox(height: 8),
 
           // Email Input
@@ -159,7 +152,6 @@ class _SignupFormState extends State<SignupForm> {
                             'confirmPassword': _confirmPasswordController.text,
                             'phoneNumber': _phoneNumberController.text,
                             'gender': _selectedGender,
-                            'roles': _selectedRole, // Pass role here
                           },
                         );
                       }
@@ -219,46 +211,6 @@ class _SignupFormState extends State<SignupForm> {
           validator: (value) {
             if (value == null) {
               return 'Please select your gender';
-            }
-            return null;
-          },
-        ),
-      ),
-    );
-  }
-
-  Widget _buildRoleDropdown(double screenWidth) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16),
-      child: SizedBox(
-        width: screenWidth * 0.7,
-        height: screenWidth * 0.1,
-        child: DropdownButtonFormField<String>(
-          decoration: InputDecoration(
-            labelText: 'Role',
-            labelStyle: const TextStyle(color: Colors.black),
-            border: const OutlineInputBorder(
-              borderSide: BorderSide(color: Colors.black),
-            ),
-            enabledBorder: const OutlineInputBorder(
-              borderSide: BorderSide(color: Colors.black),
-            ),
-            contentPadding:
-                const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
-          ),
-          value: _selectedRole,
-          items: const [
-            DropdownMenuItem(value: 'user', child: Text('User')),
-            DropdownMenuItem(value: 'admin', child: Text('Admin')),
-          ],
-          onChanged: (value) {
-            setState(() {
-              _selectedRole = value;
-            });
-          },
-          validator: (value) {
-            if (value == null) {
-              return 'Please select your role';
             }
             return null;
           },

@@ -21,7 +21,6 @@ class HeaderWidget extends StatelessWidget {
         child: Text(
           title,
           style: TextStyle(
-            fontFamily: 'HammerSmith',
             fontSize: screenHeight * 0.03,
             color: const Color(0xFF1C3473),
           ),

@@ -35,7 +35,6 @@ class _CryptoWithTransactionState extends State<CryptoWithTransaction> {
   @override
   void initState() {
     super.initState();
-    print('Initializing CryptoWithTransaction widget...');
     _fetchUserId();
     initializeAppKitModal();
   }
@@ -65,7 +64,6 @@ class _CryptoWithTransactionState extends State<CryptoWithTransaction> {
     );
 
     await appKitModal?.init();
-    print('AppKitModal initialized successfully.');
   }
 
   void _showSendDialog(BuildContext context, String hotelName) {
@@ -143,19 +141,15 @@ class _CryptoWithTransactionState extends State<CryptoWithTransaction> {
   Widget build(BuildContext context) {
     return BlocBuilder<BookingBloc, BookingState>(
       builder: (context, state) {
-        print('Current Bloc State: $state');
         if (state is BookingLoading) {
-          print('Loading bookings...');
           return const Center(child: CircularProgressIndicator());
         } else if (state is BookingFailure) {
-          print('Error: ${state.error}');
           return Center(child: Text('Error: ${state.error}'));
         } else if (state is BookingSuccess) {
           // Filter accepted bookings only
           final acceptedBookings = state.bookings
               .where((booking) => booking.status?.toLowerCase() == 'accepted')
               .toList();
-          print('Fetched ${acceptedBookings.length} accepted bookings.');
 
           if (acceptedBookings.isEmpty) {
             return Column(
@@ -219,7 +213,6 @@ class _CryptoWithTransactionState extends State<CryptoWithTransaction> {
             itemCount: acceptedBookings.length,
             itemBuilder: (context, index) {
               final booking = acceptedBookings[index];
-              print('Displaying booking: ${booking.hotelName}');
 
               return Card(
                 margin: const EdgeInsets.all(12.0),

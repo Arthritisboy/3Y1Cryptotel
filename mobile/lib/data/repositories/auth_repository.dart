@@ -68,11 +68,7 @@ class AuthRepository {
   //! Fetch all users with filtering conditions
   Future<List<UserModel>> fetchAllUsers() async {
     try {
-      print('Starting user fetch from DataProvider...'); // Log before fetching
       final users = await dataProvider.fetchAllUsers();
-
-      // Log the total users before filtering
-      print('Total users before filtering: ${users.length}');
 
       // Filter users
       final filteredUsers = users
@@ -84,7 +80,6 @@ class AuthRepository {
           .toList();
 
       // Log the filtered users count
-      print('Filtered users count: ${filteredUsers.length}');
 
       return filteredUsers; // Return the filtered users
     } catch (error) {

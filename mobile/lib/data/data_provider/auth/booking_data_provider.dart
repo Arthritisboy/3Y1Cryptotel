@@ -24,9 +24,6 @@ class BookingDataProvider {
       },
     );
 
-    print('API response status: ${response.statusCode}');
-    print('API response body: ${response.body}');
-
     if (response.statusCode == 200) {
       final List<dynamic> bookingsJson =
           jsonDecode(response.body)['data']['bookings'];
@@ -57,9 +54,6 @@ class BookingDataProvider {
       body: jsonEncode(booking.toJson()),
     );
 
-    print('API response status: ${response.statusCode}');
-    print('API response body: ${response.body}');
-
     if (response.statusCode == 201) {
       return BookingModel.fromJson(
           jsonDecode(response.body)['data']['booking']);
@@ -88,9 +82,6 @@ class BookingDataProvider {
       body: jsonEncode(booking.toJson()), // Use toJson() to send all fields
     );
 
-    print('API response status: ${response.statusCode}');
-    print('API response body: ${response.body}');
-
     if (response.statusCode != 200) {
       final errorResponse = json.decode(response.body);
       String errorMessage =
@@ -113,9 +104,6 @@ class BookingDataProvider {
         'Authorization': 'Bearer $token',
       },
     );
-
-    print('API response status: ${response.statusCode}');
-    print('API response body: ${response.body}');
 
     if (response.statusCode != 204) {
       final errorResponse = json.decode(response.body);
