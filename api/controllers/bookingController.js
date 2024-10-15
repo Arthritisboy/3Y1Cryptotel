@@ -74,15 +74,8 @@ exports.createBooking = catchAsync(async (req, res, next) => {
     const checkIn = new Date(checkInDate);
     const checkOut = new Date(checkOutDate);
     const now = new Date();
-
-    console.log(`Current Time: ${now}`);
-    console.log(`Check-in Date: ${checkIn}`);
-    console.log(`Check-out Date: ${checkOut}`);
-
-    if (checkIn < checkOutDate) {
-      console.log('Check-in date cannot be in the past.');
-      return next(new AppError('Check-in date cannot be in the past.', 400));
-    }
+    const arrivalTime = new Date(`${checkInDate}T${timeOfArrival}`);
+    const departureTime = new Date(`${checkOutDate}T${timeOfDeparture}`);
 
     // Ensure check-in date is not in the past
     if (checkIn < now) {
@@ -91,18 +84,18 @@ exports.createBooking = catchAsync(async (req, res, next) => {
     }
 
     // Ensure the check-in and check-out dates are at least 12 hours apart
-    const hoursDifference = (checkIn - now) / (1000 * 60 * 60); // Convert ms to hours
+    const timeDifference = (departureTime - arrivalTime) / (1000 * 60 * 60); // Convert ms to hours
     console.log(
-      `Hours difference between now and check-in: ${hoursDifference}`,
+      `Time difference between arrival and departure: ${timeDifference} hours`,
     );
 
-    if (hoursDifference < 12) {
+    if (timeDifference < 12) {
       console.log(
-        'Same-day bookings must be made at least 12 hours in advance.',
+        'Arrival and departure times must have at least 12 hours between them.',
       );
       return next(
         new AppError(
-          'Same-day bookings must be made at least 12 hours in advance.',
+          'Arrival and departure times must be at least 12 hours apart.',
           400,
         ),
       );
@@ -219,6 +212,11 @@ exports.updateBooking = catchAsync(async (req, res, next) => {
       timeOfDeparture,
       status,
     } = req.body;
+
+    // Validate check-in and check-out dates
+    const checkIn = new Date(checkInDate);
+    const checkOut = new Date(checkOutDate);
+    const now = new Date();
 
     // Find the booking and update the details
     const updatedBooking = await Booking.findByIdAndUpdate(
