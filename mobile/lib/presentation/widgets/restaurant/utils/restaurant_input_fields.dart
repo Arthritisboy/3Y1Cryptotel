@@ -126,9 +126,9 @@ class _RestaurantInputFieldsState extends State<RestaurantInputFields> {
     // Close the keyboard to prevent interference with dialogs
     FocusScope.of(context).unfocus();
 
-    // Parse the dates and times from the input controllers
-    DateTime? checkInDate = DateTime.tryParse(checkInDateController.text);
-    DateTime? checkOutDate = DateTime.tryParse(checkOutDateController.text);
+    // Parse dates and times from the input controllers
+    DateTime? checkInDate = _parseDate(checkInDateController.text);
+    DateTime? checkOutDate = _parseDate(checkOutDateController.text);
     DateTime now = DateTime.now();
 
     // Combine the arrival and departure times with their corresponding dates
@@ -146,7 +146,8 @@ class _RestaurantInputFieldsState extends State<RestaurantInputFields> {
     int children = int.tryParse(childrenController.text) ?? 0;
 
     if (adults == 0 && children == 0) {
-      _showErrorDialog(context, 'Please fill in all the required details.');
+      _showErrorDialog(context,
+          'Please provide the number of guests to proceed with booking.');
       return;
     }
 
@@ -156,47 +157,46 @@ class _RestaurantInputFieldsState extends State<RestaurantInputFields> {
       return;
     }
 
-    // Check if the departure time is before the arrival time
-    if (arrivalDateTime != null &&
-        departureDateTime != null &&
-        departureDateTime.isBefore(arrivalDateTime)) {
-      _showErrorDialog(
-          context, 'Departure time cannot be before arrival time.');
-      return;
-    }
-
-    // Ensure the arrival date and time is not in the past
-    if (arrivalDateTime != null && arrivalDateTime.isBefore(now)) {
-      _showErrorDialog(context, 'Arrival time cannot be in the past.');
-      return;
-    }
-
-    // Validate same-day booking with a 12-hour difference
+    // Validate arrival and departure times
     if (arrivalDateTime != null && departureDateTime != null) {
+      if (departureDateTime.isBefore(arrivalDateTime)) {
+        _showErrorDialog(
+            context, 'Departure time cannot be before the arrival time.');
+        return;
+      }
+
+      // Same-day booking with 12-hour difference validation
       if (arrivalDateTime.day == departureDateTime.day) {
         Duration timeDifference = departureDateTime.difference(arrivalDateTime);
         if (timeDifference.inHours < 12) {
-          _showErrorDialog(context,
-              'For same-day bookings, there must be at least 12 hours between arrival and departure.');
+          _showErrorDialog(
+            context,
+            'For same-day bookings, the departure time must be at least 12 hours after the arrival time.',
+          );
           return;
         }
       }
     }
 
-    // Proceed with the booking if all validations pass
+    // Ensure the arrival date and time is not in the past
+    if (arrivalDateTime != null && arrivalDateTime.isBefore(now)) {
+      _showErrorDialog(context, 'The arrival time cannot be in the past.');
+      return;
+    }
+
+    // Validate total guests against the restaurant capacity
+    final int totalGuests = adults + children;
+    if (totalGuests > widget.capacity) {
+      _showCapacityErrorDialog(context); // Show capacity error
+      return;
+    }
+
+    // Proceed with booking if all validations pass
     if (checkInDate != null &&
         checkOutDate != null &&
         arrivalDateTime != null &&
         departureDateTime != null &&
         userId != null) {
-      final int totalGuests = adults + children;
-
-      // Check if the total number of guests exceeds the restaurant capacity
-      if (totalGuests > widget.capacity) {
-        _showCapacityErrorDialog(context);
-        return;
-      }
-
       final booking = BookingModel(
         bookingType: 'RestaurantBooking',
         restaurantId: widget.restaurantId,
@@ -221,6 +221,15 @@ class _RestaurantInputFieldsState extends State<RestaurantInputFields> {
             booking: booking,
             userId: userId!,
           ));
+    }
+  }
+
+  DateTime? _parseDate(String date) {
+    try {
+      return DateTime.parse(date);
+    } catch (e) {
+      print('Date parsing error: $e');
+      return null;
     }
   }
 
