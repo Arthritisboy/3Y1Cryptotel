@@ -186,6 +186,9 @@ class _TabScreenState extends State<TabScreen> {
             ),
           ],
         ),
+        if (_searchQuery.isNotEmpty)
+          _buildSearchSuggestions(), // Show suggestions
+
         Positioned(
           top: 40.0,
           right: 10.0,
@@ -202,6 +205,60 @@ class _TabScreenState extends State<TabScreen> {
     );
   }
 
+  Widget _buildSearchSuggestions() {
+    List<String> suggestions = [
+      'The Monarch Hotel',
+      'Star Plaze Hotel',
+      'Matutina’s',
+      'Dagupeña',
+      'Lenox Hotel',
+    ];
+
+    List<String> filteredSuggestions = suggestions
+        .where(
+            (hotel) => hotel.toLowerCase().contains(_searchQuery.toLowerCase()))
+        .toList();
+
+    return Positioned(
+      top: 235, // Adjust the top position to align correctly
+      left: 16,
+      right: 16,
+      child: Material(
+        elevation: 5,
+        color: Colors.transparent, // Make Material background transparent
+        borderRadius: BorderRadius.circular(10), // Apply border radius
+        child: Container(
+          decoration: BoxDecoration(
+            color: Colors.white, // White background for dropdown
+            borderRadius: BorderRadius.circular(10), // Smooth rounded corners
+            border: Border.all(
+              color: Colors.grey, // Light gray border
+              width: 1.0,
+            ),
+          ),
+          child: ListView.builder(
+            shrinkWrap: true,
+            itemCount: filteredSuggestions.length,
+            itemBuilder: (context, index) {
+              return ListTile(
+                title: Text(
+                  filteredSuggestions[index],
+                  style: const TextStyle(fontSize: 18, color: Colors.black),
+                ),
+                onTap: () {
+                  setState(() {
+                    _searchQuery = filteredSuggestions[index];
+                    filteredSuggestions = []; // Clear the list on selection
+                  });
+                },
+              );
+            },
+          ),
+        ),
+      ),
+    );
+  }
+
   Widget _buildTabContent() {
     return SingleChildScrollView(
       child: Column(
@@ -215,7 +272,7 @@ class _TabScreenState extends State<TabScreen> {
                 searchQuery: _searchQuery,
                 scrollDirection: Axis.horizontal,
                 rowOrColumn: 'row',
-                width: 300,
+                width: 320,
               ),
             ),
             BlocProvider<RestaurantBloc>(
@@ -225,7 +282,7 @@ class _TabScreenState extends State<TabScreen> {
                 searchQuery: _searchQuery,
                 scrollDirection: Axis.horizontal,
                 rowOrColumn: 'row',
-                width: 300,
+                width: 320,
               ),
             ),
           ],
@@ -234,14 +291,14 @@ class _TabScreenState extends State<TabScreen> {
               searchQuery: _searchQuery,
               scrollDirection: Axis.vertical,
               rowOrColumn: 'column',
-              width: 380,
+              width: 400,
             ),
           if (_selectedIndex == 2)
             HomeScreen(
               searchQuery: _searchQuery,
               scrollDirection: Axis.vertical,
               rowOrColumn: 'column',
-              width: 380,
+              width: 400,
             ),
         ],
       ),

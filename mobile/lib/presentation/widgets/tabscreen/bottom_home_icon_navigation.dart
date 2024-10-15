@@ -94,7 +94,7 @@ class BottomTabIconNavigation extends StatelessWidget {
         ),
         if (isSelected)
           Padding(
-            padding: const EdgeInsets.only(top: 1.0),
+            padding: const EdgeInsets.only(top: 4.0),
           ),
       ],
     );

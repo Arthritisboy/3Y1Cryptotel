@@ -36,7 +36,7 @@ class CardWidget extends StatelessWidget {
                     const BorderRadius.vertical(top: Radius.circular(12.0)),
                 child: Image.network(
                   imagePath, // Load image from network URL
-                  height: 190.0, // Increase the height of the image section
+                  height: 220.0, // Increase the height of the image section
                   width: double.infinity,
                   fit: BoxFit.cover, // Ensure the image fits the container
                   loadingBuilder: (context, child, loadingProgress) {
