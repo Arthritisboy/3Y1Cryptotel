@@ -3,7 +3,7 @@ import 'package:image_picker/image_picker.dart';
 import 'dart:io';
 
 class CreateRoom extends StatefulWidget {
-  const CreateRoom({Key? key}) : super(key: key);
+  const CreateRoom({super.key});
 
   @override
   _CreateRoomState createState() => _CreateRoomState();

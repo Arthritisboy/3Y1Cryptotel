@@ -1,5 +1,5 @@
 import 'package:hotel_flutter/data/data_provider/auth/favorite_data_provider.dart';
-import 'package:hotel_flutter/data/model/favorite/favorite_model.dart';
+import 'package:hotel_flutter/data/model/favorite/favorite_model.dart'; // Make sure to have the correct path
 
 class FavoriteRepository {
   final FavoriteDataProvider dataProvider;
@@ -12,11 +12,7 @@ class FavoriteRepository {
       final response = await dataProvider.getFavorites(userId);
 
       // Check if response is of expected type
-      if (response is FavoriteModel) {
-        return response; // Return the FavoriteModel directly
-      } else {
-        throw Exception('Expected FavoriteModel, got ${response.runtimeType}');
-      }
+      return response; // Return the FavoriteModel directly
     } catch (e) {
       // Log or handle errors accordingly
       throw Exception('Failed to fetch favorites: ${e.toString()}');

@@ -1,3 +1,6 @@
+// Import your hotel model
+// Import your restaurant model
+
 class FavoriteModel {
   final List<String> hotelIds; // List of favorite hotel IDs
   final List<String> restaurantIds; // List of favorite restaurant IDs
