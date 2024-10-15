@@ -13,6 +13,7 @@ import 'package:hotel_flutter/logic/bloc/booking/booking_bloc.dart';
 import 'package:hotel_flutter/logic/bloc/hotel/hotel_bloc.dart';
 import 'package:hotel_flutter/logic/bloc/restaurant/restaurant_bloc.dart';
 import 'package:hotel_flutter/presentation/screens/admin/admin_appScreen.dart';
+import 'package:hotel_flutter/presentation/screens/admin/admin_userScreen.dart';
 import 'package:hotel_flutter/presentation/screens/homeScreens/splash_screen.dart';
 import 'package:hotel_flutter/router/app_router.dart';
 import 'package:hotel_flutter/data/repositories/auth_repository.dart';
@@ -66,7 +67,7 @@ class MyApp extends StatelessWidget {
           title: 'Cryptotel',
           onGenerateRoute: AppRouter(bookingBloc).onGenerateRoute,
           theme: _buildAppTheme(context),
-          home: const AdminAppscreen(),
+          home: const AdminScreen(),
         ),
       ),
     );
