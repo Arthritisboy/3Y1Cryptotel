@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:hotel_flutter/logic/bloc/auth/auth_bloc.dart';
+import 'package:hotel_flutter/logic/bloc/auth/auth_event.dart';
 
 class DeleteAccountButton extends StatelessWidget {
   const DeleteAccountButton({super.key});
@@ -14,24 +17,22 @@ class DeleteAccountButton extends StatelessWidget {
             return AlertDialog(
               title: const Text("Confirm Delete"),
               content: const Text(
-                  "Are you sure you want to delete your account? The account will be disabled for 30 days before it is permanently deleted."),
+                "Are you sure you want to delete your account? "
+                "The account will be disabled for 30 days before it is permanently deleted.",
+              ),
               actions: [
                 TextButton(
                   onPressed: () {
-                    // Close the dialog without deleting
-                    Navigator.of(context).pop();
+                    Navigator.of(context).pop(); // Close dialog
                   },
                   child: const Text("Cancel"),
                 ),
                 TextButton(
                   onPressed: () {
-                    // Handle the delete action here
-                    Navigator.of(context).pop(); // Close the dialog
-                    // Add your delete account logic here
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                          content: Text('Account deleted successfully')),
-                    );
+                    Navigator.of(context).pop(); // Close dialog
+                    context
+                        .read<AuthBloc>()
+                        .add(DeleteAccountEvent()); // Trigger delete event
                   },
                   child: const Text(
                     "Delete",

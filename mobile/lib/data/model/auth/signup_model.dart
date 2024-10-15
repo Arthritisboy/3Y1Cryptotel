@@ -21,7 +21,7 @@ class SignUpModel {
     this.profilePicture,
   });
 
-  Map<String, dynamic> toJson() {
+  Map<String, String> toJson() {
     return {
       'firstName': firstName,
       'lastName': lastName,
