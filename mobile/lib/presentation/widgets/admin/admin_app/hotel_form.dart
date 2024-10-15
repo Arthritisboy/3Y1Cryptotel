@@ -30,7 +30,6 @@ class _HotelFormScreenState extends State<HotelFormScreen> {
       });
     }
   }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
