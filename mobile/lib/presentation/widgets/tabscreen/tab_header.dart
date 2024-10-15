@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 
-class TabHeader extends StatelessWidget {
+class TabHeader extends StatefulWidget {
   final String firstName;
   final String lastName;
-  final ValueChanged<String> onSearchChanged; // Add a callback
+  final ValueChanged<String> onSearchChanged;
 
   const TabHeader({
     super.key,
@@ -11,6 +11,31 @@ class TabHeader extends StatelessWidget {
     required this.lastName,
     required this.onSearchChanged,
   });
+
+  @override
+  State<TabHeader> createState() => _TabHeaderState();
+}
+
+class _TabHeaderState extends State<TabHeader> {
+  List<String> suggestions = [
+    'The Monarch Hotel',
+    'Star Plaze Hotel',
+    'Matutina’s',
+    'Dagupeña',
+    'Lenox Hotel',
+  ];
+  List<String> filteredSuggestions = [];
+
+  void filterSearchResults(String query) {
+    setState(() {
+      filteredSuggestions = query.isEmpty
+          ? []
+          : suggestions
+              .where(
+                  (hotel) => hotel.toLowerCase().contains(query.toLowerCase()))
+              .toList();
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -38,13 +63,16 @@ class TabHeader extends StatelessWidget {
             style: TextStyle(fontSize: 25, fontWeight: FontWeight.w400),
           ),
           Text(
-            "Like to Travel, $firstName", // Use the firstName variable here
+            "Like to Travel, ${widget.firstName}",
             style: const TextStyle(fontSize: 25, fontWeight: FontWeight.w400),
           ),
-          const SizedBox(
-            height: 10,
+          const SizedBox(height: 10),
+          Stack(
+            children: [
+              _buildSearchField(),
+              if (filteredSuggestions.isNotEmpty) _buildSuggestionsList(),
+            ],
           ),
-          _buildSearchField(),
         ],
       ),
     );
@@ -56,8 +84,10 @@ class TabHeader extends StatelessWidget {
         borderRadius: BorderRadius.circular(30.0),
       ),
       child: TextField(
-        onChanged: onSearchChanged, // Trigger callback on change
-
+        onChanged: (query) {
+          widget.onSearchChanged(query);
+          filterSearchResults(query); // Filter suggestions
+        },
         decoration: InputDecoration(
           prefixIcon: const Icon(Icons.search, color: Colors.black),
           hintText: 'Search',
@@ -76,16 +106,38 @@ class TabHeader extends StatelessWidget {
             borderRadius: BorderRadius.circular(30.0),
             borderSide: const BorderSide(color: Colors.grey, width: 1.0),
           ),
-          focusedErrorBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(30.0),
-            borderSide: const BorderSide(color: Colors.grey, width: 1.0),
-          ),
-          errorBorder: InputBorder.none,
           contentPadding:
               const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
         ),
         style: const TextStyle(color: Colors.black),
         cursorColor: Colors.black,
+      ),
+    );
+  }
+
+  Widget _buildSuggestionsList() {
+    return Positioned(
+      top: 60, // Aligns suggestions under the search field
+      left: 0,
+      right: 0,
+      child: Material(
+        elevation: 5,
+        borderRadius: BorderRadius.circular(10),
+        child: ListView.builder(
+          shrinkWrap: true,
+          physics: const NeverScrollableScrollPhysics(),
+          itemCount: filteredSuggestions.length,
+          itemBuilder: (context, index) {
+            return ListTile(
+              title: Text(filteredSuggestions[index]),
+              onTap: () {
+                setState(() {
+                  filteredSuggestions = []; // Clear suggestions on tap
+                });
+              },
+            );
+          },
+        ),
       ),
     );
   }
