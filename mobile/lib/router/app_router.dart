@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hotel_flutter/logic/bloc/booking/booking_bloc.dart';
-import 'package:hotel_flutter/presentation/screens/admin/admin_screen.dart';
+import 'package:hotel_flutter/presentation/screens/admin/admin_userScreen.dart';
 import 'package:hotel_flutter/presentation/screens/drawerScreens/history_screen.dart';
 import 'package:hotel_flutter/presentation/screens/homeScreens/onboarding_screen.dart';
 import 'package:hotel_flutter/presentation/screens/drawerScreens/crypto_wallet.dart';
