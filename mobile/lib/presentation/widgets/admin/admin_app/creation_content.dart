@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:hotel_flutter/presentation/widgets/admin/hotel_form.dart';
-import 'package:hotel_flutter/presentation/widgets/admin/restaurant_form.dart';
+import 'package:hotel_flutter/presentation/widgets/admin/admin_app/hotel_form.dart';
+import 'package:hotel_flutter/presentation/widgets/admin/admin_app/restaurant_form.dart';
 
 class CreationContent extends StatelessWidget {
   const CreationContent({super.key});
 
-  // Function to handle "Create Hotel" button press
   void _navigateToHotelForm(BuildContext context) {
     Navigator.push(
       context,
@@ -13,7 +12,6 @@ class CreationContent extends StatelessWidget {
     );
   }
 
-  // Function to handle "Create Restaurant" button press
   void _navigateToRestaurantForm(BuildContext context) {
     Navigator.push(
       context,
@@ -41,7 +39,6 @@ class CreationContent extends StatelessWidget {
         ),
         const SizedBox(height: 10),
 
-        // Action-oriented Guide
         Text(
           'Select whether you want to create a hotel or a restaurant. Once you choose, you\'ll be guided step-by-step to set up your establishment and manage its details.',
           style: Theme.of(context).textTheme.bodyMedium,
@@ -49,7 +46,6 @@ class CreationContent extends StatelessWidget {
         ),
         const SizedBox(height: 20),
 
-        // Grid of Selection Cards
         Expanded(
           child: GridView.count(
             crossAxisCount: 2,
