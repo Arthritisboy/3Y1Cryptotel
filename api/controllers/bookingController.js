@@ -83,22 +83,19 @@ exports.createBooking = catchAsync(async (req, res, next) => {
       return next(new AppError('Check-in date cannot be in the past.', 400));
     }
 
-    // Ensure the check-in and check-out dates are at least 12 hours apart
-    const timeDifference = (departureTime - arrivalTime) / (1000 * 60 * 60); // Convert ms to hours
-    console.log(
-      `Time difference between arrival and departure: ${timeDifference} hours`,
-    );
+    // Validate 12-hour difference only if check-in and check-out are the same day
+    if (checkIn.toDateString() === checkOut.toDateString()) {
+      const timeDifference = (departureTime - arrivalTime) / (1000 * 60 * 60); // Convert ms to hours
+      console.log(`Time difference: ${timeDifference} hours`);
 
-    if (timeDifference < 12) {
-      console.log(
-        'Arrival and departure times must have at least 12 hours between them.',
-      );
-      return next(
-        new AppError(
-          'Arrival and departure times must be at least 12 hours apart.',
-          400,
-        ),
-      );
+      if (timeDifference < 12) {
+        return next(
+          new AppError(
+            'For same-day bookings, there must be at least 12 hours between arrival and departure.',
+            400,
+          ),
+        );
+      }
     }
 
     // Ensure at least one adult is present
