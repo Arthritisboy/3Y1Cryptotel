@@ -100,7 +100,14 @@ class _PendingModalState extends State<PendingModal> {
 
   Future<void> _confirmReschedule() async {
     if (_checkInDate == _checkOutDate) {
-      _showValidationError();
+      _showValidationError(
+          'Check-in and check-out cannot be on the same day without a 12-hour difference.');
+      return;
+    }
+
+    if (!_validateTimeDifference()) {
+      _showValidationError(
+          'For same-day bookings, there must be at least 12 hours between check-in and check-out.');
       return;
     }
 
@@ -128,14 +135,42 @@ class _PendingModalState extends State<PendingModal> {
     }
   }
 
-  Future<void> _showValidationError() async {
+  bool _validateTimeDifference() {
+    if (_checkInDate != null &&
+        _checkOutDate != null &&
+        _checkInTime != null &&
+        _checkOutTime != null) {
+      final checkInDateTime = DateTime(
+        _checkInDate!.year,
+        _checkInDate!.month,
+        _checkInDate!.day,
+        _checkInTime!.hour,
+        _checkInTime!.minute,
+      );
+
+      final checkOutDateTime = DateTime(
+        _checkOutDate!.year,
+        _checkOutDate!.month,
+        _checkOutDate!.day,
+        _checkOutTime!.hour,
+        _checkOutTime!.minute,
+      );
+
+      if (_checkInDate!.isAtSameMomentAs(_checkOutDate!)) {
+        final timeDifference = checkOutDateTime.difference(checkInDateTime);
+        return timeDifference.inHours >= 12;
+      }
+    }
+    return true;
+  }
+
+  Future<void> _showValidationError(String message) async {
     showDialog(
       context: context,
       builder: (context) => CustomDialog(
-        title: 'Invalid Dates',
-        description: 'Check-in and check-out cannot be on the same day.',
+        title: 'Invalid Booking',
+        description: message,
         buttonText: 'Close',
-        secondButtonText: '',
         onButtonPressed: () => Navigator.of(context).pop(),
         onSecondButtonPressed: () {},
       ),
@@ -156,7 +191,6 @@ class _PendingModalState extends State<PendingModal> {
           ),
         );
 
-    // Dispatch FetchBookings to reload the updated list
     context.read<BookingBloc>().add(FetchBookings(userId: widget.userId));
 
     Navigator.of(context).pop();
@@ -180,7 +214,6 @@ class _PendingModalState extends State<PendingModal> {
           ),
         );
 
-    // Dispatch FetchBookings to reload the updated list
     context.read<BookingBloc>().add(FetchBookings(userId: widget.userId));
 
     Navigator.of(context).pop();
@@ -271,8 +304,9 @@ class _PendingModalState extends State<PendingModal> {
             Expanded(
                 child: Text(dateText, style: const TextStyle(fontSize: 16.0))),
             IconButton(
-                icon: const Icon(Icons.calendar_today),
-                onPressed: onSelectDate),
+              icon: const Icon(Icons.calendar_today),
+              onPressed: onSelectDate,
+            ),
           ],
         ),
         Row(
@@ -280,7 +314,9 @@ class _PendingModalState extends State<PendingModal> {
             Expanded(
                 child: Text(timeText, style: const TextStyle(fontSize: 16.0))),
             IconButton(
-                icon: const Icon(Icons.access_time), onPressed: onSelectTime),
+              icon: const Icon(Icons.access_time),
+              onPressed: onSelectTime,
+            ),
           ],
         ),
       ],
