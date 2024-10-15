@@ -54,6 +54,8 @@ class UserModel {
       'lastName': lastName,
       'email': email,
       'profile': profilePicture,
+      'phoneNumber': phoneNumber,
+      'gender': gender,
       'favoriteId': favoriteId
     };
   }

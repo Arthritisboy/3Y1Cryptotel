@@ -19,6 +19,7 @@ class ProfileScreen extends StatefulWidget {
     required this.profile,
     required this.phoneNumber,
     required this.gender,
+    required this.userId, // Add userId as a required parameter
   });
 
   final String firstName;
@@ -27,6 +28,7 @@ class ProfileScreen extends StatefulWidget {
   String profile;
   final String phoneNumber;
   final String gender;
+  final String userId; // Store userId
 
   @override
   State<StatefulWidget> createState() {
@@ -56,6 +58,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
     phoneNumberController = TextEditingController(
         text: widget.phoneNumber); // Initialize phone number controller
     gender = widget.gender; // Initialize gender
+    context
+        .read<AuthBloc>()
+        .add(GetUserEvent(widget.userId)); // Correct reference to userId
   }
 
   @override
@@ -111,6 +116,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
       // Retrieve the current user from AuthBloc's state
       final currentUser =
           (context.read<AuthBloc>().state as Authenticated).user;
+      print(
+          'Updating user data: ${currentUser.email}, ${firstNameController.text}, ${lastNameController.text}, ${emailController.text}');
 
       // Call the provider's updateUserData to update user info
       context.read<AuthBloc>().add(
@@ -183,7 +190,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             bottom: 0,
             child: BlocListener<AuthBloc, AuthState>(
               listener: (context, state) {
-                if (state is Authenticated) {
+                if (state is UserUpdated) {
                   // Handle successful profile update
                   setState(() {
                     widget.profile = state.user.profilePicture ??
@@ -212,12 +219,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     return _buildLoadingIndicator(); // Show loading animation
                   }
 
-                  if (state is Authenticated) {
+                  if (state is Authenticated || state is UserUpdated) {
                     // Ensure you're working with a single authenticated user, not a list
-                    final user = state.user;
+                    final user = state is Authenticated
+                        ? state.user
+                        : (state as UserUpdated).user;
                     print('User is authenticated.');
                     print(
-                        'Authenticated User: ${user.email}, ${user.firstName}, ${user.lastName}');
+                        'Authenticated User: ${user.email}, \n${user.firstName}, \n${user.lastName}, \n${user.gender}, \n${user.phoneNumber}, \n${user.profilePicture}');
 
                     return BottomSection(
                       firstNameController: firstNameController,
