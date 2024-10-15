@@ -18,7 +18,7 @@ class HomeScreen extends StatelessWidget {
       create: (context) => HotelBloc(context.read())..add(FetchHotelsEvent()),
       child: SingleChildScrollView(
         child: Padding(
-          padding: const EdgeInsets.all(16.0),
+          padding: const EdgeInsets.only(left: 16, right: 16, bottom: 16),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [

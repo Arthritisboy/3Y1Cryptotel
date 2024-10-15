@@ -214,6 +214,29 @@ exports.updateBooking = catchAsync(async (req, res, next) => {
     const checkIn = new Date(checkInDate);
     const checkOut = new Date(checkOutDate);
     const now = new Date();
+    const arrivalTime = new Date(`${checkInDate}T${timeOfArrival}`);
+    const departureTime = new Date(`${checkOutDate}T${timeOfDeparture}`);
+
+    // Ensure check-in date is not in the past
+    if (checkIn < now) {
+      console.log('Check-in date cannot be in the past.');
+      return next(new AppError('Check-in date cannot be in the past.', 400));
+    }
+
+    // Validate 12-hour difference only if check-in and check-out are the same day
+    if (checkIn.toDateString() === checkOut.toDateString()) {
+      const timeDifference = (departureTime - arrivalTime) / (1000 * 60 * 60);
+      console.log(`Time difference: ${timeDifference} hours`);
+
+      if (timeDifference < 12) {
+        return next(
+          new AppError(
+            'For same-day bookings, there must be at least 12 hours between arrival and departure.',
+            400,
+          ),
+        );
+      }
+    }
 
     // Find the booking and update the details
     const updatedBooking = await Booking.findByIdAndUpdate(
