@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/cupertino.dart'; // Import Cupertino icons
 import '../home/square_icon.dart';
 
 class BottomHomeIconNavigation extends StatelessWidget {
@@ -13,38 +14,48 @@ class BottomHomeIconNavigation extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceAround,
-      children: [
-        GestureDetector(
-          onTap: () => onIconTapped(0),
-          child: SquareIcon(
-            iconData: Icons.home,
-            isSelected: selectedIndex == 0,
-          ),
+    return Container(
+      padding: const EdgeInsets.symmetric(vertical: 10.0),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: const BorderRadius.only(
+          topLeft: Radius.circular(24),
+          topRight: Radius.circular(24),
         ),
-        GestureDetector(
-          onTap: () => onIconTapped(1),
-          child: SquareIcon(
-            iconData: Icons.restaurant,
-            isSelected: selectedIndex == 1,
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceAround,
+        children: [
+          GestureDetector(
+            onTap: () => onIconTapped(0),
+            child: SquareIcon(
+              iconData: CupertinoIcons.home,
+              isSelected: selectedIndex == 0,
+            ),
           ),
-        ),
-        GestureDetector(
-          onTap: () => onIconTapped(2),
-          child: SquareIcon(
-            iconData: Icons.hotel,
-            isSelected: selectedIndex == 2,
+          GestureDetector(
+            onTap: () => onIconTapped(1),
+            child: SquareIcon(
+              iconData: CupertinoIcons.square_list,
+              isSelected: selectedIndex == 1,
+            ),
           ),
-        ),
-        GestureDetector(
-          onTap: () => onIconTapped(3),
-          child: SquareIcon(
-            iconData: Icons.emoji_transportation,
-            isSelected: selectedIndex == 3,
+          GestureDetector(
+            onTap: () => onIconTapped(2),
+            child: SquareIcon(
+              iconData: CupertinoIcons.bed_double,
+              isSelected: selectedIndex == 2,
+            ),
           ),
-        ),
-      ],
+          GestureDetector(
+            onTap: () => onIconTapped(3),
+            child: SquareIcon(
+              iconData: CupertinoIcons.car_detailed,
+              isSelected: selectedIndex == 3,
+            ),
+          ),
+        ],
+      ),
     );
   }
 }

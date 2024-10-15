@@ -9,7 +9,9 @@ class Restaurantratingwidget extends StatefulWidget {
   const Restaurantratingwidget({super.key, required this.ratings});
 
   @override
-  _RestaurantratingwidgetState createState() => _RestaurantratingwidgetState();
+  State<StatefulWidget> createState() {
+    return _RestaurantratingwidgetState();
+  }
 }
 
 class _RestaurantratingwidgetState extends State<Restaurantratingwidget> {

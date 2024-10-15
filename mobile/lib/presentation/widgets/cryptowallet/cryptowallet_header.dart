@@ -116,7 +116,6 @@ class _CryptowalletHeaderState extends State<CryptowalletHeader> {
                   const Text(
                     'CRYPTOTEL',
                     style: TextStyle(
-                      fontFamily: 'HammerSmith',
                       fontSize: 25.0,
                       fontWeight: FontWeight.bold,
                       color: Color(0xFF1C3473),
@@ -166,7 +165,6 @@ class _CryptowalletHeaderState extends State<CryptowalletHeader> {
                   Text(
                     _balance,
                     style: const TextStyle(
-                      fontFamily: 'HammerSmith',
                       fontSize: 40,
                       fontWeight: FontWeight.w400,
                     ),

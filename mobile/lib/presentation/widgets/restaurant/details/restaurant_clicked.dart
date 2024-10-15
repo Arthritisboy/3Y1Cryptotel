@@ -62,8 +62,6 @@ class _RestaurantClickedState extends State<RestaurantClicked> {
         } else if (state is RestaurantError) {
           return Center(child: Text(state.error));
         } else if (state is RestaurantDetailsLoaded) {
-          print("Loaded restaurant: ${state.restaurant.name}");
-          print("Ratings count: ${state.restaurant.ratings.length}");
           return SingleChildScrollView(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hotel_flutter/data/data_provider/auth/auth_data_provider.dart';
 import 'package:hotel_flutter/data/data_provider/auth/booking_data_provider.dart';
@@ -13,14 +12,11 @@ import 'package:hotel_flutter/logic/bloc/auth/auth_bloc.dart';
 import 'package:hotel_flutter/logic/bloc/booking/booking_bloc.dart';
 import 'package:hotel_flutter/logic/bloc/hotel/hotel_bloc.dart';
 import 'package:hotel_flutter/logic/bloc/restaurant/restaurant_bloc.dart';
-import 'package:hotel_flutter/presentation/screens/admin/admin_screen.dart';
 import 'package:hotel_flutter/presentation/screens/homeScreens/splash_screen.dart';
 import 'package:hotel_flutter/presentation/screens/admin/creation_screen.dart';
 import 'package:hotel_flutter/router/app_router.dart';
 import 'package:hotel_flutter/data/repositories/auth_repository.dart';
 import 'package:logging/logging.dart';
-
-import 'package:hotel_flutter/presentation/screens/admin/admin_screen.dart';
 
 void main() {
   Logger.root.level = Level.ALL;
@@ -70,7 +66,7 @@ class MyApp extends StatelessWidget {
           title: 'Cryptotel',
           onGenerateRoute: AppRouter(bookingBloc).onGenerateRoute,
           theme: _buildAppTheme(context),
-          home: const AdminScreen(),
+          home: const SplashScreen(),
         ),
       ),
     );
@@ -107,11 +103,56 @@ class MyApp extends StatelessWidget {
         ),
         backgroundColor: Colors.white,
       ),
-      textTheme: GoogleFonts.hammersmithOneTextTheme(
-        Theme.of(context).textTheme.apply(
-              bodyColor: Colors.black,
-              displayColor: Colors.black,
-            ),
+      textTheme: _buildHelveticaTextTheme(),
+    );
+  }
+
+  TextTheme _buildHelveticaTextTheme() {
+    return const TextTheme(
+      displayLarge: TextStyle(
+        fontFamily: 'SFPro',
+        fontSize: 32,
+        fontWeight: FontWeight.bold,
+      ),
+      displayMedium: TextStyle(
+        fontFamily: 'SFPro',
+        fontSize: 24,
+        fontWeight: FontWeight.w600,
+      ),
+      displaySmall: TextStyle(
+        fontFamily: 'SFPro',
+        fontSize: 20,
+        fontWeight: FontWeight.w500,
+      ),
+      bodyLarge: TextStyle(
+        fontFamily: 'SFPro',
+        fontSize: 18,
+        fontWeight: FontWeight.normal,
+      ),
+      bodyMedium: TextStyle(
+        fontFamily: 'SFPro',
+        fontSize: 16,
+        fontWeight: FontWeight.normal,
+      ),
+      bodySmall: TextStyle(
+        fontFamily: 'SFPro',
+        fontSize: 14,
+        fontWeight: FontWeight.normal,
+      ),
+      labelLarge: TextStyle(
+        fontFamily: 'SFPro',
+        fontSize: 16,
+        fontWeight: FontWeight.bold,
+      ),
+      labelMedium: TextStyle(
+        fontFamily: 'SFPro',
+        fontSize: 14,
+        fontWeight: FontWeight.bold,
+      ),
+      labelSmall: TextStyle(
+        fontFamily: 'SFPro',
+        fontSize: 12,
+        fontWeight: FontWeight.bold,
       ),
     );
   }

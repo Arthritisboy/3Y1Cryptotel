@@ -228,7 +228,6 @@ class _RestaurantInputFieldsState extends State<RestaurantInputFields> {
     try {
       return DateTime.parse(date);
     } catch (e) {
-      print('Date parsing error: $e');
       return null;
     }
   }

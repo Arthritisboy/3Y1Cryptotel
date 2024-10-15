@@ -59,8 +59,6 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       emit(AuthLoading()); // Start with loading state
       try {
         final users = await authRepository.fetchAllUsers();
-        print(
-            'Fetched users count: ${users.length}'); // Log the number of users fetched
         emit(UsersFetched(users)); // Emit users fetched state
       } catch (e) {
         _logger.severe(

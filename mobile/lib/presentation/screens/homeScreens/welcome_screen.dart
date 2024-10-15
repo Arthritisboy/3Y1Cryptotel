@@ -35,7 +35,6 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                   child: Text(
                     'CRYPTOTEL',
                     style: TextStyle(
-                      fontFamily: 'HammerSmith',
                       fontSize: screenHeight * 0.03,
                       color: const Color(0xFF1C3473),
                     ),
@@ -75,7 +74,6 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                       child: Text(
                         'CRYPTOTEL',
                         style: TextStyle(
-                          fontFamily: 'HammerSmith',
                           fontSize: screenHeight * 0.02,
                           color: Colors.black,
                         ),
@@ -85,7 +83,6 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                       child: Text(
                         'WHERE CRYPTO MEETS COMFORT',
                         style: TextStyle(
-                          fontFamily: 'HammerSmith',
                           fontSize: screenHeight * 0.02,
                           color: Colors.black,
                         ),

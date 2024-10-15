@@ -28,7 +28,7 @@ class TabHeader extends StatelessWidget {
           ),
           const SizedBox(height: 5.0),
           const Text(
-            "Where Would you",
+            "Where would you",
             style: TextStyle(fontSize: 25, fontWeight: FontWeight.w400),
           ),
           Text(
