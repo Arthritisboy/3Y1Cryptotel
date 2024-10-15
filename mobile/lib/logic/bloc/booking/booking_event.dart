@@ -32,7 +32,7 @@ class UpdateBooking extends BookingEvent {
   final String bookingId;
   final String userId; // Add the userId here to fetch updated bookings.
 
-  UpdateBooking({
+  const UpdateBooking({
     required this.booking,
     required this.bookingId,
     required this.userId,

@@ -16,7 +16,7 @@ class AuthLoading extends AuthState {}
 class AuthenticatedLogin extends AuthState {
   final LoginModel user;
 
-  AuthenticatedLogin(this.user);
+  const AuthenticatedLogin(this.user);
 
   bool get hasCompletedOnboarding => user.hasCompletedOnboarding;
   String get roles => user.roles;

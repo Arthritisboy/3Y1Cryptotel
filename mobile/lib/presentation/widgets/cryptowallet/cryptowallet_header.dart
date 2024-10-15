@@ -5,9 +5,9 @@ class CryptowalletHeader extends StatefulWidget {
   final Function(String, String, bool) onWalletUpdated;
 
   const CryptowalletHeader({
-    Key? key,
+    super.key,
     required this.onWalletUpdated,
-  }) : super(key: key);
+  });
 
   @override
   State<CryptowalletHeader> createState() => _CryptowalletHeaderState();
@@ -164,7 +164,7 @@ class _CryptowalletHeaderState extends State<CryptowalletHeader> {
               Row(
                 children: [
                   Text(
-                    '$_balance',
+                    _balance,
                     style: const TextStyle(
                       fontFamily: 'HammerSmith',
                       fontSize: 40,
