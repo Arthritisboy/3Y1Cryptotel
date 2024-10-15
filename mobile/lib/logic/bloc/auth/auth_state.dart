@@ -83,3 +83,12 @@ class UsersFetched extends AuthState {
   @override
   List<Object> get props => [users];
 }
+
+class AccountDeleted extends AuthState {
+  final String message;
+
+  const AccountDeleted(this.message);
+
+  @override
+  List<Object> get props => [message];
+}

@@ -67,3 +67,5 @@ class VerifyUserEvent extends AuthEvent {
 class CompleteOnboardingEvent extends AuthEvent {}
 
 class FetchAllUsersEvent extends AuthEvent {}
+
+class DeleteAccountEvent extends AuthEvent {}

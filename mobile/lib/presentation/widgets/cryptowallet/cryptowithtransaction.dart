@@ -128,7 +128,6 @@ class _CryptoWithTransactionState extends State<CryptoWithTransaction> {
         const SnackBar(content: Text('Transaction successful!')),
       );
     } catch (e) {
-      print('Error during transaction: $e');
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Transaction failed: $e')),
       );

@@ -21,7 +21,6 @@ class _SignupFormState extends State<SignupForm> {
   final TextEditingController _phoneNumberController = TextEditingController();
 
   String? _selectedGender;
-  String? _selectedRole; // New variable for role selection
 
   bool _isPasswordVisible = false;
   bool _isConfirmPasswordVisible = false;
