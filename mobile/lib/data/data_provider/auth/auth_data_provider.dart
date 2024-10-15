@@ -1,253 +1,116 @@
 import 'dart:io';
-
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-// ignore: depend_on_referenced_packages
-import 'package:http/http.dart' as http;
 import 'dart:convert';
+import 'package:http/http.dart' as http;
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:hotel_flutter/data/model/auth/user_model.dart';
 import 'package:hotel_flutter/data/model/auth/signup_model.dart';
 import 'package:logging/logging.dart';
 
 class AuthDataProvider {
   final Logger _logger = Logger('AuthDataProvider');
-  final String baseUrl = 'https://3-y1-cryptotel-hazel.vercel.app/api/v1/auth';
-  final FlutterSecureStorage storage = const FlutterSecureStorage();
+  final String _baseUrl = 'https://3-y1-cryptotel-hazel.vercel.app/api/v1';
+  final FlutterSecureStorage _storage = const FlutterSecureStorage();
+
+  //! Helper: Get Token from Storage
+  Future<String?> _getToken() async {
+    return await _storage.read(key: 'jwt');
+  }
+
+  //! Helper: Handle HTTP Responses
+  Future<Map<String, dynamic>> _handleResponse(http.Response response) async {
+    final responseData = json.decode(response.body);
+    if (response.statusCode >= 200 && response.statusCode < 300) {
+      return responseData;
+    } else {
+      final errorMessage = responseData['message'] ?? 'An error occurred';
+      _logger.severe('Error: $errorMessage');
+      throw Exception(errorMessage);
+    }
+  }
 
   //! Login
   Future<Map<String, dynamic>> login(String email, String password) async {
     final response = await http.post(
-      Uri.parse('$baseUrl/login'),
-      body: json.encode({
-        'email': email,
-        'password': password,
-      }),
+      Uri.parse('$_baseUrl/auth/login'),
       headers: {'Content-Type': 'application/json'},
+      body: json.encode({'email': email, 'password': password}),
     );
+    final data = await _handleResponse(response);
 
-    if (response.statusCode == 200) {
-      final data = json.decode(response.body);
-      String token = data['token'];
-      String userId = data['userId'];
-      bool hasCompletedOnboarding = data['hasCompletedOnboarding'] ?? false;
-      String roles = data['roles'];
-      String handleId = data['handleId'] ?? '';
+    await _storeAuthData(data);
+    return data;
+  }
 
-      await storage.write(key: 'jwt', value: token);
-      await storage.write(key: 'userId', value: userId);
-      await storage.write(key: 'handleId', value: handleId);
-
-      return {
-        'token': token,
-        'userId': userId,
-        'roles': roles,
-        'hasCompletedOnboarding': hasCompletedOnboarding,
-        'handleId': handleId
-      };
-    } else {
-      final errorResponse = json.decode(response.body);
-      String errorMessage =
-          errorResponse['message'] ?? 'An unexpected error occurred.';
-      throw Exception('Failed to login: $errorMessage');
+  //! Store Auth Data
+  Future<void> _storeAuthData(Map<String, dynamic> data) async {
+    await _storage.write(key: 'jwt', value: data['token']);
+    await _storage.write(key: 'userId', value: data['userId']);
+    if (data['handleId'] != null) {
+      await _storage.write(key: 'handleId', value: data['handleId']);
     }
   }
 
   //! Register
-  Future<Map<String, dynamic>> register(
-      SignUpModel signUpModel, File? profilePicture) async {
-    var request = http.MultipartRequest('POST', Uri.parse('$baseUrl/signup'));
-    request.headers['Content-Type'] = 'application/json';
+  Future<Map<String, dynamic>> register(SignUpModel model, File? image) async {
+    final request =
+        http.MultipartRequest('POST', Uri.parse('$_baseUrl/auth/signup'))
+          ..headers['Content-Type'] = 'application/json'
+          ..fields.addAll(model.toJson());
 
-    // Add text fields
-    request.fields['firstName'] = signUpModel.firstName;
-    request.fields['lastName'] = signUpModel.lastName;
-    request.fields['email'] = signUpModel.email;
-    request.fields['phoneNumber'] = signUpModel.phoneNumber;
-    request.fields['gender'] = signUpModel.gender;
-    request.fields['password'] = signUpModel.password;
-    request.fields['roles'] = signUpModel.roles;
-    request.fields['confirmPassword'] = signUpModel.confirmPassword;
-
-    // Add file if it exists
-    if (profilePicture != null) {
-      request.files
-          .add(await http.MultipartFile.fromPath('image', profilePicture.path));
+    if (image != null) {
+      request.files.add(await http.MultipartFile.fromPath('image', image.path));
     }
 
     final response = await request.send();
-
-    if (response.statusCode == 201) {
-      final responseData = await http.Response.fromStream(response);
-      return json.decode(responseData.body);
-    } else {
-      final errorResponse = await http.Response.fromStream(response);
-      String errorMessage =
-          json.decode(errorResponse.body)['message'] ?? 'An error occurred';
-      throw Exception('Failed to register: $errorMessage');
-    }
+    return await _handleResponse(await http.Response.fromStream(response));
   }
 
-  //! Verify Code
+  //! Verify User Code
   Future<void> verifyUser(String email, String code) async {
-    final response = await http.post(
-      Uri.parse('$baseUrl/verifyCode'),
-      body: json.encode({'email': email, 'code': code}),
-      headers: {'Content-Type': 'application/json'},
-    );
-
-    if (response.statusCode != 200) {
-      final errorResponse = json.decode(response.body);
-      String errorMessage = errorResponse['message'] ?? 'An error occurred';
-      throw Exception('Failed to verify code: $errorMessage');
-    }
+    await _post('$_baseUrl/auth/verifyCode', {'email': email, 'code': code});
   }
 
   //! Forgot Password
   Future<void> forgotPassword(String email) async {
-    final response = await http.post(
-      Uri.parse('$baseUrl/forgotPassword'),
-      body: json.encode({'email': email}),
-      headers: {'Content-Type': 'application/json'},
-    );
-
-    if (response.statusCode != 200) {
-      final errorResponse = json.decode(response.body);
-      String errorMessage = errorResponse['message'] ?? 'An error occurred';
-      throw Exception('Failed to send reset link: $errorMessage');
-    }
+    await _post('$_baseUrl/auth/forgotPassword', {'email': email});
   }
 
   //! Reset Password
   Future<void> resetPassword(
       String token, String newPassword, String confirmPassword) async {
-    final response = await http.patch(
-      Uri.parse('$baseUrl/resetPassword/$token'),
-      body: json.encode({
-        'password': newPassword,
-        'confirmPassword': confirmPassword,
-      }),
-      headers: {'Content-Type': 'application/json'},
-    );
-
-    if (response.statusCode != 200) {
-      final errorResponse = json.decode(response.body);
-      String errorMessage = errorResponse['message'] ?? 'An error occurred';
-      throw Exception('Failed to reset password: $errorMessage');
-    }
+    await _patch('$_baseUrl/auth/resetPassword/$token', {
+      'password': newPassword,
+      'confirmPassword': confirmPassword,
+    });
   }
 
-  //! Fetch User
+  //! Fetch User Data
   Future<UserModel> getUser(String userId) async {
-    final token = await storage.read(key: 'jwt');
-    final url = 'https://3-y1-cryptotel-hazel.vercel.app/api/v1/users/$userId';
-
-    final response = await http.get(
-      Uri.parse(url),
-      headers: {
-        'Content-Type': 'application/json',
-        if (token != null) 'Authorization': 'Bearer $token',
-      },
-    );
-
-    if (response.statusCode == 200) {
-      final jsonResponse = json.decode(response.body);
-      return UserModel.fromJson(jsonResponse['data']['user']);
-    } else {
-      final errorResponse = json.decode(response.body);
-      String errorMessage =
-          errorResponse['message'] ?? 'Failed to fetch user data';
-      throw Exception(errorMessage);
-    }
+    final response = await _get('$_baseUrl/users/$userId');
+    return UserModel.fromJson(response['data']['user']);
   }
 
   //! Fetch All Users
   Future<List<UserModel>> fetchAllUsers() async {
-    final String url = 'https://3-y1-cryptotel-hazel.vercel.app/api/v1/users';
-    final token = await storage.read(key: 'jwt');
-
-    if (token == null) {
-      _logger
-          .severe('Authorization token is missing'); // Log if token is missing
-      throw Exception('Authorization token is missing');
-    }
-
-    try {
-      final response = await http.get(
-        Uri.parse(url),
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': 'Bearer $token',
-        },
-      );
-
-      if (response.statusCode == 200) {
-        final data = json.decode(response.body)['data']['users'] as List;
-
-        print(
-            'Fetched ${data.length} users from the API'); // Log fetched user count
-        return data.map((userJson) => UserModel.fromJson(userJson)).toList();
-      } else {
-        _logger.severe(
-            'Error fetching users: ${response.body}'); // Log error message from response
-        throw Exception('Failed to load users: ${response.body}');
-      }
-    } catch (error) {
-      _logger
-          .severe('Exception during user fetch: $error'); // Log the exception
-      throw Exception('Failed to fetch users: $error');
-    }
+    final response = await _get('$_baseUrl/users');
+    final users = response['data']['users'] as List;
+    return users.map((user) => UserModel.fromJson(user)).toList();
   }
 
-  //! Change Password
-  Future<void> updatePassword(String currentPassword, String newPassword,
-      String confirmPassword) async {
-    final token = await storage.read(key: 'jwt');
-
-    final response = await http.patch(
-      Uri.parse('$baseUrl/updateMyPassword'),
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer $token',
-      },
-      body: json.encode({
-        'passwordCurrent': currentPassword,
-        'password': newPassword,
-        'confirmPassword': confirmPassword,
-      }),
-    );
-
-    if (response.statusCode != 200) {
-      final errorResponse = json.decode(response.body);
-      String errorMessage = errorResponse['message'] ?? 'An error occurred';
-      throw Exception('Failed to update password: $errorMessage');
-    }
-  }
-
-  //! Change User Profile Data
+  //! Update User Profile Data
   Future<UserModel> updateUserData({
     String? firstName,
     String? lastName,
     String? email,
     File? profilePicture,
   }) async {
-    final token = await storage.read(key: 'jwt');
+    final request =
+        http.MultipartRequest('PUT', Uri.parse('$_baseUrl/users/updateMe'))
+          ..headers['Authorization'] = 'Bearer ${await _getToken()}';
 
-    if (token == null) {
-      throw Exception('Authorization token is missing');
-    }
-
-    final uri = Uri.parse(
-        'https://3-y1-cryptotel-hazel.vercel.app/api/v1/users/updateMe');
-    var request = http.MultipartRequest('PUT', uri);
-
-    // Set Authorization header
-    request.headers['Authorization'] = 'Bearer $token';
-
-    // Add text fields
     if (firstName != null) request.fields['firstName'] = firstName;
     if (lastName != null) request.fields['lastName'] = lastName;
     if (email != null) request.fields['email'] = email;
-
-    // Add image file if it exists
     if (profilePicture != null) {
       request.files
           .add(await http.MultipartFile.fromPath('image', profilePicture.path));
@@ -258,9 +121,16 @@ class AuthDataProvider {
       final responseData = await http.Response.fromStream(response);
 
       if (response.statusCode == 200) {
+        // Parse the response body to extract user data
         final Map<String, dynamic> data = jsonDecode(responseData.body);
-        final updatedUser = UserModel.fromJson(data['data']['user']);
-        return updatedUser;
+        final updatedUser = UserModel.fromJson(
+            data['data']['user']); // Assuming you have a fromJson method
+
+        // Log or print the new profile image URL
+        _logger
+            .info('Updated profile image URL: ${updatedUser.profilePicture}');
+
+        return updatedUser; // Return the updated user model, including profile picture
       } else {
         throw Exception('Failed to update user data: ${responseData.body}');
       }
@@ -271,41 +141,61 @@ class AuthDataProvider {
 
 //!
   Future<void> logout() async {
-    try {
-      final response = await http.post(
-        Uri.parse('$baseUrl/logout'), // Replace with your actual logout URL
-        headers: {
-          'Authorization':
-              'Bearer ${await storage.read(key: 'jwt')}', // Ensure to include the JWT token if needed
-        },
-      );
-
-      await storage.deleteAll(); // Clear all stored data
-      if (response.statusCode != 200) {
-        throw Exception('Failed to logout: ${response.body}');
-      }
-    } catch (e) {
-      throw Exception('Failed to clear storage: $e');
-    }
+    await _post('$_baseUrl/auth/logout');
+    await _storage.deleteAll();
   }
 
-  //! Update User Onboarding
-  Future<void> completeOnboarding() async {
-    final token = await storage.read(key: 'jwt');
+  //! Helper: Perform HTTP GET
+  Future<Map<String, dynamic>> _get(String url) async {
+    final token = await _getToken();
+    final response =
+        await http.get(Uri.parse(url), headers: _buildHeaders(token));
+    return await _handleResponse(response);
+  }
 
-    final response = await http.put(
-      Uri.parse(
-          'https://3-y1-cryptotel-hazel.vercel.app/api/v1/users/updateHasCompletedOnboarding'),
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer $token',
-      },
+  //! Helper: Perform HTTP POST
+  Future<void> _post(String url, [Map<String, dynamic>? body]) async {
+    final token = await _getToken();
+    final response = await http.post(
+      Uri.parse(url),
+      headers: _buildHeaders(token),
+      body: body != null ? json.encode(body) : null,
     );
+    await _handleResponse(response);
+  }
 
-    if (response.statusCode != 200) {
-      final errorResponse = json.decode(response.body);
-      String errorMessage = errorResponse['message'] ?? 'An error occurred';
-      throw Exception('Failed to complete onboarding: $errorMessage');
-    }
+  //! Helper: Perform HTTP PATCH
+  Future<void> _patch(String url, Map<String, dynamic> body) async {
+    final token = await _getToken();
+    final response = await http.patch(
+      Uri.parse(url),
+      headers: _buildHeaders(token),
+      body: json.encode(body),
+    );
+    await _handleResponse(response);
+  }
+
+  //! Helper: Perform HTTP PUT
+  Future<void> _put(String url) async {
+    final token = await _getToken();
+    final response =
+        await http.put(Uri.parse(url), headers: _buildHeaders(token));
+    await _handleResponse(response);
+  }
+
+  //! Helper: Perform HTTP DELETE
+  Future<void> _delete(String url) async {
+    final token = await _getToken();
+    final response =
+        await http.delete(Uri.parse(url), headers: _buildHeaders(token));
+    await _handleResponse(response);
+  }
+
+  //! Helper: Build HTTP Headers
+  Map<String, String> _buildHeaders(String? token) {
+    return {
+      'Content-Type': 'application/json',
+      if (token != null) 'Authorization': 'Bearer $token',
+    };
   }
 }

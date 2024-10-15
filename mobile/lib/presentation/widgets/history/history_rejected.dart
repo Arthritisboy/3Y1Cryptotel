@@ -6,7 +6,10 @@ import 'package:intl/intl.dart';
 class HistoryRejectedBody extends StatelessWidget {
   final List<BookingModel> rejectedBookings;
 
-  const HistoryRejectedBody({super.key, required this.rejectedBookings});
+  const HistoryRejectedBody({
+    super.key,
+    required this.rejectedBookings,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -18,8 +21,8 @@ class HistoryRejectedBody extends StatelessWidget {
             color: Colors.white,
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withOpacity(0.5),
-                spreadRadius: 3,
+                color: Colors.black.withOpacity(0.1),
+                spreadRadius: 5,
                 blurRadius: 10,
                 offset: const Offset(0, 4),
               ),
@@ -32,7 +35,7 @@ class HistoryRejectedBody extends StatelessWidget {
                   itemBuilder: (context, index) {
                     final booking = rejectedBookings[index];
 
-                    // Determine the display name
+                    // Determine display name
                     String displayName = (booking.restaurantName != null &&
                             booking.restaurantName!.isNotEmpty)
                         ? booking.restaurantName!
@@ -45,8 +48,9 @@ class HistoryRejectedBody extends StatelessWidget {
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(15.0),
                         ),
+                        elevation: 5,
                         child: Padding(
-                          padding: const EdgeInsets.all(12.0),
+                          padding: const EdgeInsets.all(16.0),
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
@@ -57,27 +61,24 @@ class HistoryRejectedBody extends StatelessWidget {
                                       crossAxisAlignment:
                                           CrossAxisAlignment.start,
                                       children: [
-                                        Padding(
-                                          padding:
-                                              const EdgeInsets.only(left: 10.0),
-                                          child: Container(
-                                            padding: const EdgeInsets.symmetric(
-                                                horizontal: 8.0, vertical: 4.0),
-                                            decoration: BoxDecoration(
-                                              color: const Color(0xFF1C3473),
-                                              borderRadius:
-                                                  BorderRadius.circular(8.0),
-                                            ),
-                                            child: const Text(
-                                              'Status: Accepted',
-                                              style: TextStyle(
-                                                color: Colors.white,
-                                                fontWeight: FontWeight.bold,
-                                              ),
+                                        Container(
+                                          padding: const EdgeInsets.symmetric(
+                                              horizontal: 10.0, vertical: 4.0),
+                                          decoration: BoxDecoration(
+                                            color: Colors
+                                                .red, // Red color for rejected status
+                                            borderRadius:
+                                                BorderRadius.circular(8.0),
+                                          ),
+                                          child: const Text(
+                                            'Status: Rejected',
+                                            style: TextStyle(
+                                              color: Colors.white,
+                                              fontWeight: FontWeight.bold,
                                             ),
                                           ),
                                         ),
-                                        const SizedBox(height: 5),
+                                        const SizedBox(height: 10),
                                         Text(
                                           displayName,
                                           style: const TextStyle(
@@ -87,61 +88,78 @@ class HistoryRejectedBody extends StatelessWidget {
                                           ),
                                         ),
                                         const SizedBox(height: 8.0),
-                                        Text(
-                                          'Check-in: ${DateFormat.yMMMd().format(booking.checkInDate)}',
-                                          style: const TextStyle(
-                                              color: Colors.black),
+                                        Row(
+                                          children: [
+                                            Icon(Icons.calendar_today,
+                                                size: 18,
+                                                color: Colors.grey[700]),
+                                            const SizedBox(width: 5),
+                                            Text(
+                                              'Check-in: ${booking.checkInDate.toLocal().toString().split(' ')[0]}',
+                                              style: const TextStyle(
+                                                  color: Colors.black87),
+                                            ),
+                                          ],
                                         ),
-                                        Text(
-                                          'Check-out: ${DateFormat.yMMMd().format(booking.checkOutDate)}',
-                                          style: const TextStyle(
-                                              color: Colors.black),
+                                        Row(
+                                          children: [
+                                            Icon(Icons.calendar_today_outlined,
+                                                size: 18,
+                                                color: Colors.grey[700]),
+                                            const SizedBox(width: 5),
+                                            Text(
+                                              'Check-out: ${booking.checkOutDate.toLocal().toString().split(' ')[0]}',
+                                              style: const TextStyle(
+                                                  color: Colors.black87),
+                                            ),
+                                          ],
                                         ),
-                                        Text(
-                                          'Arrival Time: ${booking.timeOfArrival != null ? DateFormat.jm().format(booking.timeOfArrival!) : 'N/A'}',
-                                          style: const TextStyle(
-                                              color: Colors.black),
+                                        Row(
+                                          children: [
+                                            Icon(Icons.access_time_filled,
+                                                size: 18,
+                                                color: Colors.grey[700]),
+                                            const SizedBox(width: 5),
+                                            Text(
+                                              'Arrival: ${booking.timeOfArrival != null ? DateFormat.jm().format(booking.timeOfArrival!) : 'N/A'}',
+                                              style: const TextStyle(
+                                                  color: Colors.black87),
+                                            ),
+                                          ],
                                         ),
-                                        Text(
-                                          'Departure Time: ${booking.timeOfDeparture != null ? DateFormat.jm().format(booking.timeOfDeparture!) : 'N/A'}',
-                                          style: const TextStyle(
-                                              color: Colors.black),
+                                        Row(
+                                          children: [
+                                            Icon(Icons.access_time_outlined,
+                                                size: 18,
+                                                color: Colors.grey[700]),
+                                            const SizedBox(width: 5),
+                                            Text(
+                                              'Departure: ${booking.timeOfDeparture != null ? DateFormat.jm().format(booking.timeOfDeparture!) : 'N/A'}',
+                                              style: const TextStyle(
+                                                  color: Colors.black87),
+                                            ),
+                                          ],
                                         ),
                                       ],
                                     ),
                                   ),
                                   const SizedBox(width: 10),
-                                  Column(
-                                    children: [
-                                      ElevatedButton(
-                                        onPressed: () {
-                                          showDialog(
-                                            context: context,
-                                            builder: (BuildContext context) {
-                                              return HistoryRejectedModal(
-                                                booking: booking,
-                                              );
-                                            },
+                                  ElevatedButton(
+                                    onPressed: () {
+                                      showDialog(
+                                        context: context,
+                                        builder: (BuildContext context) {
+                                          return HistoryRejectedModal(
+                                            booking: booking,
                                           );
                                         },
-                                        style: ElevatedButton.styleFrom(
-                                          backgroundColor:
-                                              const Color(0xFF1C3473),
-                                        ),
-                                        child: const Text('Details'),
-                                      ),
-                                      const SizedBox(height: 8),
-                                      ElevatedButton(
-                                        onPressed: () {
-                                          Navigator.of(context)
-                                              .pushNamed('/cryptoTransaction');
-                                        },
-                                        style: ElevatedButton.styleFrom(
-                                          backgroundColor: Colors.green,
-                                        ),
-                                        child: const Text('Pay'),
-                                      ),
-                                    ],
+                                      );
+                                    },
+                                    style: ElevatedButton.styleFrom(
+                                      backgroundColor:
+                                          Colors.red, // Red accent for rejected
+                                    ),
+                                    child: const Text('Details'),
                                   ),
                                 ],
                               ),
@@ -157,32 +175,32 @@ class HistoryRejectedBody extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Image.asset(
-                        'assets/images/icons/booknow.png', // Corrected the path
-                        width: 100, // Adjust size as needed
+                        'assets/images/icons/booknow.png',
+                        width: 100,
                         height: 100,
                       ),
-                      SizedBox(height: 16),
-                      Text(
-                        'No Rejected, yet!',
+                      const SizedBox(height: 16),
+                      const Text(
+                        'No Rejected Bookings, yet!',
                         style: TextStyle(
                           fontSize: 18,
                           fontWeight: FontWeight.bold,
                           color: Colors.black,
                         ),
                       ),
-                      SizedBox(height: 8),
-                      Text(
+                      const SizedBox(height: 8),
+                      const Text(
                         'Make a booking with CRYPTOTEL & enjoy your stay',
+                        textAlign: TextAlign.center,
                         style: TextStyle(
                           fontSize: 14,
                           color: Colors.black54,
                         ),
                       ),
-                      SizedBox(height: 16),
+                      const SizedBox(height: 16),
                       ElevatedButton(
                         onPressed: () {
-                          Navigator.pushNamed(
-                              context, '/homescreen'); // Navigate to homescreen
+                          Navigator.pushNamed(context, '/homescreen');
                         },
                         style: ElevatedButton.styleFrom(
                           backgroundColor: const Color(0xFF1C3473),

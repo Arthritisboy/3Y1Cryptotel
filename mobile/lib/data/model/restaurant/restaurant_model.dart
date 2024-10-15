@@ -1,8 +1,9 @@
+import 'package:equatable/equatable.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:hotel_flutter/data/model/hotel/rating_model.dart';
 import 'package:logging/logging.dart';
 
-class RestaurantModel {
+class RestaurantModel extends Equatable {
   final Logger _logger = Logger('RestaurantModel');
   final String id;
   final String name;
@@ -32,7 +33,7 @@ class RestaurantModel {
         ? (json['ratings'] as List<dynamic>)
             .map((rating) => RatingModel.fromJson(rating))
             .toList()
-        : <RatingModel>[]; // Default to empty list if not a list
+        : <RatingModel>[]; // Default to an empty list if not a list
 
     return RestaurantModel(
       id: json['_id'] ?? 'Unknown ID',
@@ -50,7 +51,7 @@ class RestaurantModel {
     );
   }
 
-  // Method to convert RestaurantModel to JSON
+  // Convert RestaurantModel to JSON
   Map<String, dynamic> toJson() {
     return {
       '_id': id,
@@ -85,4 +86,17 @@ class RestaurantModel {
       return [0.0, 0.0]; // Return [0.0, 0.0] if there is an error
     }
   }
+
+  @override
+  List<Object?> get props => [
+        id,
+        name,
+        location,
+        openingHours,
+        restaurantImage,
+        price,
+        capacity,
+        availability,
+        ratings,
+      ];
 }

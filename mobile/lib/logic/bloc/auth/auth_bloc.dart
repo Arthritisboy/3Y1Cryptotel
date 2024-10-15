@@ -77,6 +77,18 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       }
     });
 
+    on<DeleteAccountEvent>((event, emit) async {
+      emit(AuthLoading()); // Emit loading state
+      try {
+        await authRepository.deleteAccount();
+        emit(const AccountDeleted('Account deleted successfully'));
+        await Future.delayed(const Duration(milliseconds: 500));
+        emit(AuthInitial());
+      } catch (e) {
+        emit(AuthError('Failed to delete account: ${e.toString()}'));
+      }
+    });
+
     on<ChangePasswordEvent>((event, emit) async {
       emit(AuthLoading());
       try {

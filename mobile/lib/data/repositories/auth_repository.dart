@@ -136,6 +136,19 @@ class AuthRepository {
     }
   }
 
+  //! Delete Account
+  Future<void> deleteAccount() async {
+    try {
+      await dataProvider
+          .deleteAccount(); // Call data provider to delete account
+      clearUserCache(); // Clear the cached user data
+      _logger.info('Account deleted successfully');
+    } catch (e) {
+      _logger.severe('Failed to delete account: $e'); // Log error
+      throw Exception('Failed to delete account: ${e.toString()}');
+    }
+  }
+
   //! Check Onboarding Status
   Future<bool> checkOnboardingStatus(String userId) async {
     try {

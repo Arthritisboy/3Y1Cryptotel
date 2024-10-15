@@ -5,6 +5,7 @@ import 'package:hotel_flutter/data/model/booking/booking_model.dart';
 import 'package:hotel_flutter/logic/bloc/booking/booking_bloc.dart';
 import 'package:hotel_flutter/logic/bloc/booking/booking_event.dart';
 import 'package:hotel_flutter/logic/bloc/booking/booking_state.dart';
+import 'package:hotel_flutter/presentation/widgets/admin/admin_user/createRoom.dart';
 import '../../widgets/admin/admin_header.dart';
 import '../../widgets/admin/admin_modal.dart';
 import 'package:intl/intl.dart';
@@ -42,14 +43,7 @@ class _AdminScreenState extends State<AdminScreen> {
       child: Scaffold(
         body: Column(
           children: [
-            AdminHeader(
-                // onCreateRoomPressed: () {
-                //   Navigator.push(
-                //     context,
-                //     MaterialPageRoute(builder: (context) => const CreateRoom()),
-                //   );
-                // },
-                ),
+            AdminHeader(),
             const TabBar(
               tabs: [
                 Tab(text: 'Rooms', icon: Icon(Icons.hotel)),
@@ -78,9 +72,54 @@ class _AdminScreenState extends State<AdminScreen> {
     return BlocBuilder<BookingBloc, BookingState>(
       builder: (context, state) {
         if (state is BookingSuccess && state.bookings.isNotEmpty) {
-          return _buildBookingList(state.bookings);
+          return Stack(
+            children: [
+              Positioned(
+                top: 16,
+                left: 16,
+                child: ElevatedButton(
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => const CreateRoom()),
+                    );
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color(0xFF1C3473),
+                  ),
+                  child: const Text('Create Room'),
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.only(top: 60.0),
+                child: _buildBookingList(state.bookings),
+              ),
+            ],
+          );
         } else {
-          return const Center(child: Text('No bookings available.'));
+          return Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const Text('No rooms available.'),
+                const SizedBox(height: 20),
+                ElevatedButton(
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => const CreateRoom()),
+                    );
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color(0xFF1C3473),
+                  ),
+                  child: const Text('Create Room'),
+                ),
+              ],
+            ),
+          );
         }
       },
     );

@@ -176,6 +176,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
             bottom: 0,
             child: BlocListener<AuthBloc, AuthState>(
               listener: (context, state) {
+                if (state is AccountDeleted) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text(state.message)),
+                  );
+                  // Redirect to login screen or another relevant screen
+                  Navigator.of(context).pushReplacementNamed('/login');
+                }
                 if (state is UserUpdated) {
                   setState(() {
                     widget.profile = state.user.profilePicture ?? '';

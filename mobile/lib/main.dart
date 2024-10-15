@@ -12,17 +12,16 @@ import 'package:hotel_flutter/logic/bloc/auth/auth_bloc.dart';
 import 'package:hotel_flutter/logic/bloc/booking/booking_bloc.dart';
 import 'package:hotel_flutter/logic/bloc/hotel/hotel_bloc.dart';
 import 'package:hotel_flutter/logic/bloc/restaurant/restaurant_bloc.dart';
+import 'package:hotel_flutter/presentation/screens/admin/admin_appScreen.dart';
+import 'package:hotel_flutter/presentation/screens/admin/admin_userScreen.dart';
 import 'package:hotel_flutter/presentation/screens/homeScreens/splash_screen.dart';
-import 'package:hotel_flutter/presentation/screens/admin/creation_screen.dart';
 import 'package:hotel_flutter/router/app_router.dart';
 import 'package:hotel_flutter/data/repositories/auth_repository.dart';
 import 'package:logging/logging.dart';
 
 void main() {
   Logger.root.level = Level.ALL;
-  Logger.root.onRecord.listen((record) {
-    print('${record.level.name}: ${record.time}: ${record.message}');
-  });
+  Logger.root.onRecord.listen((record) {});
 
   runApp(MyApp());
 }
