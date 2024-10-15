@@ -46,15 +46,7 @@ class _AdminScreenState extends State<AdminScreen> {
       child: Scaffold(
         body: Column(
           children: [
-            AdminHeader(
-              onCreateRoomPressed: () {
-                // Navigate to Create Room screen when the button is pressed
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => const CreateRoom()),
-                );
-              },
-            ),
+            AdminHeader(),
             const TabBar(
               tabs: [
                 Tab(text: 'Rooms', icon: Icon(Icons.hotel)),
@@ -81,12 +73,24 @@ class _AdminScreenState extends State<AdminScreen> {
 
   // Widget for the "Rooms" tab
   Widget _buildRoomsTab(BuildContext context) {
-    // Now directly showing room list without a button
     return BlocBuilder<BookingBloc, BookingState>(
       builder: (context, state) {
+        // Check if there are no hotels or restaurants created by the user
         if (state is BookingSuccess && state.bookings.isNotEmpty) {
-          return _buildBookingList(state.bookings);
+          // Determine if there is any hotel or restaurant created
+          final hasHotelOrResto = state.bookings.any((booking) =>
+              (booking.hotelName?.isNotEmpty == true ||
+                  booking.restaurantName?.isNotEmpty == true));
+
+          if (!hasHotelOrResto) {
+            // Show HotelorResto widget if no hotel or restaurant exists
+            return const Hotelorresto();
+          } else {
+            // If hotel or restaurant exists, show the list of bookings
+            return _buildBookingList(state.bookings);
+          }
         } else {
+          // If there are no bookings, show the default message
           return const Center(
             child: Text('No bookings available.'),
           );
@@ -215,6 +219,57 @@ class _AdminScreenState extends State<AdminScreen> {
           ),
         );
       },
+    );
+  }
+}
+
+class Hotelorresto extends StatelessWidget {
+  const Hotelorresto({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            // Button for Hotel
+            ElevatedButton(
+              onPressed: () {
+                // Add your logic here for Hotel button press
+                print('Hotel button pressed');
+              },
+              style: ElevatedButton.styleFrom(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 40, vertical: 20),
+                backgroundColor: const Color(0xFF1C3473), // Button color
+              ),
+              child: const Text(
+                'Hotel',
+                style: TextStyle(fontSize: 18),
+              ),
+            ),
+            const SizedBox(height: 20), // Space between buttons
+
+            // Button for Resto
+            ElevatedButton(
+              onPressed: () {
+                // Add your logic here for Resto button press
+                print('Resto button pressed');
+              },
+              style: ElevatedButton.styleFrom(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 40, vertical: 20),
+                backgroundColor: const Color(0xFF1C3473), // Button color
+              ),
+              child: const Text(
+                'Resto',
+                style: TextStyle(fontSize: 18),
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }

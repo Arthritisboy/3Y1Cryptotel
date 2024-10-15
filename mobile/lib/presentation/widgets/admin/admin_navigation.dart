@@ -8,7 +8,6 @@ import 'package:hotel_flutter/logic/bloc/booking/booking_state.dart';
 import 'package:hotel_flutter/presentation/admin/createRoom.dart';
 import 'package:hotel_flutter/presentation/widgets/admin/admin_header.dart';
 import 'package:hotel_flutter/presentation/widgets/admin/admin_modal.dart';
-
 import 'package:intl/intl.dart';
 
 class AdminNavigation extends StatefulWidget {
@@ -48,15 +47,7 @@ class _AdminNavigationState extends State<AdminNavigation> {
         body: Column(
           children: [
             // Passing the onCreateRoomPressed callback here
-            AdminHeader(
-              onCreateRoomPressed: () {
-                // Navigate to the CreateRoomScreen
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => const CreateRoom()),
-                );
-              },
-            ),
+            AdminHeader(),
             const TabBar(
               tabs: [
                 Tab(text: 'Rooms', icon: Icon(Icons.hotel)),
@@ -71,28 +62,7 @@ class _AdminNavigationState extends State<AdminNavigation> {
                   return TabBarView(
                     children: [
                       // "Rooms" tab: Show "Create Room" button and bookings
-                      Center(
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            ElevatedButton(
-                              onPressed: () {
-                                // Navigate to the CreateRoomScreen
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) => const CreateRoom()),
-                                );
-                              },
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: const Color(
-                                    0xFF1C3473), // Button background color
-                              ),
-                              child: const Text('Create Room'),
-                            ),
-                          ],
-                        ),
-                      ),
+                      _buildRoomsTab(context, state),
                       // "Pending" tab
                       _buildBookingList(_filterBookings(state, 'pending')),
                       // "Accepted" tab
@@ -106,6 +76,43 @@ class _AdminNavigationState extends State<AdminNavigation> {
             ),
           ],
         ),
+      ),
+    );
+  }
+
+  // Widget for the "Rooms" tab
+  Widget _buildRoomsTab(BuildContext context, BookingState state) {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          ElevatedButton(
+            onPressed: () {
+              // Navigate to the CreateRoomScreen
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const CreateRoom()),
+              );
+            },
+            style: ElevatedButton.styleFrom(
+              backgroundColor:
+                  const Color(0xFF1C3473), // Button background color
+            ),
+            child: const Text('Create Room'),
+          ),
+          const SizedBox(height: 20),
+          // Check if there are bookings or display a message
+          state is BookingSuccess && state.bookings.isNotEmpty
+              ? Expanded(child: _buildBookingList(state.bookings))
+              : const Padding(
+                  padding: EdgeInsets.all(16.0),
+                  child: Text(
+                    'No registered hotels or restaurants available. Please create a room.',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(fontSize: 16, color: Colors.black54),
+                  ),
+                ),
+        ],
       ),
     );
   }
