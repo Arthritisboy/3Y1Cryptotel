@@ -47,14 +47,6 @@ class TabHeader extends StatelessWidget {
   Widget _buildSearchField() {
     return Container(
       decoration: BoxDecoration(
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.5),
-            spreadRadius: 1,
-            blurRadius: 8,
-            offset: const Offset(0, 4),
-          ),
-        ],
         borderRadius: BorderRadius.circular(30.0),
       ),
       child: TextField(

@@ -24,7 +24,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    _fetchUserIdAndBookings(); // Trigger fetch each time dependencies change.
+    _fetchUserIdAndBookings();
   }
 
   Future<void> _fetchUserIdAndBookings() async {

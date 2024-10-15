@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hotel_flutter/logic/bloc/booking/booking_bloc.dart';
-import 'package:hotel_flutter/presentation/admin/admin_screen.dart';
+import 'package:hotel_flutter/presentation/screens/admin/admin_screen.dart';
 import 'package:hotel_flutter/presentation/screens/drawerScreens/history_screen.dart';
 import 'package:hotel_flutter/presentation/screens/homeScreens/onboarding_screen.dart';
 import 'package:hotel_flutter/presentation/screens/drawerScreens/crypto_wallet.dart';
@@ -20,87 +20,74 @@ import 'package:hotel_flutter/presentation/screens/drawerScreens/profile_screen.
 import 'package:hotel_flutter/presentation/screens/drawerScreens/favorite_screen.dart';
 
 class AppRouter {
-  final BookingBloc bookingBloc; // Pass BookingBloc to the router
+  final BookingBloc bookingBloc;
 
   AppRouter(this.bookingBloc);
 
   Route<dynamic>? onGenerateRoute(RouteSettings routeSettings) {
     switch (routeSettings.name) {
       case '/':
-        return MaterialPageRoute(builder: (_) => const WelcomeScreen());
+        return _buildRoute(const WelcomeScreen(), clearStack: true);
 
       case '/login':
-        return MaterialPageRoute(builder: (_) => const LoginScreen());
+        return _buildRoute(const LoginScreen(), clearStack: true);
 
       case '/signup':
-        return MaterialPageRoute(builder: (_) => const SignupScreen());
-
-      case '/homescreen':
-        return MaterialPageRoute(builder: (_) => TabScreen());
+        return _buildRoute(const SignupScreen(), clearStack: true);
 
       case '/forgotPassword':
-        return MaterialPageRoute(builder: (_) => const ForgotPassword());
+        return _buildRoute(const ForgotPassword());
+
+      case '/homescreen':
+        return _buildRoute(TabScreen(), clearStack: true);
 
       case '/emailResetToken':
-        return MaterialPageRoute(builder: (_) => const EmailResetTokenScreen());
+        return _buildRoute(const EmailResetTokenScreen());
 
       case '/resetPassword':
         final args = routeSettings.arguments as Map<String, dynamic>;
         final token = args['token'] as String;
-
-        return MaterialPageRoute(
-          builder: (_) => ResetPassword(token: token),
-        );
+        return _buildRoute(ResetPassword(token: token));
 
       case '/profile':
         final args = routeSettings.arguments as Map<String, dynamic>?;
-
         if (args != null) {
-          return MaterialPageRoute(
-            builder: (_) => ProfileScreen(
-              firstName: args['firstName'] ?? 'Guest',
-              lastName: args['lastName'] ?? '',
-              email: args['email'] ?? '',
-              profile: args['profile'] ?? '',
-              phoneNumber: args['phoneNumber'] ?? '',
-              gender: args['gender'] ?? 'Male',
-            ),
-          );
+          return _buildRoute(ProfileScreen(
+            firstName: args['firstName'] ?? 'Guest',
+            lastName: args['lastName'] ?? '',
+            email: args['email'] ?? '',
+            profile: args['profile'] ?? '',
+            phoneNumber: args['phoneNumber'] ?? '',
+            gender: args['gender'] ?? 'Male',
+          ));
         } else {
           return null;
         }
 
       case '/cryptoTransaction':
-        return MaterialPageRoute(builder: (_) => CryptoWallet());
+        return _buildRoute(CryptoWallet());
 
       case '/verifyCode':
         final args = routeSettings.arguments as Map<String, dynamic>?;
-
         if (args != null && args.containsKey('email')) {
-          return MaterialPageRoute(
-            builder: (_) => VerificationCodeScreen(email: args['email']),
-          );
+          return _buildRoute(VerificationCodeScreen(email: args['email']));
         } else {
           return null;
         }
 
       case '/updatePassword':
-        return MaterialPageRoute(builder: (_) => UpdatePasswordScreen());
+        return _buildRoute(UpdatePasswordScreen());
 
       case '/favorite':
         final args = routeSettings.arguments as Map<String, dynamic>?;
-
         if (args != null && args.containsKey('userId')) {
-          return MaterialPageRoute(
-            builder: (_) => FavoriteScreen(userId: args['userId']),
-          );
+          return _buildRoute(FavoriteScreen(userId: args['userId']));
         } else {
-          // Handle the case when userId is not provided
-          return null; // Or show an error or redirect as needed
+          return null;
         }
 
       case '/help':
-        return MaterialPageRoute(builder: (_) => HelpSupportScreen());
+        return _buildRoute(HelpSupportScreen());
 
       case '/history':
         return MaterialPageRoute(
@@ -111,36 +98,51 @@ class AppRouter {
         );
 
       case '/onboarding':
-        return MaterialPageRoute(builder: (_) => OnboardingScreen());
+        return _buildRoute(OnboardingScreen());
 
       case '/uploadPicture':
         final args = routeSettings.arguments as Map<String, dynamic>?;
-
         if (args != null) {
-          return MaterialPageRoute(
-            builder: (_) => UploadPictureScreen(
-              firstName: args['firstName'],
-              lastName: args['lastName'],
-              email: args['email'],
-              password: args['password'],
-              confirmPassword: args['confirmPassword'],
-              phoneNumber: args['phoneNumber'],
-              gender: args['gender'],
-              roles: args['roles'],
-            ),
-          );
+          return _buildRoute(UploadPictureScreen(
+            firstName: args['firstName'],
+            lastName: args['lastName'],
+            email: args['email'],
+            password: args['password'],
+            confirmPassword: args['confirmPassword'],
+            phoneNumber: args['phoneNumber'],
+            gender: args['gender'],
+            roles: args['roles'],
+          ));
         } else {
           return null;
         }
 
       case '/logout':
-        return MaterialPageRoute(builder: (_) => const LoginScreen());
+        return _buildRoute(const LoginScreen(), clearStack: true);
 
       case '/admin':
-        return MaterialPageRoute(builder: (_) => const AdminScreen());
+        return _buildRoute(const AdminScreen());
 
       default:
         return null;
     }
+  }
+
+  /// Helper method to build routes with optional stack clearing.
+  MaterialPageRoute _buildRoute(Widget child, {bool clearStack = false}) {
+    return MaterialPageRoute(
+      builder: (context) {
+        if (clearStack) {
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            Navigator.of(context).pushAndRemoveUntil(
+              MaterialPageRoute(builder: (_) => child),
+              (route) => false, // Clears all previous routes from the stack
+            );
+          });
+          return const SizedBox.shrink(); // Temporary placeholder widget
+        }
+        return child;
+      },
+    );
   }
 }

@@ -17,7 +17,9 @@ class PendingModal extends StatefulWidget {
   });
 
   @override
-  _PendingModalState createState() => _PendingModalState();
+  State<StatefulWidget> createState() {
+    return _PendingModalState();
+  }
 }
 
 class _PendingModalState extends State<PendingModal> {

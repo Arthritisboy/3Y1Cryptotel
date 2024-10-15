@@ -70,31 +70,59 @@ exports.createBooking = catchAsync(async (req, res, next) => {
 
     const userId = req.params.userId;
 
-    // Validate checkInDate and checkOutDate
+    // Validate check-in and check-out dates
     const checkIn = new Date(checkInDate);
     const checkOut = new Date(checkOutDate);
+    const now = new Date();
+    const arrivalTime = new Date(`${checkInDate}T${timeOfArrival}`);
+    const departureTime = new Date(`${checkOutDate}T${timeOfDeparture}`);
 
-    if (checkOut <= checkIn) {
-      console.log('Check-out date must be after check-in date');
+    // Ensure check-in date is not in the past
+    if (checkIn < now) {
+      console.log('Check-in date cannot be in the past.');
+      return next(new AppError('Check-in date cannot be in the past.', 400));
+    }
+
+    // Ensure the check-in and check-out dates are at least 12 hours apart
+    const timeDifference = (departureTime - arrivalTime) / (1000 * 60 * 60); // Convert ms to hours
+    console.log(
+      `Time difference between arrival and departure: ${timeDifference} hours`,
+    );
+
+    if (timeDifference < 12) {
+      console.log(
+        'Arrival and departure times must have at least 12 hours between them.',
+      );
       return next(
-        new AppError('Check-out date must be after check-in date', 400),
+        new AppError(
+          'Arrival and departure times must be at least 12 hours apart.',
+          400,
+        ),
+      );
+    }
+
+    // Ensure at least one adult is present
+    const numAdults = parseInt(adult, 10) || 0;
+    const numChildren = parseInt(children, 10) || 0;
+
+    if (numAdults === 0) {
+      console.log('At least one adult is required to make a booking.');
+      return next(
+        new AppError('At least one adult is required to make a booking.', 400),
       );
     }
 
     let totalPrice;
     let hotelName = '';
     let roomName = '';
-    let restaurantName = ''; // For restaurant bookings
-
-    let numAdults = parseInt(adult, 10);
-    let numChildren = parseInt(children, 10);
+    let restaurantName = '';
 
     if (bookingType === 'HotelBooking') {
       const room = await Room.findById(roomId);
       const hotel = await Hotel.findById(hotelId);
 
       if (!room || !hotel) {
-        return next(new AppError('Room or Hotel not found', 404));
+        return next(new AppError('Room or Hotel not found.', 404));
       }
 
       hotelName = hotel.name;
@@ -108,7 +136,7 @@ exports.createBooking = catchAsync(async (req, res, next) => {
     } else if (bookingType === 'RestaurantBooking') {
       const restaurant = await Restaurant.findById(restaurantId);
       if (!restaurant) {
-        return next(new AppError('Restaurant not found', 404));
+        return next(new AppError('Restaurant not found.', 404));
       }
 
       restaurantName = restaurant.name;
@@ -184,6 +212,11 @@ exports.updateBooking = catchAsync(async (req, res, next) => {
       timeOfDeparture,
       status,
     } = req.body;
+
+    // Validate check-in and check-out dates
+    const checkIn = new Date(checkInDate);
+    const checkOut = new Date(checkOutDate);
+    const now = new Date();
 
     // Find the booking and update the details
     const updatedBooking = await Booking.findByIdAndUpdate(

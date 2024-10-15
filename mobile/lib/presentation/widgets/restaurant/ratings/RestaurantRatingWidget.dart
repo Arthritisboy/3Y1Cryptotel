@@ -107,8 +107,6 @@ class _RestaurantratingwidgetState extends State<Restaurantratingwidget> {
               orElse: () => UserModel(),
             );
             if (user.firstName == null || user.lastName == null) {
-              print(
-                  "User not found or invalid for rating with score ${rating.rating}");
               return const SizedBox.shrink(); // Do not display anything
             }
 

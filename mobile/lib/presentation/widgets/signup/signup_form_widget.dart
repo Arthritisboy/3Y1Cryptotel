@@ -30,159 +30,158 @@ class _SignupFormState extends State<SignupForm> {
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
 
-    return SingleChildScrollView(
-      child: Form(
-        key: _formSignupKey,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            const Text(
-              'HELLO! CREATE AN ACCOUNT TO ACCESS AMAZING DEALS.',
+    return Form(
+      key: _formSignupKey,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          const Text(
+            'HELLO! CREATE AN ACCOUNT TO ACCESS AMAZING DEALS.',
+            style: TextStyle(
+                fontFamily: 'HammerSmith', fontSize: 20, color: Colors.black),
+          ),
+          const SizedBox(height: 16),
+          const Text('SIGN UP',
               style: TextStyle(
-                  fontFamily: 'HammerSmith', fontSize: 20, color: Colors.black),
-            ),
-            const SizedBox(height: 16),
-            const Text('SIGN UP',
-                style: TextStyle(
-                    fontFamily: 'HammerSmith',
-                    fontSize: 20,
-                    color: Colors.black)),
-            const SizedBox(height: 16),
-            CustomTextFormField(
-              label: 'First Name',
-              hint: 'Enter your first name',
-              controller: _firstNameController,
-            ),
-            const SizedBox(height: 8),
-            CustomTextFormField(
-              label: 'Last Name',
-              hint: 'Enter your last name',
-              controller: _lastNameController,
-            ),
-            const SizedBox(height: 8),
+                  fontFamily: 'HammerSmith',
+                  fontSize: 20,
+                  color: Colors.black)),
+          const SizedBox(height: 16),
+          CustomTextFormField(
+            label: 'First Name',
+            hint: 'Enter your first name',
+            controller: _firstNameController,
+          ),
+          const SizedBox(height: 8),
+          CustomTextFormField(
+            label: 'Last Name',
+            hint: 'Enter your last name',
+            controller: _lastNameController,
+          ),
+          const SizedBox(height: 8),
 
-            // Contact Number Input
-            CustomTextFormField(
-              label: 'Contact Number',
-              hint: 'Enter your contact number',
-              controller: _phoneNumberController,
-              validator: (value) {
-                if (value == null || value.isEmpty) {
-                  return 'Please enter your contact number';
-                }
-                return null;
-              },
-            ),
+          // Contact Number Input
+          CustomTextFormField(
+            label: 'Contact Number',
+            hint: 'Enter your contact number',
+            controller: _phoneNumberController,
+            validator: (value) {
+              if (value == null || value.isEmpty) {
+                return 'Please enter your contact number';
+              }
+              return null;
+            },
+          ),
 
-            const SizedBox(height: 8),
+          const SizedBox(height: 8),
 
-            // Gender Dropdown
-            _buildGenderDropdown(screenWidth),
-            const SizedBox(height: 8),
+          // Gender Dropdown
+          _buildGenderDropdown(screenWidth),
+          const SizedBox(height: 8),
 
-            // Role Dropdown
-            _buildRoleDropdown(screenWidth),
-            const SizedBox(height: 8),
+          // Role Dropdown
+          _buildRoleDropdown(screenWidth),
+          const SizedBox(height: 8),
 
-            // Email Input
-            CustomTextFormField(
-              label: 'Email',
-              hint: 'Enter your email',
-              controller: _emailController,
-              validator: (value) {
-                if (value == null || value.isEmpty) {
-                  return 'Please enter your email';
-                }
-                return null;
-              },
-            ),
-            const SizedBox(height: 8),
+          // Email Input
+          CustomTextFormField(
+            label: 'Email',
+            hint: 'Enter your email',
+            controller: _emailController,
+            validator: (value) {
+              if (value == null || value.isEmpty) {
+                return 'Please enter your email';
+              }
+              return null;
+            },
+          ),
+          const SizedBox(height: 8),
 
-            // Password Input
-            CustomTextFormField(
-              label: 'Password',
-              hint: 'Enter your password',
-              controller: _passwordController,
-              isObscure: true,
-              showPassword: _isPasswordVisible,
-              toggleShowPassword: () {
-                setState(() {
-                  _isPasswordVisible = !_isPasswordVisible;
-                });
-              },
-            ),
-            const SizedBox(height: 8),
+          // Password Input
+          CustomTextFormField(
+            label: 'Password',
+            hint: 'Enter your password',
+            controller: _passwordController,
+            isObscure: true,
+            showPassword: _isPasswordVisible,
+            toggleShowPassword: () {
+              setState(() {
+                _isPasswordVisible = !_isPasswordVisible;
+              });
+            },
+          ),
+          const SizedBox(height: 8),
 
-            // Confirm Password Input
-            CustomTextFormField(
-              label: 'Confirm Password',
-              hint: 'Verify your password',
-              controller: _confirmPasswordController,
-              isObscure: true,
-              showPassword: _isConfirmPasswordVisible,
-              toggleShowPassword: () {
-                setState(() {
-                  _isConfirmPasswordVisible = !_isConfirmPasswordVisible;
-                });
-              },
-              validator: (value) {
-                if (value == null || value.isEmpty) {
-                  return 'Please confirm your password';
-                }
-                if (value != _passwordController.text) {
-                  return 'Passwords do not match';
-                }
-                return null;
-              },
-            ),
-            const SizedBox(height: 24),
+          // Confirm Password Input
+          CustomTextFormField(
+            label: 'Confirm Password',
+            hint: 'Verify your password',
+            controller: _confirmPasswordController,
+            isObscure: true,
+            showPassword: _isConfirmPasswordVisible,
+            toggleShowPassword: () {
+              setState(() {
+                _isConfirmPasswordVisible = !_isConfirmPasswordVisible;
+              });
+            },
+            validator: (value) {
+              if (value == null || value.isEmpty) {
+                return 'Please confirm your password';
+              }
+              if (value != _passwordController.text) {
+                return 'Passwords do not match';
+              }
+              return null;
+            },
+          ),
+          const SizedBox(height: 24),
 
-            // Signup Button
-            SizedBox(
-              width: screenWidth * 0.5,
-              child: ElevatedButton(
-                style: ButtonStyle(
-                  backgroundColor:
-                      WidgetStateProperty.all(const Color(0xFF1C3473)),
-                ),
-                onPressed: _isLoading
-                    ? null
-                    : () {
-                        if (_formSignupKey.currentState!.validate()) {
-                          // Ensure role is selected
-                          Navigator.of(context).pushReplacementNamed(
-                            '/uploadPicture',
-                            arguments: {
-                              'firstName': _firstNameController.text,
-                              'lastName': _lastNameController.text,
-                              'email': _emailController.text,
-                              'password': _passwordController.text,
-                              'confirmPassword':
-                                  _confirmPasswordController.text,
-                              'phoneNumber': _phoneNumberController.text,
-                              'gender': _selectedGender,
-                              'roles': _selectedRole, // Pass role here
-                            },
-                          );
-                        }
-                      },
-                child: _isLoading
-                    ? const SizedBox(
-                        width: 20,
-                        height: 20,
-                        child: CircularProgressIndicator(
-                          valueColor:
-                              AlwaysStoppedAnimation<Color>(Colors.white),
-                          strokeWidth: 2,
-                        ),
-                      )
-                    : const Text('SIGN UP'),
+          // Signup Button
+          SizedBox(
+            width: screenWidth * 0.5,
+            child: ElevatedButton(
+              style: ButtonStyle(
+                backgroundColor:
+                    WidgetStateProperty.all(const Color(0xFF1C3473)),
               ),
+              onPressed: _isLoading
+                  ? null
+                  : () {
+                      if (_formSignupKey.currentState!.validate()) {
+                        // Ensure role is selected
+                        Navigator.of(context).pushReplacementNamed(
+                          '/uploadPicture',
+                          arguments: {
+                            'firstName': _firstNameController.text,
+                            'lastName': _lastNameController.text,
+                            'email': _emailController.text,
+                            'password': _passwordController.text,
+                            'confirmPassword': _confirmPasswordController.text,
+                            'phoneNumber': _phoneNumberController.text,
+                            'gender': _selectedGender,
+                            'roles': _selectedRole, // Pass role here
+                          },
+                        );
+                      }
+                    },
+              child: _isLoading
+                  ? const SizedBox(
+                      width: 20,
+                      height: 20,
+                      child: CircularProgressIndicator(
+                        valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                        strokeWidth: 2,
+                      ),
+                    )
+                  : const Text('SIGN UP'),
             ),
-            const SizedBox(height: 8),
-            _buildLoginRedirect(),
-          ],
-        ),
+          ),
+          const SizedBox(height: 8),
+          _buildLoginRedirect(),
+          SizedBox(
+            height: 20,
+          )
+        ],
       ),
     );
   }
