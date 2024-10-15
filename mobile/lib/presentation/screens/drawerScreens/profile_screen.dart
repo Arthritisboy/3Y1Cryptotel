@@ -183,6 +183,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
             bottom: 0,
             child: BlocListener<AuthBloc, AuthState>(
               listener: (context, state) {
+                if (state is AccountDeleted) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text(state.message)),
+                  );
+                  // Redirect to login screen or another relevant screen
+                  Navigator.of(context).pushReplacementNamed('/login');
+                }
                 if (state is Authenticated) {
                   // Handle successful profile update
                   setState(() {
@@ -214,10 +221,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
                   if (state is Authenticated) {
                     // Ensure you're working with a single authenticated user, not a list
-                    final user = state.user;
-                    print('User is authenticated.');
-                    print(
-                        'Authenticated User: ${user.email}, ${user.firstName}, ${user.lastName}');
 
                     return BottomSection(
                       firstNameController: firstNameController,

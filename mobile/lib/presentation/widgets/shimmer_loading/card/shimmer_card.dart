@@ -20,7 +20,7 @@ class ShimmerCard extends StatelessWidget {
         child: Row(
           children: List.generate(3, (index) {
             return Padding(
-              padding: const EdgeInsets.only(right: 10.0),
+              padding: const EdgeInsets.only(left: 20.0, bottom: 20),
               child: SizedBox(
                 width: 250.0,
                 height: 240.0,

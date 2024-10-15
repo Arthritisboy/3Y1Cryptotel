@@ -12,7 +12,7 @@ class HotelModel extends Equatable {
   final double averagePrice;
   final List<RoomModel> rooms;
 
-  HotelModel({
+  const HotelModel({
     required this.id,
     required this.name,
     required this.location,
