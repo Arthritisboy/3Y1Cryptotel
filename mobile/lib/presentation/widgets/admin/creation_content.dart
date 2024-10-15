@@ -1,7 +1,25 @@
 import 'package:flutter/material.dart';
+import 'package:hotel_flutter/presentation/widgets/admin/hotel_form.dart';
+import 'package:hotel_flutter/presentation/widgets/admin/restaurant_form.dart';
 
 class CreationContent extends StatelessWidget {
   const CreationContent({super.key});
+
+  // Function to handle "Create Hotel" button press
+  void _navigateToHotelForm(BuildContext context) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => const HotelFormScreen()),
+    );
+  }
+
+  // Function to handle "Create Restaurant" button press
+  void _navigateToRestaurantForm(BuildContext context) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => const RestaurantFormScreen()),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -21,6 +39,14 @@ class CreationContent extends StatelessWidget {
           'What are you creating?',
           style: Theme.of(context).textTheme.titleMedium,
         ),
+        const SizedBox(height: 10),
+
+        // Action-oriented Guide
+        Text(
+          'Select whether you want to create a hotel or a restaurant. Once you choose, you\'ll be guided step-by-step to set up your establishment and manage its details.',
+          style: Theme.of(context).textTheme.bodyMedium,
+          textAlign: TextAlign.center,
+        ),
         const SizedBox(height: 20),
 
         // Grid of Selection Cards
@@ -35,8 +61,7 @@ class CreationContent extends StatelessWidget {
                 icon: Icons.hotel,
                 color: Colors.blue,
                 onPressed: () {
-                  // Navigate to Hotel creation form
-                  Navigator.pushNamed(context, '/hotelForm');
+                  _navigateToHotelForm(context);
                 },
               ),
               SelectionCard(
@@ -44,8 +69,7 @@ class CreationContent extends StatelessWidget {
                 icon: Icons.restaurant,
                 color: Colors.green,
                 onPressed: () {
-                  // Navigate to Restaurant creation form
-                  Navigator.pushNamed(context, '/restaurantForm');
+                  _navigateToRestaurantForm(context);
                 },
               ),
             ],
