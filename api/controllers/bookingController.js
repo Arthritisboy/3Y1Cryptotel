@@ -79,6 +79,11 @@ exports.createBooking = catchAsync(async (req, res, next) => {
     console.log(`Check-in Date: ${checkIn}`);
     console.log(`Check-out Date: ${checkOut}`);
 
+    if (checkIn < checkOutDate) {
+      console.log('Check-in date cannot be in the past.');
+      return next(new AppError('Check-in date cannot be in the past.', 400));
+    }
+
     // Ensure check-in date is not in the past
     if (checkIn < now) {
       console.log('Check-in date cannot be in the past.');

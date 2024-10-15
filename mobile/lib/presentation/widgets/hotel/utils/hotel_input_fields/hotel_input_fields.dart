@@ -155,8 +155,19 @@ class _HotelInputFieldsState extends State<HotelInputFields> {
     DateTime? checkOutDate = _parseDate(checkOutDateController.text);
     DateTime now = DateTime.now();
 
-    // Debugging the parsed dates
-    print('Check-in Date: $checkInDate, Check-out Date: $checkOutDate');
+    // Combine the arrival and departure times with the corresponding dates
+    DateTime? arrivalDateTime = combineDateAndTime(
+      checkInDateController.text,
+      timeOfArrivalController.text,
+    );
+    DateTime? departureDateTime = combineDateAndTime(
+      checkOutDateController.text,
+      timeOfDepartureController.text,
+    );
+
+    // Debugging the parsed dates and times
+    print(
+        'Check-in DateTime: $arrivalDateTime, Check-out DateTime: $departureDateTime');
 
     // Ensure the number of adults is at least 1
     int adults = int.tryParse(adultsController.text) ?? 0;
@@ -175,25 +186,27 @@ class _HotelInputFieldsState extends State<HotelInputFields> {
     }
 
     // Check if the check-out date is before the check-in date
-    if (checkInDate != null &&
-        checkOutDate != null &&
-        checkOutDate.isBefore(checkInDate)) {
-      print('Error: Check-out date cannot be before the check-in date.');
-      _showErrorDialog(
-          context, 'Check-out date cannot be before the check-in date.');
+    if (arrivalDateTime != null &&
+        departureDateTime != null &&
+        departureDateTime.isBefore(arrivalDateTime)) {
+      print(
+          'Error: Check-out date and time cannot be before check-in date and time.');
+      _showErrorDialog(context,
+          'Check-out date and time cannot be before check-in date and time.');
       return;
     }
 
     // Ensure the check-in date is not in the past
-    if (checkInDate != null && checkInDate.isBefore(now)) {
-      print('Error: Check-in date cannot be in the past.');
-      _showErrorDialog(context, 'Check-in date cannot be in the past.');
+    if (arrivalDateTime != null && arrivalDateTime.isBefore(now)) {
+      print('Error: Check-in date and time cannot be in the past.');
+      _showErrorDialog(
+          context, 'Check-in date and time cannot be in the past.');
       return;
     }
 
-    // Limit same-day bookings to 12 hours in advance
-    if (checkInDate != null && checkInDate.day == now.day) {
-      Duration timeDifference = checkInDate.difference(now);
+    // Limit same-day bookings to 12 hours in advance using arrival time
+    if (arrivalDateTime != null && arrivalDateTime.day == now.day) {
+      Duration timeDifference = arrivalDateTime.difference(now);
       print(
           'Same-day booking time difference: ${timeDifference.inHours} hours');
       if (timeDifference.inHours < 12) {
@@ -204,11 +217,6 @@ class _HotelInputFieldsState extends State<HotelInputFields> {
     }
 
     // Proceed with the booking if all validations pass
-    DateTime? arrivalDateTime = combineDateAndTime(
-        checkInDateController.text, timeOfArrivalController.text);
-    DateTime? departureDateTime = combineDateAndTime(
-        checkOutDateController.text, timeOfDepartureController.text);
-
     if (checkInDate != null &&
         checkOutDate != null &&
         arrivalDateTime != null &&
