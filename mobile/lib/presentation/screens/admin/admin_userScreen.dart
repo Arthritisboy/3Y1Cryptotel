@@ -32,7 +32,9 @@ class _AdminScreenState extends State<AdminScreen> {
       if (handleId != null) {
         context.read<BookingBloc>().add(FetchBookings(userId: handleId!));
       }
-    } catch (e) {}
+    } catch (e) {
+      print('Error fetching handleId: $e');
+    }
   }
 
   @override
