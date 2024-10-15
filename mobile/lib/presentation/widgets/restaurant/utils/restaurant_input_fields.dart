@@ -122,15 +122,117 @@ class _RestaurantInputFieldsState extends State<RestaurantInputFields> {
     );
   }
 
-  void _showDateErrorDialog(BuildContext context) {
+  void _createBooking(BuildContext context) {
+    // Close the keyboard to prevent interference with dialogs
+    FocusScope.of(context).unfocus();
+
+    // Parse the dates and times from the input controllers
+    DateTime? checkInDate = DateTime.tryParse(checkInDateController.text);
+    DateTime? checkOutDate = DateTime.tryParse(checkOutDateController.text);
+    DateTime now = DateTime.now();
+
+    // Combine the arrival and departure times with their corresponding dates
+    DateTime? arrivalDateTime = combineDateAndTime(
+      checkInDateController.text,
+      timeOfArrivalController.text,
+    );
+    DateTime? departureDateTime = combineDateAndTime(
+      checkOutDateController.text,
+      timeOfDepartureController.text,
+    );
+
+    // Ensure at least one adult is present
+    int adults = int.tryParse(adultsController.text) ?? 0;
+    int children = int.tryParse(childrenController.text) ?? 0;
+
+    if (adults == 0 && children == 0) {
+      _showErrorDialog(context, 'Please fill in all the required details.');
+      return;
+    }
+
+    if (adults == 0) {
+      _showErrorDialog(
+          context, 'At least one adult is required to make a booking.');
+      return;
+    }
+
+    // Check if the departure time is before the arrival time
+    if (arrivalDateTime != null &&
+        departureDateTime != null &&
+        departureDateTime.isBefore(arrivalDateTime)) {
+      _showErrorDialog(
+          context, 'Departure time cannot be before arrival time.');
+      return;
+    }
+
+    // Ensure the arrival date and time is not in the past
+    if (arrivalDateTime != null && arrivalDateTime.isBefore(now)) {
+      _showErrorDialog(context, 'Arrival time cannot be in the past.');
+      return;
+    }
+
+    // Validate same-day booking with a 12-hour difference
+    if (arrivalDateTime != null && departureDateTime != null) {
+      if (arrivalDateTime.day == departureDateTime.day) {
+        Duration timeDifference = departureDateTime.difference(arrivalDateTime);
+        if (timeDifference.inHours < 12) {
+          _showErrorDialog(context,
+              'For same-day bookings, there must be at least 12 hours between arrival and departure.');
+          return;
+        }
+      }
+    }
+
+    // Proceed with the booking if all validations pass
+    if (checkInDate != null &&
+        checkOutDate != null &&
+        arrivalDateTime != null &&
+        departureDateTime != null &&
+        userId != null) {
+      final int totalGuests = adults + children;
+
+      // Check if the total number of guests exceeds the restaurant capacity
+      if (totalGuests > widget.capacity) {
+        _showCapacityErrorDialog(context);
+        return;
+      }
+
+      final booking = BookingModel(
+        bookingType: 'RestaurantBooking',
+        restaurantId: widget.restaurantId,
+        fullName: fullNameController.text,
+        email: emailController.text,
+        phoneNumber: phoneNumberController.text,
+        address: addressController.text,
+        checkInDate: checkInDate,
+        checkOutDate: checkOutDate,
+        timeOfArrival: arrivalDateTime,
+        timeOfDeparture: departureDateTime,
+        adult: adults,
+        children: children,
+        tableNumber: totalGuests, // Sum of adults and children
+      );
+
+      setState(() {
+        isLoading = true; // Show loading spinner
+      });
+
+      context.read<BookingBloc>().add(CreateBooking(
+            booking: booking,
+            userId: userId!,
+          ));
+    }
+  }
+
+  void _showErrorDialog(BuildContext context, String message) {
+    print('Showing Error Dialog: $message'); // Debug print
     showDialog(
       context: context,
-      barrierDismissible: false, // Prevent closing by tapping outside
+      barrierDismissible: false,
       builder: (BuildContext context) {
         return CustomDialog(
-          title: 'Invalid Date Selection',
-          description:
-              'The check-in date cannot be the same as the check-out date. Please select valid dates to proceed.',
+          title: 'Booking Invalid',
+          description: message,
           buttonText: 'OK',
           onButtonPressed: () {
             Navigator.of(context).pop(); // Close the dialog
@@ -139,67 +241,6 @@ class _RestaurantInputFieldsState extends State<RestaurantInputFields> {
         );
       },
     );
-  }
-
-  // Function to create a booking
-  void _createBooking(BuildContext context) {
-    final int totalGuests = (int.tryParse(adultsController.text) ?? 0) +
-        (int.tryParse(childrenController.text) ?? 0);
-
-    if (totalGuests > widget.capacity) {
-      _showCapacityErrorDialog(context); // Show error if capacity is exceeded
-    } else {
-      // Proceed with booking logic
-      DateTime? checkInDate = DateTime.tryParse(checkInDateController.text);
-      DateTime? checkOutDate = DateTime.tryParse(checkOutDateController.text);
-
-      // Check if the check-in date is the same as the check-out date
-      if (checkInDate != null &&
-          checkOutDate != null &&
-          checkInDate.isAtSameMomentAs(checkOutDate)) {
-        _showDateErrorDialog(
-            context); // Show error dialog for invalid date selection
-        return; // Stop further processing
-      }
-
-      DateTime? arrivalDateTime = combineDateAndTime(
-          checkInDateController.text, timeOfArrivalController.text);
-      DateTime? departureDateTime = combineDateAndTime(
-          checkOutDateController.text, timeOfDepartureController.text);
-
-      if (checkInDate != null &&
-          checkOutDate != null &&
-          arrivalDateTime != null &&
-          departureDateTime != null &&
-          userId != null) {
-        final booking = BookingModel(
-            bookingType: 'RestaurantBooking',
-            restaurantId: widget.restaurantId,
-            fullName: fullNameController.text,
-            email: emailController.text,
-            phoneNumber: phoneNumberController.text,
-            address: addressController.text,
-            checkInDate: checkInDate,
-            checkOutDate: checkOutDate,
-            timeOfArrival: arrivalDateTime,
-            timeOfDeparture: departureDateTime,
-            adult: int.tryParse(adultsController.text) ?? 1,
-            children: int.tryParse(childrenController.text) ?? 0,
-            tableNumber: (int.tryParse(adultsController.text) ?? 1) +
-                (int.tryParse(childrenController.text) ??
-                    0) // Sum of adults and children
-            );
-
-        setState(() {
-          isLoading = true; // Show loading spinner
-        });
-
-        context.read<BookingBloc>().add(CreateBooking(
-              booking: booking,
-              userId: userId!,
-            ));
-      }
-    }
   }
 
   @override
