@@ -5,10 +5,10 @@ import 'package:hotel_flutter/data/model/booking/booking_model.dart';
 import 'package:hotel_flutter/logic/bloc/booking/booking_bloc.dart';
 import 'package:hotel_flutter/logic/bloc/booking/booking_event.dart';
 import 'package:hotel_flutter/logic/bloc/booking/booking_state.dart';
-import 'package:hotel_flutter/presentation/admin/createRoom.dart'; // Import the CreateRoom screen
+import 'package:hotel_flutter/presentation/widgets/admin/createRoom.dart'; // Import the CreateRoom screen
 import 'package:intl/intl.dart';
-import '../widgets/admin/admin_modal.dart';
-import '../widgets/admin/admin_header.dart';
+import 'admin_modal.dart';
+import 'admin_header.dart';
 
 class AdminScreen extends StatefulWidget {
   const AdminScreen({super.key});
