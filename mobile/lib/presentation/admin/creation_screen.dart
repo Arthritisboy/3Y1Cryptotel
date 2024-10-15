@@ -12,10 +12,10 @@ class CreationScreen extends StatelessWidget {
         padding: const EdgeInsets.all(16.0),
         child: Column(
           children: [
-            const AdminHeader(), // Admin header at the top
+            const AdminHeader(),
             const SizedBox(height: 20),
             const Expanded(
-              child: CreationContent(), // Use the combined content widget
+              child: CreationContent(),
             ),
           ],
         ),
