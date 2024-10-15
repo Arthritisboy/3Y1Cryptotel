@@ -249,12 +249,8 @@ class AuthDataProvider {
 
     // Add image file if it exists
     if (profilePicture != null) {
-      request.files.add(
-        await http.MultipartFile.fromPath(
-          'image',
-          profilePicture.path,
-        ),
-      );
+      request.files
+          .add(await http.MultipartFile.fromPath('image', profilePicture.path));
     }
 
     try {
@@ -262,16 +258,9 @@ class AuthDataProvider {
       final responseData = await http.Response.fromStream(response);
 
       if (response.statusCode == 200) {
-        // Parse the response body to extract user data
         final Map<String, dynamic> data = jsonDecode(responseData.body);
-        final updatedUser = UserModel.fromJson(
-            data['data']['user']); // Assuming you have a fromJson method
-
-        // Log or print the new profile image URL
-        _logger
-            .info('Updated profile image URL: ${updatedUser.profilePicture}');
-
-        return updatedUser; // Return the updated user model, including profile picture
+        final updatedUser = UserModel.fromJson(data['data']['user']);
+        return updatedUser;
       } else {
         throw Exception('Failed to update user data: ${responseData.body}');
       }
