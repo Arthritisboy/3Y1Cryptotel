@@ -181,7 +181,6 @@ class _HelpSupportScreenState extends State<HelpSupportScreen> {
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(30),
                               ),
-                              elevation: 5, // Add shadow
                             ),
                             child: const Text(
                               'Send a Message',
