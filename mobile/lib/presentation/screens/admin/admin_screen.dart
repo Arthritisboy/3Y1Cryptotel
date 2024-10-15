@@ -5,9 +5,8 @@ import 'package:hotel_flutter/data/model/booking/booking_model.dart';
 import 'package:hotel_flutter/logic/bloc/booking/booking_bloc.dart';
 import 'package:hotel_flutter/logic/bloc/booking/booking_event.dart';
 import 'package:hotel_flutter/logic/bloc/booking/booking_state.dart';
-import '../../widgets/admin/admin_header.dart';
-import '../../widgets/admin/admin_modal.dart';
-import '../../widgets/admin/createRoom.dart';
+import 'package:hotel_flutter/presentation/widgets/admin/admin_header.dart';
+import 'package:hotel_flutter/presentation/widgets/admin/admin_modal.dart';
 import 'package:intl/intl.dart';
 
 class AdminScreen extends StatefulWidget {
@@ -45,14 +44,7 @@ class _AdminScreenState extends State<AdminScreen> {
       child: Scaffold(
         body: Column(
           children: [
-            AdminHeader(
-              onCreateRoomPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => const CreateRoom()),
-                );
-              },
-            ),
+            AdminHeader(),
             const TabBar(
               tabs: [
                 Tab(text: 'Rooms', icon: Icon(Icons.hotel)),
