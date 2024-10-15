@@ -5,19 +5,19 @@ import 'package:hotel_flutter/data/model/booking/booking_model.dart';
 import 'package:hotel_flutter/logic/bloc/booking/booking_bloc.dart';
 import 'package:hotel_flutter/logic/bloc/booking/booking_event.dart';
 import 'package:hotel_flutter/logic/bloc/booking/booking_state.dart';
-import 'package:hotel_flutter/presentation/widgets/admin/createRoom.dart';
-import 'package:hotel_flutter/presentation/widgets/admin/admin_header.dart';
-import 'package:hotel_flutter/presentation/widgets/admin/admin_modal.dart';
+import 'package:hotel_flutter/presentation/admin/createRoom.dart';
 import 'package:intl/intl.dart';
+import '../widgets/admin/admin_modal.dart';
+import '../widgets/admin/admin_header.dart';
 
-class AdminNavigation extends StatefulWidget {
-  const AdminNavigation({super.key});
+class AdminScreen extends StatefulWidget {
+  const AdminScreen({super.key});
 
   @override
-  _AdminNavigationState createState() => _AdminNavigationState();
+  _AdminScreenState createState() => _AdminScreenState();
 }
 
-class _AdminNavigationState extends State<AdminNavigation> {
+class _AdminScreenState extends State<AdminScreen> {
   final FlutterSecureStorage _secureStorage = const FlutterSecureStorage();
   String? handleId;
 
@@ -34,7 +34,9 @@ class _AdminNavigationState extends State<AdminNavigation> {
       if (handleId != null) {
         context.read<BookingBloc>().add(FetchBookings(userId: handleId!));
       }
-    } catch (e) {}
+    } catch (e) {
+      print('Error fetching ID from secure storage: $e');
+    }
   }
 
   @override
@@ -44,7 +46,6 @@ class _AdminNavigationState extends State<AdminNavigation> {
       child: Scaffold(
         body: Column(
           children: [
-            // Passing the onCreateRoomPressed callback here
             AdminHeader(),
             const TabBar(
               tabs: [
@@ -55,21 +56,13 @@ class _AdminNavigationState extends State<AdminNavigation> {
               ],
             ),
             Expanded(
-              child: BlocBuilder<BookingBloc, BookingState>(
-                builder: (context, state) {
-                  return TabBarView(
-                    children: [
-                      // "Rooms" tab: Show "Create Room" button and bookings
-                      _buildRoomsTab(context, state),
-                      // "Pending" tab
-                      _buildBookingList(_filterBookings(state, 'pending')),
-                      // "Accepted" tab
-                      _buildBookingList(_filterBookings(state, 'accepted')),
-                      // "Rejected" tab
-                      _buildBookingList(_filterBookings(state, 'rejected')),
-                    ],
-                  );
-                },
+              child: TabBarView(
+                children: [
+                  _buildRoomsTab(context), // The "Rooms" tab content
+                  _buildBookingList(_filterBookings(context, 'pending')),
+                  _buildBookingList(_filterBookings(context, 'accepted')),
+                  _buildBookingList(_filterBookings(context, 'rejected')),
+                ],
               ),
             ),
           ],
@@ -79,44 +72,36 @@ class _AdminNavigationState extends State<AdminNavigation> {
   }
 
   // Widget for the "Rooms" tab
-  Widget _buildRoomsTab(BuildContext context, BookingState state) {
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          ElevatedButton(
-            onPressed: () {
-              // Navigate to the CreateRoomScreen
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => const CreateRoom()),
-              );
-            },
-            style: ElevatedButton.styleFrom(
-              backgroundColor:
-                  const Color(0xFF1C3473), // Button background color
-            ),
-            child: const Text('Create Room'),
-          ),
-          const SizedBox(height: 20),
-          // Check if there are bookings or display a message
-          state is BookingSuccess && state.bookings.isNotEmpty
-              ? Expanded(child: _buildBookingList(state.bookings))
-              : const Padding(
-                  padding: EdgeInsets.all(16.0),
-                  child: Text(
-                    'No registered hotels or restaurants available. Please create a room.',
-                    textAlign: TextAlign.center,
-                    style: TextStyle(fontSize: 16, color: Colors.black54),
-                  ),
-                ),
-        ],
-      ),
+  Widget _buildRoomsTab(BuildContext context) {
+    return BlocBuilder<BookingBloc, BookingState>(
+      builder: (context, state) {
+        // Check if there are no hotels or restaurants created by the user
+        if (state is BookingSuccess && state.bookings.isNotEmpty) {
+          // Determine if there is any hotel or restaurant created
+          final hasHotelOrResto = state.bookings.any((booking) =>
+              (booking.hotelName?.isNotEmpty == true ||
+                  booking.restaurantName?.isNotEmpty == true));
+
+          if (!hasHotelOrResto) {
+            // Show HotelorResto widget if no hotel or restaurant exists
+            return const Hotelorresto();
+          } else {
+            // If hotel or restaurant exists, show the list of bookings
+            return _buildBookingList(state.bookings);
+          }
+        } else {
+          // If there are no bookings, show the default message
+          return const Center(
+            child: Text('No bookings available.'),
+          );
+        }
+      },
     );
   }
 
-  // Helper function to filter bookings based on status
-  List<BookingModel> _filterBookings(BookingState state, String status) {
+  // Filter bookings based on status
+  List<BookingModel> _filterBookings(BuildContext context, String status) {
+    final state = context.read<BookingBloc>().state;
     if (state is BookingSuccess) {
       return state.bookings
           .where((b) => b.status?.toLowerCase() == status)
@@ -234,6 +219,57 @@ class _AdminNavigationState extends State<AdminNavigation> {
           ),
         );
       },
+    );
+  }
+}
+
+class Hotelorresto extends StatelessWidget {
+  const Hotelorresto({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            // Button for Hotel
+            ElevatedButton(
+              onPressed: () {
+                // Add your logic here for Hotel button press
+                print('Hotel button pressed');
+              },
+              style: ElevatedButton.styleFrom(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 40, vertical: 20),
+                backgroundColor: const Color(0xFF1C3473), // Button color
+              ),
+              child: const Text(
+                'Hotel',
+                style: TextStyle(fontSize: 18),
+              ),
+            ),
+            const SizedBox(height: 20), // Space between buttons
+
+            // Button for Resto
+            ElevatedButton(
+              onPressed: () {
+                // Add your logic here for Resto button press
+                print('Resto button pressed');
+              },
+              style: ElevatedButton.styleFrom(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 40, vertical: 20),
+                backgroundColor: const Color(0xFF1C3473), // Button color
+              ),
+              child: const Text(
+                'Resto',
+                style: TextStyle(fontSize: 18),
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }
