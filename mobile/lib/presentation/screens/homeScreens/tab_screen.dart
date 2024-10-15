@@ -160,9 +160,12 @@ class _TabScreenState extends State<TabScreen> {
               lastName: lastName ?? '',
             ),
             const SizedBox(height: 10),
-            BottomHomeIconNavigation(
-              selectedIndex: _selectedIndex,
-              onIconTapped: _onIconTapped,
+            Padding(
+              padding: const EdgeInsets.only(bottom: 10),
+              child: BottomHomeIconNavigation(
+                selectedIndex: _selectedIndex,
+                onIconTapped: _onIconTapped,
+              ),
             ),
             Expanded(
               child: SingleChildScrollView(
