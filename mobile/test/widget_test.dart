@@ -7,13 +7,18 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-
+import 'package:hotel_flutter/data/repositories/auth_repository.dart';
 import 'package:hotel_flutter/main.dart';
+import 'package:hotel_flutter/data/data_provider/auth/auth_data_provider.dart';
 
-void main() {
+void main() async {
+  final authRepository = AuthRepository(AuthDataProvider());
+  await authRepository.initializeSharedPreferences();
   testWidgets('Counter increments smoke test', (WidgetTester tester) async {
     // Build our app and trigger a frame.
-    await tester.pumpWidget(MyApp());
+    await tester.pumpWidget(MyApp(
+      authRepository: AuthRepository(AuthDataProvider()),
+    ));
 
     // Verify that our counter starts at 0.
     expect(find.text('0'), findsOneWidget);
