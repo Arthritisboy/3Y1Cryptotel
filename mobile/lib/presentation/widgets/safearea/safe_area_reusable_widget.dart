@@ -6,6 +6,7 @@ class SafeScaffold extends StatelessWidget {
   final FloatingActionButton? floatingActionButton;
 
   const SafeScaffold({
+    super.key,
     required this.child,
     this.appBar,
     this.floatingActionButton,

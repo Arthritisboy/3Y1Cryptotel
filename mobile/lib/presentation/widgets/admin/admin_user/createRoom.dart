@@ -305,16 +305,6 @@ class _CreateRoomState extends State<CreateRoom> {
                     if (_formKey.currentState!.validate()) {
                       _formKey.currentState!.save();
 
-                      // Process the data here
-                      print('Room Name: $_roomName');
-                      print('Room Description: $_roomDescription');
-                      print('Room Price: $_roomPrice');
-                      print('Room Capacity: $_roomCapacity');
-                      print('Room Type: $_selectedRoomType');
-                      print('Bathroom Amenities: $_bathroomAmenities');
-                      print('Facilities: $_facilitiesAmenities');
-                      print('Non-Smoking: $_isNonSmoking');
-
                       ScaffoldMessenger.of(context).showSnackBar(
                         const SnackBar(content: Text('Room Created!')),
                       );

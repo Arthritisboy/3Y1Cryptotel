@@ -17,7 +17,9 @@ class AdminModal extends StatefulWidget {
   });
 
   @override
-  _AdminModalState createState() => _AdminModalState();
+  State<StatefulWidget> createState() {
+    return _AdminModalState();
+  }
 }
 
 class _AdminModalState extends State<AdminModal> {
