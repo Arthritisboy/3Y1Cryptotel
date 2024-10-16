@@ -6,6 +6,7 @@ import 'package:hotel_flutter/logic/bloc/hotel/hotel_bloc.dart';
 import 'package:hotel_flutter/logic/bloc/hotel/hotel_event.dart';
 import 'package:hotel_flutter/logic/bloc/restaurant/restaurant_bloc.dart';
 import 'package:hotel_flutter/logic/bloc/restaurant/restaurant_event.dart';
+import 'package:hotel_flutter/presentation/widgets/tabscreen/search_suggestion.dart';
 import 'package:logging/logging.dart';
 import 'package:hotel_flutter/data/model/auth/user_model.dart';
 import 'package:hotel_flutter/logic/bloc/auth/auth_bloc.dart';
@@ -45,11 +46,24 @@ class _TabScreenState extends State<TabScreen> {
   String? userId;
   List<UserModel> allUsers = [];
   List<String> suggestions = [
+    'River Palm Hotel',
     'The Monarch Hotel',
-    'Star Plaze Hotel',
-    'Matutina’s',
+    'Star Plaza Hotel',
+    'Puerto Del Sol',
+    'The Manaog Hotel',
+    'Matutina’s Gerry’s Seafood House',
     'Dagupeña',
+    'City De Luxe',
+    'Hardin sa Paraiso',
+    'Sungayan Grill',
+    'Pedritos',
+    'Grumpy Joe',
+    'Dampa',
+    'Kabsat',
+    'Masa Bakehouse',
     'Lenox Hotel',
+    'Hotel Monde',
+    'Bedbox',
   ];
   List<String> filteredSuggestions = [];
 
@@ -68,7 +82,7 @@ class _TabScreenState extends State<TabScreen> {
 
   void _onSearchChanged(String query) {
     setState(() {
-      _searchQuery = query; // Update the search query
+      _searchQuery = query;
     });
   }
 
@@ -202,7 +216,12 @@ class _TabScreenState extends State<TabScreen> {
           ],
         ),
         if (_searchQuery.isNotEmpty)
-          _buildSearchSuggestions(), // Display suggestions
+          SearchSuggestions(
+            suggestions: suggestions,
+            searchQuery: _searchQuery,
+            onSelect: _onSelectSuggestion,
+            onRemove: _onRemoveSuggestion,
+          ),
         Positioned(
           top: 40.0,
           right: 10.0,
@@ -217,6 +236,19 @@ class _TabScreenState extends State<TabScreen> {
         ),
       ],
     );
+  }
+
+  void _onSelectSuggestion(String suggestion) {
+    setState(() {
+      _searchQuery = suggestion;
+      suggestions = []; // Clear the suggestions after selecting
+    });
+  }
+
+  void _onRemoveSuggestion(String suggestion) {
+    setState(() {
+      suggestions.remove(suggestion);
+    });
   }
 
   Widget _buildSearchSuggestions() {

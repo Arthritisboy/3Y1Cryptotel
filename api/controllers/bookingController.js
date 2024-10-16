@@ -113,6 +113,8 @@ exports.createBooking = catchAsync(async (req, res, next) => {
     let hotelName = '';
     let roomName = '';
     let restaurantName = '';
+    let hotelImage = '';
+    let restaurantImage = '';
 
     if (bookingType === 'HotelBooking') {
       const room = await Room.findById(roomId);
