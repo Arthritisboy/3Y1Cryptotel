@@ -4,6 +4,8 @@ import 'package:bloc/bloc.dart';
 import 'package:hotel_flutter/data/repositories/auth_repository.dart';
 import 'package:hotel_flutter/logic/bloc/auth/auth_event.dart';
 import 'package:hotel_flutter/logic/bloc/auth/auth_state.dart';
+import 'package:hotel_flutter/data/model/auth/user_model.dart';
+
 import 'package:logging/logging.dart';
 
 class AuthBloc extends Bloc<AuthEvent, AuthState> {
@@ -58,25 +60,31 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     on<FetchAllUsersEvent>((event, emit) async {
       emit(AuthLoading()); // Start with loading state
       try {
+        // Fetch users from the repository
         final users = await authRepository.fetchAllUsers();
-        emit(UsersFetched(users)); // Emit users fetched state
+
+        // Emit the state with fetched users
+        print('Emitting UsersFetched with ${users.length} users');
+        emit(UsersFetched(users));
       } catch (e) {
-        _logger.severe(
-            'Failed to fetch users: ${e.toString()}'); // Log error if fetching users fails
+        // Log error if fetching users fails
+        print('Failed to fetch users: ${e.toString()}');
         emit(AuthError('Failed to fetch users: ${e.toString()}'));
       }
     });
 
     on<GetUserEvent>((event, emit) async {
-      emit(AuthLoading());
+      emit(AuthLoading()); // Start with loading state
       try {
+        // Fetch user data from the repository
         final user = await authRepository.getUser(event.userId);
+
+        // Emit authenticated state with the fetched user
         emit(Authenticated(user));
       } catch (e) {
         emit(AuthError('Failed to fetch user data: ${e.toString()}'));
       }
     });
-
     on<DeleteAccountEvent>((event, emit) async {
       emit(AuthLoading()); // Emit loading state
       try {

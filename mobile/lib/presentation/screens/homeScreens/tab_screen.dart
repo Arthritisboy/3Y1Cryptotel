@@ -23,6 +23,7 @@ import 'package:hotel_flutter/presentation/widgets/utils_widget/custom_dialog.da
 import 'package:hotel_flutter/presentation/widgets/shimmer_loading/tab/shimmer_tab_header.dart';
 import 'package:hotel_flutter/presentation/widgets/shimmer_loading/tab/shimmer_bottom_navigation.dart';
 import 'package:hotel_flutter/presentation/widgets/shimmer_loading/tab/shimmer_card_widget.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class TabScreen extends StatefulWidget {
   const TabScreen({super.key});
@@ -34,6 +35,7 @@ class TabScreen extends StatefulWidget {
 class _TabScreenState extends State<TabScreen> {
   final Logger _logger = Logger('TabScreen');
   final FlutterSecureStorage _secureStorage = const FlutterSecureStorage();
+  SharedPreferences? _sharedPrefs;
   int _selectedIndex = 0;
   bool _isLoading = true;
   String _searchQuery = "";
@@ -71,14 +73,13 @@ class _TabScreenState extends State<TabScreen> {
   @override
   void initState() {
     super.initState();
-    _initializeUserData();
+    _initializeUserData(); // Load user data on initialization
     _fetchAllUsers();
   }
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    _getUserData();
   }
 
   void _onSearchChanged(String query) {
@@ -88,35 +89,41 @@ class _TabScreenState extends State<TabScreen> {
   }
 
   Future<void> _initializeUserData() async {
-    try {
-      await _getUserData();
-    } catch (e) {
-      _logger.severe('Error initializing user data: $e');
-    } finally {
-      setState(() {
-        _isLoading = false;
-      });
+    _sharedPrefs = await SharedPreferences.getInstance();
+
+    // Retrieve the userId from secure storage or shared preferences
+    userId = await _secureStorage.read(key: 'userId'); // This can be null
+
+    if (userId != null && userId!.isNotEmpty) {
+      // Check if userId is not null and not empty
+      await _getUserData(); // Fetch user data only if userId is valid
+    } else {
+      print('User ID is not set. Unable to fetch user data.');
     }
+
+    setState(() {
+      _isLoading =
+          false; // Set loading to false once initialization is complete
+    });
   }
 
   Future<void> _getUserData() async {
-    final userId = await _secureStorage.read(key: 'userId');
-    _logger.info('Retrieved userId: $userId');
-    if (userId != null) {
+    if (userId != null && userId!.isNotEmpty) {
+      // Check if userId is not null and not empty
+      print('Fetching user data from AuthBloc');
       context
           .read<AuthBloc>()
-          .add(GetUserEvent(userId)); // Fetch latest data from backend
+          .add(GetUserEvent(userId!)); // Use the non-null userId
+    } else {
+      print('No valid user ID to fetch user data.');
     }
   }
 
   Future<void> _fetchAllUsers() async {
-    final token = await _secureStorage.read(key: 'jwt');
-    _logger.info('Retrieved token: $token');
-    if (token != null) {
-      context.read<AuthBloc>().add(FetchAllUsersEvent());
-    } else {
-      _logger.warning('Token is missing. Skipping user fetch.');
-    }
+    print('Fetching all users');
+    context
+        .read<AuthBloc>()
+        .add(FetchAllUsersEvent()); // Trigger an event to fetch all users
   }
 
   @override
@@ -125,17 +132,8 @@ class _TabScreenState extends State<TabScreen> {
       onWillPop: () async => await _showExitConfirmationDialog(context),
       child: BlocListener<AuthBloc, AuthState>(
         listener: (context, state) {
+          print('Current state: $state');
           _handleBlocState(context, state);
-          if (state is AuthSuccess) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text(state.message),
-                duration: const Duration(seconds: 2),
-                backgroundColor: Colors.lightGreen,
-                behavior: SnackBarBehavior.floating,
-              ),
-            );
-          }
         },
         child: BlocBuilder<AuthBloc, AuthState>(
           builder: (context, state) {
@@ -158,9 +156,15 @@ class _TabScreenState extends State<TabScreen> {
   void _handleBlocState(BuildContext context, AuthState state) {
     if (state is Authenticated) {
       _storeUserData(state.user);
+      setState(() {
+        _isLoading = false; // Stop loading once authenticated
+      });
     } else if (state is UsersFetched) {
       allUsers = state.users;
       _storeFetchedUsers(allUsers);
+      setState(() {
+        _isLoading = false; // Stop loading after users are fetched
+      });
     } else if (state is AuthInitial) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         Navigator.of(context).pushReplacementNamed('/login');
@@ -170,6 +174,9 @@ class _TabScreenState extends State<TabScreen> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('Error: ${state.error}')),
         );
+        setState(() {
+          _isLoading = false; // Stop loading if there's an error
+        });
       });
     }
   }
@@ -331,7 +338,7 @@ class _TabScreenState extends State<TabScreen> {
         break;
       case 'profile':
         if (firstName != null && lastName != null) {
-          Navigator.of(context).pushReplacementNamed(
+          Navigator.of(context).pushNamed(
             '/profile',
             arguments: {
               'firstName': firstName,
@@ -379,23 +386,17 @@ class _TabScreenState extends State<TabScreen> {
   }
 
   Future<void> _storeUserData(UserModel user) async {
+    // Update UI immediately
     setState(() {
       firstName = user.firstName;
       lastName = user.lastName;
       email = user.email;
       profile = user.profilePicture;
-      gender = user.gender;
-      phoneNumber = user.phoneNumber;
       userId = user.id;
     });
 
-    await _secureStorage.write(key: 'userId', value: userId);
-    await _secureStorage.write(key: 'firstName', value: firstName);
-    await _secureStorage.write(key: 'lastName', value: lastName);
-    await _secureStorage.write(key: 'email', value: email);
-    await _secureStorage.write(key: 'gender', value: gender);
-    await _secureStorage.write(key: 'phoneNumber', value: phoneNumber);
-    await _secureStorage.write(key: 'profile', value: profile);
+    // You no longer need to store this data in secure storage or shared prefs
+    // Your AuthBloc will manage the user state and your UI will react to those changes
   }
 
   void _showLogoutConfirmationDialog() {

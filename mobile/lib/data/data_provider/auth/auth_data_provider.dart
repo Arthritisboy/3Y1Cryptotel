@@ -87,14 +87,32 @@ class AuthDataProvider {
   //! Fetch User Data
   Future<UserModel> getUser(String userId) async {
     final response = await _get('$_baseUrl/users/$userId');
+
+    // Ensure the response structure is correct
+    if (response['data'] == null || response['data']['user'] == null) {
+      throw Exception('User data not found');
+    }
+
     return UserModel.fromJson(response['data']['user']);
   }
 
   //! Fetch All Users
   Future<List<UserModel>> fetchAllUsers() async {
     final response = await _get('$_baseUrl/users');
-    final users = response['data']['users'] as List;
-    return users.map((user) => UserModel.fromJson(user)).toList();
+
+    // Ensure the response structure is correct
+    if (response['data'] == null || response['data']['users'] == null) {
+      throw Exception('Users data not found');
+    }
+
+    // Ensure that users is a List and map to UserModel
+    final List<UserModel> users =
+        List<Map<String, dynamic>>.from(response['data']['users'])
+            .map((user) => UserModel.fromJson(user))
+            .toList();
+
+    print('Fetched users: ${users.length}'); // Log total users fetched
+    return users;
   }
 
   //! Delete Account

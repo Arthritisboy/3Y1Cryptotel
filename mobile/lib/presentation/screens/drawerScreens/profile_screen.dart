@@ -9,7 +9,6 @@ import 'package:hotel_flutter/presentation/widgets/profile/bottom_section.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:logging/logging.dart';
 
-// ignore: must_be_immutable
 class ProfileScreen extends StatefulWidget {
   ProfileScreen({
     super.key,
@@ -22,12 +21,12 @@ class ProfileScreen extends StatefulWidget {
     required this.userId,
   });
 
-  final String firstName;
-  final String lastName;
+  String firstName;
+  String lastName;
   final String email;
   String profile;
   final String phoneNumber;
-  final String gender;
+  String gender;
   final String userId;
 
   @override
@@ -46,7 +45,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
   String? gender;
   File? _selectedImage;
   bool _isLoading = false;
-
   final ImagePicker _picker = ImagePicker();
 
   @override
@@ -57,14 +55,15 @@ class _ProfileScreenState extends State<ProfileScreen> {
     emailController = TextEditingController(text: widget.email);
     phoneNumberController = TextEditingController(text: widget.phoneNumber);
     gender = widget.gender;
-    context.read<AuthBloc>().add(GetUserEvent(widget.userId));
-  }
 
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    // Fetch user data every time the screen is re-entered
-    context.read<AuthBloc>().add(GetUserEvent(widget.userId));
+    final currentState = context.read<AuthBloc>().state;
+    if (currentState is Authenticated &&
+        currentState.user.id == widget.userId) {
+      // User data is already loaded
+    } else {
+      // Fetch user data only if not loaded
+      context.read<AuthBloc>().add(GetUserEvent(widget.userId));
+    }
   }
 
   @override
@@ -88,10 +87,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
           _selectedImage = File(pickedImage.path);
         });
 
-        // Optionally, prompt user to confirm if they want to update the image
-        final currentUser =
-            (context.read<AuthBloc>().state as Authenticated).user;
-        await updateUserData(); // Call updateUserData to update all fields
+        await updateUserData();
       }
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -110,9 +106,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
     });
 
     try {
-      print('Updating user data...'); // Log that we're updating user data
       final currentUser =
           (context.read<AuthBloc>().state as Authenticated).user;
+
       context.read<AuthBloc>().add(
             UpdateUserEvent(
               currentUser,
@@ -129,7 +125,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
           backgroundColor: Colors.red,
         ),
       );
-      print('Error updating user data: $error'); // Log the error
     } finally {
       setState(() {
         _isLoading = false;
@@ -169,7 +164,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         leading: IconButton(
           icon: const Icon(Icons.arrow_back, color: Colors.white),
           onPressed: () {
-            Navigator.of(context).pushReplacementNamed('/homescreen');
+            Navigator.of(context).pop();
           },
         ),
       ),
@@ -187,12 +182,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(content: Text(state.message)),
                   );
-                  // Redirect to login screen or another relevant screen
                   Navigator.of(context).pushReplacementNamed('/login');
                 }
                 if (state is UserUpdated) {
                   setState(() {
                     widget.profile = state.user.profilePicture ?? '';
+                    widget.firstName = state.user.firstName ?? '';
+                    widget.firstName = state.user.lastName ?? '';
                   });
                   ScaffoldMessenger.of(context).showSnackBar(
                     const SnackBar(
@@ -200,6 +196,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       backgroundColor: Colors.green,
                     ),
                   );
+                  // Pass the updated user back to the previous screen
+                  Navigator.of(context)
+                      .pop(state.user); // Return the updated user
                 } else if (state is AuthError) {
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(

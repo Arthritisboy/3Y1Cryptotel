@@ -57,33 +57,44 @@ class AuthRepository {
     }
 
     try {
-      final data = await dataProvider.getUser(userId);
-      _cachedUser = data;
+      // Directly fetch the UserModel from the data provider
+      final user = await dataProvider.getUser(userId);
+
+      // Cache the user
+      _cachedUser = user;
       return _cachedUser!;
     } catch (error) {
       throw Exception('Failed to fetch user: $error');
     }
   }
 
-  //! Fetch all users with filtering conditions
+//! Fetch all users with filtering conditions
   Future<List<UserModel>> fetchAllUsers() async {
     try {
-      final users = await dataProvider.fetchAllUsers();
+      // Fetch users data from the data provider
+      final usersData = await dataProvider.fetchAllUsers();
 
-      // Filter users
-      final filteredUsers = users
-          .where((user) =>
-              user.active != false &&
-              user.verified == true &&
-              user.hasCompletedOnboarding == true &&
-              user.roles == "user")
-          .toList();
+      // Check if usersData is a List<UserModel>
+      if (usersData == null || usersData.isEmpty) {
+        throw Exception('No users data found');
+      }
+
+      // Log the fetched users
+      final filteredUsers = usersData.where((user) {
+        return (user.active == true ||
+                user.active == null) && // Include users with null active
+            user.verified == true && // Ensure user is verified
+            user.hasCompletedOnboarding ==
+                true && // Ensure onboarding is complete
+            user.roles == "user"; // Check for user role
+      }).toList();
 
       // Log the filtered users count
+      print('Filtered users count: ${filteredUsers.length}');
 
       return filteredUsers; // Return the filtered users
     } catch (error) {
-      _logger.severe('Failed to fetch all users: $error'); // Log error
+      print('Failed to fetch all users: $error'); // Log error
       throw Exception('Failed to fetch all users: $error');
     }
   }
