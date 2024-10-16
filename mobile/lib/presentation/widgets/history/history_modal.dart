@@ -1,8 +1,24 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
+import 'package:intl/intl.dart';
 
 class HistoryModal extends StatefulWidget {
-  const HistoryModal({super.key});
+  final String bookingId;
+  final String checkInDate;
+  final String checkoutDate;
+  final String hotelOrResto;
+  // final String timeArrival;
+  // final String timeDeparture;
+
+  const HistoryModal({
+    super.key,
+    required this.bookingId,
+    required this.checkInDate,
+    required this.checkoutDate,
+    required this.hotelOrResto,
+    // required this.timeArrival,
+    // required this.timeDeparture,
+  });
 
   @override
   State<StatefulWidget> createState() {
@@ -78,13 +94,31 @@ class _HistoryModalState extends State<HistoryModal> {
                       ],
                     ),
                   ),
-                  const Padding(
+                  Padding(
                     padding: EdgeInsets.symmetric(horizontal: 16.0),
-                    child: Text(
-                      'Deluxe Suite\nCheck-in: 12th Jan, 2024\nCheck-out: 15th Jan, 2024\nPangasinan',
-                      style: TextStyle(
-                        fontSize: 16.0,
-                      ),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          widget.hotelOrResto,
+                          style: TextStyle(
+                            fontSize: 16.0,
+                          ),
+                        ),
+                        Text(
+                          widget.checkInDate,
+                          style: TextStyle(
+                            fontSize: 16.0,
+                          ),
+                        ),
+                        Text(
+                          widget.checkoutDate,
+                          style: TextStyle(
+                            fontSize: 16.0,
+                          ),
+                        ),
+                      ],
                     ),
                   ),
                   const Divider(height: 20.0, thickness: 1.0),
