@@ -56,12 +56,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
     phoneNumberController = TextEditingController(text: widget.phoneNumber);
     gender = widget.gender;
 
+    // Fetch user data only if it hasn't been loaded already
     final currentState = context.read<AuthBloc>().state;
     if (currentState is Authenticated &&
         currentState.user.id == widget.userId) {
-      // User data is already loaded
+      // If already authenticated and user ID matches, no need to fetch again
     } else {
-      // Fetch user data only if not loaded
       context.read<AuthBloc>().add(GetUserEvent(widget.userId));
     }
   }
@@ -184,34 +184,20 @@ class _ProfileScreenState extends State<ProfileScreen> {
             bottom: 0,
             child: BlocListener<AuthBloc, AuthState>(
               listener: (context, state) {
-                if (state is AccountDeleted) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text(state.message)),
-                  );
-                  Navigator.of(context).pushReplacementNamed('/login');
-                }
                 if (state is UserUpdated) {
-                  // Update the local widget state
+                  // Handle user update success
                   setState(() {
                     widget.profile = state.user.profilePicture ?? '';
                     widget.firstName = state.user.firstName ?? '';
-                    widget.lastName =
-                        state.user.lastName ?? ''; // Update lastName correctly
+                    widget.lastName = state.user.lastName ?? '';
                   });
                   ScaffoldMessenger.of(context).showSnackBar(
                     const SnackBar(
-                      content: Text('Profile updated successfully!'),
-                      backgroundColor: Colors.green,
-                    ),
+                        content: Text('Profile updated successfully!')),
                   );
-                  Navigator.of(context)
-                      .pop(state.user); // Return the updated user
                 } else if (state is AuthError) {
                   ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      content: Text('Error: ${state.error}'),
-                      backgroundColor: Colors.red,
-                    ),
+                    SnackBar(content: Text('Error: ${state.error}')),
                   );
                 }
               },
@@ -219,6 +205,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 builder: (context, state) {
                   _logger.info('Current Auth State: $state');
 
+                  // Only show loading indicator if state is loading or updating
                   if (state is AuthLoading || _isLoading) {
                     return _buildLoadingIndicator();
                   }
@@ -228,6 +215,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         ? state.user
                         : (state as UserUpdated).user;
 
+                    // Set initial values from the user model if needed
                     return BottomSection(
                       firstNameController: firstNameController,
                       lastNameController: lastNameController,
@@ -244,17 +232,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     );
                   }
 
-                  if (state is AuthError) {
-                    return Center(
-                      child: Text(
-                        'Error: Unable to load user data.\n${state.error}',
-                        style: const TextStyle(color: Colors.red),
-                        textAlign: TextAlign.center,
-                      ),
-                    );
-                  }
-
-                  _logger.warning('Unexpected state encountered: $state');
                   return const Center(
                     child: Text('Unexpected error loading user data.'),
                   );
