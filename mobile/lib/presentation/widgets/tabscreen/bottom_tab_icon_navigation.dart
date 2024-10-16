@@ -39,7 +39,7 @@ class BottomTabIconNavigation extends StatelessWidget {
               GestureDetector(
                 onTap: () => onIconTapped(1),
                 child: _buildIconWithText(
-                  icon: CupertinoIcons.square_list,
+                  icon: Icons.restaurant,
                   isSelected: selectedIndex == 1,
                 ),
               ),
@@ -100,17 +100,16 @@ class BottomTabIconNavigation extends StatelessWidget {
     );
   }
 
-  // Helper method to get the header text based on the selected index
   String _getHeaderText(int selectedIndex) {
     switch (selectedIndex) {
       case 0:
         return 'Top Rated Hotel and Restaurant';
       case 1:
-        return 'All Available Hotels';
-      case 2:
         return 'All Available Restaurants';
+      case 2:
+        return 'All Available Hotels';
       case 3:
-        return 'All Hotels and Restaurants';
+        return 'Hotels and Restaurants';
       default:
         return '';
     }
