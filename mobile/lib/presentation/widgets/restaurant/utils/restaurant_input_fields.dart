@@ -157,21 +157,34 @@ class _RestaurantInputFieldsState extends State<RestaurantInputFields> {
       return;
     }
 
-    // Validate arrival and departure times
-    if (arrivalDateTime != null && departureDateTime != null) {
-      if (departureDateTime.isBefore(arrivalDateTime)) {
-        _showErrorDialog(
-            context, 'Departure time cannot be before the arrival time.');
-        return;
-      }
+    // Check if the check-out date is before the check-in date
+    if (arrivalDateTime != null &&
+        departureDateTime != null &&
+        departureDateTime.isBefore(arrivalDateTime)) {
+      _showErrorDialog(context,
+          'Check-out date and time cannot be before check-in date and time.');
+      return;
+    }
 
-      // Same-day booking with 12-hour difference validation
-      if (arrivalDateTime.day == departureDateTime.day) {
+    // **Same-day booking with 12-hour difference validation only for today**
+    if (arrivalDateTime != null && departureDateTime != null) {
+      DateTime today = DateTime.now(); // Get the current date
+
+      // Check if both arrival and departure happen today
+      if (arrivalDateTime.year == today.year &&
+          arrivalDateTime.month == today.month &&
+          arrivalDateTime.day == today.day &&
+          departureDateTime.year == today.year &&
+          departureDateTime.month == today.month &&
+          departureDateTime.day == today.day) {
         Duration timeDifference = departureDateTime.difference(arrivalDateTime);
+        print('Time difference: ${timeDifference.inHours} hours');
+
+        // Validate the 12-hour difference
         if (timeDifference.inHours < 12) {
           _showErrorDialog(
             context,
-            'For same-day bookings, the departure time must be at least 12 hours after the arrival time.',
+            'For same-day bookings, there must be at least 12 hours between time of arrival and time of checkout.',
           );
           return;
         }
@@ -180,7 +193,7 @@ class _RestaurantInputFieldsState extends State<RestaurantInputFields> {
 
     // Ensure the arrival date and time is not in the past
     if (arrivalDateTime != null && arrivalDateTime.isBefore(now)) {
-      _showErrorDialog(context, 'The arrival time cannot be in the past.');
+      _showErrorDialog(context, 'Checkin and Checkout cannot be in the past');
       return;
     }
 

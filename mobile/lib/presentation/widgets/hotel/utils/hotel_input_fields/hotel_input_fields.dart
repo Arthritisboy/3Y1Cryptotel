@@ -150,8 +150,8 @@ class _HotelInputFieldsState extends State<HotelInputFields> {
     int children = int.tryParse(childrenController.text) ?? 0;
 
     if (adults == 0 && children == 0) {
-      _showErrorDialog(
-          context, 'Please fill in all the details to ensure the booking.');
+      _showErrorDialog(context,
+          'Please provide the number of guests to proceed with booking.');
       return;
     }
 
@@ -170,20 +170,21 @@ class _HotelInputFieldsState extends State<HotelInputFields> {
       return;
     }
 
-    // Ensure the check-in date is not in the past
-    if (arrivalDateTime != null && arrivalDateTime.isBefore(now)) {
-      print('Error: Check-in date and time cannot be in the past.');
-      _showErrorDialog(
-          context, 'Check-in date and time cannot be in the past.');
-      return;
-    }
-
-// **Same-day booking with 12-hour difference validation**
+    // **Same-day booking with 12-hour difference validation only for today**
     if (arrivalDateTime != null && departureDateTime != null) {
-      if (arrivalDateTime.day == departureDateTime.day) {
+      DateTime today = DateTime.now(); // Get the current date
+
+      // Check if both arrival and departure happen today
+      if (arrivalDateTime.year == today.year &&
+          arrivalDateTime.month == today.month &&
+          arrivalDateTime.day == today.day &&
+          departureDateTime.year == today.year &&
+          departureDateTime.month == today.month &&
+          departureDateTime.day == today.day) {
         Duration timeDifference = departureDateTime.difference(arrivalDateTime);
         print('Time difference: ${timeDifference.inHours} hours');
 
+        // Validate the 12-hour difference
         if (timeDifference.inHours < 12) {
           _showErrorDialog(
             context,
@@ -193,7 +194,11 @@ class _HotelInputFieldsState extends State<HotelInputFields> {
         }
       }
     }
-
+    // Ensure the arrival date and time is not in the past
+    if (arrivalDateTime != null && arrivalDateTime.isBefore(now)) {
+      _showErrorDialog(context, 'Checkin and Checkout cannot be in the past');
+      return;
+    }
     // Proceed with the booking if all validations pass
     if (checkInDate != null &&
         checkOutDate != null &&
@@ -226,7 +231,7 @@ class _HotelInputFieldsState extends State<HotelInputFields> {
       );
 
       setState(() {
-        isLoading = true; // Show loading spinner
+        isLoading = true;
       });
 
       context.read<BookingBloc>().add(CreateBooking(
