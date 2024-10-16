@@ -27,6 +27,10 @@ class HotelBloc extends Bloc<HotelEvent, HotelState> {
     try {
       final hotels = await hotelRepository.fetchHotels();
       allHotels = hotels; // Cache the hotels list for search
+
+      // Fetch coordinates for all hotels asynchronously
+      await Future.wait(allHotels.map((hotel) => hotel.getCoordinates()));
+
       emit(HotelLoaded(hotels));
     } catch (e) {
       emit(HotelError('Failed to load hotels: ${e.toString()}'));

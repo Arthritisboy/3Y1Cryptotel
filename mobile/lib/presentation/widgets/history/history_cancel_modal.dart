@@ -29,7 +29,8 @@ class CancelModal extends StatelessWidget {
           children: [
             _buildInfoRow('Booking For:',
                 booking.hotelName ?? booking.restaurantName ?? 'N/A'),
-            _buildInfoRow('Room/Location:', booking.roomName ?? 'N/A'),
+            if (booking.roomName != null)
+              _buildInfoRow('Room/Location:', booking.roomName ?? 'N/A'),
             _buildInfoRow(
                 'Check-in Date:', _formatDateTime(booking.checkInDate)),
             _buildInfoRow(

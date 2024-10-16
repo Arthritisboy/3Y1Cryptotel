@@ -27,6 +27,9 @@ class RestaurantBloc extends Bloc<RestaurantEvent, RestaurantState> {
     try {
       final restaurants = await restaurantRepository.fetchRestaurants();
       allRestaurants = restaurants; // Cache the list for search
+
+      // Fetch coordinates for all hotels asynchronously
+      await Future.wait(allRestaurants.map((hotel) => hotel.getCoordinates()));
       emit(RestaurantLoaded(restaurants));
     } catch (e) {
       emit(RestaurantError('Failed to load restaurants: ${e.toString()}'));

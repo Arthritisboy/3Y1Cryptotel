@@ -3,6 +3,8 @@ class BookingModel {
   final String bookingType;
   final String? hotelId;
   final String? restaurantName;
+  final String? hotelImage;
+  final String? restaurantImage;
   final String? hotelName;
   final String? roomName;
   final String? roomId;
@@ -23,6 +25,8 @@ class BookingModel {
   final int? totalPrice;
 
   BookingModel({
+    this.hotelImage,
+    this.restaurantImage,
     this.id,
     required this.bookingType,
     this.hotelId,
@@ -51,6 +55,8 @@ class BookingModel {
   BookingModel copyWith({
     String? id,
     String? userId,
+    String? hotelImage,
+    String? restaurantImage,
     String? bookingType,
     String? hotelId,
     String? restaurantName,
@@ -75,6 +81,8 @@ class BookingModel {
     return BookingModel(
       id: id ?? this.id,
       userId: userId ?? this.userId,
+      hotelImage: hotelImage ?? this.hotelImage,
+      restaurantImage: userId ?? this.restaurantImage,
       bookingType: bookingType ?? this.bookingType,
       hotelId: hotelId ?? this.hotelId,
       restaurantName: restaurantName ?? this.restaurantName,
@@ -103,6 +111,8 @@ class BookingModel {
       id: json['_id'] ?? '',
       userId: json['userId'] ?? '',
       bookingType: json['bookingType'] ?? '',
+      hotelImage: json['hotelImage'] ?? '',
+      restaurantImage: json['restaurantImage'] ?? '',
       restaurantName: json['restaurantName'],
       hotelName: json['hotelName'],
       roomName: json['roomName'],

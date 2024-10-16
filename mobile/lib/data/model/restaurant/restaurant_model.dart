@@ -14,6 +14,7 @@ class RestaurantModel extends Equatable {
   final int capacity;
   final bool availability;
   final List<RatingModel> ratings;
+  List<double>? coordinates;
 
   // Constructor with default values
   RestaurantModel({
@@ -78,11 +79,13 @@ class RestaurantModel extends Equatable {
 
   // Fetch coordinates based on the location string
   Future<List<double>> getCoordinates() async {
+    if (coordinates != null) return coordinates!; // Return if already fetched
+
     try {
       List<Location> locations = await locationFromAddress(location);
-      return [locations.first.latitude, locations.first.longitude];
+      coordinates = [locations.first.latitude, locations.first.longitude];
+      return coordinates!;
     } catch (e) {
-      _logger.severe("Error fetching coordinates for $location: $e");
       return [0.0, 0.0]; // Return [0.0, 0.0] if there is an error
     }
   }
