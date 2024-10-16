@@ -36,6 +36,7 @@ const restaurant = new mongoose.Schema({
   walletAddress: {
     type: String,
     required: true,
+    default: "0xc818CfdA6B36b5569E6e681277b2866956863fAd"
   },
   ratings: [
     {

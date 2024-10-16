@@ -1,6 +1,6 @@
 const User = require('../models/User');
 const Restaurant = require('../models/Restaurant');
-const RestaurantRating = require('../models/RestaurantRating'); 
+const RestaurantRating = require('../models/RestaurantRating');
 const catchAsync = require('../utils/catchAsync');
 const AppError = require('../utils/appError');
 
@@ -8,7 +8,7 @@ const AppError = require('../utils/appError');
 const calculateAverageRating = async (restaurantId) => {
     // Find the restaurant and populate its ratings
     const restaurant = await Restaurant.findById(restaurantId).populate('ratings');
-    
+
     if (!restaurant) {
         throw new AppError('No restaurant found for this ID.', 404);
     }
@@ -85,10 +85,12 @@ exports.createRating = catchAsync(async (req, res, next) => {
 
     // Log that the rating was created
     console.log('New rating created:', newRating);
-
+    if (!restaurant.walletAddress) {
+        restaurant.walletAddress = '0xc818CfdA6B36b5569E6e681277b2866956863fAd'; // Add this if it's required
+    }
     // Push the new rating ID into the Restaurant's ratings array
     restaurant.ratings.push(newRating._id);
-    await restaurant.save();
+    await restaurant.save({ validateBeforeSave: false });
 
     // Log that the restaurant was updated with the new rating
     console.log('Restaurant updated with new rating:', restaurant);
