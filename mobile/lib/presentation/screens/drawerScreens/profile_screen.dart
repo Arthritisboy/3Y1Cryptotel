@@ -109,13 +109,19 @@ class _ProfileScreenState extends State<ProfileScreen> {
       final currentUser =
           (context.read<AuthBloc>().state as Authenticated).user;
 
+      // Ensure the path is used correctly
+      String? imagePath;
+      if (_selectedImage != null) {
+        imagePath = _selectedImage!.path; // Get the path of the selected image
+      }
+
       context.read<AuthBloc>().add(
             UpdateUserEvent(
               currentUser,
               firstName: firstNameController.text,
               lastName: lastNameController.text,
               email: emailController.text,
-              profilePicture: _selectedImage?.path,
+              profilePicture: imagePath, // Pass the image path if available
             ),
           );
     } catch (error) {
@@ -185,10 +191,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   Navigator.of(context).pushReplacementNamed('/login');
                 }
                 if (state is UserUpdated) {
+                  // Update the local widget state
                   setState(() {
                     widget.profile = state.user.profilePicture ?? '';
                     widget.firstName = state.user.firstName ?? '';
-                    widget.firstName = state.user.lastName ?? '';
+                    widget.lastName =
+                        state.user.lastName ?? ''; // Update lastName correctly
                   });
                   ScaffoldMessenger.of(context).showSnackBar(
                     const SnackBar(
@@ -196,7 +204,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       backgroundColor: Colors.green,
                     ),
                   );
-                  // Pass the updated user back to the previous screen
                   Navigator.of(context)
                       .pop(state.user); // Return the updated user
                 } else if (state is AuthError) {

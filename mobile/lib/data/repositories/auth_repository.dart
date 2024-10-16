@@ -4,13 +4,19 @@ import 'package:hotel_flutter/data/model/auth/login_model.dart';
 import 'package:hotel_flutter/data/model/auth/signup_model.dart';
 import 'package:hotel_flutter/data/model/auth/user_model.dart';
 import 'package:logging/logging.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class AuthRepository {
+  SharedPreferences? _sharedPrefs;
   final Logger _logger = Logger('AuthRepository');
   final AuthDataProvider dataProvider;
   UserModel? _cachedUser;
 
   AuthRepository(this.dataProvider);
+
+  Future<void> initializeSharedPreferences() async {
+    _sharedPrefs = await SharedPreferences.getInstance();
+  }
 
   //! Register
   Future<UserModel> register(
@@ -52,16 +58,12 @@ class AuthRepository {
 
   //! Get user
   Future<UserModel> getUser(String userId) async {
-    if (_cachedUser != null) {
-      return _cachedUser!;
-    }
-
     try {
       // Directly fetch the UserModel from the data provider
       final user = await dataProvider.getUser(userId);
 
-      // Cache the user
-      _cachedUser = user;
+      // Cache the user after fetching
+      _cachedUser = user; // This ensures you're always fetching fresh data
       return _cachedUser!;
     } catch (error) {
       throw Exception('Failed to fetch user: $error');
@@ -126,7 +128,7 @@ class AuthRepository {
     }
   }
 
-  //! Update User
+//! Update User
   Future<UserModel> updateUser(
     UserModel user, {
     String? firstName,
@@ -141,6 +143,20 @@ class AuthRepository {
         email: email ?? user.email,
         profilePicture: profilePicture,
       );
+
+      // Ensure _sharedPrefs is initialized
+      if (_sharedPrefs != null) {
+        // Update shared preferences with non-null assertion
+        await _sharedPrefs!.setString('userId', updatedUser.id ?? '');
+        await _sharedPrefs!.setString('firstName', updatedUser.firstName ?? '');
+        await _sharedPrefs!.setString('lastName', updatedUser.lastName ?? '');
+        await _sharedPrefs!.setString('email', updatedUser.email ?? '');
+        await _sharedPrefs!
+            .setString('profilePicture', updatedUser.profilePicture ?? '');
+      } else {
+        throw Exception('Shared preferences not initialized');
+      }
+
       return updatedUser; // Return the updated UserModel
     } catch (error) {
       throw Exception('Failed to update user: $error');

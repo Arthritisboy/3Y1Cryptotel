@@ -33,9 +33,7 @@ class TabScreen extends StatefulWidget {
 }
 
 class _TabScreenState extends State<TabScreen> {
-  final Logger _logger = Logger('TabScreen');
   final FlutterSecureStorage _secureStorage = const FlutterSecureStorage();
-  SharedPreferences? _sharedPrefs;
   int _selectedIndex = 0;
   bool _isLoading = true;
   String _searchQuery = "";
@@ -89,9 +87,6 @@ class _TabScreenState extends State<TabScreen> {
   }
 
   Future<void> _initializeUserData() async {
-    _sharedPrefs = await SharedPreferences.getInstance();
-
-    // Retrieve the userId from secure storage or shared preferences
     userId = await _secureStorage.read(key: 'userId'); // This can be null
 
     if (userId != null && userId!.isNotEmpty) {
@@ -126,6 +121,24 @@ class _TabScreenState extends State<TabScreen> {
         .add(FetchAllUsersEvent()); // Trigger an event to fetch all users
   }
 
+  Future<void> _onRefresh() async {
+    setState(() {
+      _isLoading = true; // Start loading
+    });
+
+    // Check if userId is not null before dispatching
+    if (userId != null) {
+      context.read<AuthBloc>().add(GetUserEvent(userId!));
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('User ID is null. Please log in again.')),
+      );
+    }
+
+    // Optionally fetch all users, but make sure it doesn't conflict
+    await _fetchAllUsers();
+  }
+
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
@@ -146,7 +159,7 @@ class _TabScreenState extends State<TabScreen> {
                 profile: profile ?? '',
               ),
               body: RefreshIndicator(
-                onRefresh: _fetchAllUsers, // Call your fetch method
+                onRefresh: _onRefresh, // Call your fetch method
                 child: _isLoading ? _buildShimmerLoading() : _buildContent(),
               ),
             );
@@ -158,14 +171,14 @@ class _TabScreenState extends State<TabScreen> {
 
   void _handleBlocState(BuildContext context, AuthState state) {
     if (state is Authenticated) {
+      // Store the updated user data
       _storeUserData(state.user);
       setState(() {
         _isLoading = false; // Stop loading once authenticated
       });
     } else if (state is UsersFetched) {
-      allUsers = state.users;
-      _storeFetchedUsers(allUsers);
       setState(() {
+        allUsers = state.users; // Update the list with the new users
         _isLoading = false; // Stop loading after users are fetched
       });
     } else if (state is AuthInitial) {
@@ -398,9 +411,12 @@ class _TabScreenState extends State<TabScreen> {
       userId = user.id;
     });
 
-    // You no longer need to store this data in secure storage or shared prefs
-    // Your AuthBloc will manage the user state and your UI will react to those changes
+    // Log the stored user data for debugging
+    print('User data stored: $firstName $lastName $email');
   }
+
+  // You no longer need to store this data in secure storage or shared prefs
+  // Your AuthBloc will manage the user state and your UI will react to those changes
 
   void _showLogoutConfirmationDialog() {
     showDialog(

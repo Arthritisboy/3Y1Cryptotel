@@ -114,7 +114,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     on<UpdateUserEvent>((event, emit) async {
       emit(AuthLoading());
       try {
-        // Ensure all fields are sent to the repository
+        // Call the repository to update the user
         final updatedUser = await authRepository.updateUser(
           event.user,
           firstName: event.firstName,
@@ -123,10 +123,11 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
           profilePicture:
               event.profilePicture != null ? File(event.profilePicture!) : null,
         );
-        emit(Authenticated(
-            updatedUser)); // Emit the updated user after successful operation
-      } catch (error) {
-        emit(AuthError('Failed to update user: $error'));
+
+        // Emit the updated user state
+        emit(UserUpdated(updatedUser));
+      } catch (e) {
+        emit(AuthError('Failed to update user data: ${e.toString()}'));
       }
     });
     on<VerifyUserEvent>((event, emit) async {

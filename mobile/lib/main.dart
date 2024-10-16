@@ -19,26 +19,34 @@ import 'package:hotel_flutter/router/app_router.dart';
 import 'package:hotel_flutter/data/repositories/auth_repository.dart';
 import 'package:logging/logging.dart';
 
-void main() {
+void main() async {
+  // Ensure the Flutter binding is initialized
+  WidgetsFlutterBinding.ensureInitialized();
+
+  // Set up logging
   Logger.root.level = Level.ALL;
   Logger.root.onRecord.listen((record) {});
 
-  runApp(MyApp());
+  // Initialize SharedPreferences
+  final authRepository = AuthRepository(AuthDataProvider());
+  await authRepository.initializeSharedPreferences();
+
+  runApp(MyApp(authRepository: authRepository));
 }
 
 class MyApp extends StatelessWidget {
-  final BookingBloc bookingBloc = BookingBloc(
-    BookingRepository(BookingDataProvider()),
-  );
+  final AuthRepository authRepository; // Add AuthRepository as a parameter
+  final BookingBloc bookingBloc;
 
-  MyApp({super.key});
+  MyApp(
+      {super.key, required this.authRepository}) // Accept it in the constructor
+      : bookingBloc = BookingBloc(BookingRepository(BookingDataProvider()));
 
   @override
   Widget build(BuildContext context) {
     return MultiRepositoryProvider(
       providers: [
-        RepositoryProvider(
-            create: (context) => AuthRepository(AuthDataProvider())),
+        RepositoryProvider.value(value: authRepository), // Provide it here
         RepositoryProvider(
             create: (context) => HotelRepository(HotelDataProvider())),
         RepositoryProvider(
