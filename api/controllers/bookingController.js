@@ -124,6 +124,7 @@ exports.createBooking = catchAsync(async (req, res, next) => {
 
       hotelName = hotel.name;
       roomName = room.type;
+      hotelImage = hotel.hotelImage;
 
       const nights = Math.ceil((checkOut - checkIn) / (1000 * 60 * 60 * 24));
       totalPrice = room.price * nights;
@@ -137,6 +138,7 @@ exports.createBooking = catchAsync(async (req, res, next) => {
       }
 
       restaurantName = restaurant.name;
+      restaurantImage = restaurant.restaurantImage;
 
       const pricePerPerson = restaurant.pricePerPerson || 0;
       totalPrice = pricePerPerson * (numAdults + numChildren);
@@ -145,9 +147,11 @@ exports.createBooking = catchAsync(async (req, res, next) => {
     const newBooking = await Booking.create({
       userId,
       bookingType,
+      hotelImage,
       hotelName,
       roomName,
       restaurantName,
+      restaurantImage,
       hotelId,
       roomId,
       restaurantId,

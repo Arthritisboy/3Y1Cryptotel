@@ -214,8 +214,9 @@ class _TabScreenState extends State<TabScreen> {
 
   Widget _buildSearchSuggestions() {
     List<String> suggestions = [
-      'The Monarch Hotel',
-      'Star Plaze Hotel',
+      'River Palm Hotel'
+          'The Monarch Hotel',
+      'Star Plaza Hotel',
       'Matutina’s',
       'Dagupeña',
       'Lenox Hotel',
@@ -232,34 +233,66 @@ class _TabScreenState extends State<TabScreen> {
       right: 16,
       child: Material(
         elevation: 5,
-        color: Colors.transparent, // Make Material background transparent
-        borderRadius: BorderRadius.circular(10), // Apply border radius
+        color: Colors.transparent,
+        borderRadius: BorderRadius.circular(10),
         child: Container(
           decoration: BoxDecoration(
-            color: Colors.white, // White background for dropdown
-            borderRadius: BorderRadius.circular(10), // Smooth rounded corners
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(10),
             border: Border.all(
-              color: Colors.grey, // Light gray border
+              color: Colors.grey,
               width: 1.0,
             ),
           ),
-          child: ListView.builder(
-            shrinkWrap: true,
-            itemCount: filteredSuggestions.length,
-            itemBuilder: (context, index) {
-              return ListTile(
-                title: Text(
-                  filteredSuggestions[index],
-                  style: const TextStyle(fontSize: 18, color: Colors.black),
+          child: Column(
+            children: [
+              // Search Field with Icon
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                child: Row(
+                  children: [
+                    const Icon(Icons.search, color: Colors.grey),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: TextField(
+                        onChanged: (value) {
+                          setState(() {
+                            _searchQuery = value;
+                          });
+                        },
+                        decoration: const InputDecoration(
+                          border: InputBorder.none,
+                          hintText: 'Search...',
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
-                onTap: () {
-                  setState(() {
-                    _searchQuery = filteredSuggestions[index];
-                    filteredSuggestions = []; // Clear the list on selection
-                  });
-                },
-              );
-            },
+              ),
+              const Divider(height: 1, color: Colors.grey),
+              Expanded(
+                child: ListView.builder(
+                  shrinkWrap: true,
+                  itemCount: filteredSuggestions.length,
+                  itemBuilder: (context, index) {
+                    return ListTile(
+                      title: Text(
+                        filteredSuggestions[index],
+                        style:
+                            const TextStyle(fontSize: 18, color: Colors.black),
+                      ),
+                      onTap: () {
+                        setState(() {
+                          _searchQuery = filteredSuggestions[index];
+                          filteredSuggestions =
+                              []; // Clear the list on selection
+                        });
+                      },
+                    );
+                  },
+                ),
+              ),
+            ],
           ),
         ),
       ),
