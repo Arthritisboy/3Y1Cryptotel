@@ -9,7 +9,7 @@ const router = express.Router();
 // Restaurant routes
 router
   .route('/')
-  .get(authController.protect, restaurantController.getRestaurant)
+  .get(authController.protect, restaurantController.getRestaurant);
 
 router
   .route('/:userId')
@@ -18,12 +18,13 @@ router
 router
   .route('/:id')
   .get(authController.protect, restaurantController.getRestaurant)
-  .patch(upload.single('image'),restaurantController.updateRestaurant)
+  .patch(upload.single('image'), restaurantController.updateRestaurant)
   .delete(restaurantController.deleteRestaurant);
 
-  
 // Rating routes
-router.route('/ratings/:restaurantId').post(ratingRestaurantController.createRating);
+router
+  .route('/ratings/:restaurantId')
+  .post(ratingRestaurantController.createRating);
 
 router
   .route('/ratings/:id')
