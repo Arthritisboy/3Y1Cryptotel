@@ -97,6 +97,12 @@ class AuthDataProvider {
     return users.map((user) => UserModel.fromJson(user)).toList();
   }
 
+  //! Delete Account
+  Future<void> deleteAccount() async {
+    await _delete('$_baseUrl/users/deleteMe');
+    await _storage.deleteAll();
+  }
+
   //! Update User Profile Data
   Future<UserModel> updateUserData({
     String? firstName,
@@ -116,34 +122,30 @@ class AuthDataProvider {
           .add(await http.MultipartFile.fromPath('image', profilePicture.path));
     }
 
-    final response = await request.send();
-    final data =
-        await _handleResponse(await http.Response.fromStream(response));
-    return UserModel.fromJson(data['data']['user']);
+    try {
+      final response = await request.send();
+      final responseData = await http.Response.fromStream(response);
+
+      if (response.statusCode == 200) {
+        // Parse the response body to extract user data
+        final Map<String, dynamic> data = jsonDecode(responseData.body);
+        final updatedUser = UserModel.fromJson(
+            data['data']['user']); // Assuming you have a fromJson method
+
+        // Log or print the new profile image URL
+        _logger
+            .info('Updated profile image URL: ${updatedUser.profilePicture}');
+
+        return updatedUser; // Return the updated user model, including profile picture
+      } else {
+        throw Exception('Failed to update user data: ${responseData.body}');
+      }
+    } catch (error) {
+      throw Exception('An error occurred during the update');
+    }
   }
 
-  //! Update Password
-  Future<void> updatePassword(String currentPassword, String newPassword,
-      String confirmPassword) async {
-    await _patch('$_baseUrl/auth/updateMyPassword', {
-      'passwordCurrent': currentPassword,
-      'password': newPassword,
-      'confirmPassword': confirmPassword,
-    });
-  }
-
-  //! Complete Onboarding
-  Future<void> completeOnboarding() async {
-    await _put('$_baseUrl/users/updateHasCompletedOnboarding');
-  }
-
-  //! Delete Account
-  Future<void> deleteAccount() async {
-    await _delete('$_baseUrl/users/deleteMe');
-    await _storage.deleteAll();
-  }
-
-  //! Logout
+//!
   Future<void> logout() async {
     await _post('$_baseUrl/auth/logout');
     await _storage.deleteAll();
@@ -201,5 +203,23 @@ class AuthDataProvider {
       'Content-Type': 'application/json',
       if (token != null) 'Authorization': 'Bearer $token',
     };
+  }
+
+  //! Update User Onboarding
+  Future<void> completeOnboarding() async {
+    final token = await _storage.read(key: 'jwt');
+    final response = await http.put(
+      Uri.parse(
+          'https://3-y1-cryptotel-hazel.vercel.app/api/v1/users/updateHasCompletedOnboarding'),
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token',
+      },
+    );
+    if (response.statusCode != 200) {
+      final errorResponse = json.decode(response.body);
+      String errorMessage = errorResponse['message'] ?? 'An error occurred';
+      throw Exception('Failed to complete onboarding: $errorMessage');
+    }
   }
 }

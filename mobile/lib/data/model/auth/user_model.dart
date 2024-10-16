@@ -28,6 +28,11 @@ class UserModel {
       this.active,
       this.favoriteId});
 
+  @override
+  String toString() {
+    return 'UserModel(firstName: $firstName, lastName: $lastName, email: $email, profilePicture: $profilePicture, phoneNumber: $phoneNumber, gender: $gender, userId: $id)';
+  }
+
   // From JSON
   factory UserModel.fromJson(Map<String, dynamic> json) {
     return UserModel(
@@ -54,6 +59,8 @@ class UserModel {
       'lastName': lastName,
       'email': email,
       'profile': profilePicture,
+      'phoneNumber': phoneNumber,
+      'gender': gender,
       'favoriteId': favoriteId
     };
   }

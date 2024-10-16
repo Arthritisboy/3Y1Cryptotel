@@ -28,8 +28,7 @@ class ActionButtons extends StatelessWidget {
           ),
         ),
         ElevatedButton.icon(
-          onPressed:
-              isLoading ? null : updateUserData, // Disable button when loading
+          onPressed: isLoading ? null : updateUserData,
           icon: isLoading
               ? const SizedBox(
                   height: 20,
@@ -45,7 +44,7 @@ class ActionButtons extends StatelessWidget {
               : const Text("Update Account"),
           style: ElevatedButton.styleFrom(
             backgroundColor: isLoading
-                ? Colors.grey // Change background when loading
+                ? Colors.grey
                 : const Color.fromARGB(255, 29, 53, 115),
             foregroundColor: Colors.white,
             padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 12),

@@ -6,7 +6,7 @@ import 'package:hotel_flutter/logic/bloc/auth/auth_event.dart';
 import 'package:hotel_flutter/logic/bloc/auth/auth_state.dart';
 import 'package:hotel_flutter/presentation/widgets/profile/blue_background_widget.dart';
 import 'package:hotel_flutter/presentation/widgets/profile/bottom_section.dart';
-import 'package:image_picker/image_picker.dart'; // For selecting images
+import 'package:image_picker/image_picker.dart';
 import 'package:logging/logging.dart';
 
 // ignore: must_be_immutable
@@ -19,6 +19,7 @@ class ProfileScreen extends StatefulWidget {
     required this.profile,
     required this.phoneNumber,
     required this.gender,
+    required this.userId,
   });
 
   final String firstName;
@@ -27,6 +28,7 @@ class ProfileScreen extends StatefulWidget {
   String profile;
   final String phoneNumber;
   final String gender;
+  final String userId;
 
   @override
   State<StatefulWidget> createState() {
@@ -39,13 +41,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
   late TextEditingController firstNameController;
   late TextEditingController lastNameController;
   late TextEditingController emailController;
-  late TextEditingController phoneNumberController; // Phone Number Controller
+  late TextEditingController phoneNumberController;
 
-  String? gender; // Gender state
-  File? _selectedImage; // To store the selected image file
+  String? gender;
+  File? _selectedImage;
   bool _isLoading = false;
 
-  final ImagePicker _picker = ImagePicker(); // Image picker instance
+  final ImagePicker _picker = ImagePicker();
 
   @override
   void initState() {
@@ -53,9 +55,16 @@ class _ProfileScreenState extends State<ProfileScreen> {
     firstNameController = TextEditingController(text: widget.firstName);
     lastNameController = TextEditingController(text: widget.lastName);
     emailController = TextEditingController(text: widget.email);
-    phoneNumberController = TextEditingController(
-        text: widget.phoneNumber); // Initialize phone number controller
-    gender = widget.gender; // Initialize gender
+    phoneNumberController = TextEditingController(text: widget.phoneNumber);
+    gender = widget.gender;
+    context.read<AuthBloc>().add(GetUserEvent(widget.userId));
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    // Fetch user data every time the screen is re-entered
+    context.read<AuthBloc>().add(GetUserEvent(widget.userId));
   }
 
   @override
@@ -63,7 +72,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     firstNameController.dispose();
     lastNameController.dispose();
     emailController.dispose();
-    phoneNumberController.dispose(); // Dispose phone number controller
+    phoneNumberController.dispose();
     super.dispose();
   }
 
@@ -79,16 +88,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
           _selectedImage = File(pickedImage.path);
         });
 
-        // Retrieve the current user from AuthBloc's state
+        // Optionally, prompt user to confirm if they want to update the image
         final currentUser =
             (context.read<AuthBloc>().state as Authenticated).user;
-        // Call the provider's updateUserData to upload the image
-        context.read<AuthBloc>().add(
-              UpdateUserEvent(
-                currentUser, // Pass the current user
-                profilePicture: _selectedImage?.path,
-              ),
-            );
+        await updateUserData(); // Call updateUserData to update all fields
       }
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -101,18 +104,15 @@ class _ProfileScreenState extends State<ProfileScreen> {
     }
   }
 
-  // Update user data method
   Future<void> updateUserData() async {
     setState(() {
-      _isLoading = true; // Start loading when the update process begins
+      _isLoading = true;
     });
 
     try {
-      // Retrieve the current user from AuthBloc's state
+      print('Updating user data...'); // Log that we're updating user data
       final currentUser =
           (context.read<AuthBloc>().state as Authenticated).user;
-
-      // Call the provider's updateUserData to update user info
       context.read<AuthBloc>().add(
             UpdateUserEvent(
               currentUser,
@@ -129,23 +129,23 @@ class _ProfileScreenState extends State<ProfileScreen> {
           backgroundColor: Colors.red,
         ),
       );
+      print('Error updating user data: $error'); // Log the error
     } finally {
       setState(() {
-        _isLoading = false; // Stop loading once the update is complete
+        _isLoading = false;
       });
     }
   }
 
-  // Loading widget with blue background and message
   Widget _buildLoadingIndicator() {
     return Stack(
       children: [
-        const BlueBackground(), // Blue background widget
+        const BlueBackground(),
         Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: const [
-              CircularProgressIndicator(), // Loading spinner
+              CircularProgressIndicator(),
               SizedBox(height: 20),
               Text(
                 "User Account Updating. Please Wait.",
@@ -169,13 +169,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
         leading: IconButton(
           icon: const Icon(Icons.arrow_back, color: Colors.white),
           onPressed: () {
-            Navigator.pop(context);
+            Navigator.of(context).pushReplacementNamed('/homescreen');
           },
         ),
       ),
       body: Stack(
         children: [
-          const BlueBackground(), // Custom background widget
+          const BlueBackground(),
           Positioned(
             top: MediaQuery.of(context).size.height * 0.1,
             left: 0,
@@ -190,11 +190,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   // Redirect to login screen or another relevant screen
                   Navigator.of(context).pushReplacementNamed('/login');
                 }
-                if (state is Authenticated) {
-                  // Handle successful profile update
+                if (state is UserUpdated) {
                   setState(() {
-                    widget.profile = state.user.profilePicture ??
-                        ''; // Update profile picture
+                    widget.profile = state.user.profilePicture ?? '';
                   });
                   ScaffoldMessenger.of(context).showSnackBar(
                     const SnackBar(
@@ -216,11 +214,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   _logger.info('Current Auth State: $state');
 
                   if (state is AuthLoading || _isLoading) {
-                    return _buildLoadingIndicator(); // Show loading animation
+                    return _buildLoadingIndicator();
                   }
 
-                  if (state is Authenticated) {
-                    // Ensure you're working with a single authenticated user, not a list
+                  if (state is Authenticated || state is UserUpdated) {
+                    final user = state is Authenticated
+                        ? state.user
+                        : (state as UserUpdated).user;
 
                     return BottomSection(
                       firstNameController: firstNameController,
@@ -256,13 +256,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
               ),
             ),
           ),
-          // Profile picture at the top
           Positioned(
             top: MediaQuery.of(context).size.height * 0.01,
             left: 0,
             right: 0,
             child: GestureDetector(
-              onTap: _isLoading ? null : _pickImage, // Disable tap when loading
+              onTap: _isLoading ? null : _pickImage,
               child: CircleAvatar(
                 radius: 60,
                 backgroundColor: const Color.fromARGB(255, 173, 175, 210),

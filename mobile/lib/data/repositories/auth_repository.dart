@@ -88,13 +88,13 @@ class AuthRepository {
     }
   }
 
-  //! Update Password
-  Future<void> updatePassword(String currentPassword, String newPassword,
-      String confirmPassword) async {
-    final response = await dataProvider.updatePassword(
-        currentPassword, newPassword, confirmPassword);
-    return response;
-  }
+  // //! Update Password
+  // Future<void> updatePassword(String currentPassword, String newPassword,
+  //     String confirmPassword) async {
+  //   final response = await dataProvider.updatePassword(
+  //       currentPassword, newPassword, confirmPassword);
+  //   return response;
+  // }
 
   //! Logout
   Future<void> logout() async {
@@ -115,23 +115,22 @@ class AuthRepository {
     }
   }
 
-  //! Update user
-  Future<UserModel> updateUser(UserModel user, {File? profilePicture}) async {
+  //! Update User
+  Future<UserModel> updateUser(
+    UserModel user, {
+    String? firstName,
+    String? lastName,
+    String? email,
+    File? profilePicture,
+  }) async {
     try {
-      // Call the data provider to update the user data
       final updatedUser = await dataProvider.updateUserData(
-        firstName: user.firstName,
-        lastName: user.lastName,
-        email: user.email,
+        firstName: firstName ?? user.firstName,
+        lastName: lastName ?? user.lastName,
+        email: email ?? user.email,
         profilePicture: profilePicture,
       );
-
-      // Update cached user with the new data (if needed)
-      _cachedUser =
-          updatedUser; // Assuming updatedUser is returned from dataProvider
-
-      // Return the updated user model
-      return updatedUser; // Ensure to return the updated UserModel
+      return updatedUser; // Return the updated UserModel
     } catch (error) {
       throw Exception('Failed to update user: $error');
     }

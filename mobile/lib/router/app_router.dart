@@ -59,6 +59,7 @@ class AppRouter {
             profile: args['profile'] ?? '',
             phoneNumber: args['phoneNumber'] ?? '',
             gender: args['gender'] ?? 'Male',
+            userId: args['userId'],
           ));
         } else {
           return null;
