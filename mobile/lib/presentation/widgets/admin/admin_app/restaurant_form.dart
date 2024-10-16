@@ -160,11 +160,11 @@ class _RestaurantFormScreenState extends State<RestaurantFormScreen> {
                     const SizedBox(height: 10),
                     ElevatedButton(
                       onPressed: _pickImage,
-                      child: const Text('Pick Image'),
                       style: ElevatedButton.styleFrom(
                         backgroundColor:
                             const Color(0xFF1C3473), // Set button color
                       ),
+                      child: const Text('Pick Image'),
                     ),
                   ],
                 ),

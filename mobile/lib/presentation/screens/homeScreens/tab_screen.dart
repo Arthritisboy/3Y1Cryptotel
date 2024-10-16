@@ -4,7 +4,6 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter/services.dart';
 import 'package:hotel_flutter/logic/bloc/hotel/hotel_bloc.dart';
 import 'package:hotel_flutter/logic/bloc/hotel/hotel_event.dart';
-import 'package:hotel_flutter/logic/bloc/hotel/hotel_state.dart';
 import 'package:hotel_flutter/logic/bloc/restaurant/restaurant_bloc.dart';
 import 'package:hotel_flutter/logic/bloc/restaurant/restaurant_event.dart';
 import 'package:hotel_flutter/presentation/screens/homeScreens/map_screen.dart';
