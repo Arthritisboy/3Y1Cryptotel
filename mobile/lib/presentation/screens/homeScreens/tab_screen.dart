@@ -145,7 +145,10 @@ class _TabScreenState extends State<TabScreen> {
                 email: email ?? '',
                 profile: profile ?? '',
               ),
-              body: _isLoading ? _buildShimmerLoading() : _buildContent(),
+              body: RefreshIndicator(
+                onRefresh: _fetchAllUsers, // Call your fetch method
+                child: _isLoading ? _buildShimmerLoading() : _buildContent(),
+              ),
             );
           },
         ),
