@@ -14,7 +14,9 @@ class AdminNavigation extends StatefulWidget {
   const AdminNavigation({super.key});
 
   @override
-  _AdminNavigationState createState() => _AdminNavigationState();
+  State<StatefulWidget> createState() {
+    return _AdminNavigationState();
+  }
 }
 
 class _AdminNavigationState extends State<AdminNavigation> {

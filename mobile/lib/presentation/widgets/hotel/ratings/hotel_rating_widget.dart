@@ -22,8 +22,6 @@ class _HotelRatingWidgetState extends State<HotelRatingWidget> {
   void initState() {
     super.initState();
     _getStoredUsers();
-    print(
-        "HotelRatingWidget initialized with ${widget.ratings.length} ratings");
   }
 
   Future<void> _getStoredUsers() async {
@@ -95,7 +93,6 @@ class _HotelRatingWidgetState extends State<HotelRatingWidget> {
                   onChanged: (value) {
                     setState(() {
                       selectedSort = value!;
-                      print("Selected sorting option: $selectedSort");
                     });
                   },
                 ),

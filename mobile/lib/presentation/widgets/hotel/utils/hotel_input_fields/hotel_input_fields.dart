@@ -86,26 +86,6 @@ class _HotelInputFieldsState extends State<HotelInputFields> {
   }
 
   // Dialog to show when the check-in date is the same as the check-out date
-  void _showDateErrorDialog(BuildContext context) {
-    showDialog(
-      context: context,
-      barrierDismissible: false, // Prevent closing by tapping outside
-      builder: (BuildContext context) {
-        return CustomDialog(
-          title: 'Invalid Date Selection',
-          description:
-              'The check-in date cannot be the same as the check-out date. Please select valid dates to proceed.',
-          buttonText: 'OK',
-          secondButtonText: '',
-          onButtonPressed: () {
-            Navigator.of(context).pop();
-          },
-          onSecondButtonPressed: () {},
-        );
-      },
-    );
-  }
-
   void _showBookingSuccessDialog(BuildContext context) {
     showDialog(
       context: context,

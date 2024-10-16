@@ -233,7 +233,6 @@ class _RestaurantInputFieldsState extends State<RestaurantInputFields> {
   }
 
   void _showErrorDialog(BuildContext context, String message) {
-    print('Showing Error Dialog: $message'); // Debug print
     showDialog(
       context: context,
       barrierDismissible: false,

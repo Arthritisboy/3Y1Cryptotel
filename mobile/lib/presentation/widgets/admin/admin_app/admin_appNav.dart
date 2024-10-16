@@ -7,14 +7,14 @@ import 'package:hotel_flutter/logic/bloc/booking/booking_event.dart';
 import 'package:hotel_flutter/logic/bloc/booking/booking_state.dart';
 import 'package:hotel_flutter/presentation/widgets/admin/admin_app/creation_content.dart';
 import 'package:hotel_flutter/presentation/widgets/admin/admin_app/manage_tab.dart';
-import 'package:hotel_flutter/presentation/widgets/admin/admin_modal.dart';
-import 'package:intl/intl.dart';
 
 class AdminAppnav extends StatefulWidget {
   const AdminAppnav({super.key});
 
   @override
-  _AdminAppnavState createState() => _AdminAppnavState();
+  State<StatefulWidget> createState() {
+    return _AdminAppnavState();
+  }
 }
 
 class _AdminAppnavState extends State<AdminAppnav> {
@@ -52,7 +52,7 @@ class _AdminAppnavState extends State<AdminAppnav> {
             Expanded(
               child: TabBarView(
                 children: [
-                  CreationContent(), 
+                  CreationContent(),
                   ManagerTab(),
                 ],
               ),

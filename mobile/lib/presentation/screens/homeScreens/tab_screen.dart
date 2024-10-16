@@ -34,7 +34,7 @@ class _TabScreenState extends State<TabScreen> {
   final FlutterSecureStorage _secureStorage = const FlutterSecureStorage();
   int _selectedIndex = 0;
   bool _isLoading = true;
-  String _searchQuery = ""; // Add a search query state
+  String _searchQuery = "";
 
   String? firstName;
   String? lastName;
@@ -44,6 +44,14 @@ class _TabScreenState extends State<TabScreen> {
   String? phoneNumber;
   String? userId;
   List<UserModel> allUsers = [];
+  List<String> suggestions = [
+    'The Monarch Hotel',
+    'Star Plaze Hotel',
+    'Matutina’s',
+    'Dagupeña',
+    'Lenox Hotel',
+  ];
+  List<String> filteredSuggestions = [];
 
   @override
   void initState() {
@@ -55,8 +63,6 @@ class _TabScreenState extends State<TabScreen> {
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-
-    // Fetch the latest user data every time the widget becomes visible
     _getUserData();
   }
 
@@ -195,7 +201,8 @@ class _TabScreenState extends State<TabScreen> {
             ),
           ],
         ),
-        if (_searchQuery.isNotEmpty) _buildSearchSuggestions(),
+        if (_searchQuery.isNotEmpty)
+          _buildSearchSuggestions(), // Display suggestions
         Positioned(
           top: 40.0,
           right: 10.0,
@@ -213,22 +220,13 @@ class _TabScreenState extends State<TabScreen> {
   }
 
   Widget _buildSearchSuggestions() {
-    List<String> suggestions = [
-      'River Palm Hotel'
-          'The Monarch Hotel',
-      'Star Plaza Hotel',
-      'Matutina’s',
-      'Dagupeña',
-      'Lenox Hotel',
-    ];
-
     List<String> filteredSuggestions = suggestions
         .where(
             (hotel) => hotel.toLowerCase().contains(_searchQuery.toLowerCase()))
         .toList();
 
     return Positioned(
-      top: 235, // Adjust the top position to align correctly
+      top: 235,
       left: 16,
       right: 16,
       child: Material(
@@ -239,60 +237,34 @@ class _TabScreenState extends State<TabScreen> {
           decoration: BoxDecoration(
             color: Colors.white,
             borderRadius: BorderRadius.circular(10),
-            border: Border.all(
-              color: Colors.grey,
-              width: 1.0,
-            ),
+            border: Border.all(color: Colors.grey, width: 1.0),
           ),
-          child: Column(
-            children: [
-              // Search Field with Icon
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                child: Row(
-                  children: [
-                    const Icon(Icons.search, color: Colors.grey),
-                    const SizedBox(width: 8),
-                    Expanded(
-                      child: TextField(
-                        onChanged: (value) {
-                          setState(() {
-                            _searchQuery = value;
-                          });
-                        },
-                        decoration: const InputDecoration(
-                          border: InputBorder.none,
-                          hintText: 'Search...',
-                        ),
-                      ),
-                    ),
-                  ],
+          child: ListView.builder(
+            shrinkWrap: true,
+            itemCount: filteredSuggestions.length,
+            itemBuilder: (context, index) {
+              return ListTile(
+                leading: const Icon(Icons.search, color: Colors.grey),
+                title: Text(
+                  filteredSuggestions[index],
+                  style: const TextStyle(fontSize: 18, color: Colors.black),
                 ),
-              ),
-              const Divider(height: 1, color: Colors.grey),
-              Expanded(
-                child: ListView.builder(
-                  shrinkWrap: true,
-                  itemCount: filteredSuggestions.length,
-                  itemBuilder: (context, index) {
-                    return ListTile(
-                      title: Text(
-                        filteredSuggestions[index],
-                        style:
-                            const TextStyle(fontSize: 18, color: Colors.black),
-                      ),
-                      onTap: () {
-                        setState(() {
-                          _searchQuery = filteredSuggestions[index];
-                          filteredSuggestions =
-                              []; // Clear the list on selection
-                        });
-                      },
-                    );
+                trailing: IconButton(
+                  icon: const Icon(Icons.close, color: Colors.grey),
+                  onPressed: () {
+                    setState(() {
+                      suggestions.remove(filteredSuggestions[index]);
+                    });
                   },
                 ),
-              ),
-            ],
+                onTap: () {
+                  setState(() {
+                    _searchQuery = filteredSuggestions[index];
+                    filteredSuggestions.clear();
+                  });
+                },
+              );
+            },
           ),
         ),
       ),
@@ -326,6 +298,20 @@ class _TabScreenState extends State<TabScreen> {
               ),
             ),
           ],
+          if (_selectedIndex == 1)
+            RestaurantScreen(
+              searchQuery: _searchQuery,
+              scrollDirection: Axis.vertical,
+              rowOrColumn: 'column',
+              width: 400,
+            ),
+          if (_selectedIndex == 2)
+            HomeScreen(
+              searchQuery: _searchQuery,
+              scrollDirection: Axis.vertical,
+              rowOrColumn: 'column',
+              width: 400,
+            ),
         ],
       ),
     );

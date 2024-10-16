@@ -6,7 +6,9 @@ class HotelFormScreen extends StatefulWidget {
   const HotelFormScreen({super.key});
 
   @override
-  _HotelFormScreenState createState() => _HotelFormScreenState();
+  State<StatefulWidget> createState() {
+    return _HotelFormScreenState();
+  }
 }
 
 class _HotelFormScreenState extends State<HotelFormScreen> {
@@ -19,7 +21,8 @@ class _HotelFormScreenState extends State<HotelFormScreen> {
 
   final TextEditingController _managerNameController = TextEditingController();
   final TextEditingController _managerEmailController = TextEditingController();
-  final TextEditingController _managerPasswordController = TextEditingController();
+  final TextEditingController _managerPasswordController =
+      TextEditingController();
 
   File? _selectedImage;
 
@@ -36,10 +39,7 @@ class _HotelFormScreenState extends State<HotelFormScreen> {
   }
 
   void _createHotelAndAdmin() {
-    if (_formKey.currentState?.validate() ?? false) {
-      print("Hotel Created: ${_nameController.text}");
-      print("Admin Created: ${_managerNameController.text}");
-    }
+    if (_formKey.currentState?.validate() ?? false) {}
   }
 
   @override
@@ -156,10 +156,10 @@ class _HotelFormScreenState extends State<HotelFormScreen> {
                     const SizedBox(height: 10),
                     ElevatedButton(
                       onPressed: _pickImage,
-                      child: const Text('Pick Image'),
                       style: ElevatedButton.styleFrom(
                         backgroundColor: const Color(0xFF1C3473),
                       ),
+                      child: const Text('Pick Image'),
                     ),
                   ],
                 ),
