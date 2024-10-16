@@ -53,7 +53,7 @@ class BottomTabIconNavigation extends StatelessWidget {
               GestureDetector(
                 onTap: () => onIconTapped(3),
                 child: _buildIconWithText(
-                  icon: CupertinoIcons.car_detailed,
+                  icon: CupertinoIcons.map,
                   isSelected: selectedIndex == 3,
                 ),
               ),
@@ -109,6 +109,8 @@ class BottomTabIconNavigation extends StatelessWidget {
         return 'All Available Hotels';
       case 2:
         return 'All Available Restaurants';
+      case 3:
+        return 'All Hotels and Restaurants';
       default:
         return '';
     }

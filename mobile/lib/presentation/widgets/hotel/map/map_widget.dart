@@ -51,7 +51,7 @@ class MapWidget extends StatelessWidget {
                   child: Icon(
                     Icons.location_on,
                     size: 40,
-                    color: Colors.red,
+                    color: Color.fromARGB(255, 29, 53, 115),
                   ),
                 ),
               ],

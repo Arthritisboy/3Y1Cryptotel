@@ -11,8 +11,9 @@ class HotelModel extends Equatable {
   final double averageRating;
   final double averagePrice;
   final List<RoomModel> rooms;
+  List<double>? coordinates;
 
-  const HotelModel({
+  HotelModel({
     required this.id,
     required this.name,
     required this.location,
@@ -56,9 +57,12 @@ class HotelModel extends Equatable {
 
   // Fetch coordinates based on the location string
   Future<List<double>> getCoordinates() async {
+    if (coordinates != null) return coordinates!; // Return if already fetched
+
     try {
       List<Location> locations = await locationFromAddress(location);
-      return [locations.first.latitude, locations.first.longitude];
+      coordinates = [locations.first.latitude, locations.first.longitude];
+      return coordinates!;
     } catch (e) {
       return [0.0, 0.0]; // Return [0.0, 0.0] if there is an error
     }
