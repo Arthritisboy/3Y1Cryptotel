@@ -12,9 +12,7 @@ const router = express.Router();
 router.route('/update-all-averages').patch(updateAllHotelsAverage);
 
 // Hotel routes
-router
-  .route('/')
-  .get(authController.protect, hotelController.getHotel)
+router.route('/').get(authController.protect, hotelController.getHotel);
 
 router
   .route('/:userId')
@@ -23,7 +21,7 @@ router
 router
   .route('/:id')
   .get(authController.protect, hotelController.getHotel)
-  .patch(upload.single('image'),hotelController.updateHotel)
+  .patch(upload.single('image'), hotelController.updateHotel)
   .delete(hotelController.deleteHotel);
 
 // Room routes
@@ -34,7 +32,7 @@ router
 router
   .route('/rooms/:id')
   .get(authController.protect, roomController.getRoom)
-  .patch(upload.single('image'),roomController.updateRoom)
+  .patch(upload.single('image'), roomController.updateRoom)
   .delete(roomController.deleteRoom);
 
 // Rating routes

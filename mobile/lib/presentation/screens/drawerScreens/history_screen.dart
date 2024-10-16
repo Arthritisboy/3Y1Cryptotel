@@ -82,7 +82,9 @@ class _HistoryScreenState extends State<HistoryScreen> {
                 final cancelBookings = state.bookings
                     .where((booking) => booking.status == 'cancelled')
                     .toList();
-
+                final doneBookings = state.bookings
+                    .where((booking) => booking.status == 'done')
+                    .toList();
                 return TabBarView(
                   children: [
                     HistoryCancelBody(canceledBookings: cancelBookings),
@@ -91,7 +93,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
                       userId: _userId!,
                     ),
                     HistoryRejectedBody(rejectedBookings: rejectedBookings),
-                    const HistoryRateBody(status: 'Rate'),
+                    HistoryRateBody(completedBookings: doneBookings),
                   ],
                 );
               } else {
