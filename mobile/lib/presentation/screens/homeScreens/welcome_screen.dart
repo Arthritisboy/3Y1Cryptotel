@@ -124,8 +124,8 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                       height: screenHeight * 0.05,
                       child: ElevatedButton(
                         style: ButtonStyle(
-                          backgroundColor: MaterialStateProperty.all(
-                              const Color(0xFF1C3473)),
+                          backgroundColor:
+                              WidgetStateProperty.all(const Color(0xFF1C3473)),
                         ),
                         onPressed: () {
                           Navigator.of(context).push(_createRoute('/signup'));
