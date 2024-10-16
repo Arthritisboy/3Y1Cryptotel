@@ -9,6 +9,7 @@ import 'package:hotel_flutter/presentation/widgets/profile/bottom_section.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:logging/logging.dart';
 
+//ignore: must_be_immutable
 class ProfileScreen extends StatefulWidget {
   ProfileScreen({
     super.key,
@@ -211,10 +212,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   }
 
                   if (state is Authenticated || state is UserUpdated) {
-                    final user = state is Authenticated
-                        ? state.user
-                        : (state as UserUpdated).user;
-
                     // Set initial values from the user model if needed
                     return BottomSection(
                       firstNameController: firstNameController,

@@ -4,13 +4,9 @@ import 'package:bloc/bloc.dart';
 import 'package:hotel_flutter/data/repositories/auth_repository.dart';
 import 'package:hotel_flutter/logic/bloc/auth/auth_event.dart';
 import 'package:hotel_flutter/logic/bloc/auth/auth_state.dart';
-import 'package:hotel_flutter/data/model/auth/user_model.dart';
-
-import 'package:logging/logging.dart';
 
 class AuthBloc extends Bloc<AuthEvent, AuthState> {
   final AuthRepository authRepository;
-  final Logger _logger = Logger('AuthBloc');
 
   AuthBloc(this.authRepository) : super(AuthInitial()) {
     on<SignUpEvent>((event, emit) async {

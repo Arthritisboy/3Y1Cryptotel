@@ -8,7 +8,6 @@ import 'package:hotel_flutter/logic/bloc/restaurant/restaurant_bloc.dart';
 import 'package:hotel_flutter/logic/bloc/restaurant/restaurant_event.dart';
 import 'package:hotel_flutter/presentation/screens/homeScreens/map_screen.dart';
 import 'package:hotel_flutter/presentation/widgets/tabscreen/search_suggestion.dart';
-import 'package:logging/logging.dart';
 import 'package:hotel_flutter/data/model/auth/user_model.dart';
 import 'package:hotel_flutter/logic/bloc/auth/auth_bloc.dart';
 import 'package:hotel_flutter/logic/bloc/auth/auth_event.dart';
@@ -23,7 +22,6 @@ import 'package:hotel_flutter/presentation/widgets/utils_widget/custom_dialog.da
 import 'package:hotel_flutter/presentation/widgets/shimmer_loading/tab/shimmer_tab_header.dart';
 import 'package:hotel_flutter/presentation/widgets/shimmer_loading/tab/shimmer_bottom_navigation.dart';
 import 'package:hotel_flutter/presentation/widgets/shimmer_loading/tab/shimmer_card_widget.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class TabScreen extends StatefulWidget {
   const TabScreen({super.key});

@@ -77,7 +77,7 @@ class AuthRepository {
       final usersData = await dataProvider.fetchAllUsers();
 
       // Check if usersData is a List<UserModel>
-      if (usersData == null || usersData.isEmpty) {
+      if (usersData.isEmpty) {
         throw Exception('No users data found');
       }
 
