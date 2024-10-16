@@ -52,6 +52,14 @@ class _TabScreenState extends State<TabScreen> {
     _fetchAllUsers();
   }
 
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+
+    // Fetch the latest user data every time the widget becomes visible
+    _getUserData();
+  }
+
   void _onSearchChanged(String query) {
     setState(() {
       _searchQuery = query; // Update the search query
@@ -74,7 +82,9 @@ class _TabScreenState extends State<TabScreen> {
     final userId = await _secureStorage.read(key: 'userId');
     _logger.info('Retrieved userId: $userId');
     if (userId != null) {
-      context.read<AuthBloc>().add(GetUserEvent(userId));
+      context
+          .read<AuthBloc>()
+          .add(GetUserEvent(userId)); // Fetch latest data from backend
     }
   }
 
@@ -170,7 +180,7 @@ class _TabScreenState extends State<TabScreen> {
             TabHeader(
               firstName: firstName ?? 'Guest',
               lastName: lastName ?? '',
-              onSearchChanged: _onSearchChanged, // Pass the callback
+              onSearchChanged: _onSearchChanged,
             ),
             const SizedBox(height: 10),
             Padding(
@@ -181,13 +191,11 @@ class _TabScreenState extends State<TabScreen> {
               ),
             ),
             Expanded(
-              child: _buildTabContent(), // Extract Tab Content Logic
+              child: _buildTabContent(),
             ),
           ],
         ),
-        if (_searchQuery.isNotEmpty)
-          _buildSearchSuggestions(), // Show suggestions
-
+        if (_searchQuery.isNotEmpty) _buildSearchSuggestions(),
         Positioned(
           top: 40.0,
           right: 10.0,
@@ -285,20 +293,6 @@ class _TabScreenState extends State<TabScreen> {
               ),
             ),
           ],
-          if (_selectedIndex == 1)
-            RestaurantScreen(
-              searchQuery: _searchQuery,
-              scrollDirection: Axis.vertical,
-              rowOrColumn: 'column',
-              width: 400,
-            ),
-          if (_selectedIndex == 2)
-            HomeScreen(
-              searchQuery: _searchQuery,
-              scrollDirection: Axis.vertical,
-              rowOrColumn: 'column',
-              width: 400,
-            ),
         ],
       ),
     );
@@ -341,7 +335,7 @@ class _TabScreenState extends State<TabScreen> {
         break;
       case 'profile':
         if (firstName != null && lastName != null) {
-          Navigator.of(context).pushNamed(
+          Navigator.of(context).pushReplacementNamed(
             '/profile',
             arguments: {
               'firstName': firstName,

@@ -27,7 +27,7 @@ class ProfileScreen extends StatefulWidget {
   final String email;
   String profile;
   final String phoneNumber;
-  String gender;
+  final String gender;
   final String userId;
 
   @override
@@ -43,8 +43,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
   late TextEditingController emailController;
   late TextEditingController phoneNumberController;
 
+  String? gender;
   File? _selectedImage;
   bool _isLoading = false;
+
   final ImagePicker _picker = ImagePicker();
 
   @override
@@ -54,6 +56,15 @@ class _ProfileScreenState extends State<ProfileScreen> {
     lastNameController = TextEditingController(text: widget.lastName);
     emailController = TextEditingController(text: widget.email);
     phoneNumberController = TextEditingController(text: widget.phoneNumber);
+    gender = widget.gender;
+    context.read<AuthBloc>().add(GetUserEvent(widget.userId));
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    // Fetch user data every time the screen is re-entered
+    context.read<AuthBloc>().add(GetUserEvent(widget.userId));
   }
 
   @override
@@ -77,8 +88,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
           _selectedImage = File(pickedImage.path);
         });
 
-        // Update user data after selecting the image
-        await updateUserData();
+        // Optionally, prompt user to confirm if they want to update the image
+        final currentUser =
+            (context.read<AuthBloc>().state as Authenticated).user;
+        await updateUserData(); // Call updateUserData to update all fields
       }
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -97,6 +110,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     });
 
     try {
+      print('Updating user data...'); // Log that we're updating user data
       final currentUser =
           (context.read<AuthBloc>().state as Authenticated).user;
       context.read<AuthBloc>().add(
@@ -115,7 +129,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
           backgroundColor: Colors.red,
         ),
       );
-      _logger.severe('Error updating user data: $error');
+      print('Error updating user data: $error'); // Log the error
     } finally {
       setState(() {
         _isLoading = false;
@@ -155,7 +169,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         leading: IconButton(
           icon: const Icon(Icons.arrow_back, color: Colors.white),
           onPressed: () {
-            Navigator.pop(context);
+            Navigator.of(context).pushReplacementNamed('/homescreen');
           },
         ),
       ),
@@ -173,6 +187,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(content: Text(state.message)),
                   );
+                  // Redirect to login screen or another relevant screen
                   Navigator.of(context).pushReplacementNamed('/login');
                 }
                 if (state is UserUpdated) {
@@ -203,17 +218,20 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   }
 
                   if (state is Authenticated || state is UserUpdated) {
+                    final user = state is Authenticated
+                        ? state.user
+                        : (state as UserUpdated).user;
+
                     return BottomSection(
                       firstNameController: firstNameController,
                       lastNameController: lastNameController,
                       emailController: emailController,
                       phoneNumberController: phoneNumberController,
-                      gender: widget.gender,
+                      gender: gender ?? 'Male',
                       updateUserData: updateUserData,
                       onGenderChanged: (selectedGender) {
                         setState(() {
-                          widget.gender =
-                              selectedGender; // Update widget gender
+                          gender = selectedGender;
                         });
                       },
                       isLoading: _isLoading,
