@@ -109,47 +109,47 @@ class MyApp extends StatelessWidget {
   TextTheme _buildHelveticaTextTheme() {
     return const TextTheme(
       displayLarge: TextStyle(
-        fontFamily: 'SFPro',
+        fontFamily: 'HelveticaNeue',
         fontSize: 32,
         fontWeight: FontWeight.bold,
       ),
       displayMedium: TextStyle(
-        fontFamily: 'SFPro',
+        fontFamily: 'HelveticaNeue',
         fontSize: 24,
         fontWeight: FontWeight.w600,
       ),
       displaySmall: TextStyle(
-        fontFamily: 'SFPro',
+        fontFamily: 'HelveticaNeue',
         fontSize: 20,
         fontWeight: FontWeight.w500,
       ),
       bodyLarge: TextStyle(
-        fontFamily: 'SFPro',
+        fontFamily: 'HelveticaNeue',
         fontSize: 18,
         fontWeight: FontWeight.normal,
       ),
       bodyMedium: TextStyle(
-        fontFamily: 'SFPro',
+        fontFamily: 'HelveticaNeue',
         fontSize: 16,
         fontWeight: FontWeight.normal,
       ),
       bodySmall: TextStyle(
-        fontFamily: 'SFPro',
+        fontFamily: 'HelveticaNeue',
         fontSize: 14,
         fontWeight: FontWeight.normal,
       ),
       labelLarge: TextStyle(
-        fontFamily: 'SFPro',
+        fontFamily: 'HelveticaNeue',
         fontSize: 16,
         fontWeight: FontWeight.bold,
       ),
       labelMedium: TextStyle(
-        fontFamily: 'SFPro',
+        fontFamily: 'HelveticaNeue',
         fontSize: 14,
         fontWeight: FontWeight.bold,
       ),
       labelSmall: TextStyle(
-        fontFamily: 'SFPro',
+        fontFamily: 'HelveticaNeue',
         fontSize: 12,
         fontWeight: FontWeight.bold,
       ),

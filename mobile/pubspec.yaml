@@ -92,60 +92,59 @@ flutter:
     - assets/images/rooms/MonarchHotel/deluxedoublebedroom4.jpg
 
   fonts:
-    # - family: HelveticaNeue
-    #   fonts:
-    #     - asset: assets/fonts/helvetica/HelveticaNeueUltraLight.otf
-    #       weight: 100
-    #     - asset: assets/fonts/helvetica/HelveticaNeueUltraLightItalic.otf
-    #       weight: 100
-    #       style: italic
-    #     - asset: assets/fonts/helvetica/HelveticaNeueThin.otf
-    #       weight: 200
-    #     - asset: assets/fonts/helvetica/HelveticaNeueThinItalic.otf
-    #       weight: 200
-    #       style: italic
-    #     - asset: assets/fonts/helvetica/HelveticaNeueLight.otf
-    #       weight: 300
-    #     - asset: assets/fonts/helvetica/HelveticaNeueLightItalic.otf
-    #       weight: 300
-    #       style: italic
-    #     - asset: assets/fonts/helvetica/HelveticaNeueRoman.otf
-    #       weight: 400
-    #     - asset: assets/fonts/helvetica/HelveticaNeueItalic.ttf
-    #       weight: 400
-    #       style: italic
-    #     - asset: assets/fonts/helvetica/HelveticaNeueMedium.otf
-    #       weight: 500
-    #     - asset: assets/fonts/helvetica/HelveticaNeueMediumItalic.otf
-    #       weight: 500
-    #       style: italic
-    #     - asset: assets/fonts/helvetica/HelveticaNeueBold.otf
-    #       weight: 700
-    #     - asset: assets/fonts/helvetica/HelveticaNeueBoldItalic.otf
-    #       weight: 700
-    #       style: italic
-    #     - asset: assets/fonts/helvetica/HelveticaNeueHeavy.otf
-    #       weight: 800
-    #     - asset: assets/fonts/helvetica/HelveticaNeueHeavyItalic.otf
-    #       weight: 800
-    #       style: italic
-    #     - asset: assets/fonts/helvetica/HelveticaNeueBlack.otf
-    #       weight: 900
-    #     - asset: assets/fonts/helvetica/HelveticaNeueBlackItalic.otf
-    #       weight: 900
-    #       style: italic
-    #       fonts:
-    - family: SFPro
+    - family: HelveticaNeue
       fonts:
-        - asset: assets/fonts/sf-pro/SFProDisplayRegular.otf
-        - asset: assets/fonts/sf-pro/SFProDisplayMedium.otf
-        - asset: assets/fonts/sf-pro/SFProDisplayBold.otf
-        - asset: assets/fonts/sf-pro/SFProDisplayLightItalic.otf
-        - asset: assets/fonts/sf-pro/SFProDisplayThinItalic.otf
-        - asset: assets/fonts/sf-pro/SFProDisplayHeavyItalic.otf
-        - asset: assets/fonts/sf-pro/SFProDisplayUltraLightItalic.otf
-        - asset: assets/fonts/sf-pro/SFProDisplaySemiBoldItalic.otf
-        - asset: assets/fonts/sf-pro/SFProDisplayBlackItalic.otf
+        - asset: assets/fonts/helvetica/HelveticaNeueUltraLight.otf
+          weight: 100
+        - asset: assets/fonts/helvetica/HelveticaNeueUltraLightItalic.otf
+          weight: 100
+          style: italic
+        - asset: assets/fonts/helvetica/HelveticaNeueThin.otf
+          weight: 200
+        - asset: assets/fonts/helvetica/HelveticaNeueThinItalic.otf
+          weight: 200
+          style: italic
+        - asset: assets/fonts/helvetica/HelveticaNeueLight.otf
+          weight: 300
+        - asset: assets/fonts/helvetica/HelveticaNeueLightItalic.otf
+          weight: 300
+          style: italic
+        - asset: assets/fonts/helvetica/HelveticaNeueRoman.otf
+          weight: 400
+        - asset: assets/fonts/helvetica/HelveticaNeueItalic.ttf
+          weight: 400
+          style: italic
+        - asset: assets/fonts/helvetica/HelveticaNeueMedium.otf
+          weight: 500
+        - asset: assets/fonts/helvetica/HelveticaNeueMediumItalic.otf
+          weight: 500
+          style: italic
+        - asset: assets/fonts/helvetica/HelveticaNeueBold.otf
+          weight: 700
+        - asset: assets/fonts/helvetica/HelveticaNeueBoldItalic.otf
+          weight: 700
+          style: italic
+        - asset: assets/fonts/helvetica/HelveticaNeueHeavy.otf
+          weight: 800
+        - asset: assets/fonts/helvetica/HelveticaNeueHeavyItalic.otf
+          weight: 800
+          style: italic
+        - asset: assets/fonts/helvetica/HelveticaNeueBlack.otf
+          weight: 900
+        - asset: assets/fonts/helvetica/HelveticaNeueBlackItalic.otf
+          weight: 900
+          style: italic
+    # - family: SFPro
+    #   fonts:
+    #     - asset: assets/fonts/sf-pro/SFProDisplayRegular.otf
+    #     - asset: assets/fonts/sf-pro/SFProDisplayMedium.otf
+    #     - asset: assets/fonts/sf-pro/SFProDisplayBold.otf
+    #     - asset: assets/fonts/sf-pro/SFProDisplayLightItalic.otf
+    #     - asset: assets/fonts/sf-pro/SFProDisplayThinItalic.otf
+    #     - asset: assets/fonts/sf-pro/SFProDisplayHeavyItalic.otf
+    #     - asset: assets/fonts/sf-pro/SFProDisplayUltraLightItalic.otf
+    #     - asset: assets/fonts/sf-pro/SFProDisplaySemiBoldItalic.otf
+    #     - asset: assets/fonts/sf-pro/SFProDisplayBlackItalic.otf
 
   # The following line ensures that the Material Icons font is
   # included with your application, so that you can use the icons in

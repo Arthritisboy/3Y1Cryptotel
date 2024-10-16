@@ -15,6 +15,12 @@ const bookingSchema = new mongoose.Schema({
   roomName: {
     type: String,
   },
+  hotelImage: {
+    type: String,
+  },
+  restaurantImage: {
+    type: String,
+  },
   userId: {
     type: String,
   },
