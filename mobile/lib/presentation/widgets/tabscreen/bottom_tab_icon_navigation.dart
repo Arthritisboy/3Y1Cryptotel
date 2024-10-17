@@ -59,22 +59,6 @@ class BottomTabIconNavigation extends StatelessWidget {
               ),
             ],
           ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: [
-              Padding(
-                padding: const EdgeInsets.only(left: 20.0, top: 25),
-                child: Text(
-                  _getHeaderText(selectedIndex),
-                  style: const TextStyle(
-                    fontSize: 24,
-                    color: Colors.black,
-                  ),
-                  textAlign: TextAlign.start,
-                ),
-              ),
-            ],
-          )
         ],
       ),
     );
@@ -100,18 +84,4 @@ class BottomTabIconNavigation extends StatelessWidget {
     );
   }
 
-  String _getHeaderText(int selectedIndex) {
-    switch (selectedIndex) {
-      case 0:
-        return 'Top Rated Hotel and Restaurant';
-      case 1:
-        return 'All Available Restaurants';
-      case 2:
-        return 'All Available Hotels';
-      case 3:
-        return 'Hotels and Restaurants';
-      default:
-        return '';
-    }
-  }
 }
