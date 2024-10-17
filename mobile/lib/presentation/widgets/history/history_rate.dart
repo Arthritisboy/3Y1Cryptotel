@@ -204,7 +204,7 @@ class HistoryRateBody extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Image.asset(
-            'assets/images/icons/completed.png',
+            'assets/images/icons/booknow.png',
             width: 100,
             height: 100,
           ),

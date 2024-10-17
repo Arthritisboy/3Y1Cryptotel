@@ -2,11 +2,17 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter/services.dart';
+import 'package:hotel_flutter/data/model/hotel/hotel_model.dart';
+import 'package:hotel_flutter/data/model/restaurant/restaurant_model.dart';
 import 'package:hotel_flutter/logic/bloc/hotel/hotel_bloc.dart';
 import 'package:hotel_flutter/logic/bloc/hotel/hotel_event.dart';
+import 'package:hotel_flutter/logic/bloc/hotel/hotel_state.dart';
 import 'package:hotel_flutter/logic/bloc/restaurant/restaurant_bloc.dart';
 import 'package:hotel_flutter/logic/bloc/restaurant/restaurant_event.dart';
+import 'package:hotel_flutter/logic/bloc/restaurant/restaurant_state.dart';
+import 'package:hotel_flutter/presentation/screens/homeScreens/hotel_screen.dart';
 import 'package:hotel_flutter/presentation/screens/homeScreens/map_screen.dart';
+import 'package:hotel_flutter/presentation/screens/homeScreens/restaurant.dart';
 import 'package:hotel_flutter/presentation/widgets/tabscreen/search_suggestion.dart';
 import 'package:hotel_flutter/data/model/auth/user_model.dart';
 import 'package:hotel_flutter/logic/bloc/auth/auth_bloc.dart';
@@ -24,10 +30,12 @@ import 'package:hotel_flutter/presentation/widgets/shimmer_loading/tab/shimmer_b
 import 'package:hotel_flutter/presentation/widgets/shimmer_loading/tab/shimmer_card_widget.dart';
 
 class TabScreen extends StatefulWidget {
-  const TabScreen({super.key});
+  TabScreen({super.key});
 
   @override
   State<TabScreen> createState() => _TabScreenState();
+
+
 }
 
 class _TabScreenState extends State<TabScreen> {
@@ -44,26 +52,34 @@ class _TabScreenState extends State<TabScreen> {
   String? phoneNumber;
   String? userId;
   List<UserModel> allUsers = [];
-  List<String> suggestions = [
+  List<String> hotelSuggestion = [
     'River Palm Hotel',
-    'The Monarch Hotel',
+    'Monarch Hotel',
     'Star Plaza Hotel',
     'Puerto Del Sol',
     'The Manaog Hotel',
-    'Matutina’s Gerry’s Seafood House',
-    'Dagupeña',
-    'City De Luxe',
-    'Hardin sa Paraiso',
-    'Sungayan Grill',
-    'Pedritos',
-    'Grumpy Joe',
-    'Dampa',
-    'Kabsat',
-    'Masa Bakehouse',
     'Lenox Hotel',
     'Hotel Monde',
+    'Hotel Le Duc',
+    'Bergamu Hotel'
     'Bedbox',
   ];
+    List<String> restaurantSuggestion = [
+    'Matutina’s Gerry’s Seafood House', 
+    'Cabalen' 
+    'City De Luxe', 
+    'Hardin sa Paraiso', 
+    'Sungayan Grill', 
+    'Pedritos', 
+    'Grumpy Joe', 
+    'Dampa',
+    'Kabsat', 
+    'Masa Bakehouse', 
+  ];
+    late List<String> suggestions;
+
+
+
   List<String> filteredSuggestions = [];
 
   @override
@@ -71,6 +87,8 @@ class _TabScreenState extends State<TabScreen> {
     super.initState();
     _initializeUserData(); // Load user data on initialization
     _fetchAllUsers();
+    suggestions = [...restaurantSuggestion, ...hotelSuggestion]; // Fixed concatenation
+
   }
 
   @override
@@ -81,8 +99,20 @@ class _TabScreenState extends State<TabScreen> {
   void _onSearchChanged(String query) {
     setState(() {
       _searchQuery = query;
+      filteredSuggestions = _filterSuggestions(query);
+
     });
   }
+  List<String> _filterSuggestions(String query) {
+  if (query.isEmpty) {
+    return []; // Return empty if no query is present
+  }
+  
+  // Filter suggestions based on the query
+  return suggestions.where((suggestion) {
+    return suggestion.toLowerCase().contains(query.toLowerCase());
+  }).toList();
+}
 
   Future<void> _initializeUserData() async {
     userId = await _secureStorage.read(key: 'userId'); // This can be null
@@ -258,12 +288,87 @@ class _TabScreenState extends State<TabScreen> {
     );
   }
 
-  void _onSelectSuggestion(String suggestion) {
-    setState(() {
-      _searchQuery = suggestion;
-      suggestions = []; // Clear the suggestions after selecting
+void _onSelectSuggestion(String suggestion) {
+  setState(() {
+    _searchQuery = suggestion;
+  });
+
+  // Check if the suggestion is a hotel or a restaurant
+  if (hotelSuggestion.contains(suggestion)) {
+    // Fetch the list of hotels using BLoC
+    final hotelBloc = context.read<HotelBloc>();
+    hotelBloc.add(FetchHotelsEvent()); // Ensure the list is updated
+
+    // Use a delayed Future to wait for state update
+    Future.delayed(Duration.zero, () {
+      final state = hotelBloc.state; // Get the current state
+
+      if (state is HotelLoaded) {
+        // Find the index of the hotel suggestion
+        int index = hotelSuggestion.indexOf(suggestion);
+        HotelModel selectedHotel = state.hotels[index]; // Get the hotel model
+
+        // Get coordinates for the selected hotel
+        selectedHotel.getCoordinates().then((coordinates) {
+          // Navigate to the HotelScreen with the selected hotel data
+          Navigator.of(context).push(
+            MaterialPageRoute(
+              builder: (context) => HotelScreen(
+                hotelId: selectedHotel.id,
+                hotelImage: selectedHotel.hotelImage,
+                hotelName: selectedHotel.name,
+                rating: selectedHotel.averageRating,
+                price: selectedHotel.averagePrice,
+                location: selectedHotel.location,
+                time: selectedHotel.openingHours,
+                latitude: coordinates[0], // Use the retrieved coordinates
+                longitude: coordinates[1], // Use the retrieved coordinates
+              ),
+            ),
+          );
+        });
+      }
+    });
+  } else if (restaurantSuggestion.contains(suggestion)) {
+    // Fetch the list of restaurants using BLoC
+    final restaurantBloc = context.read<RestaurantBloc>();
+    restaurantBloc.add(FetchRestaurantsEvent()); // Ensure the list is updated
+
+    // Use a delayed Future to wait for state update
+    Future.delayed(Duration.zero, () {
+      final state = restaurantBloc.state; // Get the current state
+
+      if (state is RestaurantLoaded) {
+        // Find the index of the restaurant suggestion
+        int index = restaurantSuggestion.indexOf(suggestion);
+        RestaurantModel selectedRestaurant = state.restaurants[index]; // Get the restaurant model
+
+        // Get coordinates for the selected restaurant
+        selectedRestaurant.getCoordinates().then((coordinates) {
+          // Navigate to the RestaurantScreen with the selected restaurant data
+          Navigator.of(context).push(
+            MaterialPageRoute(
+              builder: (context) => Restaurant(
+                restaurantId: selectedRestaurant.id,
+                restaurantName: selectedRestaurant.name,
+                capacity: selectedRestaurant.capacity, // Assuming capacity is part of the model
+                restaurantImage: selectedRestaurant.restaurantImage,
+                rating: selectedRestaurant.averageRating,
+                price: selectedRestaurant.price,
+                location: selectedRestaurant.location,
+                time: selectedRestaurant.openingHours,
+                latitude: coordinates[0], // Use the retrieved coordinates
+                longitude: coordinates[1], // Use the retrieved coordinates
+              ),
+            ),
+          );
+        });
+      }
     });
   }
+}
+
+
 
   void _onRemoveSuggestion(String suggestion) {
     setState(() {
