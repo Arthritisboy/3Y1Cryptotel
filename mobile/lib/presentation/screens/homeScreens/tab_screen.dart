@@ -208,7 +208,12 @@ class _TabScreenState extends State<TabScreen> {
           SizedBox(height: 10),
           ShimmerBottomNavigation(),
           SizedBox(height: 10),
-          Expanded(child: ShimmerCardWidget()),
+          // Wrap the Expanded widget in a SizedBox with a fixed height to prevent overflow
+          SizedBox(
+            height:
+                300, // Adjust height based on the available space or screen size
+            child: ShimmerCardWidget(),
+          ),
         ],
       ),
     );
