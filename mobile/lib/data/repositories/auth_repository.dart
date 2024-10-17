@@ -66,7 +66,7 @@ class AuthRepository {
       _cachedUser = user; // This ensures you're always fetching fresh data
       return _cachedUser!;
     } catch (error) {
-      throw Exception('Failed to fetch user: $error');
+      throw Exception('Error fetching data');
     }
   }
 

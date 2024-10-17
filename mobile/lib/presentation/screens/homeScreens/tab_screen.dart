@@ -279,17 +279,43 @@ class _TabScreenState extends State<TabScreen> {
   }
 
   Widget _buildTabContent() {
-    return SingleChildScrollView(
-      child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+  return SingleChildScrollView(
+    child: Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
         if (_selectedIndex == 0) ...[
+          // Section for Hotels (Horizontal Scroll)
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 16),
+            child: Text(
+              'Hotels',
+              style: TextStyle(
+                fontSize: 22,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ),
           BlocProvider<HotelBloc>(
             create: (context) =>
                 HotelBloc(context.read())..add(FetchHotelsEvent()),
             child: HomeScreen(
               searchQuery: _searchQuery,
               scrollDirection: Axis.horizontal,
-              rowOrColumn: 'row',
+              rowOrColumn: 'row',  // Set to 'row' for horizontal layout
               width: 320,
+            ),
+          ),
+          const SizedBox(height: 20),
+
+          // Section for Restaurants (Horizontal Scroll)
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 16),
+            child: Text(
+              'Restaurants',
+              style: TextStyle(
+                fontSize: 22,
+                fontWeight: FontWeight.bold,
+              ),
             ),
           ),
           BlocProvider<RestaurantBloc>(
@@ -298,29 +324,64 @@ class _TabScreenState extends State<TabScreen> {
             child: RestaurantScreen(
               searchQuery: _searchQuery,
               scrollDirection: Axis.horizontal,
-              rowOrColumn: 'row',
+              rowOrColumn: 'row', // Set to 'row' for horizontal layout
               width: 320,
             ),
           ),
         ],
-        if (_selectedIndex == 1)
-          RestaurantScreen(
-            searchQuery: _searchQuery,
-            scrollDirection: Axis.vertical,
-            rowOrColumn: 'column',
-            width: 400,
+        if (_selectedIndex == 1) ...[
+          // Separate Restaurants Tab (Vertical Scroll)
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 16),
+            child: Text(
+              'Restaurants',
+              style: TextStyle(
+                fontSize: 22,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
           ),
-        if (_selectedIndex == 2)
-          HomeScreen(
-            searchQuery: _searchQuery,
-            scrollDirection: Axis.vertical,
-            rowOrColumn: 'column',
-            width: 400,
+          BlocProvider<RestaurantBloc>(
+            create: (context) =>
+                RestaurantBloc(context.read())..add(FetchRestaurantsEvent()),
+            child: RestaurantScreen(
+              searchQuery: _searchQuery,
+              scrollDirection: Axis.vertical,  // Set to 'column' for vertical layout
+              rowOrColumn: 'column',
+              width: 400,
+            ),
           ),
-        if (_selectedIndex == 3) MapScreen()
-      ]),
-    );
-  }
+        ],
+        if (_selectedIndex == 2) ...[
+          // Separate Hotels Tab (Vertical Scroll)
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 16),
+            child: Text(
+              'Hotels',
+              style: TextStyle(
+                fontSize: 22,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ),
+          BlocProvider<HotelBloc>(
+            create: (context) =>
+                HotelBloc(context.read())..add(FetchHotelsEvent()),
+            child: HomeScreen(
+              searchQuery: _searchQuery,
+              scrollDirection: Axis.vertical,  // Set to 'column' for vertical layout
+              rowOrColumn: 'column',
+              width: 400,
+            ),
+          ),
+        ],
+        if (_selectedIndex == 3) 
+          MapScreen(), // Map tab content
+      ],
+    ),
+  );
+}
+
 
   Future<bool> _showExitConfirmationDialog(BuildContext context) async {
     return await showDialog<bool>(

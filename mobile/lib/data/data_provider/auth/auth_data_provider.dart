@@ -90,7 +90,7 @@ class AuthDataProvider {
 
     // Ensure the response structure is correct
     if (response['data'] == null || response['data']['user'] == null) {
-      throw Exception('User data not found');
+      throw Exception('Error fetching data! Scroll down to refresh.');
     }
 
     return UserModel.fromJson(response['data']['user']);
@@ -102,7 +102,7 @@ class AuthDataProvider {
 
     // Ensure the response structure is correct
     if (response['data'] == null || response['data']['users'] == null) {
-      throw Exception('Users data not found');
+      throw Exception('Error fetching data! scroll down to refresh.');
     }
 
     // Ensure that users is a List and map to UserModel
