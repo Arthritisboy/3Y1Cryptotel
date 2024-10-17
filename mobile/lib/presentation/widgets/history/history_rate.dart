@@ -151,7 +151,7 @@ class HistoryRateBody extends StatelessWidget {
                                             'Check-out: ${DateFormat.yMMMd().format(booking.checkOutDate)}',
                                         hotelOrResto: booking.hotelName ??
                                             booking.restaurantName ??
-                                            '',
+                                            '', bookingType: booking.bookingType,
                                       );
                                     },
                                   );

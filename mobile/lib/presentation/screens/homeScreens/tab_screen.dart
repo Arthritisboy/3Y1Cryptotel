@@ -201,21 +201,14 @@ class _TabScreenState extends State<TabScreen> {
   }
 
   Widget _buildShimmerLoading() {
-    return SingleChildScrollView(
-      child: Column(
-        children: const [
-          ShimmerTabHeader(),
-          SizedBox(height: 10),
-          ShimmerBottomNavigation(),
-          SizedBox(height: 10),
-          // Wrap the Expanded widget in a SizedBox with a fixed height to prevent overflow
-          SizedBox(
-            height:
-                300, // Adjust height based on the available space or screen size
-            child: ShimmerCardWidget(),
-          ),
-        ],
-      ),
+    return Column(
+      children: const [
+        ShimmerTabHeader(),
+        SizedBox(height: 10),
+        ShimmerBottomNavigation(),
+        SizedBox(height: 10),
+        Expanded(child: ShimmerCardWidget()),
+      ],
     );
   }
 
@@ -286,9 +279,9 @@ class _TabScreenState extends State<TabScreen> {
         if (_selectedIndex == 0) ...[
           // Section for Hotels (Horizontal Scroll)
           Padding(
-            padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 16),
+            padding: const EdgeInsets.only(left: 16, bottom: 10),
             child: Text(
-              'Hotels',
+              'Top Rated Hotels',
               style: TextStyle(
                 fontSize: 22,
                 fontWeight: FontWeight.bold,
@@ -309,9 +302,9 @@ class _TabScreenState extends State<TabScreen> {
 
           // Section for Restaurants (Horizontal Scroll)
           Padding(
-            padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 16),
+            padding: const EdgeInsets.only(left: 16, bottom: 10),
             child: Text(
-              'Restaurants',
+              'Top Rated Restaurants',
               style: TextStyle(
                 fontSize: 22,
                 fontWeight: FontWeight.bold,
@@ -332,9 +325,9 @@ class _TabScreenState extends State<TabScreen> {
         if (_selectedIndex == 1) ...[
           // Separate Restaurants Tab (Vertical Scroll)
           Padding(
-            padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 16),
+            padding: const EdgeInsets.only(left: 16, bottom: 20),
             child: Text(
-              'Restaurants',
+              'All Available Restaurants',
               style: TextStyle(
                 fontSize: 22,
                 fontWeight: FontWeight.bold,
@@ -355,9 +348,9 @@ class _TabScreenState extends State<TabScreen> {
         if (_selectedIndex == 2) ...[
           // Separate Hotels Tab (Vertical Scroll)
           Padding(
-            padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 16),
+            padding: const EdgeInsets.only(left: 16, bottom: 10),
             child: Text(
-              'Hotels',
+              'All Available Hotels',
               style: TextStyle(
                 fontSize: 22,
                 fontWeight: FontWeight.bold,
@@ -376,7 +369,31 @@ class _TabScreenState extends State<TabScreen> {
           ),
         ],
         if (_selectedIndex == 3) 
-          MapScreen(), // Map tab content
+        ...[
+                  Padding(
+            padding: const EdgeInsets.only(left: 16, bottom: 10),
+            child: Text(
+              'Map of Hotel and Restaurants',
+              style: TextStyle(
+                fontSize: 22,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ),
+MultiBlocProvider(
+  providers: [
+    BlocProvider(
+      create: (context) =>
+          HotelBloc(context.read())..add(FetchHotelsEvent()),
+    ),
+    BlocProvider(
+      create: (context) => RestaurantBloc(context.read())
+        ..add(FetchRestaurantsEvent()), // Fetch restaurants event
+    ),
+  ],
+  child: MapScreen(),
+)
+        ],
       ],
     ),
   );
