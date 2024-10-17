@@ -1,22 +1,18 @@
 import 'package:flutter/material.dart';
-import 'package:hotel_flutter/presentation/widgets/cryptowallet/cryptowallet_header.dart';
 import 'package:hotel_flutter/presentation/widgets/cryptowallet/cryptowithtransaction.dart';
 
 class CryptoWalletTransactions extends StatelessWidget {
   final bool isConnected;
   final String walletAddress;
   final String balance;
-  final Function(String, String, bool, String?, String?) onWalletUpdated;
-  final CryptowalletHeader walletHeader;
-  
+  final Future<void> Function(String, String) sendTransaction; 
 
   const CryptoWalletTransactions({
     super.key,
     required this.isConnected,
     required this.walletAddress,
     required this.balance,
-    required this.onWalletUpdated,
-    required this.walletHeader,
+    required this.sendTransaction, 
   });
 
   @override
@@ -34,10 +30,7 @@ class CryptoWalletTransactions extends StatelessWidget {
         isConnected: isConnected,
         walletAddress: walletAddress,
         balance: balance,
-        onWalletUpdated: (address, bal, connected, newReceiver, newAmount) {
-          // This callback should handle updating with newReceiver and newAmount
-          onWalletUpdated(address, bal, connected, newReceiver, newAmount);
-        }, walletHeader: walletHeader,
+        sendTransaction: sendTransaction, // Pass the method to child
       ),
     );
   }

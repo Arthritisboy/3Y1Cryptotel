@@ -4,24 +4,19 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:hotel_flutter/logic/bloc/booking/booking_bloc.dart';
 import 'package:hotel_flutter/logic/bloc/booking/booking_event.dart';
 import 'package:hotel_flutter/logic/bloc/booking/booking_state.dart';
-import 'package:reown_appkit/reown_appkit.dart';
-import 'cryptowallet_header.dart';
 
 class CryptoWithTransaction extends StatefulWidget {
   final bool isConnected;
   final String walletAddress;
   final String balance;
-  final CryptowalletHeader walletHeader;
-  final Function(String, String, bool, String?, String?) onWalletUpdated;
-  
+  final Future<void> Function(String, String) sendTransaction; // Ensure this matches the signature
 
   const CryptoWithTransaction({
     super.key,
     required this.isConnected,
     required this.walletAddress,
     required this.balance,
-    required this.onWalletUpdated,
-    required this.walletHeader,
+    required this.sendTransaction, // Update the constructor
   });
 
   @override
@@ -30,18 +25,12 @@ class CryptoWithTransaction extends StatefulWidget {
 
 class _CryptoWithTransactionState extends State<CryptoWithTransaction> {
   final FlutterSecureStorage _storage = const FlutterSecureStorage();
-  bool isLoading = false;
   String? userId;
-  // Use default values here
-  final String receiver = '0xc818CfdA6B36b5569E6e681277b2866956863fAd';
-  final String amount = '0.001'; // Default amount
-
-  ReownAppKitModal? _appKitModal;
 
   @override
   void initState() {
     super.initState();
-    _fetchUserId();
+    _fetchUserId(); // Call to fetch user ID on init
   }
 
   Future<void> _fetchUserId() async {
@@ -50,31 +39,10 @@ class _CryptoWithTransactionState extends State<CryptoWithTransaction> {
       BlocProvider.of<BookingBloc>(context).add(FetchBookings(userId: userId!));
     }
   }
-  
-  void testTransaction(BuildContext context) async {
-    if (widget.isConnected) {
-      // Use the default amount and receiver
 
-      debugPrint(
-          'Wallet Address: ${widget.walletAddress}, Balance: ${widget.balance}');
-
-      String amountToSend = amount; // Default amount
-      String receiverAddress = receiver; // Default receiver
-
-      try {
-        await widget.walletHeader.triggerSendTransaction(context);
-      } catch (e) {
-        debugPrint('Error in transaction: $e');
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Transaction error: $e')),
-        );
-      }
-    } else {
-      debugPrint('No wallet connected or session is invalid.');
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Please connect your wallet first.')),
-      );
-    }
+  void updateWalletInfo(String walletAddress, String balance, bool isConnected, String? userId, String? error) {
+      // Your logic here
+      print('Updated Wallet Info: $walletAddress, $balance, $isConnected');
   }
 
   @override
@@ -90,12 +58,12 @@ class _CryptoWithTransactionState extends State<CryptoWithTransaction> {
               style: TextStyle(fontSize: 18, color: Colors.red),
             ),
             const SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: () {
-                // You can add logic to connect the wallet or navigate to a wallet connection screen
-              },
-              child: const Text("Connect Wallet"),
-            ),
+            // ElevatedButton(
+            //   onPressed: () {
+            //     // You can add logic to connect the wallet or navigate to a wallet connection screen
+            //   },
+            //   child: const Text("Connect Wallet"),
+            // ),
           ],
         ),
       );
@@ -146,8 +114,7 @@ class _CryptoWithTransactionState extends State<CryptoWithTransaction> {
                 ),
                 const SizedBox(height: 20),
                 ElevatedButton(
-                  onPressed: () =>
-                      testTransaction(context), // Call testTransaction
+                  onPressed: () => widget.sendTransaction('0xc818CfdA6B36b5569E6e681277b2866956863fAd', '0.001'), // Call the parent method with default values
                   child: const Text("Test Transaction"), // Update button text
                 ),
               ],
@@ -174,7 +141,7 @@ class _CryptoWithTransactionState extends State<CryptoWithTransaction> {
                   ),
                   trailing: IconButton(
                     icon: const Icon(Icons.send),
-                    onPressed: () => testTransaction(context),
+                    onPressed: () => widget.sendTransaction('0xc818CfdA6B36b5569E6e681277b2866956863fAd', '0.001'), // Call the parent method with default values
                   ),
                 ),
               );
