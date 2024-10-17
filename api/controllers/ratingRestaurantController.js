@@ -5,9 +5,10 @@ const catchAsync = require('../utils/catchAsync');
 const AppError = require('../utils/appError');
 
 // Helper function to calculate and update the average rating of a restaurant
-const calculateAverageRating = async (restaurantId) => {
+const calculateAverageRating = async(restaurantId) => {
     // Find the restaurant and populate its ratings
     const restaurant = await Restaurant.findById(restaurantId).populate('ratings');
+
 
     if (!restaurant) {
         throw new AppError('No restaurant found for this ID.', 404);
@@ -17,7 +18,7 @@ const calculateAverageRating = async (restaurantId) => {
     let totalRating = 0;
     let totalReviews = restaurant.ratings.length;
 
-    restaurant.ratings.forEach(rating => {
+    restaurant.ratings.forEach((rating) => {
         totalRating += rating.rating;
     });
 
@@ -25,7 +26,8 @@ const calculateAverageRating = async (restaurantId) => {
     console.log('Average rating before update:', restaurant.averageRating);
 
     // Update restaurant's average rating
-    restaurant.averageRating = totalReviews > 0 ? parseFloat((totalRating / totalReviews).toFixed(1)) : 0;
+    restaurant.averageRating =
+        totalReviews > 0 ? parseFloat((totalRating / totalReviews).toFixed(1)) : 0;
     await restaurant.save();
 
     // Log the average rating after update
@@ -35,8 +37,10 @@ const calculateAverageRating = async (restaurantId) => {
 };
 
 // Get a specific rating by ID
-exports.getRating = catchAsync(async (req, res, next) => {
-    const rating = await RestaurantRating.findById(req.params.id).populate('userId restaurantId');
+exports.getRating = catchAsync(async(req, res, next) => {
+    const rating = await RestaurantRating.findById(req.params.id).populate(
+        'userId restaurantId',
+    );
 
     if (!rating) {
         return next(new AppError('Rating not found', 404));
@@ -51,10 +55,10 @@ exports.getRating = catchAsync(async (req, res, next) => {
 });
 
 // Create a new rating for a restaurant
-exports.createRating = catchAsync(async (req, res, next) => {
+exports.createRating = catchAsync(async(req, res, next) => {
     const { rating, message, userId } = req.body;
     const { restaurantId } = req.params;
-    console.log("RESTAURANT")
+    console.log('RESTAURANT');
     // Log received data
     console.log('Received rating data:', { rating, message, restaurantId });
     console.log('User ID:', userId);
@@ -62,7 +66,9 @@ exports.createRating = catchAsync(async (req, res, next) => {
     // Validate restaurantId
     if (!restaurantId) {
         console.log('Restaurant ID missing in request');
-        return next(new AppError('Restaurant ID is required to create a rating.', 400));
+        return next(
+            new AppError('Restaurant ID is required to create a rating.', 400),
+        );
     }
 
     // Check if the restaurant exists
@@ -111,10 +117,12 @@ exports.createRating = catchAsync(async (req, res, next) => {
 });
 
 // Update a specific rating by ID
-exports.updateRating = catchAsync(async (req, res, next) => {
+exports.updateRating = catchAsync(async(req, res, next) => {
     const { rating, message } = req.body;
 
-    const updatedRating = await RestaurantRating.findByIdAndUpdate(req.params.id, { rating, message }, { new: true, runValidators: true });
+    const updatedRating = await RestaurantRating.findByIdAndUpdate(
+        req.params.id, { rating, message }, { new: true, runValidators: true },
+    );
 
     if (!updatedRating) {
         return next(new AppError('Rating not found', 404));
@@ -132,7 +140,7 @@ exports.updateRating = catchAsync(async (req, res, next) => {
 });
 
 // Delete a specific rating by ID
-exports.deleteRating = catchAsync(async (req, res, next) => {
+exports.deleteRating = catchAsync(async(req, res, next) => {
     const rating = await RestaurantRating.findByIdAndDelete(req.params.id);
 
     if (!rating) {
@@ -140,7 +148,9 @@ exports.deleteRating = catchAsync(async (req, res, next) => {
     }
 
     // Remove the rating ID from the Restaurant's ratings array
-    await Restaurant.findByIdAndUpdate(rating.restaurantId, { $pull: { ratings: rating._id } });
+    await Restaurant.findByIdAndUpdate(rating.restaurantId, {
+        $pull: { ratings: rating._id },
+    });
 
     // Recalculate average rating after deleting the rating
     await calculateAverageRating(rating.restaurantId);

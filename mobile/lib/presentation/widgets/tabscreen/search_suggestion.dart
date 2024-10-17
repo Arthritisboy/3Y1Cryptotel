@@ -17,25 +17,22 @@ class SearchSuggestions extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final filteredSuggestions = suggestions
-        .where(
-            (hotel) => hotel.toLowerCase().contains(searchQuery.toLowerCase()))
+        .where((hotel) => hotel.toLowerCase().contains(searchQuery.toLowerCase()))
         .toList();
 
     return Positioned(
       top: 235,
       left: 16,
       right: 16,
-      child: Material(
-        elevation: 5,
-        color: Colors.transparent,
+      child: ClipRRect(
         borderRadius: BorderRadius.circular(10),
         child: Container(
           decoration: BoxDecoration(
             color: Colors.white,
-            borderRadius: BorderRadius.circular(10),
             border: Border.all(color: Colors.grey, width: 1.0),
           ),
           child: ListView.builder(
+            padding: EdgeInsets.zero, // Remove any padding from the ListView
             shrinkWrap: true,
             itemCount: filteredSuggestions.length,
             itemBuilder: (context, index) {

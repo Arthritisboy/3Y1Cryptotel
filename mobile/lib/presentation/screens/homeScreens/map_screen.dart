@@ -13,8 +13,8 @@ import 'package:hotel_flutter/data/model/hotel/hotel_model.dart';
 
 class MapScreen extends StatelessWidget {
   const MapScreen({
-    Key? key,
-  }) : super(key: key);
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -84,7 +84,7 @@ class MapScreen extends StatelessWidget {
                     averagePrice: hotel.averagePrice,
                   ),
                 );
-              }).toList(),
+              }),
               // Restaurant markers
               ...restaurants.map((restaurant) {
                 final coordinates = restaurant.coordinates ?? [0.0, 0.0];
@@ -98,7 +98,7 @@ class MapScreen extends StatelessWidget {
                     averagePrice: restaurant.price,
                   ),
                 );
-              }).toList(),
+              }),
             ],
           ),
         ],

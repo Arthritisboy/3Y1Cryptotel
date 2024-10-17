@@ -3,43 +3,50 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hotel_flutter/data/data_provider/auth/auth_data_provider.dart';
 import 'package:hotel_flutter/data/data_provider/auth/booking_data_provider.dart';
+import 'package:hotel_flutter/data/data_provider/auth/favorite_data_provider.dart';
 import 'package:hotel_flutter/data/data_provider/auth/hotel_data_provider.dart';
 import 'package:hotel_flutter/data/data_provider/auth/restaurant_data_provider.dart';
 import 'package:hotel_flutter/data/repositories/booking_repository.dart';
+import 'package:hotel_flutter/data/repositories/favorite_repository.dart';
 import 'package:hotel_flutter/data/repositories/hotel_repository.dart';
 import 'package:hotel_flutter/data/repositories/restaurant_repository.dart';
 import 'package:hotel_flutter/logic/bloc/auth/auth_bloc.dart';
 import 'package:hotel_flutter/logic/bloc/booking/booking_bloc.dart';
 import 'package:hotel_flutter/logic/bloc/hotel/hotel_bloc.dart';
 import 'package:hotel_flutter/logic/bloc/restaurant/restaurant_bloc.dart';
-import 'package:hotel_flutter/presentation/screens/admin/admin_appScreen.dart';
-import 'package:hotel_flutter/presentation/screens/admin/admin_userScreen.dart';
-import 'package:hotel_flutter/presentation/screens/homeScreens/map_screen.dart';
 import 'package:hotel_flutter/presentation/screens/homeScreens/splash_screen.dart';
 import 'package:hotel_flutter/router/app_router.dart';
 import 'package:hotel_flutter/data/repositories/auth_repository.dart';
 import 'package:logging/logging.dart';
 
-void main() {
+void main() async {
+  // Ensure the Flutter binding is initialized
+  WidgetsFlutterBinding.ensureInitialized();
+
+  // Set up logging
   Logger.root.level = Level.ALL;
   Logger.root.onRecord.listen((record) {});
 
-  runApp(MyApp());
+  // Initialize SharedPreferences
+  final authRepository = AuthRepository(AuthDataProvider());
+  await authRepository.initializeSharedPreferences();
+
+  runApp(MyApp(authRepository: authRepository));
 }
 
 class MyApp extends StatelessWidget {
-  final BookingBloc bookingBloc = BookingBloc(
-    BookingRepository(BookingDataProvider()),
-  );
+  final AuthRepository authRepository; // Add AuthRepository as a parameter
+  final BookingBloc bookingBloc;
 
-  MyApp({super.key});
+  MyApp(
+      {super.key, required this.authRepository}) // Accept it in the constructor
+      : bookingBloc = BookingBloc(BookingRepository(BookingDataProvider()));
 
   @override
   Widget build(BuildContext context) {
     return MultiRepositoryProvider(
       providers: [
-        RepositoryProvider(
-            create: (context) => AuthRepository(AuthDataProvider())),
+        RepositoryProvider.value(value: authRepository), // Provide it here
         RepositoryProvider(
             create: (context) => HotelRepository(HotelDataProvider())),
         RepositoryProvider(
@@ -47,6 +54,8 @@ class MyApp extends StatelessWidget {
                 RestaurantRepository(RestaurantDataProvider())),
         RepositoryProvider(
             create: (context) => BookingRepository(BookingDataProvider())),
+        RepositoryProvider(
+            create: (context) => FavoriteRepository(FavoriteDataProvider())),
       ],
       child: MultiBlocProvider(
         providers: [

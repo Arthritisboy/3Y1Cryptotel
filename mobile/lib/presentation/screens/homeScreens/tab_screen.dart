@@ -2,14 +2,18 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter/services.dart';
+import 'package:hotel_flutter/data/model/hotel/hotel_model.dart';
+import 'package:hotel_flutter/data/model/restaurant/restaurant_model.dart';
 import 'package:hotel_flutter/logic/bloc/hotel/hotel_bloc.dart';
 import 'package:hotel_flutter/logic/bloc/hotel/hotel_event.dart';
 import 'package:hotel_flutter/logic/bloc/hotel/hotel_state.dart';
 import 'package:hotel_flutter/logic/bloc/restaurant/restaurant_bloc.dart';
 import 'package:hotel_flutter/logic/bloc/restaurant/restaurant_event.dart';
+import 'package:hotel_flutter/logic/bloc/restaurant/restaurant_state.dart';
+import 'package:hotel_flutter/presentation/screens/homeScreens/hotel_screen.dart';
 import 'package:hotel_flutter/presentation/screens/homeScreens/map_screen.dart';
+import 'package:hotel_flutter/presentation/screens/homeScreens/restaurant.dart';
 import 'package:hotel_flutter/presentation/widgets/tabscreen/search_suggestion.dart';
-import 'package:logging/logging.dart';
 import 'package:hotel_flutter/data/model/auth/user_model.dart';
 import 'package:hotel_flutter/logic/bloc/auth/auth_bloc.dart';
 import 'package:hotel_flutter/logic/bloc/auth/auth_event.dart';
@@ -26,14 +30,15 @@ import 'package:hotel_flutter/presentation/widgets/shimmer_loading/tab/shimmer_b
 import 'package:hotel_flutter/presentation/widgets/shimmer_loading/tab/shimmer_card_widget.dart';
 
 class TabScreen extends StatefulWidget {
-  const TabScreen({super.key});
+  TabScreen({super.key});
 
   @override
   State<TabScreen> createState() => _TabScreenState();
+
+
 }
 
 class _TabScreenState extends State<TabScreen> {
-  final Logger _logger = Logger('TabScreen');
   final FlutterSecureStorage _secureStorage = const FlutterSecureStorage();
   int _selectedIndex = 0;
   bool _isLoading = true;
@@ -47,77 +52,119 @@ class _TabScreenState extends State<TabScreen> {
   String? phoneNumber;
   String? userId;
   List<UserModel> allUsers = [];
-  List<String> suggestions = [
+  List<String> hotelSuggestion = [
     'River Palm Hotel',
-    'The Monarch Hotel',
+    'Monarch Hotel',
     'Star Plaza Hotel',
     'Puerto Del Sol',
     'The Manaog Hotel',
-    'Matutina’s Gerry’s Seafood House',
-    'Dagupeña',
-    'City De Luxe',
-    'Hardin sa Paraiso',
-    'Sungayan Grill',
-    'Pedritos',
-    'Grumpy Joe',
-    'Dampa',
-    'Kabsat',
-    'Masa Bakehouse',
     'Lenox Hotel',
     'Hotel Monde',
+    'Hotel Le Duc',
+    'Bergamu Hotel'
     'Bedbox',
   ];
+    List<String> restaurantSuggestion = [
+    'Matutina’s Gerry’s Seafood House', 
+    'Cabalen' 
+    'City De Luxe', 
+    'Hardin sa Paraiso', 
+    'Sungayan Grill', 
+    'Pedritos', 
+    'Grumpy Joe', 
+    'Dampa',
+    'Kabsat', 
+    'Masa Bakehouse', 
+  ];
+    late List<String> suggestions;
+
+
+
   List<String> filteredSuggestions = [];
 
   @override
   void initState() {
     super.initState();
-    _initializeUserData();
+    _initializeUserData(); // Load user data on initialization
     _fetchAllUsers();
+    suggestions = [...restaurantSuggestion, ...hotelSuggestion]; // Fixed concatenation
+
   }
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    _getUserData();
   }
 
   void _onSearchChanged(String query) {
     setState(() {
       _searchQuery = query;
+      filteredSuggestions = _filterSuggestions(query);
+
+    });
+  }
+  List<String> _filterSuggestions(String query) {
+  if (query.isEmpty) {
+    return []; // Return empty if no query is present
+  }
+  
+  // Filter suggestions based on the query
+  return suggestions.where((suggestion) {
+    return suggestion.toLowerCase().contains(query.toLowerCase());
+  }).toList();
+}
+
+  Future<void> _initializeUserData() async {
+    userId = await _secureStorage.read(key: 'userId'); // This can be null
+
+    if (userId != null && userId!.isNotEmpty) {
+      // Check if userId is not null and not empty
+      await _getUserData(); // Fetch user data only if userId is valid
+    } else {
+      print('User ID is not set. Unable to fetch user data.');
+    }
+
+    setState(() {
+      _isLoading =
+          false; // Set loading to false once initialization is complete
     });
   }
 
-  Future<void> _initializeUserData() async {
-    try {
-      await _getUserData();
-    } catch (e) {
-      _logger.severe('Error initializing user data: $e');
-    } finally {
-      setState(() {
-        _isLoading = false;
-      });
-    }
-  }
-
   Future<void> _getUserData() async {
-    final userId = await _secureStorage.read(key: 'userId');
-    _logger.info('Retrieved userId: $userId');
-    if (userId != null) {
+    if (userId != null && userId!.isNotEmpty) {
+      // Check if userId is not null and not empty
+      print('Fetching user data from AuthBloc');
       context
           .read<AuthBloc>()
-          .add(GetUserEvent(userId)); // Fetch latest data from backend
+          .add(GetUserEvent(userId!)); // Use the non-null userId
+    } else {
+      print('No valid user ID to fetch user data.');
     }
   }
 
   Future<void> _fetchAllUsers() async {
-    final token = await _secureStorage.read(key: 'jwt');
-    _logger.info('Retrieved token: $token');
-    if (token != null) {
-      context.read<AuthBloc>().add(FetchAllUsersEvent());
+    print('Fetching all users');
+    context
+        .read<AuthBloc>()
+        .add(FetchAllUsersEvent()); // Trigger an event to fetch all users
+  }
+
+  Future<void> _onRefresh() async {
+    setState(() {
+      _isLoading = true; // Start loading
+    });
+
+    // Check if userId is not null before dispatching
+    if (userId != null) {
+      context.read<AuthBloc>().add(GetUserEvent(userId!));
     } else {
-      _logger.warning('Token is missing. Skipping user fetch.');
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('User ID is null. Please log in again.')),
+      );
     }
+
+    // Optionally fetch all users, but make sure it doesn't conflict
+    await _fetchAllUsers();
   }
 
   @override
@@ -126,17 +173,8 @@ class _TabScreenState extends State<TabScreen> {
       onWillPop: () async => await _showExitConfirmationDialog(context),
       child: BlocListener<AuthBloc, AuthState>(
         listener: (context, state) {
+          print('Current state: $state');
           _handleBlocState(context, state);
-          if (state is AuthSuccess) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text(state.message),
-                duration: const Duration(seconds: 2),
-                backgroundColor: Colors.lightGreen,
-                behavior: SnackBarBehavior.floating,
-              ),
-            );
-          }
         },
         child: BlocBuilder<AuthBloc, AuthState>(
           builder: (context, state) {
@@ -148,7 +186,10 @@ class _TabScreenState extends State<TabScreen> {
                 email: email ?? '',
                 profile: profile ?? '',
               ),
-              body: _isLoading ? _buildShimmerLoading() : _buildContent(),
+              body: RefreshIndicator(
+                onRefresh: _onRefresh, // Call your fetch method
+                child: _isLoading ? _buildShimmerLoading() : _buildContent(),
+              ),
             );
           },
         ),
@@ -158,10 +199,16 @@ class _TabScreenState extends State<TabScreen> {
 
   void _handleBlocState(BuildContext context, AuthState state) {
     if (state is Authenticated) {
+      // Store the updated user data
       _storeUserData(state.user);
+      setState(() {
+        _isLoading = false; // Stop loading once authenticated
+      });
     } else if (state is UsersFetched) {
-      allUsers = state.users;
-      _storeFetchedUsers(allUsers);
+      setState(() {
+        allUsers = state.users; // Update the list with the new users
+        _isLoading = false; // Stop loading after users are fetched
+      });
     } else if (state is AuthInitial) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         Navigator.of(context).pushReplacementNamed('/login');
@@ -171,6 +218,9 @@ class _TabScreenState extends State<TabScreen> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('Error: ${state.error}')),
         );
+        setState(() {
+          _isLoading = false; // Stop loading if there's an error
+        });
       });
     }
   }
@@ -238,12 +288,87 @@ class _TabScreenState extends State<TabScreen> {
     );
   }
 
-  void _onSelectSuggestion(String suggestion) {
-    setState(() {
-      _searchQuery = suggestion;
-      suggestions = []; // Clear the suggestions after selecting
+void _onSelectSuggestion(String suggestion) {
+  setState(() {
+    _searchQuery = suggestion;
+  });
+
+  // Check if the suggestion is a hotel or a restaurant
+  if (hotelSuggestion.contains(suggestion)) {
+    // Fetch the list of hotels using BLoC
+    final hotelBloc = context.read<HotelBloc>();
+    hotelBloc.add(FetchHotelsEvent()); // Ensure the list is updated
+
+    // Use a delayed Future to wait for state update
+    Future.delayed(Duration.zero, () {
+      final state = hotelBloc.state; // Get the current state
+
+      if (state is HotelLoaded) {
+        // Find the index of the hotel suggestion
+        int index = hotelSuggestion.indexOf(suggestion);
+        HotelModel selectedHotel = state.hotels[index]; // Get the hotel model
+
+        // Get coordinates for the selected hotel
+        selectedHotel.getCoordinates().then((coordinates) {
+          // Navigate to the HotelScreen with the selected hotel data
+          Navigator.of(context).push(
+            MaterialPageRoute(
+              builder: (context) => HotelScreen(
+                hotelId: selectedHotel.id,
+                hotelImage: selectedHotel.hotelImage,
+                hotelName: selectedHotel.name,
+                rating: selectedHotel.averageRating,
+                price: selectedHotel.averagePrice,
+                location: selectedHotel.location,
+                time: selectedHotel.openingHours,
+                latitude: coordinates[0], // Use the retrieved coordinates
+                longitude: coordinates[1], // Use the retrieved coordinates
+              ),
+            ),
+          );
+        });
+      }
+    });
+  } else if (restaurantSuggestion.contains(suggestion)) {
+    // Fetch the list of restaurants using BLoC
+    final restaurantBloc = context.read<RestaurantBloc>();
+    restaurantBloc.add(FetchRestaurantsEvent()); // Ensure the list is updated
+
+    // Use a delayed Future to wait for state update
+    Future.delayed(Duration.zero, () {
+      final state = restaurantBloc.state; // Get the current state
+
+      if (state is RestaurantLoaded) {
+        // Find the index of the restaurant suggestion
+        int index = restaurantSuggestion.indexOf(suggestion);
+        RestaurantModel selectedRestaurant = state.restaurants[index]; // Get the restaurant model
+
+        // Get coordinates for the selected restaurant
+        selectedRestaurant.getCoordinates().then((coordinates) {
+          // Navigate to the RestaurantScreen with the selected restaurant data
+          Navigator.of(context).push(
+            MaterialPageRoute(
+              builder: (context) => Restaurant(
+                restaurantId: selectedRestaurant.id,
+                restaurantName: selectedRestaurant.name,
+                capacity: selectedRestaurant.capacity, // Assuming capacity is part of the model
+                restaurantImage: selectedRestaurant.restaurantImage,
+                rating: selectedRestaurant.averageRating,
+                price: selectedRestaurant.price,
+                location: selectedRestaurant.location,
+                time: selectedRestaurant.openingHours,
+                latitude: coordinates[0], // Use the retrieved coordinates
+                longitude: coordinates[1], // Use the retrieved coordinates
+              ),
+            ),
+          );
+        });
+      }
     });
   }
+}
+
+
 
   void _onRemoveSuggestion(String suggestion) {
     setState(() {
@@ -252,17 +377,43 @@ class _TabScreenState extends State<TabScreen> {
   }
 
   Widget _buildTabContent() {
-    return SingleChildScrollView(
-      child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+  return SingleChildScrollView(
+    child: Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
         if (_selectedIndex == 0) ...[
+          // Section for Hotels (Horizontal Scroll)
+          Padding(
+            padding: const EdgeInsets.only(left: 16, bottom: 10),
+            child: Text(
+              'Top Rated Hotels',
+              style: TextStyle(
+                fontSize: 22,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ),
           BlocProvider<HotelBloc>(
             create: (context) =>
                 HotelBloc(context.read())..add(FetchHotelsEvent()),
             child: HomeScreen(
               searchQuery: _searchQuery,
               scrollDirection: Axis.horizontal,
-              rowOrColumn: 'row',
+              rowOrColumn: 'row',  // Set to 'row' for horizontal layout
               width: 320,
+            ),
+          ),
+          const SizedBox(height: 20),
+
+          // Section for Restaurants (Horizontal Scroll)
+          Padding(
+            padding: const EdgeInsets.only(left: 16, bottom: 10),
+            child: Text(
+              'Top Rated Restaurants',
+              style: TextStyle(
+                fontSize: 22,
+                fontWeight: FontWeight.bold,
+              ),
             ),
           ),
           BlocProvider<RestaurantBloc>(
@@ -271,29 +422,88 @@ class _TabScreenState extends State<TabScreen> {
             child: RestaurantScreen(
               searchQuery: _searchQuery,
               scrollDirection: Axis.horizontal,
-              rowOrColumn: 'row',
+              rowOrColumn: 'row', // Set to 'row' for horizontal layout
               width: 320,
             ),
           ),
         ],
-        if (_selectedIndex == 1)
-          RestaurantScreen(
-            searchQuery: _searchQuery,
-            scrollDirection: Axis.vertical,
-            rowOrColumn: 'column',
-            width: 400,
+        if (_selectedIndex == 1) ...[
+          // Separate Restaurants Tab (Vertical Scroll)
+          Padding(
+            padding: const EdgeInsets.only(left: 16, bottom: 20),
+            child: Text(
+              'All Available Restaurants',
+              style: TextStyle(
+                fontSize: 22,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
           ),
-        if (_selectedIndex == 2)
-          HomeScreen(
-            searchQuery: _searchQuery,
-            scrollDirection: Axis.vertical,
-            rowOrColumn: 'column',
-            width: 400,
+          BlocProvider<RestaurantBloc>(
+            create: (context) =>
+                RestaurantBloc(context.read())..add(FetchRestaurantsEvent()),
+            child: RestaurantScreen(
+              searchQuery: _searchQuery,
+              scrollDirection: Axis.vertical,  // Set to 'column' for vertical layout
+              rowOrColumn: 'column',
+              width: 400,
+            ),
           ),
-        if (_selectedIndex == 3) MapScreen()
-      ]),
-    );
-  }
+        ],
+        if (_selectedIndex == 2) ...[
+          // Separate Hotels Tab (Vertical Scroll)
+          Padding(
+            padding: const EdgeInsets.only(left: 16, bottom: 10),
+            child: Text(
+              'All Available Hotels',
+              style: TextStyle(
+                fontSize: 22,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ),
+          BlocProvider<HotelBloc>(
+            create: (context) =>
+                HotelBloc(context.read())..add(FetchHotelsEvent()),
+            child: HomeScreen(
+              searchQuery: _searchQuery,
+              scrollDirection: Axis.vertical,  // Set to 'column' for vertical layout
+              rowOrColumn: 'column',
+              width: 400,
+            ),
+          ),
+        ],
+        if (_selectedIndex == 3) 
+        ...[
+                  Padding(
+            padding: const EdgeInsets.only(left: 16, bottom: 10),
+            child: Text(
+              'Map of Hotel and Restaurants',
+              style: TextStyle(
+                fontSize: 22,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ),
+MultiBlocProvider(
+  providers: [
+    BlocProvider(
+      create: (context) =>
+          HotelBloc(context.read())..add(FetchHotelsEvent()),
+    ),
+    BlocProvider(
+      create: (context) => RestaurantBloc(context.read())
+        ..add(FetchRestaurantsEvent()), // Fetch restaurants event
+    ),
+  ],
+  child: MapScreen(),
+)
+        ],
+      ],
+    ),
+  );
+}
+
 
   Future<bool> _showExitConfirmationDialog(BuildContext context) async {
     return await showDialog<bool>(
@@ -332,7 +542,7 @@ class _TabScreenState extends State<TabScreen> {
         break;
       case 'profile':
         if (firstName != null && lastName != null) {
-          Navigator.of(context).pushReplacementNamed(
+          Navigator.of(context).pushNamed(
             '/profile',
             arguments: {
               'firstName': firstName,
@@ -380,24 +590,21 @@ class _TabScreenState extends State<TabScreen> {
   }
 
   Future<void> _storeUserData(UserModel user) async {
+    // Update UI immediately
     setState(() {
       firstName = user.firstName;
       lastName = user.lastName;
       email = user.email;
       profile = user.profilePicture;
-      gender = user.gender;
-      phoneNumber = user.phoneNumber;
       userId = user.id;
     });
 
-    await _secureStorage.write(key: 'userId', value: userId);
-    await _secureStorage.write(key: 'firstName', value: firstName);
-    await _secureStorage.write(key: 'lastName', value: lastName);
-    await _secureStorage.write(key: 'email', value: email);
-    await _secureStorage.write(key: 'gender', value: gender);
-    await _secureStorage.write(key: 'phoneNumber', value: phoneNumber);
-    await _secureStorage.write(key: 'profile', value: profile);
+    // Log the stored user data for debugging
+    print('User data stored: $firstName $lastName $email');
   }
+
+  // You no longer need to store this data in secure storage or shared prefs
+  // Your AuthBloc will manage the user state and your UI will react to those changes
 
   void _showLogoutConfirmationDialog() {
     showDialog(

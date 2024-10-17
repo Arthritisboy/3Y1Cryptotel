@@ -52,7 +52,7 @@ class RestaurantScreen extends StatelessWidget {
 
     final children = uniqueRestaurants.map((restaurant) {
       return Padding(
-        padding: const EdgeInsets.only(left: 16, right: 20.0, bottom: 20),
+        padding: const EdgeInsets.only(left: 16, right: 10.0, bottom: 20),
         child: InkWell(
           onTap: () async {
             List<double> coordinates = await restaurant.getCoordinates();

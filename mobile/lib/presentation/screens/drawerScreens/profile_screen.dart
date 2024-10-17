@@ -9,7 +9,7 @@ import 'package:hotel_flutter/presentation/widgets/profile/bottom_section.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:logging/logging.dart';
 
-// ignore: must_be_immutable
+//ignore: must_be_immutable
 class ProfileScreen extends StatefulWidget {
   ProfileScreen({
     super.key,
@@ -22,12 +22,12 @@ class ProfileScreen extends StatefulWidget {
     required this.userId,
   });
 
-  final String firstName;
-  final String lastName;
+  String firstName;
+  String lastName;
   final String email;
   String profile;
   final String phoneNumber;
-  final String gender;
+  String gender;
   final String userId;
 
   @override
@@ -46,7 +46,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
   String? gender;
   File? _selectedImage;
   bool _isLoading = false;
-
   final ImagePicker _picker = ImagePicker();
 
   @override
@@ -57,14 +56,15 @@ class _ProfileScreenState extends State<ProfileScreen> {
     emailController = TextEditingController(text: widget.email);
     phoneNumberController = TextEditingController(text: widget.phoneNumber);
     gender = widget.gender;
-    context.read<AuthBloc>().add(GetUserEvent(widget.userId));
-  }
 
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    // Fetch user data every time the screen is re-entered
-    context.read<AuthBloc>().add(GetUserEvent(widget.userId));
+    // Fetch user data only if it hasn't been loaded already
+    final currentState = context.read<AuthBloc>().state;
+    if (currentState is Authenticated &&
+        currentState.user.id == widget.userId) {
+      // If already authenticated and user ID matches, no need to fetch again
+    } else {
+      context.read<AuthBloc>().add(GetUserEvent(widget.userId));
+    }
   }
 
   @override
@@ -88,10 +88,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
           _selectedImage = File(pickedImage.path);
         });
 
-        // Optionally, prompt user to confirm if they want to update the image
-        final currentUser =
-            (context.read<AuthBloc>().state as Authenticated).user;
-        await updateUserData(); // Call updateUserData to update all fields
+        await updateUserData();
       }
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -110,16 +107,22 @@ class _ProfileScreenState extends State<ProfileScreen> {
     });
 
     try {
-      print('Updating user data...'); // Log that we're updating user data
       final currentUser =
           (context.read<AuthBloc>().state as Authenticated).user;
+
+      // Ensure the path is used correctly
+      String? imagePath;
+      if (_selectedImage != null) {
+        imagePath = _selectedImage!.path; // Get the path of the selected image
+      }
+
       context.read<AuthBloc>().add(
             UpdateUserEvent(
               currentUser,
               firstName: firstNameController.text,
               lastName: lastNameController.text,
               email: emailController.text,
-              profilePicture: _selectedImage?.path,
+              profilePicture: imagePath, // Pass the image path if available
             ),
           );
     } catch (error) {
@@ -129,7 +132,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
           backgroundColor: Colors.red,
         ),
       );
-      print('Error updating user data: $error'); // Log the error
     } finally {
       setState(() {
         _isLoading = false;
@@ -169,7 +171,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         leading: IconButton(
           icon: const Icon(Icons.arrow_back, color: Colors.white),
           onPressed: () {
-            Navigator.of(context).pushReplacementNamed('/homescreen');
+            Navigator.of(context).pop();
           },
         ),
       ),
@@ -183,29 +185,20 @@ class _ProfileScreenState extends State<ProfileScreen> {
             bottom: 0,
             child: BlocListener<AuthBloc, AuthState>(
               listener: (context, state) {
-                if (state is AccountDeleted) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text(state.message)),
-                  );
-                  // Redirect to login screen or another relevant screen
-                  Navigator.of(context).pushReplacementNamed('/login');
-                }
                 if (state is UserUpdated) {
+                  // Handle user update success
                   setState(() {
                     widget.profile = state.user.profilePicture ?? '';
+                    widget.firstName = state.user.firstName ?? '';
+                    widget.lastName = state.user.lastName ?? '';
                   });
                   ScaffoldMessenger.of(context).showSnackBar(
                     const SnackBar(
-                      content: Text('Profile updated successfully!'),
-                      backgroundColor: Colors.green,
-                    ),
+                        content: Text('Profile updated successfully!')),
                   );
                 } else if (state is AuthError) {
                   ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      content: Text('Error: ${state.error}'),
-                      backgroundColor: Colors.red,
-                    ),
+                    SnackBar(content: Text('Error: ${state.error}')),
                   );
                 }
               },
@@ -213,15 +206,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 builder: (context, state) {
                   _logger.info('Current Auth State: $state');
 
+                  // Only show loading indicator if state is loading or updating
                   if (state is AuthLoading || _isLoading) {
                     return _buildLoadingIndicator();
                   }
 
                   if (state is Authenticated || state is UserUpdated) {
-                    final user = state is Authenticated
-                        ? state.user
-                        : (state as UserUpdated).user;
-
+                    // Set initial values from the user model if needed
                     return BottomSection(
                       firstNameController: firstNameController,
                       lastNameController: lastNameController,
@@ -238,17 +229,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     );
                   }
 
-                  if (state is AuthError) {
-                    return Center(
-                      child: Text(
-                        'Error: Unable to load user data.\n${state.error}',
-                        style: const TextStyle(color: Colors.red),
-                        textAlign: TextAlign.center,
-                      ),
-                    );
-                  }
-
-                  _logger.warning('Unexpected state encountered: $state');
                   return const Center(
                     child: Text('Unexpected error loading user data.'),
                   );

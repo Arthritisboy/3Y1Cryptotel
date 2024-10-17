@@ -54,7 +54,7 @@ class HomeScreen extends StatelessWidget {
 
     final children = uniqueHotels.map((hotel) {
       return Padding(
-        padding: const EdgeInsets.only(left: 16, right: 20.0, bottom: 20),
+        padding: const EdgeInsets.only(left: 16, right: 10.0, bottom: 20),
         child: InkWell(
           onTap: () async {
             List<double> coordinates = await hotel.getCoordinates();

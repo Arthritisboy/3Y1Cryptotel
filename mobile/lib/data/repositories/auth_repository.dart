@@ -4,13 +4,19 @@ import 'package:hotel_flutter/data/model/auth/login_model.dart';
 import 'package:hotel_flutter/data/model/auth/signup_model.dart';
 import 'package:hotel_flutter/data/model/auth/user_model.dart';
 import 'package:logging/logging.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class AuthRepository {
+  SharedPreferences? _sharedPrefs;
   final Logger _logger = Logger('AuthRepository');
   final AuthDataProvider dataProvider;
   UserModel? _cachedUser;
 
   AuthRepository(this.dataProvider);
+
+  Future<void> initializeSharedPreferences() async {
+    _sharedPrefs = await SharedPreferences.getInstance();
+  }
 
   //! Register
   Future<UserModel> register(
@@ -52,38 +58,45 @@ class AuthRepository {
 
   //! Get user
   Future<UserModel> getUser(String userId) async {
-    if (_cachedUser != null) {
-      return _cachedUser!;
-    }
-
     try {
-      final data = await dataProvider.getUser(userId);
-      _cachedUser = data;
+      // Directly fetch the UserModel from the data provider
+      final user = await dataProvider.getUser(userId);
+
+      // Cache the user after fetching
+      _cachedUser = user; // This ensures you're always fetching fresh data
       return _cachedUser!;
     } catch (error) {
-      throw Exception('Failed to fetch user: $error');
+      throw Exception('Error fetching data');
     }
   }
 
-  //! Fetch all users with filtering conditions
+//! Fetch all users with filtering conditions
   Future<List<UserModel>> fetchAllUsers() async {
     try {
-      final users = await dataProvider.fetchAllUsers();
+      // Fetch users data from the data provider
+      final usersData = await dataProvider.fetchAllUsers();
 
-      // Filter users
-      final filteredUsers = users
-          .where((user) =>
-              user.active != false &&
-              user.verified == true &&
-              user.hasCompletedOnboarding == true &&
-              user.roles == "user")
-          .toList();
+      // Check if usersData is a List<UserModel>
+      if (usersData.isEmpty) {
+        throw Exception('No users data found');
+      }
+
+      // Log the fetched users
+      final filteredUsers = usersData.where((user) {
+        return (user.active == true ||
+                user.active == null) && // Include users with null active
+            user.verified == true && // Ensure user is verified
+            user.hasCompletedOnboarding ==
+                true && // Ensure onboarding is complete
+            user.roles == "user"; // Check for user role
+      }).toList();
 
       // Log the filtered users count
+      print('Filtered users count: ${filteredUsers.length}');
 
       return filteredUsers; // Return the filtered users
     } catch (error) {
-      _logger.severe('Failed to fetch all users: $error'); // Log error
+      print('Failed to fetch all users: $error'); // Log error
       throw Exception('Failed to fetch all users: $error');
     }
   }
@@ -115,7 +128,7 @@ class AuthRepository {
     }
   }
 
-  //! Update User
+//! Update User
   Future<UserModel> updateUser(
     UserModel user, {
     String? firstName,
@@ -130,6 +143,20 @@ class AuthRepository {
         email: email ?? user.email,
         profilePicture: profilePicture,
       );
+
+      // Ensure _sharedPrefs is initialized
+      if (_sharedPrefs != null) {
+        // Update shared preferences with non-null assertion
+        await _sharedPrefs!.setString('userId', updatedUser.id ?? '');
+        await _sharedPrefs!.setString('firstName', updatedUser.firstName ?? '');
+        await _sharedPrefs!.setString('lastName', updatedUser.lastName ?? '');
+        await _sharedPrefs!.setString('email', updatedUser.email ?? '');
+        await _sharedPrefs!
+            .setString('profilePicture', updatedUser.profilePicture ?? '');
+      } else {
+        throw Exception('Shared preferences not initialized');
+      }
+
       return updatedUser; // Return the updated UserModel
     } catch (error) {
       throw Exception('Failed to update user: $error');

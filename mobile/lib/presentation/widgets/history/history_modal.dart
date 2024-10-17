@@ -1,8 +1,24 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:hotel_flutter/logic/bloc/rating/rating_bloc.dart';
+import 'package:hotel_flutter/logic/bloc/rating/rating_event.dart'; // Ensure you have this import
 
 class HistoryModal extends StatefulWidget {
-  const HistoryModal({super.key});
+  final String bookingId;
+  final String checkInDate;
+  final String checkoutDate;
+  final String hotelOrResto;
+  final String bookingType; // New property for booking type
+
+  const HistoryModal({
+    super.key,
+    required this.bookingId,
+    required this.checkInDate,
+    required this.checkoutDate,
+    required this.hotelOrResto,
+    required this.bookingType, // Accept booking type in the constructor
+  });
 
   @override
   State<StatefulWidget> createState() {
@@ -18,7 +34,6 @@ class _HistoryModalState extends State<HistoryModal> {
   @override
   void initState() {
     super.initState();
-
     _commentController.addListener(() {
       setState(() {
         _currentLength = _commentController.text.length;
@@ -34,7 +49,7 @@ class _HistoryModalState extends State<HistoryModal> {
 
   @override
   Widget build(BuildContext context) {
-    double rating = 0;
+    int rating = 0;
 
     return Dialog(
       shape: RoundedRectangleBorder(
@@ -59,7 +74,7 @@ class _HistoryModalState extends State<HistoryModal> {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         const Text(
-                          'Hotel Name',
+                          'Hotel/Restaurant Name',
                           style: TextStyle(
                             fontWeight: FontWeight.bold,
                             fontSize: 18,
@@ -78,13 +93,31 @@ class _HistoryModalState extends State<HistoryModal> {
                       ],
                     ),
                   ),
-                  const Padding(
+                  Padding(
                     padding: EdgeInsets.symmetric(horizontal: 16.0),
-                    child: Text(
-                      'Deluxe Suite\nCheck-in: 12th Jan, 2024\nCheck-out: 15th Jan, 2024\nPangasinan',
-                      style: TextStyle(
-                        fontSize: 16.0,
-                      ),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          widget.hotelOrResto,
+                          style: TextStyle(
+                            fontSize: 16.0,
+                          ),
+                        ),
+                        Text(
+                          widget.checkInDate,
+                          style: TextStyle(
+                            fontSize: 16.0,
+                          ),
+                        ),
+                        Text(
+                          widget.checkoutDate,
+                          style: TextStyle(
+                            fontSize: 16.0,
+                          ),
+                        ),
+                      ],
                     ),
                   ),
                   const Divider(height: 20.0, thickness: 1.0),
@@ -95,29 +128,29 @@ class _HistoryModalState extends State<HistoryModal> {
                       style: TextStyle(fontSize: 16.0),
                     ),
                   ),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 10.0),
-                    child: Center(
-                      child: RatingBar.builder(
-                        initialRating: 0,
-                        minRating: 1,
-                        direction: Axis.horizontal,
-                        allowHalfRating: false,
-                        itemCount: 5,
-                        itemPadding:
-                            const EdgeInsets.symmetric(horizontal: 4.0),
-                        itemBuilder: (context, _) => const Icon(
-                          Icons.star,
-                          color: Colors.amber,
-                        ),
-                        onRatingUpdate: (newRating) {
-                          setState(() {
-                            rating = newRating;
-                          });
-                        },
-                      ),
-                    ),
-                  ),
+Padding(
+  padding: const EdgeInsets.symmetric(vertical: 10.0),
+  child: Center(
+    child: RatingBar.builder(
+      initialRating: 0,
+      minRating: 1,
+      direction: Axis.horizontal,
+      allowHalfRating: false,
+      itemCount: 5,
+      itemPadding: const EdgeInsets.symmetric(horizontal: 4.0),
+      itemBuilder: (context, _) => const Icon(
+        Icons.star,
+        color: Colors.amber,
+      ),
+      onRatingUpdate: (newRating) {
+        setState(() {
+          rating = newRating.toInt(); // Convert to int
+        });
+      },
+    ),
+  ),
+),
+
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 16.0),
                     child: Column(
@@ -177,6 +210,24 @@ class _HistoryModalState extends State<HistoryModal> {
                       child: ElevatedButton(
                         onPressed: () {
                           Navigator.of(context).pop();
+                          // Dispatch the appropriate event based on booking type
+                          if (widget.bookingType == 'HotelBooking') {
+                            BlocProvider.of<RatingBloc>(context).add(
+                              CreateRoomRatingEvent(
+                                roomId: widget.bookingId,
+                                rating: rating,
+                                message: _commentController.text,
+                              ),
+                            );
+                          } else if (widget.bookingType == 'RestaurantBooking') {
+                            BlocProvider.of<RatingBloc>(context).add(
+                              CreateRestaurantRatingEvent(
+                                restaurantId: widget.bookingId,
+                                rating: rating,
+                                message: _commentController.text,
+                              ),
+                            );
+                          }
                           ScaffoldMessenger.of(context).showSnackBar(
                             SnackBar(
                               content: Text(
