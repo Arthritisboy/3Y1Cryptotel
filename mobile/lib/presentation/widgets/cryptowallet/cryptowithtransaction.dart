@@ -1,25 +1,22 @@
-import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:hotel_flutter/logic/bloc/booking/booking_bloc.dart';
 import 'package:hotel_flutter/logic/bloc/booking/booking_event.dart';
 import 'package:hotel_flutter/logic/bloc/booking/booking_state.dart';
-import 'package:hotel_flutter/presentation/screens/homeScreens/tab_screen.dart';
-import 'package:reown_appkit/reown_appkit.dart';
 
 class CryptoWithTransaction extends StatefulWidget {
   final bool isConnected;
   final String walletAddress;
   final String balance;
-  final Function(String, String, bool) onWalletUpdated;
+  final Future<void> Function(String, String) sendTransaction; // Ensure this matches the signature
 
   const CryptoWithTransaction({
     super.key,
     required this.isConnected,
     required this.walletAddress,
     required this.balance,
-    required this.onWalletUpdated,
+    required this.sendTransaction, // Update the constructor
   });
 
   @override
@@ -28,116 +25,50 @@ class CryptoWithTransaction extends StatefulWidget {
 
 class _CryptoWithTransactionState extends State<CryptoWithTransaction> {
   final FlutterSecureStorage _storage = const FlutterSecureStorage();
-  ReownAppKitModal? appKitModal;
-  bool isLoading = false;
   String? userId;
 
   @override
   void initState() {
     super.initState();
-    _fetchUserId();
-    initializeAppKitModal();
+    _fetchUserId(); // Call to fetch user ID on init
   }
 
   Future<void> _fetchUserId() async {
     userId = await _storage.read(key: 'userId');
     if (userId != null) {
       BlocProvider.of<BookingBloc>(context).add(FetchBookings(userId: userId!));
-    } else {}
-  }
-
-  void initializeAppKitModal() async {
-    appKitModal = ReownAppKitModal(
-      context: context,
-      projectId: '40e5897bd6b0d9d2b27b717ec50906c3',
-      metadata: const PairingMetadata(
-        name: 'Crypto Flutter',
-        description: 'A Crypto Flutter Example App',
-        url: 'https://www.reown.com/',
-        icons: ['https://reown.com/reown-logo.png'],
-        redirect: Redirect(
-          native: 'cryptoflutter://',
-          universal: 'https://reown.com',
-          linkMode: true,
-        ),
-      ),
-    );
-
-    await appKitModal?.init();
-  }
-
-  void _showSendDialog(BuildContext context, String hotelName) {
-    final addressController = TextEditingController();
-    final amountController = TextEditingController();
-
-    showDialog(
-      context: context,
-      builder: (context) {
-        return AlertDialog(
-          title: Text('Send Crypto to $hotelName'),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              TextField(
-                controller: addressController,
-                decoration:
-                    const InputDecoration(hintText: 'Recipient Address (0x..)'),
-              ),
-              TextField(
-                controller: amountController,
-                decoration: const InputDecoration(hintText: 'Amount to Send'),
-                keyboardType: TextInputType.number,
-              ),
-            ],
-          ),
-          actions: [
-            TextButton(
-              onPressed: () async {
-                String recipient = addressController.text;
-                String amount = amountController.text;
-
-                print('Sending $amount ETH to $recipient');
-                Navigator.of(context).pop();
-                await sendTransaction(recipient, amount);
-              },
-              child: const Text('Send'),
-            ),
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-              child: const Text('Cancel'),
-            ),
-          ],
-        );
-      },
-    );
-  }
-
-  Future<void> sendTransaction(String receiver, String amountString) async {
-    setState(() => isLoading = true);
-
-    try {
-      double amountInEther = double.parse(amountString);
-      BigInt amountInWei = BigInt.from((amountInEther * pow(10, 18)).toInt());
-
-      print('Sending $amountInEther ETH to $receiver');
-      // Simulate transaction
-      await Future.delayed(const Duration(seconds: 2));
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Transaction successful!')),
-      );
-    } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Transaction failed: $e')),
-      );
-    } finally {
-      setState(() => isLoading = false);
     }
+  }
+
+  void updateWalletInfo(String walletAddress, String balance, bool isConnected, String? userId, String? error) {
+      // Your logic here
+      print('Updated Wallet Info: $walletAddress, $balance, $isConnected');
   }
 
   @override
   Widget build(BuildContext context) {
+    // Check if the wallet is connected
+    if (!widget.isConnected) {
+      return Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const Text(
+              "No wallet connected or session is invalid.",
+              style: TextStyle(fontSize: 18, color: Colors.red),
+            ),
+            const SizedBox(height: 20),
+            // ElevatedButton(
+            //   onPressed: () {
+            //     // You can add logic to connect the wallet or navigate to a wallet connection screen
+            //   },
+            //   child: const Text("Connect Wallet"),
+            // ),
+          ],
+        ),
+      );
+    }
+
     return BlocBuilder<BookingBloc, BookingState>(
       builder: (context, state) {
         if (state is BookingLoading) {
@@ -183,26 +114,8 @@ class _CryptoWithTransactionState extends State<CryptoWithTransaction> {
                 ),
                 const SizedBox(height: 20),
                 ElevatedButton(
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) =>  TabScreen()),
-                    );
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFF1C3473),
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 24.0, vertical: 12.0),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8.0),
-                    ),
-                    textStyle: const TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  child: const Text("Book Now"),
+                  onPressed: () => widget.sendTransaction('0xc818CfdA6B36b5569E6e681277b2866956863fAd', '0.001'), // Call the parent method with default values
+                  child: const Text("Test Transaction"), // Update button text
                 ),
               ],
             );
@@ -212,56 +125,30 @@ class _CryptoWithTransactionState extends State<CryptoWithTransaction> {
             itemCount: acceptedBookings.length,
             itemBuilder: (context, index) {
               final booking = acceptedBookings[index];
-
               return Card(
-                margin: const EdgeInsets.all(12.0),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(15.0),
-                ),
-                child: Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: Column(
+                margin: const EdgeInsets.all(10),
+                child: ListTile(
+                  title: Text(
+                    'Booking ID: ${booking.id}',
+                    style: const TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                  subtitle: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(
-                        booking.hotelName != null
-                            ? 'Hotel: ${booking.hotelName}'
-                            : 'Restaurant: ${booking.restaurantName ?? ''}',
-                      ),
-                      const SizedBox(height: 8),
-                      Text(booking.hotelName != null
-                          ? 'Room: ${booking.roomName ?? 'N/A'}'
-                          : 'Table Number: ${booking.tableNumber ?? 'N/A'}'),
-                      const SizedBox(height: 8),
-                      Text(
-                          'Check-in: ${booking.checkInDate} at ${booking.timeOfArrival}'),
-                      Text(
-                          'Check-out: ${booking.checkOutDate} at ${booking.timeOfDeparture}'),
-                      const SizedBox(height: 20),
-                      ElevatedButton(
-                        onPressed: isLoading
-                            ? null
-                            : () => _showSendDialog(
-                                context, booking.hotelName ?? ''),
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: const Color(0xFF1C3473),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(8.0),
-                          ),
-                        ),
-                        child: isLoading
-                            ? const CircularProgressIndicator()
-                            : const Text('Send Crypto'),
-                      ),
+                      Text('Status: ${booking.status}'),
+                      Text('Total Price: ${booking.totalPrice}'),
                     ],
+                  ),
+                  trailing: IconButton(
+                    icon: const Icon(Icons.send),
+                    onPressed: () => widget.sendTransaction('0xc818CfdA6B36b5569E6e681277b2866956863fAd', '0.001'), // Call the parent method with default values
                   ),
                 ),
               );
             },
           );
-        } else {
-          return const Center(child: Text('No bookings found.'));
         }
+        return const Center(child: Text('No bookings available.'));
       },
     );
   }

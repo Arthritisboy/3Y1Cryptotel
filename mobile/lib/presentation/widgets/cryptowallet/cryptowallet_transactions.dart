@@ -5,34 +5,32 @@ class CryptoWalletTransactions extends StatelessWidget {
   final bool isConnected;
   final String walletAddress;
   final String balance;
-  final Function(String, String, bool) onWalletUpdated;
+  final Future<void> Function(String, String) sendTransaction; 
 
   const CryptoWalletTransactions({
     super.key,
     required this.isConnected,
     required this.walletAddress,
     required this.balance,
-    required this.onWalletUpdated,
+    required this.sendTransaction, 
   });
 
   @override
   Widget build(BuildContext context) {
-    return Expanded(
-      child: Container(
-        decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.only(
-              topLeft: Radius.circular(30.0),
-              topRight: Radius.circular(30.0),
-            ),
-            border:
-                Border.all(color: const Color.fromARGB(255, 209, 207, 207))),
-        child: CryptoWithTransaction(
-          isConnected: isConnected,
-          walletAddress: walletAddress,
-          balance: balance,
-          onWalletUpdated: onWalletUpdated,
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(30.0),
+          topRight: Radius.circular(30.0),
         ),
+        border: Border.all(color: const Color.fromARGB(255, 209, 207, 207)),
+      ),
+      child: CryptoWithTransaction(
+        isConnected: isConnected,
+        walletAddress: walletAddress,
+        balance: balance,
+        sendTransaction: sendTransaction, // Pass the method to child
       ),
     );
   }
