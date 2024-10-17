@@ -30,7 +30,7 @@ const favoriteRouter = require('./routes/favoriteRoute.js');
 
 const updateRouter = require('./routes/updateRoute.js');
 
-const downloadRouter = require('./routes/downloadRoute.js')
+// const downloadRouter = require('./routes/downloadRoute.js')
 
 //!Error Handler
 const AppError = require('./utils/appError');
@@ -93,7 +93,7 @@ app.use('/api/v1/hotel', hotelRouter);
 app.use('/api/v1/restaurant', restaurantRouter);
 app.use('/api/v1/favorites', favoriteRouter);
 
-app.use('/api/v1/export', downloadRouter);
+// app.use('/api/v1/export', downloadRouter);
 app.use('/dev/v1/update-all', updateRouter);
 
 //! Handle all undefined routes
