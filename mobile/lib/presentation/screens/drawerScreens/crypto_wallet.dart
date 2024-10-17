@@ -13,12 +13,36 @@ class _CryptoWalletState extends State<CryptoWallet> {
   String walletAddress = 'No Address';
   String balance = '₱ 0';
   bool isConnected = false;
+  String receiver = '';
+  String amount = '';
 
-  void updateWalletInfo(String address, String bal, bool connected) {
+  late CryptowalletHeader walletHeader;
+  @override
+  void initState() {
+    super.initState();
+
+    // Initialize walletHeader here
+    walletHeader = CryptowalletHeader(
+      onWalletUpdated: (address, bal, connected) {
+        updateWalletInfo(address, bal, connected);
+      },
+      receiver: receiver, // Default receiver
+      amount: amount,     // Default amount
+    );
+  }
+  // Update the wallet info and include receiver and amount
+  void updateWalletInfo(String address, String bal, bool connected,
+      {String? newReceiver, String? newAmount}) {
     setState(() {
       walletAddress = address;
       balance = bal;
       isConnected = connected;
+      if (newReceiver != null) {
+        receiver = newReceiver;
+      }
+      if (newAmount != null) {
+        amount = newAmount;
+      }
     });
   }
 
@@ -29,7 +53,11 @@ class _CryptoWalletState extends State<CryptoWallet> {
         child: Column(
           children: [
             CryptowalletHeader(
-              onWalletUpdated: updateWalletInfo,
+              onWalletUpdated: (address, bal, connected) {
+                updateWalletInfo(address, bal, connected);
+              },
+              receiver: receiver, // Pass receiver to the header 
+              amount: amount, // Pass amount to the header
             ),
             const SizedBox(height: 20),
             Expanded(
@@ -37,7 +65,11 @@ class _CryptoWalletState extends State<CryptoWallet> {
                 isConnected: isConnected,
                 walletAddress: walletAddress,
                 balance: balance,
-                onWalletUpdated: updateWalletInfo,
+                walletHeader: walletHeader, 
+                onWalletUpdated:(address, bal, connected, newReceiver, newAmount) {
+                  updateWalletInfo(address, bal, connected,
+                      newReceiver: newReceiver, newAmount: newAmount);
+                },
               ),
             ),
           ],
