@@ -201,14 +201,16 @@ class _TabScreenState extends State<TabScreen> {
   }
 
   Widget _buildShimmerLoading() {
-    return Column(
-      children: const [
-        ShimmerTabHeader(),
-        SizedBox(height: 10),
-        ShimmerBottomNavigation(),
-        SizedBox(height: 10),
-        Expanded(child: ShimmerCardWidget()),
-      ],
+    return SingleChildScrollView(
+      child: Column(
+        children: const [
+          ShimmerTabHeader(),
+          SizedBox(height: 10),
+          ShimmerBottomNavigation(),
+          SizedBox(height: 10),
+          Expanded(child: ShimmerCardWidget()),
+        ],
+      ),
     );
   }
 
