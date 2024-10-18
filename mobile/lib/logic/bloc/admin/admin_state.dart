@@ -1,6 +1,34 @@
-part of 'admin_bloc.dart';
+import 'package:equatable/equatable.dart';
 
-@immutable
-sealed class AdminState {}
+abstract class AdminState extends Equatable {
+  const AdminState();
 
-final class AdminInitial extends AdminState {}
+  @override
+  List<Object?> get props => [];
+}
+
+// Initial State
+class AdminInitial extends AdminState {}
+
+// Loading State
+class AdminLoading extends AdminState {}
+
+// Success State
+class AdminSuccess extends AdminState {
+  final String message;
+
+  const AdminSuccess(this.message);
+
+  @override
+  List<Object?> get props => [message];
+}
+
+// Failure State
+class AdminFailure extends AdminState {
+  final String error;
+
+  const AdminFailure(this.error);
+
+  @override
+  List<Object?> get props => [error];
+}
