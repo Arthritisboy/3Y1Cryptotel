@@ -135,14 +135,6 @@ class AuthRepository {
     }
   }
 
-  // //! Update Password
-  // Future<void> updatePassword(String currentPassword, String newPassword,
-  //     String confirmPassword) async {
-  //   final response = await dataProvider.updatePassword(
-  //       currentPassword, newPassword, confirmPassword);
-  //   return response;
-  // }
-
   //! Logout
   Future<void> logout() async {
     try {
@@ -150,6 +142,19 @@ class AuthRepository {
       clearUserCache(); // Clear cache on logout if necessary
     } catch (e) {
       throw Exception('Failed to logout: $e');
+    }
+  }
+
+  //! Change Password
+  Future<void> changePassword(String currentPassword, String newPassword,
+      String confirmPassword) async {
+    try {
+      await dataProvider.changePassword(
+          currentPassword, newPassword, confirmPassword);
+      _logger.info('Password changed successfully');
+    } catch (e) {
+      _logger.severe('Failed to change password: $e');
+      throw Exception('Failed to change password: ${e.toString()}');
     }
   }
 

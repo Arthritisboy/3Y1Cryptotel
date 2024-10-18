@@ -5,6 +5,8 @@ import 'package:hotel_flutter/logic/bloc/auth/auth_bloc.dart';
 import 'package:hotel_flutter/logic/bloc/auth/auth_event.dart';
 import 'package:hotel_flutter/logic/bloc/auth/auth_state.dart';
 import 'package:hotel_flutter/presentation/widgets/profile/blue_background_widget.dart';
+import 'package:hotel_flutter/presentation/widgets/update_password/update_bottom_section.dart';
+import 'package:hotel_flutter/presentation/widgets/utils_widget/custom_dialog.dart';
 
 class UpdatePasswordScreen extends StatefulWidget {
   const UpdatePasswordScreen({super.key});
@@ -20,6 +22,7 @@ class _UpdatePasswordScreenState extends State<UpdatePasswordScreen> {
   late TextEditingController newPasswordController;
   late TextEditingController confirmPasswordController;
   final storage = const FlutterSecureStorage();
+  bool _isLoading = false; // Track loading state
 
   @override
   void initState() {
@@ -37,18 +40,59 @@ class _UpdatePasswordScreenState extends State<UpdatePasswordScreen> {
     super.dispose();
   }
 
-  void _updatePassword() {
-    final currentPassword = currentPasswordController.text;
-    final newPassword = newPasswordController.text;
-    final confirmPassword = confirmPasswordController.text;
+  void _showCustomDialog(
+    BuildContext context,
+    String title,
+    String description,
+    String buttonText,
+  ) {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return CustomDialog(
+          title: title,
+          description: description,
+          buttonText: buttonText,
+          onButtonPressed: () {
+            Navigator.of(context).pop();
+          },
+          secondButtonText: '',
+          onSecondButtonPressed: () {},
+        );
+      },
+    );
+  }
 
-    if (newPassword != confirmPassword) {
-      // Display an error message if passwords do not match
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("New passwords do not match.")),
+  void _updatePassword() {
+    final currentPassword = currentPasswordController.text.trim();
+    final newPassword = newPasswordController.text.trim();
+    final confirmPassword = confirmPasswordController.text.trim();
+
+    if (currentPassword.isEmpty ||
+        newPassword.isEmpty ||
+        confirmPassword.isEmpty) {
+      _showCustomDialog(
+        context,
+        'Error',
+        'All fields are required.',
+        'Close',
       );
       return;
     }
+
+    if (newPassword != confirmPassword) {
+      _showCustomDialog(
+        context,
+        'Error',
+        'New passwords do not match.',
+        'Close',
+      );
+      return;
+    }
+
+    setState(() {
+      _isLoading = true; // Start loading
+    });
 
     BlocProvider.of<AuthBloc>(context).add(
       ChangePasswordEvent(currentPassword, newPassword, confirmPassword),
@@ -75,30 +119,41 @@ class _UpdatePasswordScreenState extends State<UpdatePasswordScreen> {
             left: 0,
             right: 0,
             bottom: 0,
-            child: BlocListener<AuthBloc, AuthState>(
+            child: BlocConsumer<AuthBloc, AuthState>(
               listener: (context, state) {
-                if (state is AuthLoading) {
-                } else if (state is AuthSuccess) {
+                if (state is AuthPasswordChangeSuccess) {
+                  setState(() {
+                    _isLoading = false;
+                  });
                   ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text('Password updated successfully!'),
+                    SnackBar(
+                      content: Text(state.message),
                       backgroundColor: Colors.green,
                     ),
                   );
                   storage.deleteAll();
                   Navigator.of(context).pushNamed('/login');
-                } else if (state is AuthError) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text(state.error)),
+                } else if (state is PasswordChangeFailure) {
+                  setState(() {
+                    _isLoading = false;
+                  });
+                  _showCustomDialog(
+                    context,
+                    'Password Change Failed',
+                    state.error,
+                    'Close',
                   );
                 }
               },
-              child: BottomSection(
-                currentPasswordController: currentPasswordController,
-                newPasswordController: newPasswordController,
-                confirmPasswordController: confirmPasswordController,
-                onUpdatePassword: _updatePassword,
-              ),
+              builder: (context, state) {
+                return UpdateBottomSection(
+                  currentPasswordController: currentPasswordController,
+                  newPasswordController: newPasswordController,
+                  confirmPasswordController: confirmPasswordController,
+                  onUpdatePassword: _updatePassword,
+                  isLoading: _isLoading,
+                );
+              },
             ),
           ),
           Positioned(
@@ -117,99 +172,6 @@ class _UpdatePasswordScreenState extends State<UpdatePasswordScreen> {
           ),
         ],
       ),
-    );
-  }
-}
-
-class BottomSection extends StatelessWidget {
-  final TextEditingController currentPasswordController;
-  final TextEditingController newPasswordController;
-  final TextEditingController confirmPasswordController;
-  final VoidCallback onUpdatePassword;
-
-  const BottomSection({
-    super.key,
-    required this.currentPasswordController,
-    required this.newPasswordController,
-    required this.confirmPasswordController,
-    required this.onUpdatePassword,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      decoration: const BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.vertical(top: Radius.circular(30)),
-      ),
-      child: Padding(
-        padding: const EdgeInsets.all(20),
-        child: SingleChildScrollView(
-          child: Column(
-            children: [
-              const SizedBox(height: 80),
-              TextField(
-                controller: currentPasswordController,
-                obscureText: true,
-                decoration: const InputDecoration(
-                  labelText: 'Current Password',
-                  border: OutlineInputBorder(),
-                ),
-              ),
-              const SizedBox(height: 10),
-              TextField(
-                controller: newPasswordController,
-                obscureText: true,
-                decoration: const InputDecoration(
-                  labelText: 'New Password',
-                  border: OutlineInputBorder(),
-                ),
-              ),
-              const SizedBox(height: 10),
-              TextField(
-                controller: confirmPasswordController,
-                obscureText: true,
-                decoration: const InputDecoration(
-                  labelText: 'Confirm New Password',
-                  border: OutlineInputBorder(),
-                ),
-              ),
-              const SizedBox(height: 20),
-              ActionButtons(
-                onPressed: onUpdatePassword,
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class ActionButtons extends StatelessWidget {
-  final VoidCallback onPressed;
-
-  const ActionButtons({
-    super.key,
-    required this.onPressed,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceAround,
-      children: [
-        ElevatedButton.icon(
-          onPressed: onPressed,
-          icon: const Icon(Icons.lock, color: Colors.white),
-          label: const Text("Update Password"),
-          style: ElevatedButton.styleFrom(
-            backgroundColor: const Color.fromARGB(255, 29, 53, 115),
-            foregroundColor: Colors.white,
-            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-          ),
-        ),
-      ],
     );
   }
 }

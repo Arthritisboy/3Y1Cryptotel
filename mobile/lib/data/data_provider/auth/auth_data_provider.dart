@@ -234,6 +234,41 @@ class AuthDataProvider {
     };
   }
 
+  //! Change Password
+  Future<void> changePassword(
+    String currentPassword,
+    String newPassword,
+    String confirmPassword,
+  ) async {
+    final String? token = await _getToken();
+
+    if (token == null) {
+      throw Exception('User not authenticated. Please login again.');
+    }
+
+    final response = await http.patch(
+      Uri.parse('$_baseUrl/auth/updateMyPassword'), // Correct URL
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token', // Token sent here
+      },
+      body: json.encode({
+        'passwordCurrent': currentPassword,
+        'password': newPassword,
+        'confirmPassword': confirmPassword,
+      }),
+    );
+
+    if (response.statusCode == 200) {
+      _logger.info('Password updated successfully');
+    } else {
+      final error =
+          json.decode(response.body)['message'] ?? 'Password update failed';
+      _logger.severe('Password update failed: $error');
+      throw Exception(error);
+    }
+  }
+
   //! Update User Onboarding
   Future<void> completeOnboarding() async {
     final token = await _storage.read(key: 'jwt');

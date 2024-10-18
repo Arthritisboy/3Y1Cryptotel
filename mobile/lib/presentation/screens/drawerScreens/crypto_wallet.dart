@@ -158,8 +158,17 @@ class _CryptoWalletState extends State<CryptoWallet> {
   Future<void> updateWalletInfo() async {
      connectWallet(); // Call the connectWallet logic
   }
-
+  
+  bool isWalletConnected() {
+  return _appKitModal?.session != null; // Assuming this checks if the session exists
+}
   Future<void> sendTransaction(String receiver, String amount) async {
+    if (!isWalletConnected()) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('Please connect your wallet first')),
+    );
+    return; // Exit the function if not connected
+  }
     if (receiver.isEmpty || amount.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Invalid receiver address!')),

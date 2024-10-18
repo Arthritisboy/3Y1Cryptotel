@@ -38,14 +38,6 @@ class GetUserEvent extends AuthEvent {
 
 class LogoutEvent extends AuthEvent {}
 
-class ChangePasswordEvent extends AuthEvent {
-  final String oldPassword;
-  final String newPassword;
-  final String confirmPassword;
-
-  ChangePasswordEvent(this.oldPassword, this.newPassword, this.confirmPassword);
-}
-
 class UpdateUserEvent extends AuthEvent {
   final UserModel user;
   final String? profilePicture;
@@ -74,6 +66,21 @@ class ResendCodeEvent extends AuthEvent {
   final String email;
 
   ResendCodeEvent({required this.email});
+}
+
+class ChangePasswordEvent extends AuthEvent {
+  final String oldPassword;
+  final String newPassword;
+  final String confirmPassword;
+
+  ChangePasswordEvent(
+    this.oldPassword,
+    this.newPassword,
+    this.confirmPassword,
+  );
+
+  @override
+  List<Object> get props => [oldPassword, newPassword, confirmPassword];
 }
 
 class AddToFavoritesEvent extends AuthEvent {
