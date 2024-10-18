@@ -9,11 +9,13 @@ const router = express.Router();
 // Restaurant routes
 router
   .route('/')
-  .get(authController.protect, restaurantController.getRestaurant);
-
-router
-  .route('/:userId')
-  .post(upload.single('image'), restaurantController.createRestaurant);
+  .get(authController.protect, restaurantController.getRestaurant)
+  .post(
+    upload.single('image'),
+    authController.protect,
+    authController.restrictTo('admin'),
+    restaurantController.createRestaurant,
+  );
 
 router
   .route('/:id')

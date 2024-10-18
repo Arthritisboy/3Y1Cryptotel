@@ -24,7 +24,8 @@ const hotelSchema = new mongoose.Schema({
     required: true, // example "7:30 Am to 4:30 Pm" I make it simpler rather than using complicated type: Date
   },
   hotelImage: {
-    type: String, // similar user profile
+    type: String,
+    required: true, // similar user profile
   },
   // contactNumber: { will add this later I kinda forgot to git pull
   //   type: String,
