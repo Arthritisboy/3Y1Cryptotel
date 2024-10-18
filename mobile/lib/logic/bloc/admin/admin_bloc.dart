@@ -9,6 +9,7 @@ class AdminBloc extends Bloc<AdminEvent, AdminState> {
   AdminBloc({required this.adminRepository}) : super(AdminInitial()) {
     on<CreateHotelEvent>(_onCreateHotel);
     on<CreateRestaurantEvent>(_onCreateRestaurant);
+    on<CreateRoomEvent>(_onCreateRoom); // Add Room Event Handler
   }
 
   // Handle Hotel Creation
@@ -34,6 +35,22 @@ class AdminBloc extends Bloc<AdminEvent, AdminState> {
       emit(AdminSuccess('Restaurant created successfully!'));
     } catch (e) {
       emit(AdminFailure('Failed to create restaurant: ${e.toString()}'));
+    }
+  }
+
+  // Handle Room Creation
+  Future<void> _onCreateRoom(
+      CreateRoomEvent event, Emitter<AdminState> emit) async {
+    emit(AdminLoading());
+
+    try {
+      final response = await adminRepository.createRoom(
+        event.roomModel,
+        event.hotelId,
+      );
+      emit(AdminSuccess('Room created successfully!'));
+    } catch (e) {
+      emit(AdminFailure('Failed to create room: ${e.toString()}'));
     }
   }
 }

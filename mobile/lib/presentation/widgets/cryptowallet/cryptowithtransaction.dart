@@ -5,6 +5,7 @@ import 'package:hotel_flutter/logic/bloc/booking/booking_bloc.dart';
 import 'package:hotel_flutter/logic/bloc/booking/booking_event.dart';
 import 'package:hotel_flutter/logic/bloc/booking/booking_state.dart';
 import 'package:hotel_flutter/presentation/screens/homeScreens/tab_screen.dart';
+import 'package:intl/intl.dart';
 
 class CryptoWithTransaction extends StatefulWidget {
   final bool isConnected;
@@ -139,35 +140,138 @@ class _CryptoWithTransactionState extends State<CryptoWithTransaction> {
               ],
             );
           }
-
           return ListView.builder(
             itemCount: acceptedBookings.length,
             itemBuilder: (context, index) {
               final booking = acceptedBookings[index];
-              return Card(
-                margin: const EdgeInsets.all(10),
-                color: const Color.fromARGB(255, 28, 52, 115),
-                child: ListTile(
-                  title: Text(
-                    'Booking Type: ${booking.bookingType}',
-                    style: const TextStyle(fontWeight: FontWeight.bold),
+
+              // Determine display name
+              String displayName = (booking.restaurantName != null &&
+                      booking.restaurantName!.isNotEmpty)
+                  ? booking.restaurantName!
+                  : '${booking.hotelName ?? ''} - ${booking.roomName ?? ''}';
+
+              // Determine display image
+              String? displayImage = booking.hotelImage?.isNotEmpty == true
+                  ? booking.hotelImage
+                  : booking.restaurantImage;
+
+              return Padding(
+                padding: const EdgeInsets.all(12.0),
+                child: Card(
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(15.0),
                   ),
-                  subtitle: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      // Conditional message based on booking type
-                      Text(booking.bookingType == 'HotelBooking'
-                          ? 'Hotel: ${booking.hotelName}'
-                          : 'Restaurant: ${booking.restaurantName}'),
-                      Text('Status: ${booking.status}'),
-                      Text('Total Price: ${booking.totalPrice}'),
-                    ],
-                  ),
-                  trailing: IconButton(
-                    icon: const Icon(Icons.send),
-                    onPressed: () => widget.sendTransaction(
-                        '0xc818CfdA6B36b5569E6e681277b2866956863fAd',
-                        '0.001'), // Call the parent method with default values
+                  elevation: 3,
+                  child: Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        // Row with Image and Booking Details
+                        Row(
+                          children: [
+                            // Circular Image
+                            ClipRRect(
+                              borderRadius: BorderRadius.circular(50.0),
+                              child: displayImage != null
+                                  ? Image.network(
+                                      displayImage,
+                                      width: 70,
+                                      height: 70,
+                                      fit: BoxFit.cover,
+                                    )
+                                  : Image.asset(
+                                      'assets/images/icons/placeholder.png',
+                                      width: 70,
+                                      height: 70,
+                                      fit: BoxFit.cover,
+                                    ),
+                            ),
+                            const SizedBox(width: 10),
+                            // Booking Information
+
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Container(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 8.0, vertical: 2.0),
+                                  decoration: BoxDecoration(
+                                    color: const Color(0xFF1C3473),
+                                    borderRadius: BorderRadius.circular(8.0),
+                                  ),
+                                  child: Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                      vertical: 6,
+                                      horizontal: 12,
+                                    ),
+                                    child: Text(
+                                      'Status: accepted',
+                                      style: const TextStyle(
+                                        color: Colors.white,
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 12,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                                const SizedBox(height: 5),
+                                Text(
+                                  displayName,
+                                  style: const TextStyle(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.black87,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 15),
+
+                        // Check-in and Check-out Times
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Column(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                _buildInfoRow(
+                                  Icons.calendar_today,
+                                  'Check-in: ${booking.checkInDate.toLocal().toString().split(' ')[0]}',
+                                ),
+                                const SizedBox(height: 5),
+                                _buildInfoRow(
+                                  Icons.calendar_today_outlined,
+                                  'Check-out: ${booking.checkOutDate.toLocal().toString().split(' ')[0]}',
+                                ),
+                                const SizedBox(height: 5),
+
+                                // Arrival and Departure Times (if available)
+                                _buildInfoRow(
+                                  Icons.access_time_filled,
+                                  'Arrival: ${booking.timeOfArrival != null ? DateFormat.jm().format(booking.timeOfArrival!) : 'N/A'}',
+                                ),
+                                const SizedBox(height: 5),
+                                _buildInfoRow(
+                                  Icons.access_time_outlined,
+                                  'Departure: ${booking.timeOfDeparture != null ? DateFormat.jm().format(booking.timeOfDeparture!) : 'N/A'}',
+                                ),
+                              ],
+                            ),
+                            IconButton(
+                              icon: const Icon(Icons.send),
+                              onPressed: () => widget.sendTransaction(
+                                  '0xc818CfdA6B36b5569E6e681277b2866956863fAd',
+                                  '0.001'), // Call the parent method with default values
+                            ),
+                          ],
+                        )
+                      ],
+                    ),
                   ),
                 ),
               );
@@ -176,6 +280,20 @@ class _CryptoWithTransactionState extends State<CryptoWithTransaction> {
         }
         return const Center(child: Text('No bookings available.'));
       },
+    );
+  }
+
+  // Helper Widget for Info Rows with Icon
+  Widget _buildInfoRow(IconData icon, String text) {
+    return Row(
+      children: [
+        Icon(icon, size: 18, color: Colors.grey[700]),
+        const SizedBox(width: 5),
+        Text(
+          text,
+          style: const TextStyle(color: Colors.black87, fontSize: 14),
+        ),
+      ],
     );
   }
 }

@@ -95,6 +95,53 @@ class AdminDataProvider {
     }
   }
 
+  // Function to Create a Room
+  Future<Map<String, dynamic>> createRoom({
+    required String hotelId,
+    required String roomNumber,
+    required String type,
+    required int price,
+    required int capacity,
+    File? roomImage, // Optional room image
+  }) async {
+    try {
+      final String? token = await _getToken();
+      if (token == null) {
+        throw Exception('Authentication required. Please log in.');
+      }
+
+      // Prepare the multipart request
+      final request = http.MultipartRequest(
+        'POST',
+        Uri.parse('$_baseUrl/hotel/rooms/$hotelId'),
+      )..headers['Authorization'] = 'Bearer $token';
+
+      // Add form fields
+      request.fields['roomNumber'] = roomNumber;
+      request.fields['type'] = type;
+      request.fields['price'] = price.toString();
+      request.fields['capacity'] = capacity.toString();
+
+      // Attach image if provided
+      if (roomImage != null) {
+        request.files.add(await http.MultipartFile.fromPath(
+          'image',
+          roomImage.path,
+        ));
+      }
+
+      // Send the request
+      final response = await request.send();
+      final httpResponse = await http.Response.fromStream(response);
+
+      // Handle the response
+      return await _handleResponse(httpResponse);
+    } catch (e) {
+      print('Error creating room: $e');
+      rethrow;
+    }
+  }
+
   // Create Restaurant with Manager Registration and Image Upload
   Future<Map<String, dynamic>> createRestaurant({
     required String name,

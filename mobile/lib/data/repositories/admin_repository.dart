@@ -1,5 +1,7 @@
 import 'package:hotel_flutter/data/data_provider/auth/admin_data_provider.dart';
 import 'package:hotel_flutter/data/model/admin/admin_model.dart';
+import 'package:hotel_flutter/data/model/hotel/create_room_model.dart';
+import 'package:hotel_flutter/data/model/hotel/room_model.dart';
 
 class AdminRepository {
   final AdminDataProvider adminDataProvider;
@@ -50,6 +52,24 @@ class AdminRepository {
       );
     } catch (e) {
       print('Error in AdminRepository.createRestaurant: $e');
+      rethrow;
+    }
+  }
+
+  // Create Room
+  Future<Map<String, dynamic>> createRoom(
+      CreateRoomModel roomModel, String hotelId) async {
+    try {
+      return await adminDataProvider.createRoom(
+        hotelId: hotelId,
+        roomNumber: roomModel.roomNumber,
+        type: roomModel.type,
+        price: roomModel.price,
+        capacity: roomModel.capacity,
+        roomImage: roomModel.image,
+      );
+    } catch (e) {
+      print('Error in AdminRepository.createRoom: $e');
       rethrow;
     }
   }
