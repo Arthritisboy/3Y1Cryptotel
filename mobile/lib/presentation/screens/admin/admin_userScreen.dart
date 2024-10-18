@@ -70,7 +70,7 @@ class _AdminScreenState extends State<AdminScreen> {
     );
   }
 
-  Widget _buildRoomsTab(BuildContext context) {
+  Widget _buildRoomsTab(BuildContext contextRoom) {
     return BlocBuilder<BookingBloc, BookingState>(
       builder: (context, state) {
         if (state is BookingSuccess && state.bookings.isNotEmpty) {

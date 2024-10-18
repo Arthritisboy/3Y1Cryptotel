@@ -66,7 +66,7 @@ const userSchema = new mongoose.Schema(
       default: 'user',
     },
     handleId: {
-      type: mongoose.Schema.Types.ObjectId,
+      type: String,
     },
     passwordChangedAt: {
       type: Date,
