@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 class AdminHeader extends StatelessWidget {
   final String name;
+
   const AdminHeader({super.key, required this.name});
 
   @override
@@ -31,13 +32,21 @@ class AdminHeader extends StatelessWidget {
                 ),
               ),
               const Spacer(),
+              // Menu icon aligned to the right
+              IconButton(
+                icon: const Icon(Icons.menu, size: 28.0),
+                color: const Color(0xFF1C3473),
+                onPressed: () {
+                  Scaffold.of(context).openEndDrawer();
+                },
+              ),
             ],
           ),
           const SizedBox(height: 5.0),
           // Row to hold "Admin Panel" text only
           Text(
             "$name Panel",
-            style: TextStyle(
+            style: const TextStyle(
               fontSize: 30,
               fontWeight: FontWeight.w400,
             ),
