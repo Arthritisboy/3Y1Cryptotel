@@ -4,16 +4,25 @@ const bookingSchema = new mongoose.Schema({
   bookingType: {
     type: String,
     required: true,
-    enum: ['HotelBooking', 'RestaurantBooking'], // Allowed booking types
+    enum: ['HotelBooking', 'RestaurantBooking'], // Specify allowed types
   },
-  restaurantName: String,
-  hotelName: String,
-  roomName: String,
-  hotelImage: String,
-  restaurantImage: String,
+  restaurantName: {
+    type: String,
+  },
+  hotelName: {
+    type: String,
+  },
+  roomName: {
+    type: String,
+  },
+  hotelImage: {
+    type: String,
+  },
+  restaurantImage: {
+    type: String,
+  },
   userId: {
     type: String,
-    required: true,
   },
   hotelId: {
     type: mongoose.Schema.Types.ObjectId,
@@ -47,6 +56,7 @@ const bookingSchema = new mongoose.Schema({
     type: Number,
     validate: {
       validator: function (value) {
+        // Only validate if bookingType is 'RestaurantBooking'
         return this.bookingType === 'RestaurantBooking' ? value != null : true;
       },
       message: 'Table number is required for Restaurant Booking.',
@@ -59,12 +69,6 @@ const bookingSchema = new mongoose.Schema({
   checkOutDate: {
     type: Date,
     required: true,
-    validate: {
-      validator: function (value) {
-        return value > this.checkInDate;
-      },
-      message: 'Check-out date must be later than check-in date.',
-    },
   },
   timeOfArrival: {
     type: Date,
@@ -72,9 +76,10 @@ const bookingSchema = new mongoose.Schema({
   },
   timeOfDeparture: {
     type: Date,
-    required: true,
   },
-  totalPrice: Number,
+  totalPrice: {
+    type: Number,
+  },
   adult: {
     type: Number,
     required: true,
@@ -87,10 +92,6 @@ const bookingSchema = new mongoose.Schema({
     type: String,
     enum: ['pending', 'accepted', 'cancelled', 'rejected', 'done'],
     default: 'pending',
-  },
-  availability: {
-    type: Boolean,
-    default: false, // Default to false
   },
   createdAt: {
     type: Date,
@@ -112,7 +113,5 @@ bookingSchema.pre('save', function (next) {
   next();
 });
 
-// Create the Booking model
 const Booking = mongoose.model('Booking', bookingSchema);
-
 module.exports = Booking;
