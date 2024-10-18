@@ -44,17 +44,17 @@ class FavoriteBloc extends Bloc<FavoriteEvent, FavoriteState> {
       // Create a list of FavoriteItem by mapping the fetched hotel and restaurant models
       final List<FavoriteItem> favorites = [
         ...hotels.map((hotel) => FavoriteItem(
-              id: hotel.id,
-              name: hotel.name,
-              location: hotel.location,
-              imageUrl: hotel.hotelImage,
-            )),
+            id: hotel.id,
+            name: hotel.name,
+            location: hotel.location,
+            imageUrl: hotel.hotelImage,
+            type: 'hotel')),
         ...restaurants.map((restaurant) => FavoriteItem(
-              id: restaurant.id,
-              name: restaurant.name,
-              location: restaurant.location,
-              imageUrl: restaurant.restaurantImage,
-            )),
+            id: restaurant.id,
+            name: restaurant.name,
+            location: restaurant.location,
+            imageUrl: restaurant.restaurantImage,
+            type: 'restaurant')),
       ];
 
       emit(FavoritesFetched(favorites));
