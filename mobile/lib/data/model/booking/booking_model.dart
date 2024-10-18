@@ -121,6 +121,9 @@ class BookingModel {
       restaurantName: json['restaurantName'],
       hotelName: json['hotelName'],
       roomName: json['roomName'],
+      restaurantId: json['restaurantId'] is Map
+          ? json['restaurantId']['_id']
+          : json['restaurantId'],
       hotelId:
           json['hotelId'] is Map ? json['hotelId']['_id'] : json['hotelId'],
       roomId: json['roomId'] is Map ? json['roomId']['_id'] : json['roomId'],

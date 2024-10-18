@@ -5,16 +5,19 @@ import 'package:hotel_flutter/data/data_provider/auth/auth_data_provider.dart';
 import 'package:hotel_flutter/data/data_provider/auth/booking_data_provider.dart';
 import 'package:hotel_flutter/data/data_provider/auth/favorite_data_provider.dart';
 import 'package:hotel_flutter/data/data_provider/auth/hotel_data_provider.dart';
+import 'package:hotel_flutter/data/data_provider/auth/rating_data_provider.dart';
 import 'package:hotel_flutter/data/data_provider/auth/restaurant_data_provider.dart';
 import 'package:hotel_flutter/data/repositories/admin_repository.dart';
 import 'package:hotel_flutter/data/repositories/booking_repository.dart';
 import 'package:hotel_flutter/data/repositories/favorite_repository.dart';
 import 'package:hotel_flutter/data/repositories/hotel_repository.dart';
+import 'package:hotel_flutter/data/repositories/rating_repository.dart';
 import 'package:hotel_flutter/data/repositories/restaurant_repository.dart';
 import 'package:hotel_flutter/logic/bloc/admin/admin_bloc.dart';
 import 'package:hotel_flutter/logic/bloc/auth/auth_bloc.dart';
 import 'package:hotel_flutter/logic/bloc/booking/booking_bloc.dart';
 import 'package:hotel_flutter/logic/bloc/hotel/hotel_bloc.dart';
+import 'package:hotel_flutter/logic/bloc/rating/rating_bloc.dart';
 import 'package:hotel_flutter/logic/bloc/restaurant/restaurant_bloc.dart';
 import 'package:hotel_flutter/presentation/screens/homeScreens/splash_screen.dart';
 import 'package:hotel_flutter/router/app_router.dart';
@@ -38,21 +41,25 @@ void main() async {
 }
 
 class MyApp extends StatelessWidget {
-  final AuthRepository authRepository; // Add AuthRepository as a parameter
+  final AuthRepository authRepository;
   final BookingBloc bookingBloc;
 
-  MyApp(
-      {super.key, required this.authRepository}) // Accept it in the constructor
+  MyApp({super.key, required this.authRepository})
       : bookingBloc = BookingBloc(BookingRepository(BookingDataProvider()));
 
   @override
   Widget build(BuildContext context) {
     return MultiRepositoryProvider(
       providers: [
-        RepositoryProvider.value(value: authRepository), // Provide it here
+        RepositoryProvider.value(value: authRepository),
         RepositoryProvider(
-            create: (context) =>
-                AdminRepository(adminDataProvider: AdminDataProvider())),
+          create: (context) =>
+              RatingRepository(ratingDataProvider: RatingDataProvider()),
+        ),
+        RepositoryProvider(
+          create: (context) =>
+              AdminRepository(adminDataProvider: AdminDataProvider()),
+        ),
         RepositoryProvider(
             create: (context) => HotelRepository(HotelDataProvider())),
         RepositoryProvider(
@@ -66,18 +73,31 @@ class MyApp extends StatelessWidget {
       child: MultiBlocProvider(
         providers: [
           BlocProvider(
-              create: (context) => AdminBloc(
-                  adminRepository:
-                      AdminRepository(adminDataProvider: AdminDataProvider()))),
+            create: (context) => RatingBloc(
+              ratingRepository:
+                  RepositoryProvider.of<RatingRepository>(context),
+            ),
+          ),
           BlocProvider(
-              create: (context) =>
-                  AuthBloc(RepositoryProvider.of<AuthRepository>(context))),
+            create: (context) => AdminBloc(
+              adminRepository: RepositoryProvider.of<AdminRepository>(context),
+            ),
+          ),
           BlocProvider(
-              create: (context) =>
-                  HotelBloc(RepositoryProvider.of<HotelRepository>(context))),
+            create: (context) => AuthBloc(
+              RepositoryProvider.of<AuthRepository>(context),
+            ),
+          ),
           BlocProvider(
-              create: (context) => RestaurantBloc(
-                  RepositoryProvider.of<RestaurantRepository>(context))),
+            create: (context) => HotelBloc(
+              RepositoryProvider.of<HotelRepository>(context),
+            ),
+          ),
+          BlocProvider(
+            create: (context) => RestaurantBloc(
+              RepositoryProvider.of<RestaurantRepository>(context),
+            ),
+          ),
           BlocProvider.value(value: bookingBloc),
         ],
         child: MaterialApp(
@@ -90,89 +110,89 @@ class MyApp extends StatelessWidget {
       ),
     );
   }
+}
 
-  ThemeData _buildAppTheme(BuildContext context) {
-    return ThemeData(
-      primaryColor: Colors.white,
-      colorScheme: ColorScheme.fromSeed(
-        seedColor: const Color.fromARGB(255, 255, 255, 255),
-      ),
-      useMaterial3: true,
-      listTileTheme: const ListTileThemeData(
-        textColor: Colors.white,
-        iconColor: Colors.white,
-      ),
-      drawerTheme: const DrawerThemeData(
-        backgroundColor: Color.fromARGB(255, 29, 53, 115),
-      ),
-      elevatedButtonTheme: ElevatedButtonThemeData(
-        style: ElevatedButton.styleFrom(
-          backgroundColor: Colors.black,
-          foregroundColor: Colors.white,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(8.0),
-          ),
+ThemeData _buildAppTheme(BuildContext context) {
+  return ThemeData(
+    primaryColor: Colors.white,
+    colorScheme: ColorScheme.fromSeed(
+      seedColor: const Color.fromARGB(255, 255, 255, 255),
+    ),
+    useMaterial3: true,
+    listTileTheme: const ListTileThemeData(
+      textColor: Colors.white,
+      iconColor: Colors.white,
+    ),
+    drawerTheme: const DrawerThemeData(
+      backgroundColor: Color.fromARGB(255, 29, 53, 115),
+    ),
+    elevatedButtonTheme: ElevatedButtonThemeData(
+      style: ElevatedButton.styleFrom(
+        backgroundColor: Colors.black,
+        foregroundColor: Colors.white,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(8.0),
         ),
       ),
-      scaffoldBackgroundColor: Colors.white,
-      appBarTheme: const AppBarTheme(
-        systemOverlayStyle: SystemUiOverlayStyle(
-          statusBarColor: Colors.transparent,
-          statusBarIconBrightness: Brightness.dark,
-        ),
-        backgroundColor: Colors.white,
+    ),
+    scaffoldBackgroundColor: Colors.white,
+    appBarTheme: const AppBarTheme(
+      systemOverlayStyle: SystemUiOverlayStyle(
+        statusBarColor: Colors.transparent,
+        statusBarIconBrightness: Brightness.dark,
       ),
-      textTheme: _buildHelveticaTextTheme(),
-    );
-  }
+      backgroundColor: Colors.white,
+    ),
+    textTheme: _buildHelveticaTextTheme(),
+  );
+}
 
-  TextTheme _buildHelveticaTextTheme() {
-    return const TextTheme(
-      displayLarge: TextStyle(
-        fontFamily: 'HelveticaNeue',
-        fontSize: 32,
-        fontWeight: FontWeight.bold,
-      ),
-      displayMedium: TextStyle(
-        fontFamily: 'HelveticaNeue',
-        fontSize: 24,
-        fontWeight: FontWeight.w600,
-      ),
-      displaySmall: TextStyle(
-        fontFamily: 'HelveticaNeue',
-        fontSize: 20,
-        fontWeight: FontWeight.w500,
-      ),
-      bodyLarge: TextStyle(
-        fontFamily: 'HelveticaNeue',
-        fontSize: 18,
-        fontWeight: FontWeight.normal,
-      ),
-      bodyMedium: TextStyle(
-        fontFamily: 'HelveticaNeue',
-        fontSize: 16,
-        fontWeight: FontWeight.normal,
-      ),
-      bodySmall: TextStyle(
-        fontFamily: 'HelveticaNeue',
-        fontSize: 14,
-        fontWeight: FontWeight.normal,
-      ),
-      labelLarge: TextStyle(
-        fontFamily: 'HelveticaNeue',
-        fontSize: 16,
-        fontWeight: FontWeight.bold,
-      ),
-      labelMedium: TextStyle(
-        fontFamily: 'HelveticaNeue',
-        fontSize: 14,
-        fontWeight: FontWeight.bold,
-      ),
-      labelSmall: TextStyle(
-        fontFamily: 'HelveticaNeue',
-        fontSize: 12,
-        fontWeight: FontWeight.bold,
-      ),
-    );
-  }
+TextTheme _buildHelveticaTextTheme() {
+  return const TextTheme(
+    displayLarge: TextStyle(
+      fontFamily: 'HelveticaNeue',
+      fontSize: 32,
+      fontWeight: FontWeight.bold,
+    ),
+    displayMedium: TextStyle(
+      fontFamily: 'HelveticaNeue',
+      fontSize: 24,
+      fontWeight: FontWeight.w600,
+    ),
+    displaySmall: TextStyle(
+      fontFamily: 'HelveticaNeue',
+      fontSize: 20,
+      fontWeight: FontWeight.w500,
+    ),
+    bodyLarge: TextStyle(
+      fontFamily: 'HelveticaNeue',
+      fontSize: 18,
+      fontWeight: FontWeight.normal,
+    ),
+    bodyMedium: TextStyle(
+      fontFamily: 'HelveticaNeue',
+      fontSize: 16,
+      fontWeight: FontWeight.normal,
+    ),
+    bodySmall: TextStyle(
+      fontFamily: 'HelveticaNeue',
+      fontSize: 14,
+      fontWeight: FontWeight.normal,
+    ),
+    labelLarge: TextStyle(
+      fontFamily: 'HelveticaNeue',
+      fontSize: 16,
+      fontWeight: FontWeight.bold,
+    ),
+    labelMedium: TextStyle(
+      fontFamily: 'HelveticaNeue',
+      fontSize: 14,
+      fontWeight: FontWeight.bold,
+    ),
+    labelSmall: TextStyle(
+      fontFamily: 'HelveticaNeue',
+      fontSize: 12,
+      fontWeight: FontWeight.bold,
+    ),
+  );
 }

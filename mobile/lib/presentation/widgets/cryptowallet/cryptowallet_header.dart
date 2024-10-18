@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
+import 'crypto_navigation.dart'; // Import the CryptoNavigation widget
 
 class CryptoWalletHeader extends StatelessWidget {
-  final VoidCallback
-      onWalletUpdated; // This callback will trigger the parent’s connectWallet() method
+  final VoidCallback onWalletUpdated;
   final String walletAddress;
   final String balance;
   final bool isLoading;
@@ -12,7 +12,7 @@ class CryptoWalletHeader extends StatelessWidget {
     required this.onWalletUpdated,
     required this.walletAddress,
     required this.balance,
-    this.isLoading = false, // Control loading state for the button
+    this.isLoading = false,
   });
 
   @override
@@ -93,6 +93,9 @@ class CryptoWalletHeader extends StatelessWidget {
                   const Spacer(),
                 ],
               ),
+              const SizedBox(height: 20.0),
+              // CryptoNavigation Widget Added Below the Address Section
+              const CryptoNavigation(),
             ],
           ),
           Positioned(
