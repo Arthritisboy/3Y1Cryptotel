@@ -73,6 +73,20 @@ class _HotelFormScreenState extends State<HotelFormScreen> {
         );
         return;
       }
+      // Print all field values to the console
+      print('Hotel Name: ${_nameController.text.trim()}');
+      print('Location: ${_locationController.text.trim()}');
+      print('Opening Hours: ${_openingHoursController.text.trim()}');
+      print('Wallet Address: ${_walletAddressController.text.trim()}');
+      print('Manager Email: ${_managerEmailController.text.trim()}');
+      print('Manager First Name: ${_managerFirstNameController.text.trim()}');
+      print('Manager Last Name: ${_managerLastNameController.text.trim()}');
+      print('Manager Password: ${_managerPasswordController.text.trim()}');
+      print('Confirm Password: ${_confirmPasswordController.text.trim()}');
+      print(
+          'Manager Phone Number: ${_managerPhoneNumberController.text.trim()}');
+      print('Manager Gender: $_selectedGender');
+      print('Selected Image: ${_selectedImage?.path}');
 
       final adminModel = AdminModel(
         name: _nameController.text.trim(),
@@ -83,6 +97,7 @@ class _HotelFormScreenState extends State<HotelFormScreen> {
         managerFirstName: _managerFirstNameController.text.trim(),
         managerLastName: _managerLastNameController.text.trim(),
         managerPassword: _managerPasswordController.text.trim(),
+        managerConfirmPassword: _confirmPasswordController.text.trim(),
         managerPhoneNumber: _managerPhoneNumberController.text.trim(),
         managerGender: _selectedGender,
         image: _selectedImage!,

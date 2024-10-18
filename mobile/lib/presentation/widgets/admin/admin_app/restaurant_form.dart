@@ -1,6 +1,6 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
-import 'dart:io';
 
 class RestaurantFormScreen extends StatefulWidget {
   const RestaurantFormScreen({super.key});
@@ -11,24 +11,83 @@ class RestaurantFormScreen extends StatefulWidget {
 
 class _RestaurantFormScreenState extends State<RestaurantFormScreen> {
   final _formKey = GlobalKey<FormState>();
+  final ImagePicker _picker = ImagePicker();
 
+  // Controllers
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _locationController = TextEditingController();
   final TextEditingController _openingHoursController = TextEditingController();
   final TextEditingController _priceController = TextEditingController();
   final TextEditingController _capacityController = TextEditingController();
+  final TextEditingController _managerPasswordController =
+      TextEditingController();
+  final TextEditingController _confirmPasswordController =
+      TextEditingController();
 
-  bool _availability = false; // For storing availability status
-  File? _selectedImage; // For storing the selected image
+  File? _selectedImage;
+  bool _isLoading = false;
+  String _selectedGender = 'male'; // Default gender value
 
-  final ImagePicker _picker = ImagePicker();
-
+  // Pick Image from Gallery
   Future<void> _pickImage() async {
     final pickedFile = await _picker.pickImage(source: ImageSource.gallery);
-
     if (pickedFile != null) {
       setState(() {
         _selectedImage = File(pickedFile.path);
+      });
+    }
+  }
+
+  // Validate Password and Confirm Password
+  String? _validatePassword(String? value) {
+    if (value == null || value.isEmpty) {
+      return 'Please enter password';
+    }
+    return null;
+  }
+
+  String? _validateConfirmPassword(String? value) {
+    if (value != _managerPasswordController.text) {
+      return 'Passwords do not match';
+    }
+    return null;
+  }
+
+  // Create Restaurant - Logic Placeholder
+  void _createRestaurant() {
+    if (_formKey.currentState?.validate() ?? false) {
+      if (_selectedImage == null) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Please upload an image')),
+        );
+        return;
+      }
+
+      // Print all fields to console
+      print('Restaurant Name: ${_nameController.text.trim()}');
+      print('Location: ${_locationController.text.trim()}');
+      print('Opening Hours: ${_openingHoursController.text.trim()}');
+      print('Price: ${_priceController.text.trim()}');
+      print('Capacity: ${_capacityController.text.trim()}');
+      print('Manager Password: ${_managerPasswordController.text.trim()}');
+      print('Confirm Password: ${_confirmPasswordController.text.trim()}');
+      print('Gender: $_selectedGender');
+      print('Selected Image: ${_selectedImage?.path}');
+
+      // Show loading state
+      setState(() {
+        _isLoading = true;
+      });
+
+      // Perform actual API call here
+      // For now, simulate a successful operation
+      Future.delayed(const Duration(seconds: 2), () {
+        setState(() {
+          _isLoading = false;
+        });
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Restaurant created successfully!')),
+        );
       });
     }
   }
@@ -44,148 +103,169 @@ class _RestaurantFormScreenState extends State<RestaurantFormScreen> {
             child: ListView(
               padding: EdgeInsets.zero, // Remove extra padding
               children: [
-                // Header with back button and title
-                Row(
-                  children: [
-                    IconButton(
-                      icon: const Icon(Icons.arrow_back),
-                      onPressed: () {
-                        Navigator.pop(context); // Go back to previous screen
-                      },
-                    ),
-                    const Text(
-                      'Create Restaurant',
-                      style: TextStyle(
-                        fontSize: 24,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ],
-                ),
+                _buildHeader(),
                 const SizedBox(height: 20),
 
                 // Restaurant Name
-                TextFormField(
-                  controller: _nameController,
-                  decoration: const InputDecoration(
-                    labelText: 'Restaurant Name',
-                    border: OutlineInputBorder(),
-                  ),
-                ),
+                _buildTextField('Restaurant Name', _nameController),
                 const SizedBox(height: 20),
 
                 // Location
-                TextFormField(
-                  controller: _locationController,
-                  decoration: const InputDecoration(
-                    labelText: 'Location',
-                    border: OutlineInputBorder(),
-                  ),
-                ),
+                _buildTextField('Location', _locationController),
                 const SizedBox(height: 20),
 
                 // Opening Hours
-                TextFormField(
-                  controller: _openingHoursController,
-                  decoration: const InputDecoration(
-                    labelText: 'Opening Hours',
-                    border: OutlineInputBorder(),
-                  ),
-                ),
+                _buildTextField('Opening Hours', _openingHoursController),
                 const SizedBox(height: 20),
 
                 // Price
-                TextFormField(
-                  controller: _priceController,
-                  decoration: const InputDecoration(
-                    labelText: 'Price per Meal',
-                    border: OutlineInputBorder(),
-                  ),
-                  keyboardType: TextInputType.number,
-                ),
+                _buildTextField('Price per Meal', _priceController,
+                    keyboardType: TextInputType.number),
                 const SizedBox(height: 20),
 
                 // Capacity
-                TextFormField(
-                  controller: _capacityController,
-                  decoration: const InputDecoration(
-                    labelText: 'Capacity',
-                    border: OutlineInputBorder(),
-                  ),
-                  keyboardType: TextInputType.number,
-                ),
+                _buildTextField('Capacity', _capacityController,
+                    keyboardType: TextInputType.number),
                 const SizedBox(height: 20),
 
-                // Availability Switch
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    const Text(
-                      'Availability',
-                      style: TextStyle(fontSize: 16),
-                    ),
-                    Switch(
-                      value: _availability,
-                      onChanged: (bool value) {
-                        setState(() {
-                          _availability = value;
-                        });
-                      },
-                    ),
-                  ],
-                ),
+                // Manager Password
+                _buildPasswordField(
+                    'Manager Password', _managerPasswordController),
                 const SizedBox(height: 20),
 
-                // Image Upload
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const Text('Upload Restaurant Image',
-                        style: TextStyle(fontSize: 16)),
-                    const SizedBox(height: 10),
-                    _selectedImage != null
-                        ? Image.file(
-                            _selectedImage!,
-                            height: 150,
-                            width: double.infinity,
-                            fit: BoxFit.cover,
-                          )
-                        : Container(
-                            height: 150,
-                            width: double.infinity,
-                            color: Colors.grey[200],
-                            child: const Icon(Icons.image,
-                                size: 100, color: Colors.grey),
-                          ),
-                    const SizedBox(height: 10),
-                    ElevatedButton(
-                      onPressed: _pickImage,
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor:
-                            const Color(0xFF1C3473), // Set button color
-                      ),
-                      child: const Text('Pick Image'),
-                    ),
-                  ],
-                ),
+                // Confirm Password
+                _buildPasswordField(
+                    'Confirm Password', _confirmPasswordController,
+                    validator: _validateConfirmPassword),
                 const SizedBox(height: 20),
 
-                // UI-only Submit Button
+                // Gender Selector
+                _buildGenderSelector(),
+                const SizedBox(height: 20),
+
+                // Image Upload Section
+                _buildImagePicker(),
+                const SizedBox(height: 30),
+
+                // Submit Button
                 ElevatedButton(
-                  onPressed: () {
-                    // No functionality, UI only
-                  },
+                  onPressed: _isLoading ? null : _createRestaurant,
                   style: ElevatedButton.styleFrom(
-                    backgroundColor:
-                        const Color(0xFF1C3473), // Set button color
+                    backgroundColor: const Color(0xFF1C3473),
                   ),
-                  child: const Text('Create Restaurant'),
+                  child: _isLoading
+                      ? const SizedBox(
+                          width: 20,
+                          height: 20,
+                          child: CircularProgressIndicator(
+                            color: Colors.white,
+                            strokeWidth: 2.0,
+                          ),
+                        )
+                      : const Text('Create Restaurant'),
                 ),
               ],
             ),
           ),
         ),
       ),
+    );
+  }
+
+  // Header
+  Widget _buildHeader() {
+    return Row(
+      children: [
+        IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () => Navigator.pop(context),
+        ),
+        const Text(
+          'Create Restaurant',
+          style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+        ),
+      ],
+    );
+  }
+
+  // Text Field
+  Widget _buildTextField(String label, TextEditingController controller,
+      {TextInputType keyboardType = TextInputType.text}) {
+    return TextFormField(
+      controller: controller,
+      decoration: InputDecoration(
+        labelText: label,
+        border: const OutlineInputBorder(),
+      ),
+      keyboardType: keyboardType,
+      validator: (value) =>
+          value == null || value.isEmpty ? 'Please enter $label' : null,
+    );
+  }
+
+  // Password Field
+  Widget _buildPasswordField(String label, TextEditingController controller,
+      {String? Function(String?)? validator}) {
+    return TextFormField(
+      controller: controller,
+      decoration: InputDecoration(
+        labelText: label,
+        border: const OutlineInputBorder(),
+      ),
+      obscureText: true,
+      validator: validator ?? _validatePassword,
+    );
+  }
+
+  // Image Picker
+  Widget _buildImagePicker() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const Text('Upload Restaurant Image', style: TextStyle(fontSize: 16)),
+        const SizedBox(height: 10),
+        _selectedImage != null
+            ? Image.file(
+                _selectedImage!,
+                height: 150,
+                width: double.infinity,
+                fit: BoxFit.cover,
+              )
+            : Container(
+                height: 150,
+                width: double.infinity,
+                color: Colors.grey[200],
+                child: const Icon(Icons.image, size: 100, color: Colors.grey),
+              ),
+        const SizedBox(height: 10),
+        ElevatedButton(
+          onPressed: _pickImage,
+          style: ElevatedButton.styleFrom(
+            backgroundColor: const Color(0xFF1C3473),
+          ),
+          child: const Text('Pick Image'),
+        ),
+      ],
+    );
+  }
+
+  // Gender Selector
+  Widget _buildGenderSelector() {
+    return Row(
+      children: [
+        const Text('Gender: ', style: TextStyle(fontSize: 16)),
+        Expanded(
+          child: DropdownButtonFormField<String>(
+            value: _selectedGender,
+            items: const [
+              DropdownMenuItem(value: 'male', child: Text('Male')),
+              DropdownMenuItem(value: 'female', child: Text('Female')),
+              DropdownMenuItem(value: 'other', child: Text('Other')),
+            ],
+            onChanged: (value) => setState(() => _selectedGender = value!),
+          ),
+        ),
+      ],
     );
   }
 }

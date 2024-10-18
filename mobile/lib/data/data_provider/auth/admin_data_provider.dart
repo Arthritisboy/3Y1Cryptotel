@@ -32,7 +32,6 @@ class AdminDataProvider {
     };
   }
 
-  // Create Hotel with Manager Registration and Image Upload
   Future<Map<String, dynamic>> createHotel({
     required String name,
     required String location,
@@ -42,9 +41,12 @@ class AdminDataProvider {
     required String managerFirstName,
     required String managerLastName,
     required String managerPassword,
+    required String managerConfirmPassword,
     required String managerPhoneNumber,
     required String managerGender,
     required File hotelImage,
+    int? capacity, // Optional capacity field
+    int? price, // Optional price field
   }) async {
     try {
       final String? token = await _getToken();
@@ -65,22 +67,30 @@ class AdminDataProvider {
         ..fields['managerFirstName'] = managerFirstName
         ..fields['managerLastName'] = managerLastName
         ..fields['managerPassword'] = managerPassword
+        ..fields['managerConfirmPassword'] = managerConfirmPassword
         ..fields['managerPhoneNumber'] = managerPhoneNumber
         ..fields['managerGender'] = managerGender;
 
-      // Attach the image file to the request
+      // Add optional fields
+      if (capacity != null) {
+        request.fields['capacity'] = capacity.toString();
+      }
+      if (price != null) {
+        request.fields['price'] = price.toString();
+      }
+
+      // Attach the image file
       request.files.add(await http.MultipartFile.fromPath(
         'image',
         hotelImage.path,
       ));
 
-      // Send Request and Handle Response
       final response = await request.send();
       final httpResponse = await http.Response.fromStream(response);
 
       return await _handleResponse(httpResponse);
     } catch (e) {
-      print('Error creating hotel: $e'); // Log the error for debugging
+      print('Error creating hotel: $e');
       rethrow;
     }
   }
@@ -96,8 +106,10 @@ class AdminDataProvider {
     required String managerLastName,
     required String managerPassword,
     required String managerPhoneNumber,
+    required String managerConfirmPassword,
     required String managerGender,
     required int capacity,
+    required int price,
     required File restaurantImage,
   }) async {
     try {
@@ -119,9 +131,11 @@ class AdminDataProvider {
         ..fields['managerFirstName'] = managerFirstName
         ..fields['managerLastName'] = managerLastName
         ..fields['managerPassword'] = managerPassword
+        ..fields['managerConfirmPassword'] = managerConfirmPassword
         ..fields['managerPhoneNumber'] = managerPhoneNumber
         ..fields['managerGender'] = managerGender
-        ..fields['capacity'] = capacity.toString();
+        ..fields['capacity'] = capacity.toString()
+        ..fields['price'] = price.toString();
 
       // Attach the image file to the request
       request.files.add(await http.MultipartFile.fromPath(

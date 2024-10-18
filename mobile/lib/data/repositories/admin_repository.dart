@@ -18,6 +18,7 @@ class AdminRepository {
         managerFirstName: adminModel.managerFirstName,
         managerLastName: adminModel.managerLastName,
         managerPassword: adminModel.managerPassword,
+        managerConfirmPassword: adminModel.managerConfirmPassword,
         managerPhoneNumber: adminModel.managerPhoneNumber,
         managerGender: adminModel.managerGender,
         hotelImage: adminModel.image,
@@ -41,8 +42,10 @@ class AdminRepository {
         managerLastName: adminModel.managerLastName,
         managerPassword: adminModel.managerPassword,
         managerPhoneNumber: adminModel.managerPhoneNumber,
+        managerConfirmPassword: adminModel.managerConfirmPassword,
         managerGender: adminModel.managerGender,
         capacity: adminModel.capacity ?? 0,
+        price: adminModel.price ?? 0,
         restaurantImage: adminModel.image,
       );
     } catch (e) {

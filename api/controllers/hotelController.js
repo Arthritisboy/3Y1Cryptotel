@@ -103,10 +103,10 @@ exports.createHotel = catchAsync(async (req, res, next) => {
       confirmPassword: managerConfirmPassword,
       phoneNumber: managerPhoneNumber,
       gender: managerGender,
-      roles: 'manager', // Assign manager role
-      verified: true, // Automatically verify manager
+      roles: 'manager',
+      verified: true,
       hasCompletedOnboarding: true,
-      handleId: newHotel._id, // Assign the hotel ID to manager's handleId
+      handleId: newHotel._id,
     };
 
     const newManager = await User.create(managerData);

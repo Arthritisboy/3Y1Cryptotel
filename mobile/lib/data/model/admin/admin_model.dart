@@ -10,10 +10,11 @@ class AdminModel {
   final String managerPhoneNumber;
   final String managerGender;
   final String managerPassword;
+  final String managerConfirmPassword;
   final String walletAddress;
   final File image;
   final int? capacity;
-  final int? price;
+  final int? price; // Optional price field
 
   AdminModel({
     required this.name,
@@ -24,10 +25,11 @@ class AdminModel {
     required this.managerFirstName,
     required this.managerLastName,
     required this.managerPassword,
+    required this.managerConfirmPassword,
     required this.managerPhoneNumber,
     required this.managerGender,
     this.capacity,
-    this.price, // New price field initialization
+    this.price,
     required this.image,
   });
 
@@ -41,9 +43,10 @@ class AdminModel {
       'managerEmail': managerEmail,
       'managerFirstName': managerFirstName,
       'managerLastName': managerLastName,
-      'managerPassword': managerPassword,
       'managerPhoneNumber': managerPhoneNumber,
       'managerGender': managerGender,
+      'managerPassword': managerPassword,
+      'managerConfirmPassword': managerConfirmPassword,
     };
 
     // Add optional capacity if available
