@@ -27,13 +27,13 @@ class _AdminModalState extends State<AdminModal> {
 
   // Helper function to format the date
   String formatDate(DateTime date) {
-    return DateFormat('MMMM d, y').format(date); // E.g., October 13, 2024
+    return DateFormat('MMMM d, y').format(date);
   }
 
   // Helper function to format the time
   String formatTime(DateTime? time) {
     if (time == null) return 'N/A';
-    return DateFormat.jm().format(time); // E.g., 2:30 PM
+    return DateFormat.jm().format(time);
   }
 
   // Function to update the booking status and dispatch the event
@@ -53,8 +53,10 @@ class _AdminModalState extends State<AdminModal> {
           ),
         );
 
-    // Wait for the state to update before closing the dialog
-    context.read<BookingBloc>().stream.listen((state) {
+    // Wait for the state to update
+    if (mounted) {
+      final state = await context.read<BookingBloc>().stream.firstWhere(
+          (state) => state is BookingSuccess || state is BookingFailure);
       if (state is BookingSuccess) {
         Navigator.of(context).pop(); // Close the dialog
         ScaffoldMessenger.of(context).showSnackBar(
@@ -68,7 +70,7 @@ class _AdminModalState extends State<AdminModal> {
           SnackBar(content: Text('Failed to update booking: ${state.error}')),
         );
       }
-    });
+    }
   }
 
   @override

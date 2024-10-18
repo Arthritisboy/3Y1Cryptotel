@@ -41,9 +41,7 @@ class UpdateBooking extends BookingEvent {
 
 class DeleteBooking extends BookingEvent {
   final String bookingId;
+  final String userId; // Add userId here
 
-  const DeleteBooking(this.bookingId);
-
-  @override
-  List<Object> get props => [bookingId];
+  DeleteBooking(this.bookingId, this.userId);
 }

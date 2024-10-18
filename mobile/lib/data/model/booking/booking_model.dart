@@ -106,6 +106,11 @@ class BookingModel {
     );
   }
 
+  @override
+  String toString() {
+    return 'BookingModel{id: $id, bookingType: $bookingType, restaurantName: $restaurantName, hotelName: $hotelName, roomName: $roomName}';
+  }
+
   factory BookingModel.fromJson(Map<String, dynamic> json) {
     return BookingModel(
       id: json['_id'] ?? '',

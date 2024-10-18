@@ -9,6 +9,7 @@ import 'package:hotel_flutter/presentation/widgets/admin/admin_user/createRoom.d
 import '../../widgets/admin/admin_header.dart';
 import '../../widgets/admin/admin_modal.dart';
 import 'package:intl/intl.dart';
+import 'dart:async';
 
 class AdminScreen extends StatefulWidget {
   const AdminScreen({super.key});
@@ -24,47 +25,89 @@ class _AdminScreenState extends State<AdminScreen> {
   @override
   void initState() {
     super.initState();
-    _fetchBookings();
+    _fetchBookings(); // Initial fetch on load
   }
 
   Future<void> _fetchBookings() async {
+    if (!mounted) return;
+
     try {
       handleId = await _secureStorage.read(key: 'handleId');
       if (handleId != null) {
+        print('Fetching bookings for userId: $handleId');
         context.read<BookingBloc>().add(FetchBookings(userId: handleId!));
+      } else {
+        print('handleId is null');
       }
-    } catch (e) {}
+    } catch (e) {
+      print('Error fetching handleId: $e');
+    }
+  }
+
+  void _deleteBooking(String bookingId) {
+    if (handleId != null) {
+      context.read<BookingBloc>().add(DeleteBooking(bookingId, handleId!));
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    return DefaultTabController(
-      length: 4,
-      child: Scaffold(
-        body: Column(
-          children: [
-            AdminHeader(
-              name: 'Manager',
-            ),
-            const TabBar(
-              tabs: [
-                Tab(text: 'Rooms', icon: Icon(Icons.hotel)),
-                Tab(text: 'Pending', icon: Icon(Icons.pending_actions)),
-                Tab(text: 'Accepted', icon: Icon(Icons.check_circle)),
-                Tab(text: 'Rejected', icon: Icon(Icons.cancel)),
-              ],
-            ),
-            Expanded(
-              child: TabBarView(
+    return BlocListener<BookingBloc, BookingState>(
+      listener: (context, state) {
+        if (state is BookingSuccess) {
+          print('Successfully fetched bookings: ${state.bookings}');
+        } else if (state is BookingFailure) {
+          print('Error fetching bookings: ${state.error}');
+        }
+      },
+      child: DefaultTabController(
+        length: 4,
+        child: Scaffold(
+          body: Stack(
+            children: [
+              Column(
                 children: [
-                  _buildRoomsTab(context),
-                  _buildFilteredBookingList(context, 'pending'),
-                  _buildFilteredBookingList(context, 'accepted'),
-                  _buildFilteredBookingList(context, 'rejected'),
+                  AdminHeader(name: 'Manager'),
+                  const TabBar(
+                    tabs: [
+                      Tab(text: 'Rooms', icon: Icon(Icons.hotel)),
+                      Tab(text: 'Pending', icon: Icon(Icons.pending_actions)),
+                      Tab(text: 'Accepted', icon: Icon(Icons.check_circle)),
+                      Tab(text: 'Rejected', icon: Icon(Icons.cancel)),
+                    ],
+                  ),
+                  Expanded(
+                    child: TabBarView(
+                      children: [
+                        _buildRoomsTab(context),
+                        _buildFilteredBookingList(context, 'pending'),
+                        _buildFilteredBookingList(context, 'accepted'),
+                        _buildFilteredBookingList(context, 'rejected'),
+                      ],
+                    ),
+                  ),
                 ],
               ),
-            ),
-          ],
+              Positioned(
+                top: 250, // Adjust this value based on your layout
+                right: 16, // Adjust this value for desired spacing
+                child: BlocBuilder<BookingBloc, BookingState>(
+                  builder: (context, state) {
+                    return FloatingActionButton(
+                      onPressed: _fetchBookings, // Refresh button action
+                      backgroundColor: const Color(0xFF1C3473),
+                      child: state is BookingLoading
+                          ? const CircularProgressIndicator(
+                              valueColor: AlwaysStoppedAnimation<Color>(
+                                  Color.fromARGB(255, 82, 27, 27)),
+                            )
+                          : const Icon(Icons.refresh, color: Colors.white),
+                    );
+                  },
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -90,17 +133,19 @@ class _AdminScreenState extends State<AdminScreen> {
   }
 
   Widget _buildFilteredBookingList(BuildContext context, String status) {
-    return BlocSelector<BookingBloc, BookingState, List<BookingModel>>(
-      selector: (state) {
-        if (state is BookingSuccess) {
-          return state.bookings
+    return BlocBuilder<BookingBloc, BookingState>(
+      builder: (context, state) {
+        if (state is BookingLoading) {
+          return const Center(child: CircularProgressIndicator());
+        } else if (state is BookingSuccess) {
+          final bookings = state.bookings
               .where((booking) => booking.status?.toLowerCase() == status)
               .toList();
+          return _buildBookingList(bookings);
+        } else if (state is BookingFailure) {
+          return Center(child: Text('Error: ${state.error}'));
         }
-        return [];
-      },
-      builder: (context, bookings) {
-        return _buildBookingList(bookings);
+        return const Center(child: Text('Unexpected state.'));
       },
     );
   }
@@ -149,6 +194,10 @@ class _AdminScreenState extends State<AdminScreen> {
                     'Check-in: ${DateFormat.yMMMd().format(booking.checkInDate)}'),
                 Text(
                     'Check-out: ${DateFormat.yMMMd().format(booking.checkOutDate)}'),
+                // IconButton(
+                //   icon: const Icon(Icons.delete, color: Colors.red),
+                //   onPressed: () => _deleteBooking(booking.id!),
+                // ), // Delete button
               ],
             ),
           ),

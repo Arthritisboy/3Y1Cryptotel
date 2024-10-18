@@ -27,6 +27,7 @@ class BookingDataProvider {
     if (response.statusCode == 200) {
       final List<dynamic> bookingsJson =
           jsonDecode(response.body)['data']['bookings'];
+      print('Bookings fetched: $bookingsJson');
       return bookingsJson.map((json) => BookingModel.fromJson(json)).toList();
     } else {
       final errorResponse = json.decode(response.body);
