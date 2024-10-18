@@ -2,10 +2,17 @@ import 'dart:convert';
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:hotel_flutter/data/model/booking/booking_model.dart';
+import 'package:hotel_flutter/data/repositories/booking_repository.dart';
+import 'package:hotel_flutter/logic/bloc/booking/booking_bloc.dart';
+import 'package:hotel_flutter/logic/bloc/booking/booking_event.dart';
+import 'package:hotel_flutter/logic/bloc/booking/booking_state.dart';
 import 'package:hotel_flutter/presentation/widgets/cryptowallet/cryptowallet_header.dart';
 import 'package:hotel_flutter/presentation/widgets/cryptowallet/cryptowallet_transactions.dart';
 import 'package:hotel_flutter/presentation/widgets/cryptowallet/wallet_manager.dart';
 import 'package:reown_appkit/reown_appkit.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 class CryptoWallet extends StatefulWidget {
   const CryptoWallet({super.key});
@@ -15,6 +22,9 @@ class CryptoWallet extends StatefulWidget {
 }
 
 class _CryptoWalletState extends State<CryptoWallet> {
+  final FlutterSecureStorage _storage = const FlutterSecureStorage();
+  String? userId;
+
   String walletAddress = 'No Address';
   String balance = '₱ 0';
   ReownAppKitModal? _appKitModal;
@@ -39,6 +49,7 @@ class _CryptoWalletState extends State<CryptoWallet> {
   @override
   void initState() {
     super.initState();
+    _fetchUserId();
     walletAddress = WalletManager().walletAddress;
     balance = WalletManager().balance;
 
@@ -63,6 +74,13 @@ class _CryptoWalletState extends State<CryptoWallet> {
     ]);
 
     initializeAppKitModal();
+  }
+
+  Future<void> _fetchUserId() async {
+    userId = await _storage.read(key: 'userId');
+    if (userId != null) {
+      BlocProvider.of<BookingBloc>(context).add(FetchBookings(userId: userId!));
+    }
   }
 
   void initializeAppKitModal() async {
@@ -166,7 +184,8 @@ class _CryptoWalletState extends State<CryptoWallet> {
         null; // Assuming this checks if the session exists
   }
 
-  Future<void> sendTransaction(String receiver, String amount) async {
+  Future<void> sendTransaction(
+      String receiver, String amount, BookingModel booking) async {
     if (!isWalletConnected()) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Please connect your wallet first')),
@@ -283,12 +302,25 @@ class _CryptoWalletState extends State<CryptoWallet> {
         ],
       );
       debugPrint('Debug Transaction: Transaction request result: $result');
+
+      final updatedBooking = booking.copyWith(status: 'done');
+
+      // Dispatch the UpdateBooking event using Bloc
+      BlocProvider.of<BookingBloc>(context).add(
+        UpdateBooking(
+          bookingId: booking.id!,
+          booking: updatedBooking,
+          userId: userId!,
+        ),
+      );
       // _appKitModal!.launchConnectedWallet();
       // Handle result
       if (result != null) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Transaction successful!')),
         );
+
+        // // Dispatch the UpdateBooking event using Bloc
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Transaction failed.')),
@@ -309,6 +341,7 @@ class _CryptoWalletState extends State<CryptoWallet> {
       body: SafeArea(
         child: Column(
           children: [
+            // Wallet Header
             CryptoWalletHeader(
               onWalletUpdated: updateWalletInfo,
               walletAddress: WalletManager().walletAddress,
@@ -316,12 +349,34 @@ class _CryptoWalletState extends State<CryptoWallet> {
               isLoading: isLoading,
             ),
             const SizedBox(height: 20),
+
+            // Expanded widget containing BlocBuilder
             Expanded(
-              child: CryptoWalletTransactions(
-                isConnected: WalletManager().isConnected,
-                walletAddress: WalletManager().walletAddress,
-                balance: WalletManager().balance,
-                sendTransaction: sendTransaction, // Pass the method to child
+              child: BlocBuilder<BookingBloc, BookingState>(
+                builder: (context, state) {
+                  if (state is BookingLoading) {
+                    return const Center(child: CircularProgressIndicator());
+                  } else if (state is BookingFailure) {
+                    return Center(child: Text('Error: ${state.error}'));
+                  } else if (state is BookingSuccess) {
+                    // Filter the accepted bookings
+                    final acceptedBookings = state.bookings
+                        .where((booking) =>
+                            booking.status?.toLowerCase() == 'accepted')
+                        .toList();
+
+                    // Pass the filtered bookings to the child
+                    return CryptoWalletTransactions(
+                      isConnected: WalletManager().isConnected,
+                      walletAddress: WalletManager().walletAddress,
+                      balance: WalletManager().balance,
+                      sendTransaction:
+                          sendTransaction, // Pass the method to child
+                      acceptedBookings: acceptedBookings,
+                    );
+                  }
+                  return const Center(child: Text('No bookings available.'));
+                },
               ),
             ),
           ],

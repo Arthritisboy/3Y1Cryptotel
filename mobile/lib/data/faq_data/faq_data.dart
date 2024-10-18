@@ -12,22 +12,22 @@ final List<Map<String, String>> faqItems = [
   {
     'question': 'What is your refund policy?',
     'answer':
-        'Refunds are processed within 5-7 business days after your cancellation is confirmed.'
+        'Refunds are not possible through crypto payments. However, you can contact the hotel or restaurant directly to request a refund.'
   },
   {
     'question': 'How does your payment work?',
     'answer':
-        'We accept cryptocurrency payments and ensure that they are processed securely using blockchain technology.'
+        'We accept cryptocurrency payments and ensure they are processed securely using blockchain technology.'
   },
   {
     'question': 'Can I modify or cancel my booking?',
     'answer':
-        'Yes, bookings can be modified or cancelled from your account settings before the reservation date.'
+        'Yes, bookings can be modified or canceled from your account settings before the reservation date.'
   },
   {
     'question': 'Can I get a refund?',
     'answer':
-        'Refunds are available if you cancel before the cancellation deadline mentioned in your booking.'
+        'Refunds are not available directly through the app, but you may contact the hotel or restaurant directly to discuss refund options.'
   },
   {
     'question': 'How do I make a booking through the app?',

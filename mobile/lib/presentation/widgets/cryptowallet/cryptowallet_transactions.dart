@@ -1,18 +1,22 @@
 import 'package:flutter/material.dart';
+import 'package:hotel_flutter/data/model/booking/booking_model.dart';
 import 'package:hotel_flutter/presentation/widgets/cryptowallet/cryptowithtransaction.dart';
 
 class CryptoWalletTransactions extends StatelessWidget {
   final bool isConnected;
   final String walletAddress;
   final String balance;
-  final Future<void> Function(String, String) sendTransaction; 
+  final Future<void> Function(String, String, BookingModel)
+      sendTransaction; // Update function signature
+  final List<BookingModel> acceptedBookings;
 
   const CryptoWalletTransactions({
     super.key,
     required this.isConnected,
     required this.walletAddress,
     required this.balance,
-    required this.sendTransaction, 
+    required this.sendTransaction,
+    required this.acceptedBookings,
   });
 
   @override
@@ -30,7 +34,8 @@ class CryptoWalletTransactions extends StatelessWidget {
         isConnected: isConnected,
         walletAddress: walletAddress,
         balance: balance,
-        sendTransaction: sendTransaction, // Pass the method to child
+        sendTransaction: sendTransaction,
+        acceptedBookings: acceptedBookings,
       ),
     );
   }
