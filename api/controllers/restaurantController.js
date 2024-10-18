@@ -1,4 +1,4 @@
-const User = require('../models/User')
+const User = require('../models/User');
 const Restaurant = require('../models/Restaurant');
 const RestaurantRating = require('../models/RestaurantRating');
 const { uploadEveryImage } = require('../middleware/imageUpload');
@@ -29,98 +29,90 @@ exports.getRestaurant = catchAsync(async (req, res, next) => {
   });
 });
 
+// Create a restaurant with manager registration
 exports.createRestaurant = catchAsync(async (req, res, next) => {
-  const userId = req.params.userId; // Get userId from params
-  console.log('User ID from params:', userId);
-
-  // Ensure userId is provided
-  if (!userId) {
-    return next(new AppError('User ID is required.', 400));
-  }
-
-  const user = await User.findById(userId);
-  if (!user) {
-    return next(new AppError('User not found.', 404));
-  }
-  console.log(user);
-  if (!user.roles === 'admin') {
-    return next(new AppError('User is not an Admin,', 400))
-  }
-  // Check if the user already has a handleId
-  if (user.handleId) {
-    return next(new AppError('User already is already assigned.', 400));
-  }
-
-  // // Optionally, Check if the user is authenticated
-  // if (!req.user) {
-  //     return next(new AppError('User not authenticated', 401));
-  // }
-
-  console.log('Authenticated User:', req.user); // Log the authenticated user
-
-  // Destructure data from request body
   const {
-    tableNumber,
     name,
-    price,
-    capacity,
-    ratingId,
     location,
-    walletAddress,
     openingHours,
+    walletAddress,
+    managerEmail,
+    managerFirstName,
+    managerLastName,
+    managerPassword,
+    managerPhoneNumber,
+    managerGender,
   } = req.body;
+
+  // Ensure required fields are provided
+  if (
+    !name ||
+    !location ||
+    !openingHours ||
+    !managerEmail ||
+    !managerPassword
+  ) {
+    return next(new AppError('Missing required fields.', 400));
+  }
+
+  // Check if an image is provided
+  if (!req.file) {
+    return next(new AppError('Restaurant image is required.', 400));
+  }
 
   let restaurantImage;
 
-  // Handle image upload if a file is provided
-  if (req.file) {
-    try {
-      restaurantImage = await uploadEveryImage(req); // Upload the image
-    } catch (uploadErr) {
-      return res.status(500).json({
-        status: 'error',
-        message: 'Image upload failed',
-        error: uploadErr.message || uploadErr,
-      });
-    }
+  // Handle restaurant image upload
+  try {
+    restaurantImage = await uploadEveryImage(req);
+  } catch (uploadErr) {
+    return res.status(500).json({
+      status: 'error',
+      message: 'Image upload failed',
+      error: uploadErr.message || uploadErr,
+    });
   }
 
-  // Create new restaurant
-  const newRestaurant = await Restaurant.create({
-    tableNumber,
-    restaurantImage: restaurantImage || undefined,
-    name,
-    price,
-    capacity,
-    location,
-    walletAddress,
-    openingHours,
-    ratings: ratingId && ratingId.length ? ratingId : [],
-  });
+  try {
+    // 1. Create the restaurant
+    const newRestaurant = await Restaurant.create({
+      name,
+      location,
+      openingHours,
+      walletAddress,
+      restaurantImage, // Restaurant image is required
+    });
 
-  const updatedUser = await User.findByIdAndUpdate(
-    userId, 
-    { handleId: newRestaurant._id }, 
-    { new: true, runValidators: true }
-  );
+    // 2. Register the manager
+    const managerData = {
+      firstName: managerFirstName,
+      lastName: managerLastName,
+      email: managerEmail,
+      password: managerPassword,
+      phoneNumber: managerPhoneNumber,
+      gender: managerGender,
+      roles: 'manager', // Assign manager role
+      verified: true, // Automatically verify manager
+      hasCompletedOnboarding: true,
+      handleId: newRestaurant._id, // Assign the restaurant ID to manager's handleId
+    };
 
-  if (!updatedUser) {
-    console.log('User not found for handleId update.');
-    return next(new AppError('User not found.', 404));
+    const newManager = await User.create(managerData);
+    console.log('Manager created:', newManager);
+
+    // 3. Send success response with restaurant and manager info
+    res.status(201).json({
+      status: 'success',
+      data: {
+        restaurant: newRestaurant,
+        manager: newManager,
+      },
+    });
+  } catch (err) {
+    console.error('Error creating manager or restaurant:', err);
+    return next(new AppError('Failed to create manager or restaurant.', 500));
   }
-
-  console.log('User handleId updated with new restaurant ID:', newRestaurant._id);
-
-
-  // Respond with the new restaurant data
-  res.status(201).json({
-    status: 'success',
-    data: {
-      restaurant: newRestaurant,
-    },
-  });
 });
-
 
 // Update a restaurant by ID
 exports.updateRestaurant = catchAsync(async (req, res, next) => {
