@@ -1,93 +1,121 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:hotel_flutter/data/model/auth/user_model.dart';
+import 'package:hotel_flutter/logic/bloc/auth/auth_bloc.dart';
+import 'package:hotel_flutter/logic/bloc/auth/auth_event.dart';
+import 'package:hotel_flutter/logic/bloc/auth/auth_state.dart';
 
-class ManagerTab extends StatelessWidget {
+class ManagerTab extends StatefulWidget {
   const ManagerTab({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    final List<Map<String, String>> managers = [
-      {
-        'name': 'John Doe',
-        'role': 'Manager',
-        'handled': 'The Grand Hotel',
-      },
-      {
-        'name': 'Jane Smith',
-        'role': 'Manager',
-        'handled': 'Sunshine Restaurant',
-      },
-      {
-        'name': 'Emily Davis',
-        'role': 'Manager',
-        'handled': 'Oceanview Resort',
-      },
-      {
-        'name': 'Michael Brown',
-        'role': 'Manager',
-        'handled': 'Cityscape Hotel',
-      },
-    ];
+  State<ManagerTab> createState() => _ManagerTabState();
+}
 
+class _ManagerTabState extends State<ManagerTab> {
+  @override
+  void initState() {
+    super.initState();
+    // Use the correct event to fetch only managers
+    BlocProvider.of<AuthBloc>(context).add(FetchAllManagersEvent());
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return Scaffold(
-      body: ListView.builder(
-        padding: const EdgeInsets.all(16),
-        itemCount: managers.length,
-        itemBuilder: (context, index) {
-          final manager = managers[index];
-          return Card(
-            margin: const EdgeInsets.only(bottom: 16),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(12),
-            ),
-            elevation: 3,
-            child: ListTile(
-              leading: CircleAvatar(
-                radius: 30,
-                backgroundColor: Colors.blueGrey[100],
-                child: Text(
-                  manager['name']![0],
+      body: BlocListener<AuthBloc, AuthState>(
+        listener: (context, state) {
+          if (state is AuthError) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text(state.error)),
+            );
+          }
+        },
+        child: BlocBuilder<AuthBloc, AuthState>(
+          builder: (context, state) {
+            if (state is AuthLoading) {
+              return const Center(child: CircularProgressIndicator());
+            } else if (state is UsersFetched) {
+              print('Fetched Managers: ${state.users}'); // Debug print
+
+              if (state.users.isEmpty) {
+                return const Center(child: Text('No managers found.'));
+              }
+
+              return ListView.builder(
+                padding: const EdgeInsets.all(16),
+                itemCount: state.users.length,
+                itemBuilder: (context, index) {
+                  final manager = state.users[index];
+                  return _buildManagerCard(manager);
+                },
+              );
+            } else {
+              return const Center(child: Text('Unexpected state.'));
+            }
+          },
+        ),
+      ),
+    );
+  }
+
+  // Manager Card UI
+  Widget _buildManagerCard(UserModel manager) {
+    return Card(
+      margin: const EdgeInsets.only(bottom: 16),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(12),
+      ),
+      elevation: 3,
+      child: ListTile(
+        leading: CircleAvatar(
+          radius: 30,
+          backgroundColor: Colors.blueGrey[100],
+          backgroundImage: manager.profilePicture != null
+              ? NetworkImage(manager.profilePicture!)
+              : null,
+          child: manager.profilePicture == null
+              ? Text(
+                  manager.firstName?[0] ?? '?',
                   style: const TextStyle(
                     fontSize: 24,
                     fontWeight: FontWeight.bold,
                     color: Colors.black,
                   ),
-                ),
-              ),
-              title: Text(
-                manager['name']!,
-                style: const TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.black,
-                ),
-              ),
-              subtitle: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    manager['role']!,
-                    style: const TextStyle(
-                      color: Colors.black,
-                    ),
-                  ),
-                  Text(
-                    'Handled: ${manager['handled']}',
-                    style: const TextStyle(
-                      color: Colors.black,
-                    ),
-                  ),
-                ],
-              ),
-              onTap: () {
-                _showManagerDialog(context, manager);
-              },
+                )
+              : null,
+        ),
+        title: Text(
+          '${manager.firstName ?? "N/A"} ${manager.lastName ?? ""}',
+          style: const TextStyle(
+            fontSize: 18,
+            fontWeight: FontWeight.bold,
+            color: Colors.black,
+          ),
+        ),
+        subtitle: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              manager.email ?? 'No email provided',
+              style: const TextStyle(color: Colors.black),
             ),
-          );
+            const SizedBox(height: 5),
+            Text(
+              'Phone: ${manager.phoneNumber ?? "N/A"}',
+              style: const TextStyle(color: Colors.black),
+            ),
+          ],
+        ),
+        onTap: () {
+          _showManagerDialog(context, manager);
         },
       ),
     );
   }
-  void _showManagerDialog(BuildContext context, Map<String, String> manager) {
+
+  // Manager Dialog
+  void _showManagerDialog(BuildContext context, UserModel manager) {
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -95,14 +123,17 @@ class ManagerTab extends StatelessWidget {
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(15),
           ),
-          title: Text('Manager: ${manager['name']}'),
+          title: Text(
+              'Manager: ${manager.firstName ?? "N/A"} ${manager.lastName ?? ""}'),
           content: Column(
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text('Role: ${manager['role']}'),
+              Text('Email: ${manager.email ?? "N/A"}'),
               const SizedBox(height: 10),
-              Text('Handled: ${manager['handled']}'),
+              Text('Phone: ${manager.phoneNumber ?? "N/A"}'),
+              const SizedBox(height: 10),
+              Text('Gender: ${manager.gender ?? "N/A"}'),
             ],
           ),
           actions: [
@@ -116,7 +147,7 @@ class ManagerTab extends StatelessWidget {
               onPressed: () {
                 Navigator.of(context).pop();
                 ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text('Revoked ${manager['name']}')),
+                  SnackBar(content: Text('Revoked ${manager.firstName}')),
                 );
               },
               style: ElevatedButton.styleFrom(

@@ -82,3 +82,5 @@ class ChangePasswordEvent extends AuthEvent {
   @override
   List<Object> get props => [oldPassword, newPassword, confirmPassword];
 }
+
+class FetchAllManagersEvent extends AuthEvent {}

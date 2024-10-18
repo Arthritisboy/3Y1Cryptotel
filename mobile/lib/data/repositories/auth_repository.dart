@@ -97,6 +97,28 @@ class AuthRepository {
     }
   }
 
+  //! Fetch all managers
+  Future<List<UserModel>> fetchAllManagers() async {
+    try {
+      // Fetch all users from the data provider
+      final usersData = await dataProvider.fetchAllUsers();
+
+      // Filter only managers
+      final managers = usersData.where((user) {
+        return user.roles?.toLowerCase() == 'manager' &&
+            (user.active == true || user.active == null) &&
+            user.verified == true &&
+            user.hasCompletedOnboarding == true;
+      }).toList();
+
+      print('Filtered managers count: ${managers.length}');
+      return managers;
+    } catch (error) {
+      print('Failed to fetch managers: $error');
+      throw Exception('Failed to fetch managers: $error');
+    }
+  }
+
 //! Fetch all users with filtering conditions
   Future<List<UserModel>> fetchAllUsers() async {
     try {

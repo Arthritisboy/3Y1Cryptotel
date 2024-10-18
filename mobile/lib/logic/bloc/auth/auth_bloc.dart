@@ -69,6 +69,22 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       }
     });
 
+    on<FetchAllManagersEvent>((event, emit) async {
+      emit(AuthLoading()); // Start with loading state
+      try {
+        // Fetch managers from the repository
+        final managers = await authRepository.fetchAllManagers();
+
+        // Emit the state with fetched managers
+        print('Emitting ManagersFetched with ${managers.length} managers');
+        emit(UsersFetched(managers)); // Reusing UsersFetched for managers
+      } catch (e) {
+        // Log error if fetching managers fails
+        print('Failed to fetch managers: ${e.toString()}');
+        emit(AuthError('Failed to fetch managers: ${e.toString()}'));
+      }
+    });
+
     on<GetUserEvent>((event, emit) async {
       emit(AuthLoading()); // Start with loading state
       try {
