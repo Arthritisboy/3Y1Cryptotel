@@ -51,15 +51,6 @@ class AuthSuccess extends AuthState {
   List<Object> get props => [message];
 }
 
-class AuthPasswordChangeSuccess extends AuthState {
-  final String message;
-
-  const AuthPasswordChangeSuccess(this.message);
-
-  @override
-  List<Object> get props => [message];
-}
-
 class UserUpdated extends AuthState {
   final UserModel user;
 
@@ -91,4 +82,24 @@ class AccountDeleted extends AuthState {
 
   @override
   List<Object> get props => [message];
+}
+
+class PasswordChanging extends AuthState {}
+
+class AuthPasswordChangeSuccess extends AuthState {
+  final String message;
+
+  const AuthPasswordChangeSuccess(this.message);
+
+  @override
+  List<Object> get props => [message];
+}
+
+class PasswordChangeFailure extends AuthState {
+  final String error;
+
+  const PasswordChangeFailure(this.error);
+
+  @override
+  List<Object> get props => [error];
 }

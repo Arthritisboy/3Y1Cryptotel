@@ -158,7 +158,7 @@ class _CryptoWithTransactionState extends State<CryptoWithTransaction> {
                       // Conditional message based on booking type
                       Text(booking.bookingType == 'HotelBooking'
                           ? 'Hotel: ${booking.hotelName}'
-                          : 'Restaurant: ${booking.restaurantName}' ),
+                          : 'Restaurant: ${booking.restaurantName}'),
                       Text('Status: ${booking.status}'),
                       Text('Total Price: ${booking.totalPrice}'),
                     ],
