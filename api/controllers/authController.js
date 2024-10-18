@@ -58,8 +58,10 @@ exports.register = catchAsync(async (req, res, next) => {
     gender: req.body.gender,
     phoneNumber: req.body.phoneNumber,
     favoriteId: req.body.roles === 'user' ? null : undefined,
-    roles: req.body.roles || 'user', 
-    profile: profile || 'https://res.cloudinary.com/djuvg4di0/image/upload/v1728833875/burui8vcrcqrvedo39yt.png',
+    roles: req.body.roles || 'user',
+    profile:
+      profile ||
+      'https://res.cloudinary.com/djuvg4di0/image/upload/v1728833875/burui8vcrcqrvedo39yt.png',
     hasCompletedOnboarding: req.body.hasCompletedOnboarding || false,
     handleId: req.body.roles === 'admin' ? null : undefined,
   };
@@ -81,7 +83,8 @@ exports.register = catchAsync(async (req, res, next) => {
     });
     res.status(201).json({
       status: 'success',
-      message: 'User registered! Verification code sent to email.', verificationCode,
+      message: 'User registered! Verification code sent to email.',
+      verificationCode,
     });
   } catch (error) {
     newUser.verificationCode = undefined;
@@ -142,12 +145,10 @@ exports.verifyCode = catchAsync(async (req, res, next) => {
     return next(new AppError('Invalid or expired verification code.', 400));
   }
 
-  // Mark user as verified and clear verificationCode and codeExpires fields
   user.verified = true;
   user.verificationCode = undefined;
   user.codeExpires = undefined;
 
-  // Use { validateBeforeSave: false } to prevent Mongoose from trying to validate confirmPassword
   await user.save({ validateBeforeSave: false });
 
   res.status(200).json({
@@ -374,4 +375,53 @@ exports.logout = async (req, res) => {
       message: 'Internal Server Error',
     });
   }
+
+  // ** Resend Verification Code Controller
+  exports.resendCode = catchAsync(async (req, res, next) => {
+    const { email } = req.body;
+
+    // 1. Check if the user exists
+    const user = await User.findOne({ email });
+
+    if (!user) {
+      return next(new AppError('User not found with this email.', 404));
+    }
+
+    // 2. Check if the user is already verified
+    if (user.verified) {
+      return next(new AppError('User is already verified.', 400));
+    }
+
+    // 3. Generate a new verification code
+    const verificationCode = user.createVerificationCode();
+    await user.save({ validateBeforeSave: false });
+
+    // 4. Send the new verification code to the user's email
+    try {
+      await sendEmail({
+        email: user.email,
+        subject: 'Your New Verification Code',
+        verificationCode: verificationCode,
+        type: 'verification',
+      });
+
+      // 5. Return success response
+      res.status(200).json({
+        status: 'success',
+        message: 'Verification code resent to email!',
+      });
+    } catch (err) {
+      // If there's an error sending the email, clear the verification code and its expiration
+      user.verificationCode = undefined;
+      user.codeExpires = undefined;
+      await user.save({ validateBeforeSave: false });
+
+      return next(
+        new AppError(
+          'Error resending verification code. Try again later.',
+          500,
+        ),
+      );
+    }
+  });
 };

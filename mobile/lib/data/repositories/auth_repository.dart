@@ -57,6 +57,15 @@ class AuthRepository {
         token, newPassword, confirmPassword);
   }
 
+  //! Resend Code
+  Future<void> resendCode(String email) async {
+    try {
+      await dataProvider.resendCode(email);
+    } catch (e) {
+      throw Exception('Failed to resend verification code: ${e.toString()}');
+    }
+  }
+
   //! Get user
   Future<UserModel> getUser(String userId) async {
     try {

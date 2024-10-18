@@ -10,9 +10,11 @@ class AdminAppscreen extends StatelessWidget {
     return Scaffold(
       body: Column(
         children: const [
-          AdminHeader(),
+          AdminHeader(
+            name: 'Admin',
+          ),
           Expanded(
-            child: AdminAppnav(), 
+            child: AdminAppnav(),
           ),
         ],
       ),

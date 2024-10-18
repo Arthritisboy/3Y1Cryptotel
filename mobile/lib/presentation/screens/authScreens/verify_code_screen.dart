@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hotel_flutter/logic/bloc/auth/auth_bloc.dart';
@@ -16,7 +17,10 @@ class VerificationCodeScreen extends StatefulWidget {
 class _VerificationCodeScreenState extends State<VerificationCodeScreen> {
   final _formVerificationKey = GlobalKey<FormState>();
   String? _verificationCode;
-  bool _isLoading = false; // Track loading state
+  bool _isLoading = false;
+  bool _isResendButtonDisabled = true;
+  late Timer _timer;
+  int _remainingSeconds = 600; // 10 minutes = 600 seconds
 
   String _getFriendlyErrorMessage(String error) {
     switch (error) {
@@ -29,6 +33,39 @@ class _VerificationCodeScreenState extends State<VerificationCodeScreen> {
       default:
         return 'Something went wrong. Please try again later.';
     }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _startTimer();
+  }
+
+  @override
+  void dispose() {
+    _timer.cancel(); // Cancel the timer when the screen is disposed
+    super.dispose();
+  }
+
+  void _startTimer() {
+    _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
+      if (_remainingSeconds == 0) {
+        setState(() {
+          _isResendButtonDisabled = false;
+          _timer.cancel();
+        });
+      } else {
+        setState(() {
+          _remainingSeconds--;
+        });
+      }
+    });
+  }
+
+  String _formatTime(int seconds) {
+    final minutes = (seconds ~/ 60).toString().padLeft(2, '0');
+    final remainingSeconds = (seconds % 60).toString().padLeft(2, '0');
+    return '$minutes:$remainingSeconds';
   }
 
   @override
@@ -54,8 +91,7 @@ class _VerificationCodeScreenState extends State<VerificationCodeScreen> {
                   ScaffoldMessenger.of(context).showSnackBar(
                     const SnackBar(
                       content: Text('Verification successful!'),
-                      backgroundColor:
-                          Colors.green, // Set the background color to green
+                      backgroundColor: Colors.green,
                     ),
                   );
                   Navigator.of(context).pushReplacementNamed('/login');
@@ -69,10 +105,6 @@ class _VerificationCodeScreenState extends State<VerificationCodeScreen> {
                       backgroundColor: Colors.red,
                     ),
                   );
-                } else if (state is AuthInitial) {
-                  setState(() {
-                    _isLoading = false;
-                  });
                 }
               },
               child: Column(
@@ -95,7 +127,7 @@ class _VerificationCodeScreenState extends State<VerificationCodeScreen> {
                       'Please enter the verification code sent to your email address.',
                       style: TextStyle(
                         color: Colors.black,
-                        fontSize: screenHeight * 0.018,
+                        fontSize: screenHeight * 0.02,
                         fontWeight: FontWeight.w300,
                       ),
                       textAlign: TextAlign.center,
@@ -116,8 +148,7 @@ class _VerificationCodeScreenState extends State<VerificationCodeScreen> {
                               return null;
                             },
                             onChanged: (value) {
-                              _verificationCode =
-                                  value; // Store the verification code input
+                              _verificationCode = value;
                             },
                             decoration: InputDecoration(
                               label: const Text('Verification Code'),
@@ -146,7 +177,7 @@ class _VerificationCodeScreenState extends State<VerificationCodeScreen> {
                                   const Color.fromARGB(255, 29, 53, 115),
                             ),
                             onPressed: _isLoading
-                                ? null // Disable button while loading
+                                ? null
                                 : () {
                                     if (_formVerificationKey.currentState!
                                         .validate()) {
@@ -175,20 +206,31 @@ class _VerificationCodeScreenState extends State<VerificationCodeScreen> {
                             const Text(
                               'Didn\'t receive the code? ',
                               style: TextStyle(
-                                fontWeight: FontWeight.bold,
-                                color: Colors.black,
+                                color: Color.fromARGB(255, 29, 53, 115),
                               ),
                             ),
                             GestureDetector(
-                              onTap: () {
-                                Navigator.of(context).pushNamed(
-                                    '/resendCode'); // Update with your resend code screen
-                              },
-                              child: const Text(
-                                'Resend Code',
+                              onTap: _isResendButtonDisabled
+                                  ? null
+                                  : () {
+                                      setState(() {
+                                        _isResendButtonDisabled = true;
+                                        _remainingSeconds =
+                                            600; // Restart the timer
+                                      });
+                                      _startTimer();
+                                      context.read<AuthBloc>().add(
+                                          ResendCodeEvent(email: widget.email));
+                                    },
+                              child: Text(
+                                _isResendButtonDisabled
+                                    ? 'Resend Code (${_formatTime(_remainingSeconds)})'
+                                    : 'Resend Code',
                                 style: TextStyle(
                                   fontWeight: FontWeight.bold,
-                                  color: Color.fromARGB(255, 29, 53, 115),
+                                  color: _isResendButtonDisabled
+                                      ? Colors.grey
+                                      : const Color.fromARGB(255, 29, 53, 115),
                                 ),
                               ),
                             ),

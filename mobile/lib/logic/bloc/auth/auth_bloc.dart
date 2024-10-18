@@ -107,6 +107,16 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     //   }
     // });
 
+    on<ResendCodeEvent>((event, emit) async {
+      emit(AuthLoading());
+      try {
+        await authRepository.resendCode(event.email);
+        emit(const AuthSuccess('Verification code resent successfully!'));
+      } catch (e) {
+        emit(AuthError('Failed to resend verification code: ${e.toString()}'));
+      }
+    });
+
     on<UpdateUserEvent>((event, emit) async {
       emit(AuthLoading());
       try {

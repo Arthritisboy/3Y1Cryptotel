@@ -47,7 +47,9 @@ class _AdminNavigationState extends State<AdminNavigation> {
         body: Column(
           children: [
             // Passing the onCreateRoomPressed callback here
-            AdminHeader(),
+            AdminHeader(
+              name: 'Manager',
+            ),
             const TabBar(
               tabs: [
                 Tab(text: 'Rooms', icon: Icon(Icons.hotel)),

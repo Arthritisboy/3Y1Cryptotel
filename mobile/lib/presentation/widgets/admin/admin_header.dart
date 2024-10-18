@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 
 class AdminHeader extends StatelessWidget {
-  const AdminHeader({super.key});
+  final String name;
+  const AdminHeader({super.key, required this.name});
 
   @override
   Widget build(BuildContext context) {
@@ -34,8 +35,8 @@ class AdminHeader extends StatelessWidget {
           ),
           const SizedBox(height: 5.0),
           // Row to hold "Admin Panel" text only
-          const Text(
-            "Admin Panel",
+          Text(
+            "$name Panel",
             style: TextStyle(
               fontSize: 30,
               fontWeight: FontWeight.w400,
