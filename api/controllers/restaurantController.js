@@ -34,6 +34,7 @@ exports.createRestaurant = catchAsync(async (req, res, next) => {
   const {
     name,
     location,
+    price,
     openingHours,
     walletAddress,
     managerEmail,
@@ -82,6 +83,7 @@ exports.createRestaurant = catchAsync(async (req, res, next) => {
       openingHours,
       walletAddress,
       capacity,
+      price,
       restaurantImage, // Restaurant image is required
     });
 
@@ -94,6 +96,7 @@ exports.createRestaurant = catchAsync(async (req, res, next) => {
       phoneNumber: managerPhoneNumber,
       gender: managerGender,
       capacity: capacity,
+      price: price,
       roles: 'manager', // Assign manager role
       verified: true, // Automatically verify manager
       hasCompletedOnboarding: true,
