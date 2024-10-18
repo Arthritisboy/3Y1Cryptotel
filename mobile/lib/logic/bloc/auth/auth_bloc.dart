@@ -172,5 +172,37 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         emit(AuthError('Failed to complete onboarding: ${e.toString()}'));
       }
     });
+
+    on<AddToFavoritesEvent>((event, emit) async {
+      emit(AuthLoading());
+      try {
+        await authRepository.addToFavorites(event.userId, event.type, event.id);
+        emit(FavoritesSuccess('Added to favorites'));
+      } catch (e) {
+        emit(FavoritesError('Failed to add to favorites: ${e.toString()}'));
+      }
+    });
+
+    on<RemoveFromFavoritesEvent>((event, emit) async {
+      emit(AuthLoading());
+      try {
+        await authRepository.removeFromFavorites(
+            event.userId, event.type, event.id);
+        emit(FavoritesSuccess('Removed from favorites'));
+      } catch (e) {
+        emit(
+            FavoritesError('Failed to remove from favorites: ${e.toString()}'));
+      }
+    });
+
+    on<GetFavoritesEvent>((event, emit) async {
+      emit(AuthLoading());
+      try {
+        final favorites = await authRepository.getFavorites(event.userId);
+        emit(FavoritesFetched(favorites));
+      } catch (e) {
+        emit(FavoritesError('Failed to fetch favorites: ${e.toString()}'));
+      }
+    });
   }
 }

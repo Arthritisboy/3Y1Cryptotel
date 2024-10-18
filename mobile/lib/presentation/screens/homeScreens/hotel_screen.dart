@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:hotel_flutter/logic/bloc/auth/auth_bloc.dart';
+import 'package:hotel_flutter/logic/bloc/auth/auth_event.dart';
 import 'package:hotel_flutter/presentation/widgets/hotel/details/hotel_clicked.dart';
 
 class HotelScreen extends StatefulWidget {
@@ -46,7 +49,15 @@ class _HotelScreenState extends State<HotelScreen> {
             icon: const Icon(Icons.favorite_outline),
             color: const Color.fromARGB(255, 52, 46, 46),
             onPressed: () {
-              // Add favorite functionality here
+              // Dispatch the event to add the hotel to favorites
+              final userId = 'your_user_id'; // Replace with the actual user ID
+              final type = 'hotel'; // Specify the type as hotel
+              final hotelId = widget.hotelId; // Get the hotel ID
+
+              // Dispatch the AddToFavoritesEvent
+              context
+                  .read<AuthBloc>()
+                  .add(AddToFavoritesEvent(userId, type, hotelId));
             },
           ),
         ],

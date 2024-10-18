@@ -251,4 +251,42 @@ class AuthDataProvider {
       throw Exception('Failed to complete onboarding: $errorMessage');
     }
   }
+
+  Future<void> addToFavorites(String userId, String type, String id) async {
+    final response = await http.post(
+      Uri.parse('$_baseUrl/favorites/add/$userId'),
+      headers: {'Content-Type': 'application/json'},
+      body: json.encode({'type': type, 'id': id}),
+    );
+
+    if (response.statusCode != 200) {
+      throw Exception('Failed to add to favorites');
+    }
+  }
+
+  Future<void> removeFromFavorites(
+      String userId, String type, String id) async {
+    final response = await http.delete(
+      Uri.parse('$_baseUrl/favorites/remove/$userId'),
+      headers: {'Content-Type': 'application/json'},
+      body: json.encode({'type': type, 'id': id}),
+    );
+
+    if (response.statusCode != 200) {
+      throw Exception('Failed to remove from favorites');
+    }
+  }
+
+  Future<List<dynamic>> getFavorites(String userId) async {
+    final response = await http.get(
+      Uri.parse('$_baseUrl/favorites/$userId'),
+      headers: {'Content-Type': 'application/json'},
+    );
+
+    if (response.statusCode != 200) {
+      throw Exception('Failed to load favorites');
+    }
+
+    return json.decode(response.body)['data']['favorite'];
+  }
 }

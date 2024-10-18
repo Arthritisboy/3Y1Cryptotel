@@ -1,6 +1,7 @@
 import 'package:equatable/equatable.dart';
 import 'package:hotel_flutter/data/model/auth/login_model.dart';
 import 'package:hotel_flutter/data/model/auth/user_model.dart';
+import 'package:hotel_flutter/data/model/favorite/favorite_model.dart';
 
 abstract class AuthState extends Equatable {
   const AuthState();
@@ -92,3 +93,32 @@ class AccountDeleted extends AuthState {
   @override
   List<Object> get props => [message];
 }
+
+class FavoritesSuccess extends AuthState {
+  final String message;
+
+  const FavoritesSuccess(this.message);
+
+  @override
+  List<Object> get props => [message];
+}
+
+class FavoritesError extends AuthState {
+  final String error;
+
+  const FavoritesError(this.error);
+
+  @override
+  List<Object> get props => [error];
+}
+
+class FavoritesFetched extends AuthState {
+  final List<dynamic> favorites;
+
+  const FavoritesFetched(this.favorites);
+
+  @override
+  List<Object> get props => [favorites];
+}
+
+class FavoritesLoading extends AuthState {}

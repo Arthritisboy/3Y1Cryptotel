@@ -75,3 +75,25 @@ class ResendCodeEvent extends AuthEvent {
 
   ResendCodeEvent({required this.email});
 }
+
+class AddToFavoritesEvent extends AuthEvent {
+  final String userId;
+  final String type; // 'hotel' or 'restaurant'
+  final String id; // hotelId or restaurantId
+
+  AddToFavoritesEvent(this.userId, this.type, this.id);
+}
+
+class RemoveFromFavoritesEvent extends AuthEvent {
+  final String userId;
+  final String type; // 'hotel' or 'restaurant'
+  final String id; // hotelId or restaurantId
+
+  RemoveFromFavoritesEvent(this.userId, this.type, this.id);
+}
+
+class GetFavoritesEvent extends AuthEvent {
+  final String userId;
+
+  GetFavoritesEvent(this.userId);
+}

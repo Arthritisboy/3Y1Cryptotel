@@ -235,4 +235,19 @@ class AuthRepository {
   void clearUserCache() {
     _cachedUser = null;
   }
+
+  //! Add to Favorites
+  Future<void> addToFavorites(String userId, String type, String id) {
+    return dataProvider.addToFavorites(userId, type, id);
+  }
+
+  //! Remove from Favorites
+  Future<void> removeFromFavorites(String userId, String type, String id) {
+    return dataProvider.removeFromFavorites(userId, type, id);
+  }
+
+  //! Get Favorites
+  Future<List<dynamic>> getFavorites(String userId) {
+    return dataProvider.getFavorites(userId);
+  }
 }
