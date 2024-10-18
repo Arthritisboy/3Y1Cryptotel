@@ -44,7 +44,7 @@ exports.register = catchAsync(async (req, res, next) => {
     }
   }
 
-  const validRoles = ['user', 'admin'];
+  const validRoles = ['user', 'admin', 'manager'];
   if (!validRoles.includes(req.body.roles)) {
     return next(new AppError('Invalid role provided.', 400));
   }
@@ -63,7 +63,10 @@ exports.register = catchAsync(async (req, res, next) => {
       profile ||
       'https://res.cloudinary.com/djuvg4di0/image/upload/v1728833875/burui8vcrcqrvedo39yt.png',
     hasCompletedOnboarding: req.body.hasCompletedOnboarding || false,
-    handleId: req.body.roles === 'admin' ? null : undefined,
+    handleId:
+      req.body.roles === 'manager' || req.body.roles === 'admin'
+        ? null
+        : undefined,
   };
 
   const newUser = await User.create(userData);
@@ -71,6 +74,9 @@ exports.register = catchAsync(async (req, res, next) => {
   console.warn('New user created:', newUser);
 
   const verificationCode = newUser.createVerificationCode();
+  console.log(newUser);
+  console.log(verificationCode);
+
   await newUser.save({ validateBeforeSave: false });
 
   const message = `Your verification code is: ${verificationCode}. This code is valid for 10 minutes.`;
@@ -128,6 +134,7 @@ exports.sendVerificationCode = catchAsync(async (req, res, next) => {
     );
   }
 });
+
 // ** Verify code controller
 exports.verifyCode = catchAsync(async (req, res, next) => {
   const { email, code } = req.body;
@@ -186,7 +193,7 @@ exports.login = catchAsync(async (req, res, next) => {
     userId: user._id,
     hasCompletedOnboarding: user.hasCompletedOnboarding,
     roles: user.roles,
-    handleId: user.handleId,
+    handleId: user.handleId || 'null',
   });
 });
 

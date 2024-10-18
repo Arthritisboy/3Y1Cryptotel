@@ -105,6 +105,7 @@ exports.createHotel = catchAsync(async (req, res, next) => {
       gender: managerGender,
       roles: 'manager',
       verified: true,
+      codeExpires: undefined,
       hasCompletedOnboarding: true,
       handleId: newHotel._id,
     };
