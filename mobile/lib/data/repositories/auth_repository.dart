@@ -74,6 +74,23 @@ class AuthRepository {
 
       // Cache the user after fetching
       _cachedUser = user; // This ensures you're always fetching fresh data
+
+      // Save user details to SharedPreferences
+      if (_sharedPrefs != null) {
+        await _sharedPrefs!.setString('userId', user.id ?? '');
+        await _sharedPrefs!.setString('firstName', user.firstName ?? '');
+        await _sharedPrefs!.setString('lastName', user.lastName ?? '');
+        await _sharedPrefs!.setString('email', user.email ?? '');
+        await _sharedPrefs!.setString('gender', user.gender ?? '');
+        await _sharedPrefs!.setString('phoneNumber', user.phoneNumber ?? '');
+        await _sharedPrefs!.setString('roles', user.roles ?? '');
+        await _sharedPrefs!.setString('favoriteId', user.favoriteId ?? '');
+        await _sharedPrefs!
+            .setString('profilePicture', user.profilePicture ?? '');
+      } else {
+        throw Exception('Shared preferences not initialized');
+      }
+
       return _cachedUser!;
     } catch (error) {
       throw Exception('Error fetching data');

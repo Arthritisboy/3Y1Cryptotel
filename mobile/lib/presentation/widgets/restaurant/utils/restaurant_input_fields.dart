@@ -8,6 +8,7 @@ import 'package:hotel_flutter/data/model/booking/booking_model.dart';
 import 'shared_widgets.dart'; // Shared UI components for input fields
 import 'date_time_helper.dart'; // Helper for selecting date, time, and combining
 import 'package:hotel_flutter/presentation/widgets/utils_widget/custom_dialog.dart'; // Import the CustomDialog widget
+import 'package:shared_preferences/shared_preferences.dart';
 
 class RestaurantInputFields extends StatefulWidget {
   final String restaurantId;
@@ -51,12 +52,12 @@ class _RestaurantInputFieldsState extends State<RestaurantInputFields> {
   }
 
   Future<void> _loadUserData() async {
-    userId = await secureStorage.read(key: 'userId');
-    String? firstName = await secureStorage.read(key: 'firstName') ?? '';
-    String? lastName = await secureStorage.read(key: 'lastName') ?? '';
-    String? storedEmail = await secureStorage.read(key: 'email') ?? '';
-    String? storedPhoneNumber =
-        await secureStorage.read(key: 'phoneNumber') ?? '+63 ';
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    userId = prefs.getString('userId');
+    String? firstName = prefs.getString('firstName') ?? '';
+    String? lastName = prefs.getString('lastName') ?? '';
+    String? storedEmail = prefs.getString('email') ?? '';
+    String? storedPhoneNumber = prefs.getString('phoneNumber') ?? '+63 ';
 
     setState(() {
       fullNameController.text = '$firstName $lastName'.trim();
