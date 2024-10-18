@@ -34,8 +34,6 @@ class TabScreen extends StatefulWidget {
 
   @override
   State<TabScreen> createState() => _TabScreenState();
-
-
 }
 
 class _TabScreenState extends State<TabScreen> {
@@ -62,23 +60,21 @@ class _TabScreenState extends State<TabScreen> {
     'Hotel Monde',
     'Hotel Le Duc',
     'Bergamu Hotel'
-    'Bedbox',
+        'Bedbox',
   ];
-    List<String> restaurantSuggestion = [
-    'Matutina’s Gerry’s Seafood House', 
-    'Cabalen' 
-    'City De Luxe', 
-    'Hardin sa Paraiso', 
-    'Sungayan Grill', 
-    'Pedritos', 
-    'Grumpy Joe', 
+  List<String> restaurantSuggestion = [
+    'Matutina’s Gerry’s Seafood House',
+    'Cabalen'
+        'City De Luxe',
+    'Hardin sa Paraiso',
+    'Sungayan Grill',
+    'Pedritos',
+    'Grumpy Joe',
     'Dampa',
-    'Kabsat', 
-    'Masa Bakehouse', 
+    'Kabsat',
+    'Masa Bakehouse',
   ];
-    late List<String> suggestions;
-
-
+  late List<String> suggestions;
 
   List<String> filteredSuggestions = [];
 
@@ -87,8 +83,10 @@ class _TabScreenState extends State<TabScreen> {
     super.initState();
     _initializeUserData(); // Load user data on initialization
     _fetchAllUsers();
-    suggestions = [...restaurantSuggestion, ...hotelSuggestion]; // Fixed concatenation
-
+    suggestions = [
+      ...restaurantSuggestion,
+      ...hotelSuggestion
+    ]; // Fixed concatenation
   }
 
   @override
@@ -100,19 +98,19 @@ class _TabScreenState extends State<TabScreen> {
     setState(() {
       _searchQuery = query;
       filteredSuggestions = _filterSuggestions(query);
-
     });
   }
+
   List<String> _filterSuggestions(String query) {
-  if (query.isEmpty) {
-    return []; // Return empty if no query is present
+    if (query.isEmpty) {
+      return []; // Return empty if no query is present
+    }
+
+    // Filter suggestions based on the query
+    return suggestions.where((suggestion) {
+      return suggestion.toLowerCase().contains(query.toLowerCase());
+    }).toList();
   }
-  
-  // Filter suggestions based on the query
-  return suggestions.where((suggestion) {
-    return suggestion.toLowerCase().contains(query.toLowerCase());
-  }).toList();
-}
 
   Future<void> _initializeUserData() async {
     userId = await _secureStorage.read(key: 'userId'); // This can be null
@@ -288,87 +286,87 @@ class _TabScreenState extends State<TabScreen> {
     );
   }
 
-void _onSelectSuggestion(String suggestion) {
-  setState(() {
-    _searchQuery = suggestion;
-  });
-
-  // Check if the suggestion is a hotel or a restaurant
-  if (hotelSuggestion.contains(suggestion)) {
-    // Fetch the list of hotels using BLoC
-    final hotelBloc = context.read<HotelBloc>();
-    hotelBloc.add(FetchHotelsEvent()); // Ensure the list is updated
-
-    // Use a delayed Future to wait for state update
-    Future.delayed(Duration.zero, () {
-      final state = hotelBloc.state; // Get the current state
-
-      if (state is HotelLoaded) {
-        // Find the index of the hotel suggestion
-        int index = hotelSuggestion.indexOf(suggestion);
-        HotelModel selectedHotel = state.hotels[index]; // Get the hotel model
-
-        // Get coordinates for the selected hotel
-        selectedHotel.getCoordinates().then((coordinates) {
-          // Navigate to the HotelScreen with the selected hotel data
-          Navigator.of(context).push(
-            MaterialPageRoute(
-              builder: (context) => HotelScreen(
-                hotelId: selectedHotel.id,
-                hotelImage: selectedHotel.hotelImage,
-                hotelName: selectedHotel.name,
-                rating: selectedHotel.averageRating,
-                price: selectedHotel.averagePrice,
-                location: selectedHotel.location,
-                time: selectedHotel.openingHours,
-                latitude: coordinates[0], // Use the retrieved coordinates
-                longitude: coordinates[1], // Use the retrieved coordinates
-              ),
-            ),
-          );
-        });
-      }
+  void _onSelectSuggestion(String suggestion) {
+    setState(() {
+      _searchQuery = suggestion;
     });
-  } else if (restaurantSuggestion.contains(suggestion)) {
-    // Fetch the list of restaurants using BLoC
-    final restaurantBloc = context.read<RestaurantBloc>();
-    restaurantBloc.add(FetchRestaurantsEvent()); // Ensure the list is updated
 
-    // Use a delayed Future to wait for state update
-    Future.delayed(Duration.zero, () {
-      final state = restaurantBloc.state; // Get the current state
+    // Check if the suggestion is a hotel or a restaurant
+    if (hotelSuggestion.contains(suggestion)) {
+      // Fetch the list of hotels using BLoC
+      final hotelBloc = context.read<HotelBloc>();
+      hotelBloc.add(FetchHotelsEvent()); // Ensure the list is updated
 
-      if (state is RestaurantLoaded) {
-        // Find the index of the restaurant suggestion
-        int index = restaurantSuggestion.indexOf(suggestion);
-        RestaurantModel selectedRestaurant = state.restaurants[index]; // Get the restaurant model
+      // Use a delayed Future to wait for state update
+      Future.delayed(Duration.zero, () {
+        final state = hotelBloc.state; // Get the current state
 
-        // Get coordinates for the selected restaurant
-        selectedRestaurant.getCoordinates().then((coordinates) {
-          // Navigate to the RestaurantScreen with the selected restaurant data
-          Navigator.of(context).push(
-            MaterialPageRoute(
-              builder: (context) => Restaurant(
-                restaurantId: selectedRestaurant.id,
-                restaurantName: selectedRestaurant.name,
-                capacity: selectedRestaurant.capacity, // Assuming capacity is part of the model
-                restaurantImage: selectedRestaurant.restaurantImage,
-                rating: selectedRestaurant.averageRating,
-                price: selectedRestaurant.price,
-                location: selectedRestaurant.location,
-                time: selectedRestaurant.openingHours,
-                latitude: coordinates[0], // Use the retrieved coordinates
-                longitude: coordinates[1], // Use the retrieved coordinates
+        if (state is HotelLoaded) {
+          // Find the index of the hotel suggestion
+          int index = hotelSuggestion.indexOf(suggestion);
+          HotelModel selectedHotel = state.hotels[index]; // Get the hotel model
+
+          // Get coordinates for the selected hotel
+          selectedHotel.getCoordinates().then((coordinates) {
+            // Navigate to the HotelScreen with the selected hotel data
+            Navigator.of(context).push(
+              MaterialPageRoute(
+                builder: (context) => HotelScreen(
+                  hotelId: selectedHotel.id,
+                  hotelImage: selectedHotel.hotelImage,
+                  hotelName: selectedHotel.name,
+                  rating: selectedHotel.averageRating,
+                  price: selectedHotel.averagePrice,
+                  location: selectedHotel.location,
+                  time: selectedHotel.openingHours,
+                  latitude: coordinates[0], // Use the retrieved coordinates
+                  longitude: coordinates[1], // Use the retrieved coordinates
+                ),
               ),
-            ),
-          );
-        });
-      }
-    });
+            );
+          });
+        }
+      });
+    } else if (restaurantSuggestion.contains(suggestion)) {
+      // Fetch the list of restaurants using BLoC
+      final restaurantBloc = context.read<RestaurantBloc>();
+      restaurantBloc.add(FetchRestaurantsEvent()); // Ensure the list is updated
+
+      // Use a delayed Future to wait for state update
+      Future.delayed(Duration.zero, () {
+        final state = restaurantBloc.state; // Get the current state
+
+        if (state is RestaurantLoaded) {
+          // Find the index of the restaurant suggestion
+          int index = restaurantSuggestion.indexOf(suggestion);
+          RestaurantModel selectedRestaurant =
+              state.restaurants[index]; // Get the restaurant model
+
+          // Get coordinates for the selected restaurant
+          selectedRestaurant.getCoordinates().then((coordinates) {
+            // Navigate to the RestaurantScreen with the selected restaurant data
+            Navigator.of(context).push(
+              MaterialPageRoute(
+                builder: (context) => Restaurant(
+                  restaurantId: selectedRestaurant.id,
+                  restaurantName: selectedRestaurant.name,
+                  capacity: selectedRestaurant
+                      .capacity, // Assuming capacity is part of the model
+                  restaurantImage: selectedRestaurant.restaurantImage,
+                  rating: selectedRestaurant.averageRating,
+                  price: selectedRestaurant.price,
+                  location: selectedRestaurant.location,
+                  time: selectedRestaurant.openingHours,
+                  latitude: coordinates[0], // Use the retrieved coordinates
+                  longitude: coordinates[1], // Use the retrieved coordinates
+                ),
+              ),
+            );
+          });
+        }
+      });
+    }
   }
-}
-
-
 
   void _onRemoveSuggestion(String suggestion) {
     setState(() {
@@ -377,133 +375,133 @@ void _onSelectSuggestion(String suggestion) {
   }
 
   Widget _buildTabContent() {
-  return SingleChildScrollView(
-    child: Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        if (_selectedIndex == 0) ...[
-          // Section for Hotels (Horizontal Scroll)
-          Padding(
-            padding: const EdgeInsets.only(left: 16, bottom: 10),
-            child: Text(
-              'Top Rated Hotels',
-              style: TextStyle(
-                fontSize: 22,
-                fontWeight: FontWeight.bold,
+    return SingleChildScrollView(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          if (_selectedIndex == 0) ...[
+            // Section for Hotels (Horizontal Scroll)
+            Padding(
+              padding: const EdgeInsets.only(left: 16, bottom: 10),
+              child: Text(
+                'Top Rated Hotels',
+                style: TextStyle(
+                  fontSize: 22,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
             ),
-          ),
-          BlocProvider<HotelBloc>(
-            create: (context) =>
-                HotelBloc(context.read())..add(FetchHotelsEvent()),
-            child: HomeScreen(
-              searchQuery: _searchQuery,
-              scrollDirection: Axis.horizontal,
-              rowOrColumn: 'row',  // Set to 'row' for horizontal layout
-              width: 320,
+            BlocProvider<HotelBloc>(
+              create: (context) =>
+                  HotelBloc(context.read())..add(FetchHotelsEvent()),
+              child: HomeScreen(
+                searchQuery: _searchQuery,
+                scrollDirection: Axis.horizontal,
+                rowOrColumn: 'row', // Set to 'row' for horizontal layout
+                width: 320,
+              ),
             ),
-          ),
-          const SizedBox(height: 20),
+            const SizedBox(height: 20),
 
-          // Section for Restaurants (Horizontal Scroll)
-          Padding(
-            padding: const EdgeInsets.only(left: 16, bottom: 10),
-            child: Text(
-              'Top Rated Restaurants',
-              style: TextStyle(
-                fontSize: 22,
-                fontWeight: FontWeight.bold,
+            // Section for Restaurants (Horizontal Scroll)
+            Padding(
+              padding: const EdgeInsets.only(left: 16, bottom: 10),
+              child: Text(
+                'Top Rated Restaurants',
+                style: TextStyle(
+                  fontSize: 22,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
             ),
-          ),
-          BlocProvider<RestaurantBloc>(
-            create: (context) =>
-                RestaurantBloc(context.read())..add(FetchRestaurantsEvent()),
-            child: RestaurantScreen(
-              searchQuery: _searchQuery,
-              scrollDirection: Axis.horizontal,
-              rowOrColumn: 'row', // Set to 'row' for horizontal layout
-              width: 320,
-            ),
-          ),
-        ],
-        if (_selectedIndex == 1) ...[
-          // Separate Restaurants Tab (Vertical Scroll)
-          Padding(
-            padding: const EdgeInsets.only(left: 16, bottom: 20),
-            child: Text(
-              'All Available Restaurants',
-              style: TextStyle(
-                fontSize: 22,
-                fontWeight: FontWeight.bold,
+            BlocProvider<RestaurantBloc>(
+              create: (context) =>
+                  RestaurantBloc(context.read())..add(FetchRestaurantsEvent()),
+              child: RestaurantScreen(
+                searchQuery: _searchQuery,
+                scrollDirection: Axis.horizontal,
+                rowOrColumn: 'row', // Set to 'row' for horizontal layout
+                width: 320,
               ),
             ),
-          ),
-          BlocProvider<RestaurantBloc>(
-            create: (context) =>
-                RestaurantBloc(context.read())..add(FetchRestaurantsEvent()),
-            child: RestaurantScreen(
-              searchQuery: _searchQuery,
-              scrollDirection: Axis.vertical,  // Set to 'column' for vertical layout
-              rowOrColumn: 'column',
-              width: 400,
-            ),
-          ),
-        ],
-        if (_selectedIndex == 2) ...[
-          // Separate Hotels Tab (Vertical Scroll)
-          Padding(
-            padding: const EdgeInsets.only(left: 16, bottom: 10),
-            child: Text(
-              'All Available Hotels',
-              style: TextStyle(
-                fontSize: 22,
-                fontWeight: FontWeight.bold,
+          ],
+          if (_selectedIndex == 1) ...[
+            // Separate Restaurants Tab (Vertical Scroll)
+            Padding(
+              padding: const EdgeInsets.only(left: 16, bottom: 20),
+              child: Text(
+                'All Available Restaurants',
+                style: TextStyle(
+                  fontSize: 22,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
             ),
-          ),
-          BlocProvider<HotelBloc>(
-            create: (context) =>
-                HotelBloc(context.read())..add(FetchHotelsEvent()),
-            child: HomeScreen(
-              searchQuery: _searchQuery,
-              scrollDirection: Axis.vertical,  // Set to 'column' for vertical layout
-              rowOrColumn: 'column',
-              width: 400,
-            ),
-          ),
-        ],
-        if (_selectedIndex == 3) 
-        ...[
-                  Padding(
-            padding: const EdgeInsets.only(left: 16, bottom: 10),
-            child: Text(
-              'Map of Hotel and Restaurants',
-              style: TextStyle(
-                fontSize: 22,
-                fontWeight: FontWeight.bold,
+            BlocProvider<RestaurantBloc>(
+              create: (context) =>
+                  RestaurantBloc(context.read())..add(FetchRestaurantsEvent()),
+              child: RestaurantScreen(
+                searchQuery: _searchQuery,
+                scrollDirection:
+                    Axis.vertical, // Set to 'column' for vertical layout
+                rowOrColumn: 'column',
+                width: 400,
               ),
             ),
-          ),
-MultiBlocProvider(
-  providers: [
-    BlocProvider(
-      create: (context) =>
-          HotelBloc(context.read())..add(FetchHotelsEvent()),
-    ),
-    BlocProvider(
-      create: (context) => RestaurantBloc(context.read())
-        ..add(FetchRestaurantsEvent()), // Fetch restaurants event
-    ),
-  ],
-  child: MapScreen(),
-)
+          ],
+          if (_selectedIndex == 2) ...[
+            // Separate Hotels Tab (Vertical Scroll)
+            Padding(
+              padding: const EdgeInsets.only(left: 16, bottom: 10),
+              child: Text(
+                'All Available Hotels',
+                style: TextStyle(
+                  fontSize: 22,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+            BlocProvider<HotelBloc>(
+              create: (context) =>
+                  HotelBloc(context.read())..add(FetchHotelsEvent()),
+              child: HomeScreen(
+                searchQuery: _searchQuery,
+                scrollDirection:
+                    Axis.vertical, // Set to 'column' for vertical layout
+                rowOrColumn: 'column',
+                width: 400,
+              ),
+            ),
+          ],
+          if (_selectedIndex == 3) ...[
+            Padding(
+              padding: const EdgeInsets.only(left: 16, bottom: 10),
+              child: Text(
+                'Map of Hotel and Restaurants',
+                style: TextStyle(
+                  fontSize: 22,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+            MultiBlocProvider(
+              providers: [
+                BlocProvider(
+                  create: (context) =>
+                      HotelBloc(context.read())..add(FetchHotelsEvent()),
+                ),
+                BlocProvider(
+                  create: (context) => RestaurantBloc(context.read())
+                    ..add(FetchRestaurantsEvent()), // Fetch restaurants event
+                ),
+              ],
+              child: MapScreen(),
+            )
+          ],
         ],
-      ],
-    ),
-  );
-}
-
+      ),
+    );
+  }
 
   Future<bool> _showExitConfirmationDialog(BuildContext context) async {
     return await showDialog<bool>(
@@ -596,6 +594,8 @@ MultiBlocProvider(
       lastName = user.lastName;
       email = user.email;
       profile = user.profilePicture;
+      phoneNumber = user.phoneNumber;
+      gender = user.gender;
       userId = user.id;
     });
 

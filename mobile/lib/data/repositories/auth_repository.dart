@@ -5,6 +5,7 @@ import 'package:hotel_flutter/data/model/auth/signup_model.dart';
 import 'package:hotel_flutter/data/model/auth/user_model.dart';
 import 'package:logging/logging.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:hotel_flutter/presentation/widgets/tabscreen/user_storage_helper.dart';
 
 class AuthRepository {
   SharedPreferences? _sharedPrefs;
@@ -73,30 +74,37 @@ class AuthRepository {
 //! Fetch all users with filtering conditions
   Future<List<UserModel>> fetchAllUsers() async {
     try {
-      // Fetch users data from the data provider
+      // First, get users from SharedPreferences
+      List<UserModel> storedUsers = await UserStorageHelper.getUsers();
+
+      // If storedUsers is not empty, return it
+      if (storedUsers.isNotEmpty) {
+        print('Fetched users from SharedPreferences: ${storedUsers.length}');
+        return storedUsers;
+      }
+
+      // If no stored users, fetch from the data provider
       final usersData = await dataProvider.fetchAllUsers();
 
-      // Check if usersData is a List<UserModel>
       if (usersData.isEmpty) {
         throw Exception('No users data found');
       }
 
       // Log the fetched users
       final filteredUsers = usersData.where((user) {
-        return (user.active == true ||
-                user.active == null) && // Include users with null active
-            user.verified == true && // Ensure user is verified
-            user.hasCompletedOnboarding ==
-                true && // Ensure onboarding is complete
-            user.roles == "user"; // Check for user role
+        return (user.active == true || user.active == null) &&
+            user.verified == true &&
+            user.hasCompletedOnboarding == true &&
+            user.roles == "user";
       }).toList();
 
-      // Log the filtered users count
-      print('Filtered users count: ${filteredUsers.length}');
+      // Store the fetched users in SharedPreferences
+      await UserStorageHelper.storeUsers(filteredUsers);
 
-      return filteredUsers; // Return the filtered users
+      print('Filtered users count: ${filteredUsers.length}');
+      return filteredUsers;
     } catch (error) {
-      print('Failed to fetch all users: $error'); // Log error
+      print('Failed to fetch all users: $error');
       throw Exception('Failed to fetch all users: $error');
     }
   }
