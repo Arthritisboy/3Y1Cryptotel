@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 
 class CryptoWalletHeader extends StatelessWidget {
-  final VoidCallback onWalletUpdated; // This callback will trigger the parent’s connectWallet() method
+  final VoidCallback
+      onWalletUpdated; // This callback will trigger the parent’s connectWallet() method
   final String walletAddress;
   final String balance;
   final bool isLoading;
@@ -81,7 +82,9 @@ class CryptoWalletHeader extends StatelessWidget {
               Row(
                 children: [
                   Text(
-                    balance,
+                    balance == '₱ 0'
+                        ? balance
+                        : '${double.tryParse(balance.split(' ')[0])?.toStringAsFixed(4) ?? '0.0000'} ETH',
                     style: const TextStyle(
                       fontSize: 40,
                       fontWeight: FontWeight.w400,
