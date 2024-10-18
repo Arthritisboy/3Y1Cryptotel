@@ -169,10 +169,10 @@ class _RestaurantInputFieldsState extends State<RestaurantInputFields> {
       // Same-day booking with 12-hour difference validation
       if (arrivalDateTime.day == departureDateTime.day) {
         Duration timeDifference = departureDateTime.difference(arrivalDateTime);
-        if (timeDifference.inHours < 12) {
+        if (timeDifference.inHours < 3) {
           _showErrorDialog(
             context,
-            'For same-day bookings, the departure time must be at least 12 hours after the arrival time.',
+            'For same-day bookings, the departure time must be at least 3 hours after the arrival time.',
           );
           return;
         }

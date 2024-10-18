@@ -11,8 +11,9 @@ class CreateRoomRatingEvent extends RatingEvent {
   final String roomId;
   final int rating;
   final String message;
-
+  final String userId;
   const CreateRoomRatingEvent({
+    required this.userId,
     required this.roomId,
     required this.rating,
     required this.message,
@@ -26,8 +27,10 @@ class CreateRestaurantRatingEvent extends RatingEvent {
   final String restaurantId;
   final int rating;
   final String message;
+  final String userId;
 
   const CreateRestaurantRatingEvent({
+    required this.userId,
     required this.restaurantId,
     required this.rating,
     required this.message,
