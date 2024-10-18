@@ -14,6 +14,7 @@ const restaurant = new mongoose.Schema({
   },
   price: {
     type: Number,
+    required: true,
   },
   //test
   location: {
