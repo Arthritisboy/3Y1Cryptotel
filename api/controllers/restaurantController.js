@@ -29,7 +29,6 @@ exports.getRestaurant = catchAsync(async (req, res, next) => {
   });
 });
 
-// Create a restaurant with manager registration
 exports.createRestaurant = catchAsync(async (req, res, next) => {
   const {
     name,
@@ -41,6 +40,7 @@ exports.createRestaurant = catchAsync(async (req, res, next) => {
     managerFirstName,
     managerLastName,
     managerPassword,
+    managerConfirmPassword,
     managerPhoneNumber,
     managerGender,
     capacity,
@@ -76,14 +76,24 @@ exports.createRestaurant = catchAsync(async (req, res, next) => {
   }
 
   try {
+    // Convert capacity and price to integers
+    const parsedCapacity = parseInt(capacity);
+    const parsedPrice = parseInt(price);
+
+    if (isNaN(parsedCapacity) || isNaN(parsedPrice)) {
+      return next(
+        new AppError('Capacity and price must be valid integers.', 400),
+      );
+    }
+
     // 1. Create the restaurant
     const newRestaurant = await Restaurant.create({
       name,
       location,
       openingHours,
       walletAddress,
-      capacity,
-      price,
+      capacity: parsedCapacity,
+      price: parsedPrice,
       restaurantImage, // Restaurant image is required
     });
 
@@ -95,8 +105,6 @@ exports.createRestaurant = catchAsync(async (req, res, next) => {
       password: managerPassword,
       phoneNumber: managerPhoneNumber,
       gender: managerGender,
-      capacity: capacity,
-      price: price,
       roles: 'manager', // Assign manager role
       verified: true, // Automatically verify manager
       hasCompletedOnboarding: true,
@@ -120,7 +128,6 @@ exports.createRestaurant = catchAsync(async (req, res, next) => {
   }
 });
 
-// Update a restaurant by ID
 exports.updateRestaurant = catchAsync(async (req, res, next) => {
   const restaurantId = req.params.id;
 
@@ -148,6 +155,21 @@ exports.updateRestaurant = catchAsync(async (req, res, next) => {
         message: 'Image upload failed',
         error: uploadErr.message || uploadErr,
       });
+    }
+  }
+
+  // Convert capacity and price to integers if provided
+  if (req.body.capacity) {
+    req.body.capacity = parseInt(req.body.capacity);
+    if (isNaN(req.body.capacity)) {
+      return next(new AppError('Capacity must be a valid integer.', 400));
+    }
+  }
+
+  if (req.body.price) {
+    req.body.price = parseInt(req.body.price);
+    if (isNaN(req.body.price)) {
+      return next(new AppError('Price must be a valid integer.', 400));
     }
   }
 
