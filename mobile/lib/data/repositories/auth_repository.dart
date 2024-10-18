@@ -19,6 +19,11 @@ class AuthRepository {
     _sharedPrefs = await SharedPreferences.getInstance();
   }
 
+  String? getUserId() {
+    return _sharedPrefs
+        ?.getString('userId'); // Replace 'userId' with your actual key
+  }
+
   //! Register
   Future<UserModel> register(
       SignUpModel signUpModel, File? profilePicture) async {

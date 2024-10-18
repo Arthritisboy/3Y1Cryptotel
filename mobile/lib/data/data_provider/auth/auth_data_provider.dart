@@ -287,41 +287,69 @@ class AuthDataProvider {
     }
   }
 
-  Future<void> addToFavorites(String userId, String type, String id) async {
-    final response = await http.post(
-      Uri.parse('$_baseUrl/favorites/add/$userId'),
-      headers: {'Content-Type': 'application/json'},
-      body: json.encode({'type': type, 'id': id}),
-    );
+  Future<List<dynamic>> getFavorites(String userId) async {
+    try {
+      final token = await _getToken(); // Get the token
+      final response = await http.get(
+        Uri.parse('$_baseUrl/favorites/$userId'),
+        headers: _buildHeaders(token), // Pass the token in headers
+      );
 
-    if (response.statusCode != 200) {
-      throw Exception('Failed to add to favorites');
+      // Log the response for debugging
+      if (response.statusCode == 200) {
+        return json.decode(response.body)['data']['favorite'];
+      } else {
+        // Log the response body for more information
+        print('Failed to load favorites: ${response.body}');
+        throw Exception(
+            'Failed to load favorites. Status code: ${response.statusCode}');
+      }
+    } catch (e) {
+      print('Error fetching favorites: $e');
+      throw Exception('Failed to load favorites: ${e.toString()}');
+    }
+  }
+
+  Future<void> addToFavorites(String userId, String type, String id) async {
+    try {
+      final token = await _getToken(); // Get the token
+      final response = await http.post(
+        Uri.parse('$_baseUrl/favorites/add/$userId'),
+        headers: _buildHeaders(token), // Pass the token in headers
+        body: json.encode({'type': type, 'id': id}),
+      );
+
+      // Log the response for debugging
+      if (response.statusCode != 200) {
+        print('Failed to add to favorites: ${response.body}');
+        throw Exception(
+            'Failed to add to favorites. Status code: ${response.statusCode}');
+      }
+    } catch (e) {
+      print('Error adding to favorites: $e');
+      throw Exception('Failed to add to favorites: ${e.toString()}');
     }
   }
 
   Future<void> removeFromFavorites(
       String userId, String type, String id) async {
-    final response = await http.delete(
-      Uri.parse('$_baseUrl/favorites/remove/$userId'),
-      headers: {'Content-Type': 'application/json'},
-      body: json.encode({'type': type, 'id': id}),
-    );
+    try {
+      final token = await _getToken(); // Get the token
+      final response = await http.delete(
+        Uri.parse('$_baseUrl/favorites/remove/$userId'),
+        headers: _buildHeaders(token), // Pass the token in headers
+        body: json.encode({'type': type, 'id': id}),
+      );
 
-    if (response.statusCode != 200) {
-      throw Exception('Failed to remove from favorites');
+      // Log the response for debugging
+      if (response.statusCode != 200) {
+        print('Failed to remove from favorites: ${response.body}');
+        throw Exception(
+            'Failed to remove from favorites. Status code: ${response.statusCode}');
+      }
+    } catch (e) {
+      print('Error removing from favorites: $e');
+      throw Exception('Failed to remove from favorites: ${e.toString()}');
     }
-  }
-
-  Future<List<dynamic>> getFavorites(String userId) async {
-    final response = await http.get(
-      Uri.parse('$_baseUrl/favorites/$userId'),
-      headers: {'Content-Type': 'application/json'},
-    );
-
-    if (response.statusCode != 200) {
-      throw Exception('Failed to load favorites');
-    }
-
-    return json.decode(response.body)['data']['favorite'];
   }
 }
