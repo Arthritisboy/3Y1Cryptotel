@@ -4,12 +4,14 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:hotel_flutter/logic/bloc/booking/booking_bloc.dart';
 import 'package:hotel_flutter/logic/bloc/booking/booking_event.dart';
 import 'package:hotel_flutter/logic/bloc/booking/booking_state.dart';
+import 'package:hotel_flutter/presentation/screens/homeScreens/tab_screen.dart';
 
 class CryptoWithTransaction extends StatefulWidget {
   final bool isConnected;
   final String walletAddress;
   final String balance;
-  final Future<void> Function(String, String) sendTransaction; // Ensure this matches the signature
+  final Future<void> Function(String, String)
+      sendTransaction; // Ensure this matches the signature
 
   const CryptoWithTransaction({
     super.key,
@@ -40,34 +42,35 @@ class _CryptoWithTransactionState extends State<CryptoWithTransaction> {
     }
   }
 
-  void updateWalletInfo(String walletAddress, String balance, bool isConnected, String? userId, String? error) {
-      // Your logic here
-      print('Updated Wallet Info: $walletAddress, $balance, $isConnected');
+  void updateWalletInfo(String walletAddress, String balance, bool isConnected,
+      String? userId, String? error) {
+    // Your logic here
+    print('Updated Wallet Info: $walletAddress, $balance, $isConnected');
   }
 
   @override
   Widget build(BuildContext context) {
     // Check if the wallet is connected
-    if (!widget.isConnected) {
-      return Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            const Text(
-              "No wallet connected or session is invalid.",
-              style: TextStyle(fontSize: 18, color: Colors.red),
-            ),
-            const SizedBox(height: 20),
-            // ElevatedButton(
-            //   onPressed: () {
-            //     // You can add logic to connect the wallet or navigate to a wallet connection screen
-            //   },
-            //   child: const Text("Connect Wallet"),
-            // ),
-          ],
-        ),
-      );
-    }
+    // if (!widget.isConnected) {
+    //   return Center(
+    //     child: Column(
+    //       mainAxisAlignment: MainAxisAlignment.center,
+    //       children: [
+    //         const Text(
+    //           "No wallet connected or session is invalid.",
+    //           style: TextStyle(fontSize: 18, color: Colors.red),
+    //         ),
+    //         const SizedBox(height: 20),
+    //         ElevatedButton(
+    //           onPressed: () {
+    //             // You can add logic to connect the wallet or navigate to a wallet connection screen
+    //           },
+    //           child: const Text("Connect Wallet"),
+    //         ),
+    //       ],
+    //     ),
+    //   );
+    // }
 
     return BlocBuilder<BookingBloc, BookingState>(
       builder: (context, state) {
@@ -100,7 +103,6 @@ class _CryptoWithTransactionState extends State<CryptoWithTransaction> {
                     color: Colors.black,
                   ),
                 ),
-                const SizedBox(height: 8),
                 Padding(
                   padding: const EdgeInsets.only(left: 20, right: 20),
                   child: const Text(
@@ -114,8 +116,25 @@ class _CryptoWithTransactionState extends State<CryptoWithTransaction> {
                 ),
                 const SizedBox(height: 20),
                 ElevatedButton(
-                  onPressed: () => widget.sendTransaction('0xc818CfdA6B36b5569E6e681277b2866956863fAd', '0.001'), // Call the parent method with default values
-                  child: const Text("Test Transaction"), // Update button text
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => TabScreen()),
+                    );
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color(0xFF1C3473),
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 24.0, vertical: 12.0),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8.0),
+                    ),
+                    textStyle: const TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  child: const Text("Book Now"),
                 ),
               ],
             );
@@ -127,21 +146,28 @@ class _CryptoWithTransactionState extends State<CryptoWithTransaction> {
               final booking = acceptedBookings[index];
               return Card(
                 margin: const EdgeInsets.all(10),
+                color: const Color.fromARGB(255, 28, 52, 115),
                 child: ListTile(
                   title: Text(
-                    'Booking ID: ${booking.id}',
+                    'Booking Type: ${booking.bookingType}',
                     style: const TextStyle(fontWeight: FontWeight.bold),
                   ),
                   subtitle: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
+                      // Conditional message based on booking type
+                      Text(booking.bookingType == 'HotelBooking'
+                          ? 'Hotel: ${booking.hotelName}'
+                          : 'Restaurant: ${booking.restaurantName}' ),
                       Text('Status: ${booking.status}'),
                       Text('Total Price: ${booking.totalPrice}'),
                     ],
                   ),
                   trailing: IconButton(
                     icon: const Icon(Icons.send),
-                    onPressed: () => widget.sendTransaction('0xc818CfdA6B36b5569E6e681277b2866956863fAd', '0.001'), // Call the parent method with default values
+                    onPressed: () => widget.sendTransaction(
+                        '0xc818CfdA6B36b5569E6e681277b2866956863fAd',
+                        '0.001'), // Call the parent method with default values
                   ),
                 ),
               );
