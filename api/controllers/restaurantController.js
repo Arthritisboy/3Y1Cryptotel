@@ -42,6 +42,7 @@ exports.createRestaurant = catchAsync(async (req, res, next) => {
     managerPassword,
     managerPhoneNumber,
     managerGender,
+    capacity,
   } = req.body;
 
   // Ensure required fields are provided
@@ -80,6 +81,7 @@ exports.createRestaurant = catchAsync(async (req, res, next) => {
       location,
       openingHours,
       walletAddress,
+      capacity,
       restaurantImage, // Restaurant image is required
     });
 
@@ -91,6 +93,7 @@ exports.createRestaurant = catchAsync(async (req, res, next) => {
       password: managerPassword,
       phoneNumber: managerPhoneNumber,
       gender: managerGender,
+      capacity: capacity,
       roles: 'manager', // Assign manager role
       verified: true, // Automatically verify manager
       hasCompletedOnboarding: true,

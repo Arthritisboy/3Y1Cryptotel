@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hotel_flutter/logic/bloc/booking/booking_bloc.dart';
+import 'package:hotel_flutter/presentation/screens/admin/admin_appScreen.dart';
 import 'package:hotel_flutter/presentation/screens/admin/admin_userScreen.dart';
 import 'package:hotel_flutter/presentation/screens/drawerScreens/history_screen.dart';
 import 'package:hotel_flutter/presentation/screens/homeScreens/onboarding_screen.dart';
@@ -120,9 +121,10 @@ class AppRouter {
       case '/logout':
         return _buildRoute(const LoginScreen(), clearStack: true);
 
-      case '/admin':
+      case '/manager':
         return _buildRoute(const AdminScreen());
-
+      case '/admin':
+        return _buildRoute(const AdminAppscreen());
       default:
         return null;
     }
