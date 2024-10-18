@@ -16,6 +16,10 @@ class _ManagerTabState extends State<ManagerTab> {
   @override
   void initState() {
     super.initState();
+    _fetchManagers();
+  }
+
+  Future<void> _fetchManagers() async {
     // Use the correct event to fetch only managers
     BlocProvider.of<AuthBloc>(context).add(FetchAllManagersEvent());
   }
@@ -42,13 +46,16 @@ class _ManagerTabState extends State<ManagerTab> {
                 return const Center(child: Text('No managers found.'));
               }
 
-              return ListView.builder(
-                padding: const EdgeInsets.all(16),
-                itemCount: state.users.length,
-                itemBuilder: (context, index) {
-                  final manager = state.users[index];
-                  return _buildManagerCard(manager);
-                },
+              return RefreshIndicator(
+                onRefresh: _fetchManagers, // Refresh handler
+                child: ListView.builder(
+                  padding: const EdgeInsets.all(16),
+                  itemCount: state.users.length,
+                  itemBuilder: (context, index) {
+                    final manager = state.users[index];
+                    return _buildManagerCard(manager);
+                  },
+                ),
               );
             } else {
               return const Center(child: Text('Unexpected state.'));
