@@ -12,8 +12,9 @@ class RatingDataProvider {
     required String roomId,
     required int rating,
     required String message,
+    required String userId,
   }) async {
-    final String url = '$baseUrl/rooms/$roomId/ratings';
+    final String url = '$baseUrl/hotel/ratings/$roomId';
 
     // Read the JWT token from secure storage
     final token = await storage.read(key: 'jwt');
@@ -29,20 +30,19 @@ class RatingDataProvider {
         Uri.parse(url),
         headers: {
           'Content-Type': 'application/json',
-          'Authorization':
-              'Bearer $token', // Add the token in the Authorization header
+          'Authorization': 'Bearer $token',
         },
         body: json.encode({
           'rating': rating,
           'message': message,
+          'userId': userId, // Include userId in the payload
         }),
       );
 
       // Handle response and status code
       if (response.statusCode == 201) {
         final ratingJson = json.decode(response.body)['data']['rating'];
-        return HotelAndRestaurantRating.fromJson(
-            ratingJson); // Return the created rating
+        return HotelAndRestaurantRating.fromJson(ratingJson);
       } else {
         throw Exception('Failed to create room rating: ${response.body}');
       }
@@ -57,8 +57,9 @@ class RatingDataProvider {
     required String restaurantId,
     required int rating,
     required String message,
+    required String userId,
   }) async {
-    final String url = '$baseUrl/restaurants/$restaurantId/ratings';
+    final String url = '$baseUrl/restaurant/ratings/$restaurantId';
 
     // Read the JWT token from secure storage
     final token = await storage.read(key: 'jwt');
@@ -74,20 +75,19 @@ class RatingDataProvider {
         Uri.parse(url),
         headers: {
           'Content-Type': 'application/json',
-          'Authorization':
-              'Bearer $token', // Add the token in the Authorization header
+          'Authorization': 'Bearer $token',
         },
         body: json.encode({
           'rating': rating,
           'message': message,
+          'userId': userId, // Include userId in the payload
         }),
       );
 
       // Handle response and status code
       if (response.statusCode == 201) {
         final ratingJson = json.decode(response.body)['data']['rating'];
-        return HotelAndRestaurantRating.fromJson(
-            ratingJson); // Return the created rating
+        return HotelAndRestaurantRating.fromJson(ratingJson);
       } else {
         throw Exception('Failed to create restaurant rating: ${response.body}');
       }

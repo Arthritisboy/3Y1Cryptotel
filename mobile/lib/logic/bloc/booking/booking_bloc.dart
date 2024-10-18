@@ -50,10 +50,12 @@ class BookingBloc extends Bloc<BookingEvent, BookingState> {
     }
   }
 
+  //! Delete Booking Handler
   Future<void> _onDeleteBooking(
       DeleteBooking event, Emitter<BookingState> emit) async {
     emit(BookingLoading());
     try {
+      // Call the repository method with bookingId and bookingType
       await bookingRepository.deleteBooking(event.bookingId);
       emit(BookingDeleteSuccess());
     } catch (e) {

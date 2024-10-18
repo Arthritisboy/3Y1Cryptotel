@@ -6,37 +6,43 @@ class RatingRepository {
 
   RatingRepository({required this.ratingDataProvider});
 
-  //! Create Room Rating
+  //! Create a new rating for a room
   Future<HotelAndRestaurantRating> createRoomRating({
     required String roomId,
     required int rating,
     required String message,
+    required String userId,
   }) async {
     try {
       return await ratingDataProvider.createRoomRating(
         roomId: roomId,
         rating: rating,
         message: message,
+        userId: userId,
       );
-    } catch (e) {
-      throw Exception('Failed to create room rating: $e');
+    } catch (error) {
+      print('Error in RatingRepository (createRoomRating): $error');
+      rethrow;
     }
   }
 
-  //! Create Restaurant Rating
+  //! Create a new rating for a restaurant
   Future<HotelAndRestaurantRating> createRestaurantRating({
     required String restaurantId,
     required int rating,
     required String message,
+    required String userId,
   }) async {
     try {
       return await ratingDataProvider.createRestaurantRating(
         restaurantId: restaurantId,
         rating: rating,
         message: message,
+        userId: userId,
       );
-    } catch (e) {
-      throw Exception('Failed to create restaurant rating: $e');
+    } catch (error) {
+      print('Error in RatingRepository (createRestaurantRating): $error');
+      rethrow;
     }
   }
 }
