@@ -29,7 +29,8 @@ class RatingDataProvider {
         Uri.parse(url),
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': 'Bearer $token', // Add the token in the Authorization header
+          'Authorization':
+              'Bearer $token', // Add the token in the Authorization header
         },
         body: json.encode({
           'rating': rating,
@@ -40,13 +41,14 @@ class RatingDataProvider {
       // Handle response and status code
       if (response.statusCode == 201) {
         final ratingJson = json.decode(response.body)['data']['rating'];
-        return HotelAndRestaurantRating.fromJson(ratingJson); // Return the created rating
+        return HotelAndRestaurantRating.fromJson(
+            ratingJson); // Return the created rating
       } else {
         throw Exception('Failed to create room rating: ${response.body}');
       }
     } catch (error) {
       print('Error creating room rating: $error');
-      throw error;
+      rethrow;
     }
   }
 
@@ -72,7 +74,8 @@ class RatingDataProvider {
         Uri.parse(url),
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': 'Bearer $token', // Add the token in the Authorization header
+          'Authorization':
+              'Bearer $token', // Add the token in the Authorization header
         },
         body: json.encode({
           'rating': rating,
@@ -83,13 +86,14 @@ class RatingDataProvider {
       // Handle response and status code
       if (response.statusCode == 201) {
         final ratingJson = json.decode(response.body)['data']['rating'];
-        return HotelAndRestaurantRating.fromJson(ratingJson); // Return the created rating
+        return HotelAndRestaurantRating.fromJson(
+            ratingJson); // Return the created rating
       } else {
         throw Exception('Failed to create restaurant rating: ${response.body}');
       }
     } catch (error) {
       print('Error creating restaurant rating: $error');
-      throw error;
+      rethrow;
     }
   }
 }

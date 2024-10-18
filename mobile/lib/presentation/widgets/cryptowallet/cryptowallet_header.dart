@@ -8,12 +8,12 @@ class CryptoWalletHeader extends StatelessWidget {
   final bool isLoading;
 
   const CryptoWalletHeader({
-    Key? key,
+    super.key,
     required this.onWalletUpdated,
     required this.walletAddress,
     required this.balance,
     this.isLoading = false, // Control loading state for the button
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
