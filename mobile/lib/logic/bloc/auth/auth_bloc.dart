@@ -93,20 +93,6 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       }
     });
 
-    // on<ChangePasswordEvent>((event, emit) async {
-    //   emit(AuthLoading());
-    //   try {
-    //     await authRepository.updatePassword(
-    //       event.oldPassword,
-    //       event.newPassword,
-    //       event.confirmPassword,
-    //     );
-    //     emit(const AuthSuccess('Password changed successfully'));
-    //   } catch (e) {
-    //     emit(AuthError('Failed to change password: ${e.toString()}'));
-    //   }
-    // });
-
     on<ResendCodeEvent>((event, emit) async {
       emit(AuthLoading());
       try {
@@ -114,6 +100,20 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         emit(const AuthSuccess('Verification code resent successfully!'));
       } catch (e) {
         emit(AuthError('Failed to resend verification code: ${e.toString()}'));
+      }
+    });
+
+    on<ChangePasswordEvent>((event, emit) async {
+      emit(PasswordChanging());
+      try {
+        await authRepository.changePassword(
+          event.oldPassword,
+          event.newPassword,
+          event.confirmPassword,
+        );
+        emit(const AuthPasswordChangeSuccess('Password changed successfully'));
+      } catch (e) {
+        emit(PasswordChangeFailure('Password change failed: ${e.toString()}'));
       }
     });
 
