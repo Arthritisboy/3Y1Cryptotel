@@ -163,10 +163,21 @@ class AuthDataProvider {
     }
   }
 
-//!
+  //! Logout
   Future<void> logout() async {
     await _post('$_baseUrl/auth/logout');
     await _storage.deleteAll();
+  }
+
+  //! Resend Verification Code
+  Future<void> resendCode(String email) async {
+    final response = await http.post(
+      Uri.parse('$_baseUrl/auth/resendCode'),
+      headers: {'Content-Type': 'application/json'},
+      body: json.encode({'email': email}),
+    );
+
+    await _handleResponse(response);
   }
 
   //! Helper: Perform HTTP GET

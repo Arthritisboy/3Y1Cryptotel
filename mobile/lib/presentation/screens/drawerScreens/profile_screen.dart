@@ -150,7 +150,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
               CircularProgressIndicator(),
               SizedBox(height: 20),
               Text(
-                "User Account Updating. Please Wait.",
+                "Loading User Account. Please Wait.",
                 style: TextStyle(
                   color: Colors.white,
                   fontSize: 18,

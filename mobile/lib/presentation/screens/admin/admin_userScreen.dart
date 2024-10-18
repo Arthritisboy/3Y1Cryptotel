@@ -43,7 +43,9 @@ class _AdminScreenState extends State<AdminScreen> {
       child: Scaffold(
         body: Column(
           children: [
-            AdminHeader(),
+            AdminHeader(
+              name: 'Manager',
+            ),
             const TabBar(
               tabs: [
                 Tab(text: 'Rooms', icon: Icon(Icons.hotel)),

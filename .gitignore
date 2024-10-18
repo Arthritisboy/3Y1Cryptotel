@@ -4,3 +4,4 @@ mobile/linux/flutter/generated_plugin_registrant.h
 mobile/macos/Flutter/GeneratedPluginRegistrant.swift
 mobile/windows/flutter/generated_plugin_registrant.cc
 mobile/windows/flutter/generated_plugins.cmake
+api/config.env.example

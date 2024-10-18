@@ -69,3 +69,9 @@ class CompleteOnboardingEvent extends AuthEvent {}
 class FetchAllUsersEvent extends AuthEvent {}
 
 class DeleteAccountEvent extends AuthEvent {}
+
+class ResendCodeEvent extends AuthEvent {
+  final String email;
+
+  ResendCodeEvent({required this.email});
+}

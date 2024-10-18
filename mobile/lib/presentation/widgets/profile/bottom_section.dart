@@ -63,8 +63,10 @@ class BottomSection extends StatelessWidget {
               ),
               const SizedBox(height: 10),
               TextField(
+                readOnly: true,
                 controller: emailController,
                 decoration: const InputDecoration(
+                  suffixIcon: Icon(Icons.lock),
                   labelText: 'Email',
                   border: OutlineInputBorder(),
                 ),
@@ -78,8 +80,10 @@ class BottomSection extends StatelessWidget {
               const SizedBox(height: 10),
               // Updated: Changed labelText from "Address" to "Phone Number"
               TextField(
+                readOnly: true,
                 controller: phoneNumberController, // Phone number controller
                 decoration: const InputDecoration(
+                  suffixIcon: Icon(Icons.lock),
                   labelText: 'Phone Number', // Updated label
                   border: OutlineInputBorder(),
                 ),

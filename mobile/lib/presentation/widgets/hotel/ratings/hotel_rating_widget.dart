@@ -25,12 +25,16 @@ class _HotelRatingWidgetState extends State<HotelRatingWidget> {
   }
 
   Future<void> _getStoredUsers() async {
-    final users = await UserStorageHelper.getUsers();
-    if (users.isNotEmpty) {
+    try {
+      final users = await UserStorageHelper.getUsers();
+      print("Fetched users in HotelRatingWidget: ${users.length}");
       setState(() {
         allUsers = users;
       });
-    } else {}
+    } catch (e) {
+      print("Error fetching users: $e");
+      // Handle the error gracefully, maybe show a message
+    }
   }
 
   List<RatingModel> _sortRatings(List<RatingModel> ratings) {
@@ -44,6 +48,9 @@ class _HotelRatingWidgetState extends State<HotelRatingWidget> {
 
   @override
   Widget build(BuildContext context) {
+    print("HotelRatingWidget - Ratings Count: ${widget.ratings.length}");
+
+    // If users are not loaded yet, show a loading indicator
     if (allUsers.isEmpty) {
       return const Center(child: CircularProgressIndicator());
     }
@@ -107,13 +114,11 @@ class _HotelRatingWidgetState extends State<HotelRatingWidget> {
           itemCount: sortedRatings.length,
           itemBuilder: (context, index) {
             final rating = sortedRatings[index];
+            // Use firstWhere with a proper null check
             UserModel? user = allUsers.firstWhere(
               (u) => u.id == rating.userId,
-              orElse: () => UserModel(), // Returns empty UserModel if not found
+              orElse: () => UserModel(), // Return null if not found
             );
-            if (user.firstName == null || user.lastName == null) {
-              return const SizedBox.shrink(); // Do not display anything
-            }
             return Card(
               color: const Color.fromARGB(255, 238, 237, 237),
               margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
@@ -151,7 +156,7 @@ class _HotelRatingWidgetState extends State<HotelRatingWidget> {
                         children: [
                           // User name
                           Text(
-                            "${user.firstName} ${user.lastName}",
+                            "${user.firstName ?? 'Deleted User'} ${user.lastName ?? ''}",
                             style: const TextStyle(
                               fontSize: 16,
                               fontWeight: FontWeight.bold,
