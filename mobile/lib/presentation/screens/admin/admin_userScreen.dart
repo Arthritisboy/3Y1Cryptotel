@@ -44,12 +44,6 @@ class _AdminScreenState extends State<AdminScreen> {
     }
   }
 
-  void _deleteBooking(String bookingId) {
-    if (handleId != null) {
-      context.read<BookingBloc>().add(DeleteBooking(bookingId, handleId!));
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     return BlocListener<BookingBloc, BookingState>(

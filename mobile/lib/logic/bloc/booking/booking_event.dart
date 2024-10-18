@@ -41,7 +41,7 @@ class UpdateBooking extends BookingEvent {
 
 class DeleteBooking extends BookingEvent {
   final String bookingId;
-  final String userId; // Add userId here
+  final String userId;
 
-  DeleteBooking(this.bookingId, this.userId);
+  DeleteBooking({required this.bookingId, required this.userId});
 }

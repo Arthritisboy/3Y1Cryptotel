@@ -267,6 +267,7 @@ class _HistoryModalState extends State<HistoryModal> {
                 context.read<BookingBloc>().add(
                       DeleteBooking(
                         bookingId: widget.bookingDeleteId,
+                        userId: _userId!, // Ensure userId is passed here
                       ),
                     );
               }
@@ -292,8 +293,7 @@ class _HistoryModalState extends State<HistoryModal> {
                 // Proceed to delete the booking if rating submission succeeds
                 context.read<BookingBloc>().add(
                       DeleteBooking(
-                        bookingId: widget.bookingDeleteId,
-                      ),
+                          bookingId: widget.bookingDeleteId, userId: _userId!),
                     );
               }
             }
