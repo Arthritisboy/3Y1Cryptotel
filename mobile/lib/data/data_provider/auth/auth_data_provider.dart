@@ -287,7 +287,7 @@ class AuthDataProvider {
     }
   }
 
-  Future<List<dynamic>> getFavorites(String userId) async {
+  Future<List<String>> getFavorites(String userId) async {
     try {
       final token = await _getToken(); // Get the token
       final response = await http.get(
@@ -296,8 +296,24 @@ class AuthDataProvider {
       );
 
       // Log the response for debugging
+      print(
+          'Response body: ${response.body}'); // Add this line to see the full response
+
       if (response.statusCode == 200) {
-        return json.decode(response.body)['data']['favorite'];
+        final data = json.decode(response.body);
+
+        // Check if 'data' contains a 'favorite' object
+        if (data['data'] != null && data['data']['favorite'] != null) {
+          // Ensure that 'favorite.hotels' is indeed a list
+          if (data['data']['favorite']['hotels'] is List) {
+            // Return the list of hotel IDs
+            return List<String>.from(data['data']['favorite']['hotels']);
+          } else {
+            throw Exception('Favorites is not a list');
+          }
+        } else {
+          throw Exception('Favorites data is missing');
+        }
       } else {
         // Log the response body for more information
         print('Failed to load favorites: ${response.body}');
