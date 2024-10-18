@@ -12,6 +12,7 @@ router.post('/sendVerificationCode', authController.sendVerificationCode);
 
 // ** Verify route
 router.post('/verifyCode', authController.verifyCode);
+router.post('/resendCode', authController.resendCode);
 
 // ** Login route
 router.route('/login').post(authController.login);
