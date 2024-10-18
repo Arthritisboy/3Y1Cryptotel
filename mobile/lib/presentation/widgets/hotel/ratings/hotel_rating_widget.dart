@@ -119,11 +119,6 @@ class _HotelRatingWidgetState extends State<HotelRatingWidget> {
               (u) => u.id == rating.userId,
               orElse: () => UserModel(), // Return null if not found
             );
-
-            if (user == null) {
-              print(
-                  "No user found for userId: ${rating.userId}"); // Log if user not found
-            }
             return Card(
               color: const Color.fromARGB(255, 238, 237, 237),
               margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
@@ -135,8 +130,8 @@ class _HotelRatingWidgetState extends State<HotelRatingWidget> {
                   children: [
                     ClipRRect(
                       borderRadius: BorderRadius.circular(10),
-                      child: user?.profilePicture != null &&
-                              user!.profilePicture!.isNotEmpty
+                      child: user.profilePicture != null &&
+                              user.profilePicture!.isNotEmpty
                           ? Image.network(
                               user.profilePicture!,
                               width: 60,
@@ -161,7 +156,7 @@ class _HotelRatingWidgetState extends State<HotelRatingWidget> {
                         children: [
                           // User name
                           Text(
-                            "${user?.firstName ?? 'Unknown'} ${user?.lastName ?? ''}",
+                            "${user.firstName ?? 'Deleted User'} ${user.lastName ?? ''}",
                             style: const TextStyle(
                               fontSize: 16,
                               fontWeight: FontWeight.bold,
