@@ -111,7 +111,7 @@ class AuthDataProvider {
             .map((user) => UserModel.fromJson(user))
             .toList();
 
-    print('Fetched users: ${users.length}'); // Log total users fetched
+    print('Check: Fetched users: ${users.length}'); // Log total users fetched
     return users;
   }
 

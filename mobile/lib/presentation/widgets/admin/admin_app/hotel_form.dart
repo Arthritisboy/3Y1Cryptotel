@@ -156,10 +156,6 @@ class _HotelFormScreenState extends State<HotelFormScreen> {
                   _buildTextField('Wallet Address', _walletAddressController),
                   const SizedBox(height: 20),
 
-                  // Image Upload Section
-                  _buildImagePicker(),
-                  const SizedBox(height: 20),
-
                   // Manager Info Section
                   const Text(
                     'Manager Account Information',
@@ -201,6 +197,10 @@ class _HotelFormScreenState extends State<HotelFormScreen> {
                   // Gender Selector
                   _buildGenderSelector(),
                   const SizedBox(height: 30),
+
+                  // Image Upload Section
+                  _buildImagePicker(),
+                  const SizedBox(height: 20),
 
                   // Submit Button
                   ElevatedButton(

@@ -19,6 +19,15 @@ class _RestaurantFormScreenState extends State<RestaurantFormScreen> {
   final TextEditingController _openingHoursController = TextEditingController();
   final TextEditingController _priceController = TextEditingController();
   final TextEditingController _capacityController = TextEditingController();
+  final TextEditingController _walletAddressController =
+      TextEditingController();
+  final TextEditingController _managerFirstNameController =
+      TextEditingController();
+  final TextEditingController _managerLastNameController =
+      TextEditingController();
+  final TextEditingController _managerEmailController = TextEditingController();
+  final TextEditingController _managerPhoneNumberController =
+      TextEditingController();
   final TextEditingController _managerPasswordController =
       TextEditingController();
   final TextEditingController _confirmPasswordController =
@@ -63,12 +72,18 @@ class _RestaurantFormScreenState extends State<RestaurantFormScreen> {
         return;
       }
 
-      // Print all fields to console
+      // Print all fields to console for debugging
       print('Restaurant Name: ${_nameController.text.trim()}');
       print('Location: ${_locationController.text.trim()}');
       print('Opening Hours: ${_openingHoursController.text.trim()}');
       print('Price: ${_priceController.text.trim()}');
       print('Capacity: ${_capacityController.text.trim()}');
+      print('Wallet Address: ${_walletAddressController.text.trim()}');
+      print('Manager First Name: ${_managerFirstNameController.text.trim()}');
+      print('Manager Last Name: ${_managerLastNameController.text.trim()}');
+      print('Manager Email: ${_managerEmailController.text.trim()}');
+      print(
+          'Manager Phone Number: ${_managerPhoneNumberController.text.trim()}');
       print('Manager Password: ${_managerPasswordController.text.trim()}');
       print('Confirm Password: ${_confirmPasswordController.text.trim()}');
       print('Gender: $_selectedGender');
@@ -80,7 +95,6 @@ class _RestaurantFormScreenState extends State<RestaurantFormScreen> {
       });
 
       // Perform actual API call here
-      // For now, simulate a successful operation
       Future.delayed(const Duration(seconds: 2), () {
         setState(() {
           _isLoading = false;
@@ -101,39 +115,67 @@ class _RestaurantFormScreenState extends State<RestaurantFormScreen> {
           child: Form(
             key: _formKey,
             child: ListView(
-              padding: EdgeInsets.zero, // Remove extra padding
               children: [
                 _buildHeader(),
                 const SizedBox(height: 20),
 
-                // Restaurant Name
+                // Restaurant Name Field
                 _buildTextField('Restaurant Name', _nameController),
                 const SizedBox(height: 20),
 
-                // Location
+                // Location Field
                 _buildTextField('Location', _locationController),
                 const SizedBox(height: 20),
 
-                // Opening Hours
+                // Opening Hours Field
                 _buildTextField('Opening Hours', _openingHoursController),
                 const SizedBox(height: 20),
 
-                // Price
+                // Price Field
                 _buildTextField('Price per Meal', _priceController,
                     keyboardType: TextInputType.number),
                 const SizedBox(height: 20),
 
-                // Capacity
+                // Capacity Field
                 _buildTextField('Capacity', _capacityController,
                     keyboardType: TextInputType.number),
                 const SizedBox(height: 20),
 
-                // Manager Password
+                // Wallet Address Field
+                _buildTextField('Wallet Address', _walletAddressController),
+                const SizedBox(height: 20),
+                const Text(
+                  'Manager Account Information',
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                ),
+                const SizedBox(height: 20),
+
+                // Manager First Name Field
+                _buildTextField(
+                    'Manager First Name', _managerFirstNameController),
+                const SizedBox(height: 20),
+
+                // Manager Last Name Field
+                _buildTextField(
+                    'Manager Last Name', _managerLastNameController),
+                const SizedBox(height: 20),
+
+                // Manager Email Field
+                _buildTextField('Manager Email', _managerEmailController,
+                    keyboardType: TextInputType.emailAddress),
+                const SizedBox(height: 20),
+
+                // Manager Phone Number Field
+                _buildTextField(
+                    'Manager Phone Number', _managerPhoneNumberController),
+                const SizedBox(height: 20),
+
+                // Manager Password Field
                 _buildPasswordField(
                     'Manager Password', _managerPasswordController),
                 const SizedBox(height: 20),
 
-                // Confirm Password
+                // Confirm Password Field
                 _buildPasswordField(
                     'Confirm Password', _confirmPasswordController,
                     validator: _validateConfirmPassword),
