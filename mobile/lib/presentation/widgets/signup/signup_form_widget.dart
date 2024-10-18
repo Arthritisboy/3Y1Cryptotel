@@ -182,7 +182,7 @@ class _SignupFormState extends State<SignupForm> {
       padding: const EdgeInsets.symmetric(horizontal: 16),
       child: SizedBox(
         width: screenWidth * 0.7,
-        height: screenWidth * 0.1,
+        height: screenWidth * 0.12,
         child: DropdownButtonFormField<String>(
           decoration: InputDecoration(
             labelText: 'Gender',

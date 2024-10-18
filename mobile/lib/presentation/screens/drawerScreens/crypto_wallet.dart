@@ -8,6 +8,8 @@ import 'package:hotel_flutter/presentation/widgets/cryptowallet/wallet_manager.d
 import 'package:reown_appkit/reown_appkit.dart';
 
 class CryptoWallet extends StatefulWidget {
+  const CryptoWallet({super.key});
+
   @override
   _CryptoWalletState createState() => _CryptoWalletState();
 }
@@ -156,19 +158,21 @@ class _CryptoWalletState extends State<CryptoWallet> {
   }
 
   Future<void> updateWalletInfo() async {
-     connectWallet(); // Call the connectWallet logic
+    connectWallet(); // Call the connectWallet logic
   }
-  
+
   bool isWalletConnected() {
-  return _appKitModal?.session != null; // Assuming this checks if the session exists
-}
+    return _appKitModal?.session !=
+        null; // Assuming this checks if the session exists
+  }
+
   Future<void> sendTransaction(String receiver, String amount) async {
     if (!isWalletConnected()) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Please connect your wallet first')),
-    );
-    return; // Exit the function if not connected
-  }
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Please connect your wallet first')),
+      );
+      return; // Exit the function if not connected
+    }
     if (receiver.isEmpty || amount.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Invalid receiver address!')),
@@ -228,7 +232,7 @@ class _CryptoWalletState extends State<CryptoWallet> {
     // Check if the balance is sufficient for the transaction
     if (balanceInWei.getInWei < totalCost) {
       debugPrint(
-          'Insufficient funds for transaction! Balance: ${balanceInWei}, Total Cost: $totalCost');
+          'Insufficient funds for transaction! Balance: $balanceInWei, Total Cost: $totalCost');
 
       // Show a snackbar to inform the user
       ScaffoldMessenger.of(context).showSnackBar(
@@ -237,7 +241,7 @@ class _CryptoWalletState extends State<CryptoWallet> {
 
       return; // Exit the function
     }
-     _appKitModal!.launchConnectedWallet();
+    _appKitModal!.launchConnectedWallet();
     // Define the contract and its ABI
     final tetherContract = DeployedContract(
       ContractAbi.fromJson(

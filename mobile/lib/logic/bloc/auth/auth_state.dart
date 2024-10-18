@@ -84,6 +84,35 @@ class AccountDeleted extends AuthState {
   List<Object> get props => [message];
 }
 
+class FavoritesSuccess extends AuthState {
+  final String message;
+
+  const FavoritesSuccess(this.message);
+
+  @override
+  List<Object> get props => [message];
+}
+
+class FavoritesError extends AuthState {
+  final String error;
+
+  const FavoritesError(this.error);
+
+  @override
+  List<Object> get props => [error];
+}
+
+class FavoritesFetched extends AuthState {
+  final List<dynamic> favorites;
+
+  const FavoritesFetched(this.favorites);
+
+  @override
+  List<Object> get props => [favorites];
+}
+
+class FavoritesLoading extends AuthState {}
+
 class PasswordChanging extends AuthState {}
 
 class AuthPasswordChangeSuccess extends AuthState {
