@@ -4,25 +4,16 @@ const bookingSchema = new mongoose.Schema({
   bookingType: {
     type: String,
     required: true,
-    enum: ['HotelBooking', 'RestaurantBooking'], // Specify allowed types
+    enum: ['HotelBooking', 'RestaurantBooking'], // Allowed booking types
   },
-  restaurantName: {
-    type: String,
-  },
-  hotelName: {
-    type: String,
-  },
-  roomName: {
-    type: String,
-  },
-  hotelImage: {
-    type: String,
-  },
-  restaurantImage: {
-    type: String,
-  },
+  restaurantName: String,
+  hotelName: String,
+  roomName: String,
+  hotelImage: String,
+  restaurantImage: String,
   userId: {
     type: String,
+    required: true,
   },
   hotelId: {
     type: mongoose.Schema.Types.ObjectId,
@@ -56,7 +47,6 @@ const bookingSchema = new mongoose.Schema({
     type: Number,
     validate: {
       validator: function (value) {
-        // Only validate if bookingType is 'RestaurantBooking'
         return this.bookingType === 'RestaurantBooking' ? value != null : true;
       },
       message: 'Table number is required for Restaurant Booking.',
@@ -69,6 +59,12 @@ const bookingSchema = new mongoose.Schema({
   checkOutDate: {
     type: Date,
     required: true,
+    validate: {
+      validator: function (value) {
+        return value > this.checkInDate;
+      },
+      message: 'Check-out date must be later than check-in date.',
+    },
   },
   timeOfArrival: {
     type: Date,
@@ -76,10 +72,9 @@ const bookingSchema = new mongoose.Schema({
   },
   timeOfDeparture: {
     type: Date,
+    required: true,
   },
-  totalPrice: {
-    type: Number,
-  },
+  totalPrice: Number,
   adult: {
     type: Number,
     required: true,
@@ -93,12 +88,31 @@ const bookingSchema = new mongoose.Schema({
     enum: ['pending', 'accepted', 'cancelled', 'rejected', 'done'],
     default: 'pending',
   },
+  availability: {
+    type: Boolean,
+    default: false, // Default to false
+  },
   createdAt: {
     type: Date,
     default: Date.now,
   },
 });
 
+// ** Pre-save hook to set availability based on conditional logic **
+bookingSchema.pre('save', function (next) {
+  // Check both date and time conditions
+  if (
+    this.checkOutDate > this.checkInDate &&
+    this.timeOfArrival < this.timeOfDeparture
+  ) {
+    this.availability = true;
+  } else {
+    this.availability = false;
+  }
+  next();
+});
+
 // Create the Booking model
 const Booking = mongoose.model('Booking', bookingSchema);
+
 module.exports = Booking;
