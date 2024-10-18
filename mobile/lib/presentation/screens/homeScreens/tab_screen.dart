@@ -30,7 +30,7 @@ import 'package:hotel_flutter/presentation/widgets/shimmer_loading/tab/shimmer_b
 import 'package:hotel_flutter/presentation/widgets/shimmer_loading/tab/shimmer_card_widget.dart';
 
 class TabScreen extends StatefulWidget {
-  const TabScreen({super.key});
+  TabScreen({super.key});
 
   @override
   State<TabScreen> createState() => _TabScreenState();
@@ -171,7 +171,6 @@ class _TabScreenState extends State<TabScreen> {
       onWillPop: () async => await _showExitConfirmationDialog(context),
       child: BlocListener<AuthBloc, AuthState>(
         listener: (context, state) {
-          print('Current state: $state');
           _handleBlocState(context, state);
         },
         child: BlocBuilder<AuthBloc, AuthState>(
@@ -185,7 +184,7 @@ class _TabScreenState extends State<TabScreen> {
                 profile: profile ?? '',
               ),
               body: RefreshIndicator(
-                onRefresh: _onRefresh, // Call your fetch method
+                onRefresh: _onRefresh,
                 child: _isLoading ? _buildShimmerLoading() : _buildContent(),
               ),
             );
