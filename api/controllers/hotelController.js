@@ -50,6 +50,7 @@ exports.createHotel = catchAsync(async (req, res, next) => {
     managerLastName,
     managerPassword,
     managerPhoneNumber,
+    managerConfirmPassword,
     managerGender,
   } = req.body;
 
@@ -59,7 +60,8 @@ exports.createHotel = catchAsync(async (req, res, next) => {
     !location ||
     !openingHours ||
     !managerEmail ||
-    !managerPassword
+    !managerPassword ||
+    !managerConfirmPassword
   ) {
     return next(new AppError('Missing required fields.', 400));
   }
@@ -98,6 +100,7 @@ exports.createHotel = catchAsync(async (req, res, next) => {
       lastName: managerLastName,
       email: managerEmail,
       password: managerPassword,
+      confirmPassword: managerConfirmPassword,
       phoneNumber: managerPhoneNumber,
       gender: managerGender,
       roles: 'manager', // Assign manager role
