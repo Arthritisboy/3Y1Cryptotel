@@ -1,5 +1,10 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:hotel_flutter/data/model/admin/admin_model.dart';
+import 'package:hotel_flutter/logic/bloc/admin/admin_bloc.dart';
+import 'package:hotel_flutter/logic/bloc/admin/admin_event.dart';
+import 'package:hotel_flutter/logic/bloc/admin/admin_state.dart';
 import 'package:image_picker/image_picker.dart';
 
 class RestaurantFormScreen extends StatefulWidget {
@@ -62,7 +67,7 @@ class _RestaurantFormScreenState extends State<RestaurantFormScreen> {
     return null;
   }
 
-  // Create Restaurant - Logic Placeholder
+  // Create Restaurant - Dispatch Event
   void _createRestaurant() {
     if (_formKey.currentState?.validate() ?? false) {
       if (_selectedImage == null) {
@@ -72,141 +77,121 @@ class _RestaurantFormScreenState extends State<RestaurantFormScreen> {
         return;
       }
 
-      // Print all fields to console for debugging
-      print('Restaurant Name: ${_nameController.text.trim()}');
-      print('Location: ${_locationController.text.trim()}');
-      print('Opening Hours: ${_openingHoursController.text.trim()}');
-      print('Price: ${_priceController.text.trim()}');
-      print('Capacity: ${_capacityController.text.trim()}');
-      print('Wallet Address: ${_walletAddressController.text.trim()}');
-      print('Manager First Name: ${_managerFirstNameController.text.trim()}');
-      print('Manager Last Name: ${_managerLastNameController.text.trim()}');
-      print('Manager Email: ${_managerEmailController.text.trim()}');
-      print(
-          'Manager Phone Number: ${_managerPhoneNumberController.text.trim()}');
-      print('Manager Password: ${_managerPasswordController.text.trim()}');
-      print('Confirm Password: ${_confirmPasswordController.text.trim()}');
-      print('Gender: $_selectedGender');
-      print('Selected Image: ${_selectedImage?.path}');
+      final adminModel = AdminModel(
+        name: _nameController.text,
+        location: _locationController.text,
+        openingHours: _openingHoursController.text,
+        price: int.parse(_priceController.text),
+        capacity: int.parse(_capacityController.text),
+        walletAddress: _walletAddressController.text,
+        managerFirstName: _managerFirstNameController.text,
+        managerLastName: _managerLastNameController.text,
+        managerEmail: _managerEmailController.text,
+        managerPhoneNumber: _managerPhoneNumberController.text,
+        managerPassword: _managerPasswordController.text,
+        managerConfirmPassword: _confirmPasswordController.text,
+        managerGender: _selectedGender,
+        image: _selectedImage!,
+      );
 
-      // Show loading state
-      setState(() {
-        _isLoading = true;
-      });
-
-      // Perform actual API call here
-      Future.delayed(const Duration(seconds: 2), () {
-        setState(() {
-          _isLoading = false;
-        });
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Restaurant created successfully!')),
-        );
-      });
+      context.read<AdminBloc>().add(CreateRestaurantEvent(adminModel));
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Form(
-            key: _formKey,
-            child: ListView(
-              children: [
-                _buildHeader(),
-                const SizedBox(height: 20),
-
-                // Restaurant Name Field
-                _buildTextField('Restaurant Name', _nameController),
-                const SizedBox(height: 20),
-
-                // Location Field
-                _buildTextField('Location', _locationController),
-                const SizedBox(height: 20),
-
-                // Opening Hours Field
-                _buildTextField('Opening Hours', _openingHoursController),
-                const SizedBox(height: 20),
-
-                // Price Field
-                _buildTextField('Price per Meal', _priceController,
-                    keyboardType: TextInputType.number),
-                const SizedBox(height: 20),
-
-                // Capacity Field
-                _buildTextField('Capacity', _capacityController,
-                    keyboardType: TextInputType.number),
-                const SizedBox(height: 20),
-
-                // Wallet Address Field
-                _buildTextField('Wallet Address', _walletAddressController),
-                const SizedBox(height: 20),
-                const Text(
-                  'Manager Account Information',
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                ),
-                const SizedBox(height: 20),
-
-                // Manager First Name Field
-                _buildTextField(
-                    'Manager First Name', _managerFirstNameController),
-                const SizedBox(height: 20),
-
-                // Manager Last Name Field
-                _buildTextField(
-                    'Manager Last Name', _managerLastNameController),
-                const SizedBox(height: 20),
-
-                // Manager Email Field
-                _buildTextField('Manager Email', _managerEmailController,
-                    keyboardType: TextInputType.emailAddress),
-                const SizedBox(height: 20),
-
-                // Manager Phone Number Field
-                _buildTextField(
-                    'Manager Phone Number', _managerPhoneNumberController),
-                const SizedBox(height: 20),
-
-                // Manager Password Field
-                _buildPasswordField(
-                    'Manager Password', _managerPasswordController),
-                const SizedBox(height: 20),
-
-                // Confirm Password Field
-                _buildPasswordField(
-                    'Confirm Password', _confirmPasswordController,
-                    validator: _validateConfirmPassword),
-                const SizedBox(height: 20),
-
-                // Gender Selector
-                _buildGenderSelector(),
-                const SizedBox(height: 20),
-
-                // Image Upload Section
-                _buildImagePicker(),
-                const SizedBox(height: 30),
-
-                // Submit Button
-                ElevatedButton(
-                  onPressed: _isLoading ? null : _createRestaurant,
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFF1C3473),
+    return BlocListener<AdminBloc, AdminState>(
+      listener: (context, state) {
+        if (state is AdminLoading) {
+          setState(() {
+            _isLoading = true;
+          });
+        } else if (state is AdminSuccess) {
+          setState(() {
+            _isLoading = false;
+          });
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text(state.message)),
+          );
+        } else if (state is AdminFailure) {
+          setState(() {
+            _isLoading = false;
+          });
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text(state.error)),
+          );
+        }
+      },
+      child: Scaffold(
+        body: SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Form(
+              key: _formKey,
+              child: ListView(
+                children: [
+                  _buildHeader(),
+                  const SizedBox(height: 20),
+                  _buildTextField('Restaurant Name', _nameController),
+                  const SizedBox(height: 20),
+                  _buildTextField('Location', _locationController),
+                  const SizedBox(height: 20),
+                  _buildTextField('Opening Hours', _openingHoursController),
+                  const SizedBox(height: 20),
+                  _buildTextField('Price per Meal', _priceController,
+                      keyboardType: TextInputType.number),
+                  const SizedBox(height: 20),
+                  _buildTextField('Capacity', _capacityController,
+                      keyboardType: TextInputType.number),
+                  const SizedBox(height: 20),
+                  _buildTextField('Wallet Address', _walletAddressController),
+                  const SizedBox(height: 20),
+                  const Text(
+                    'Manager Account Information',
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                   ),
-                  child: _isLoading
-                      ? const SizedBox(
-                          width: 20,
-                          height: 20,
-                          child: CircularProgressIndicator(
-                            color: Colors.white,
-                            strokeWidth: 2.0,
-                          ),
-                        )
-                      : const Text('Create Restaurant'),
-                ),
-              ],
+                  const SizedBox(height: 20),
+                  _buildTextField(
+                      'Manager First Name', _managerFirstNameController),
+                  const SizedBox(height: 20),
+                  _buildTextField(
+                      'Manager Last Name', _managerLastNameController),
+                  const SizedBox(height: 20),
+                  _buildTextField('Manager Email', _managerEmailController,
+                      keyboardType: TextInputType.emailAddress),
+                  const SizedBox(height: 20),
+                  _buildTextField(
+                      'Manager Phone Number', _managerPhoneNumberController),
+                  const SizedBox(height: 20),
+                  _buildPasswordField(
+                      'Manager Password', _managerPasswordController),
+                  const SizedBox(height: 20),
+                  _buildPasswordField(
+                      'Confirm Password', _confirmPasswordController,
+                      validator: _validateConfirmPassword),
+                  const SizedBox(height: 20),
+                  _buildGenderSelector(),
+                  const SizedBox(height: 20),
+                  _buildImagePicker(),
+                  const SizedBox(height: 30),
+                  ElevatedButton(
+                    onPressed: _isLoading ? null : () => _createRestaurant(),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color(0xFF1C3473),
+                    ),
+                    child: _isLoading
+                        ? const SizedBox(
+                            width: 20,
+                            height: 20,
+                            child: CircularProgressIndicator(
+                              color: Colors.white,
+                              strokeWidth: 2.0,
+                            ),
+                          )
+                        : const Text('Create Restaurant'),
+                  ),
+                ],
+              ),
             ),
           ),
         ),
