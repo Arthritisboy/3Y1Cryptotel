@@ -6,10 +6,12 @@ import 'package:hotel_flutter/data/data_provider/auth/booking_data_provider.dart
 import 'package:hotel_flutter/data/data_provider/auth/favorite_data_provider.dart';
 import 'package:hotel_flutter/data/data_provider/auth/hotel_data_provider.dart';
 import 'package:hotel_flutter/data/data_provider/auth/restaurant_data_provider.dart';
+import 'package:hotel_flutter/data/repositories/admin_repository.dart';
 import 'package:hotel_flutter/data/repositories/booking_repository.dart';
 import 'package:hotel_flutter/data/repositories/favorite_repository.dart';
 import 'package:hotel_flutter/data/repositories/hotel_repository.dart';
 import 'package:hotel_flutter/data/repositories/restaurant_repository.dart';
+import 'package:hotel_flutter/logic/bloc/admin/admin_bloc.dart';
 import 'package:hotel_flutter/logic/bloc/auth/auth_bloc.dart';
 import 'package:hotel_flutter/logic/bloc/booking/booking_bloc.dart';
 import 'package:hotel_flutter/logic/bloc/hotel/hotel_bloc.dart';
@@ -18,6 +20,7 @@ import 'package:hotel_flutter/presentation/screens/homeScreens/splash_screen.dar
 import 'package:hotel_flutter/router/app_router.dart';
 import 'package:hotel_flutter/data/repositories/auth_repository.dart';
 import 'package:logging/logging.dart';
+import 'package:hotel_flutter/data/data_provider/auth/admin_data_provider.dart';
 
 void main() async {
   // Ensure the Flutter binding is initialized
@@ -48,6 +51,9 @@ class MyApp extends StatelessWidget {
       providers: [
         RepositoryProvider.value(value: authRepository), // Provide it here
         RepositoryProvider(
+            create: (context) =>
+                AdminRepository(adminDataProvider: AdminDataProvider())),
+        RepositoryProvider(
             create: (context) => HotelRepository(HotelDataProvider())),
         RepositoryProvider(
             create: (context) =>
@@ -59,6 +65,10 @@ class MyApp extends StatelessWidget {
       ],
       child: MultiBlocProvider(
         providers: [
+          BlocProvider(
+              create: (context) => AdminBloc(
+                  adminRepository:
+                      AdminRepository(adminDataProvider: AdminDataProvider()))),
           BlocProvider(
               create: (context) =>
                   AuthBloc(RepositoryProvider.of<AuthRepository>(context))),
