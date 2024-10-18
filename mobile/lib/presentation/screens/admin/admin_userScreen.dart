@@ -71,59 +71,21 @@ class _AdminScreenState extends State<AdminScreen> {
   }
 
   Widget _buildRoomsTab(BuildContext contextRoom) {
-    return BlocBuilder<BookingBloc, BookingState>(
-      builder: (context, state) {
-        if (state is BookingSuccess && state.bookings.isNotEmpty) {
-          return Stack(
-            children: [
-              Positioned(
-                top: 16,
-                left: 16,
-                child: ElevatedButton(
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => const CreateRoom()),
-                    );
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFF1C3473),
-                  ),
-                  child: const Text('Create Room'),
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.only(top: 60.0),
-                child: _buildBookingList(state.bookings),
-              ),
-            ],
-          );
-        } else {
-          return Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                const Text('No rooms available.'),
-                const SizedBox(height: 20),
-                ElevatedButton(
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => const CreateRoom()),
-                    );
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFF1C3473),
-                  ),
-                  child: const Text('Create Room'),
-                ),
-              ],
+    return Center(
+      child: ElevatedButton(
+        onPressed: () {
+          Navigator.push(
+            contextRoom,
+            MaterialPageRoute(
+              builder: (context) => const CreateRoom(),
             ),
           );
-        }
-      },
+        },
+        style: ElevatedButton.styleFrom(
+          backgroundColor: const Color(0xFF1C3473),
+        ),
+        child: const Text('Create Room'),
+      ),
     );
   }
 

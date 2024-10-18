@@ -1,5 +1,6 @@
 import 'package:equatable/equatable.dart';
 import 'package:hotel_flutter/data/model/admin/admin_model.dart';
+import 'package:hotel_flutter/data/model/hotel/create_room_model.dart';
 
 abstract class AdminEvent extends Equatable {
   const AdminEvent();
@@ -26,4 +27,22 @@ class CreateRestaurantEvent extends AdminEvent {
 
   @override
   List<Object?> get props => [adminModel];
+}
+
+abstract class RoomEvent extends Equatable {
+  const RoomEvent();
+
+  @override
+  List<Object?> get props => [];
+}
+
+// Event for Creating a Room
+class CreateRoomEvent extends AdminEvent {
+  final CreateRoomModel roomModel;
+  final String hotelId;
+
+  const CreateRoomEvent({required this.roomModel, required this.hotelId});
+
+  @override
+  List<Object?> get props => [roomModel, hotelId];
 }

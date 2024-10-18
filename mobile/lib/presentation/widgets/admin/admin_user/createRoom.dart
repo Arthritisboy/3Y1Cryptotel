@@ -1,6 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
+import 'package:hotel_flutter/data/model/hotel/create_room_model.dart';
+import 'package:hotel_flutter/logic/bloc/admin/admin_event.dart';
+import 'package:hotel_flutter/logic/bloc/admin/admin_bloc.dart';
+import 'package:hotel_flutter/logic/bloc/admin/admin_state.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 class CreateRoom extends StatefulWidget {
   const CreateRoom({super.key});
@@ -11,42 +17,35 @@ class CreateRoom extends StatefulWidget {
 
 class _CreateRoomState extends State<CreateRoom> {
   final _formKey = GlobalKey<FormState>();
+  final FlutterSecureStorage _storage = const FlutterSecureStorage();
 
   String? _roomName;
-  String? _roomDescription;
   double? _roomPrice;
   int? _roomCapacity;
   String? _selectedRoomType;
-  File? _selectedImage; // To store the selected image
+  File? _selectedImage;
+  String? _hotelId;
+  bool _isLoading = false;
 
   final List<String> _roomTypes = ['Single', 'Double', 'Suite', 'Deluxe'];
-
-  // Amenity Categories
-  final Map<String, bool> _bathroomAmenities = {
-    'Toiletries': false,
-    'Shower': false,
-    'Bidet': false,
-    'Towels': false,
-    'Slippers': false,
-    'Toilet paper': false,
-  };
-
-  final Map<String, bool> _facilitiesAmenities = {
-    'Air Conditioning': false,
-    'Safety Deposit Box': false,
-    'Linen': false,
-    'Socket Near the Bed': false,
-    'TV': false,
-    'Refrigerator': false,
-    'Telephone': false,
-    'Satellite Channels': false,
-    'Wifi': false,
-    'Cable Channels': false,
-  };
-
-  bool _isNonSmoking = false; // For Smoking category
-
   final ImagePicker _picker = ImagePicker();
+
+  @override
+  void initState() {
+    super.initState();
+    _getHotelId();
+  }
+
+  Future<void> _getHotelId() async {
+    try {
+      _hotelId = await _storage.read(key: 'handleId');
+      if (_hotelId == null) {
+        _showSnackbar('Failed to retrieve hotel ID.', Colors.red);
+      }
+    } catch (e) {
+      print('Error retrieving hotel ID: $e');
+    }
+  }
 
   Future<void> _pickImage() async {
     final pickedFile = await _picker.pickImage(source: ImageSource.gallery);
@@ -58,6 +57,37 @@ class _CreateRoomState extends State<CreateRoom> {
     }
   }
 
+  void _submitForm() {
+    if (_formKey.currentState!.validate() && _hotelId != null) {
+      _formKey.currentState!.save();
+
+      final roomModel = CreateRoomModel(
+        roomNumber: _roomName!,
+        type: _selectedRoomType!,
+        price: _roomPrice!.toInt(),
+        capacity: _roomCapacity!,
+        image: _selectedImage!,
+      );
+
+      context.read<AdminBloc>().add(
+            CreateRoomEvent(roomModel: roomModel, hotelId: _hotelId!),
+          );
+
+      setState(() {
+        _isLoading = true;
+      });
+    }
+  }
+
+  void _showSnackbar(String message, Color color) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(message),
+        backgroundColor: color,
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -67,16 +97,13 @@ class _CreateRoomState extends State<CreateRoom> {
           child: Form(
             key: _formKey,
             child: ListView(
-              padding: EdgeInsets.zero, // Remove padding from ListView
+              padding: EdgeInsets.zero,
               children: [
                 Row(
                   children: [
                     IconButton(
                       icon: const Icon(Icons.arrow_back),
-                      onPressed: () {
-                        Navigator.pop(
-                            context); // Go back to the previous screen
-                      },
+                      onPressed: () => Navigator.pop(context),
                     ),
                     const Text(
                       'Room Creation',
@@ -88,45 +115,16 @@ class _CreateRoomState extends State<CreateRoom> {
                   ],
                 ),
                 const SizedBox(height: 20),
-
-                // Room Name
                 TextFormField(
                   decoration: const InputDecoration(
                     labelText: 'Room Name',
                     border: OutlineInputBorder(),
                   ),
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Please enter the room name';
-                    }
-                    return null;
-                  },
-                  onSaved: (value) {
-                    _roomName = value;
-                  },
+                  validator: (value) =>
+                      value == null || value.isEmpty ? 'Enter room name' : null,
+                  onSaved: (value) => _roomName = value,
                 ),
                 const SizedBox(height: 20),
-
-                // Room Description
-                TextFormField(
-                  decoration: const InputDecoration(
-                    labelText: 'Room Description',
-                    border: OutlineInputBorder(),
-                  ),
-                  maxLines: 3,
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Please enter a description';
-                    }
-                    return null;
-                  },
-                  onSaved: (value) {
-                    _roomDescription = value;
-                  },
-                ),
-                const SizedBox(height: 20),
-
-                // Room Price
                 TextFormField(
                   decoration: const InputDecoration(
                     labelText: 'Price per Night',
@@ -135,20 +133,16 @@ class _CreateRoomState extends State<CreateRoom> {
                   keyboardType: TextInputType.number,
                   validator: (value) {
                     if (value == null || value.isEmpty) {
-                      return 'Please enter the room price';
+                      return 'Enter room price';
                     }
                     if (double.tryParse(value) == null) {
-                      return 'Please enter a valid price';
+                      return 'Enter a valid price';
                     }
                     return null;
                   },
-                  onSaved: (value) {
-                    _roomPrice = double.tryParse(value!);
-                  },
+                  onSaved: (value) => _roomPrice = double.tryParse(value!),
                 ),
                 const SizedBox(height: 20),
-
-                // Room Capacity
                 TextFormField(
                   decoration: const InputDecoration(
                     labelText: 'Room Capacity',
@@ -157,20 +151,16 @@ class _CreateRoomState extends State<CreateRoom> {
                   keyboardType: TextInputType.number,
                   validator: (value) {
                     if (value == null || value.isEmpty) {
-                      return 'Please enter the room capacity';
+                      return 'Enter room capacity';
                     }
                     if (int.tryParse(value) == null) {
-                      return 'Please enter a valid number';
+                      return 'Enter a valid number';
                     }
                     return null;
                   },
-                  onSaved: (value) {
-                    _roomCapacity = int.tryParse(value!);
-                  },
+                  onSaved: (value) => _roomCapacity = int.tryParse(value!),
                 ),
                 const SizedBox(height: 20),
-
-                // Room Type Dropdown
                 DropdownButtonFormField<String>(
                   decoration: const InputDecoration(
                     labelText: 'Room Type',
@@ -183,28 +173,18 @@ class _CreateRoomState extends State<CreateRoom> {
                       child: Text(type),
                     );
                   }).toList(),
-                  onChanged: (value) {
-                    setState(() {
-                      _selectedRoomType = value;
-                    });
-                  },
-                  validator: (value) {
-                    if (value == null) {
-                      return 'Please select a room type';
-                    }
-                    return null;
-                  },
+                  onChanged: (value) => setState(() {
+                    _selectedRoomType = value;
+                  }),
+                  validator: (value) =>
+                      value == null ? 'Select a room type' : null,
                 ),
                 const SizedBox(height: 20),
-
-                // Image Upload
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Text(
-                      'Upload Room Image',
-                      style: TextStyle(fontSize: 16),
-                    ),
+                    const Text('Upload Room Image',
+                        style: TextStyle(fontSize: 16)),
                     const SizedBox(height: 10),
                     _selectedImage != null
                         ? Image.file(
@@ -217,104 +197,40 @@ class _CreateRoomState extends State<CreateRoom> {
                             height: 150,
                             width: double.infinity,
                             color: Colors.grey[200],
-                            child: const Icon(
-                              Icons.image,
-                              size: 100,
-                              color: Colors.grey,
-                            ),
+                            child: const Icon(Icons.image, size: 100),
                           ),
                     const SizedBox(height: 10),
                     ElevatedButton(
                       onPressed: _pickImage,
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor:
-                            const Color(0xFF1C3473), // Set button color
-                      ),
                       child: const Text('Pick Image'),
                     ),
                   ],
                 ),
                 const SizedBox(height: 20),
-
-                // Bathroom Amenities
-                ExpansionTile(
-                  title: const Text('Bathroom Amenities'),
-                  children: _bathroomAmenities.keys.map((amenity) {
-                    return CheckboxListTile(
-                      title: Text(
-                        amenity,
-                        style: const TextStyle(
-                            color: Colors.black), // Set text color to black
-                      ),
-                      value: _bathroomAmenities[amenity],
-                      onChanged: (bool? value) {
-                        setState(() {
-                          _bathroomAmenities[amenity] = value!;
-                        });
-                      },
-                    );
-                  }).toList(),
-                ),
-                const SizedBox(height: 10),
-
-                // Facilities Section
-                ExpansionTile(
-                  title: const Text('Facilities'),
-                  children: _facilitiesAmenities.keys.map((amenity) {
-                    return CheckboxListTile(
-                      title: Text(
-                        amenity,
-                        style: const TextStyle(
-                            color: Colors.black), // Set text color to black
-                      ),
-                      value: _facilitiesAmenities[amenity],
-                      onChanged: (bool? value) {
-                        setState(() {
-                          _facilitiesAmenities[amenity] = value!;
-                        });
-                      },
-                    );
-                  }).toList(),
-                ),
-                const SizedBox(height: 10),
-
-                // Smoking Section
-                ExpansionTile(
-                  title: const Text('Smoking'),
-                  children: [
-                    SwitchListTile(
-                      title: const Text(
-                        'Non-Smoking',
-                        style: TextStyle(
-                            color: Colors.black), // Set text color to black
-                      ),
-                      value: _isNonSmoking,
-                      onChanged: (bool value) {
-                        setState(() {
-                          _isNonSmoking = value;
-                        });
-                      },
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 20),
-
-                // Submit Button
-                ElevatedButton(
-                  onPressed: () {
-                    if (_formKey.currentState!.validate()) {
-                      _formKey.currentState!.save();
-
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(content: Text('Room Created!')),
-                      );
+                BlocListener<AdminBloc, AdminState>(
+                  listener: (context, state) {
+                    if (state is AdminSuccess) {
+                      _showSnackbar('Room Created Successfully!', Colors.green);
+                      setState(() {
+                        _isLoading = false;
+                      });
+                      Navigator.pop(context);
+                    } else if (state is AdminFailure) {
+                      _showSnackbar(state.error, Colors.red);
+                      setState(() {
+                        _isLoading = false;
+                      });
                     }
                   },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor:
-                        const Color(0xFF1C3473), // Set button color
+                  child: ElevatedButton(
+                    onPressed: _isLoading ? null : _submitForm,
+                    child: _isLoading
+                        ? const CircularProgressIndicator(
+                            valueColor:
+                                AlwaysStoppedAnimation<Color>(Colors.white),
+                          )
+                        : const Text('Create Room'),
                   ),
-                  child: const Text('Create Room'),
                 ),
               ],
             ),
