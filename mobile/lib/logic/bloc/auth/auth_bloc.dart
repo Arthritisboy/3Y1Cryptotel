@@ -194,6 +194,11 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       try {
         await authRepository.addToFavorites(event.userId, event.type, event.id);
         emit(FavoritesSuccess('Added to favorites'));
+
+        // Fetch updated favorites
+        final updatedFavorites =
+            await authRepository.getFavorites(event.userId);
+        emit(FavoritesFetched(updatedFavorites)); // Pass the updated favorites
       } catch (e) {
         emit(FavoritesError('Failed to add to favorites: ${e.toString()}'));
       }
@@ -205,6 +210,11 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         await authRepository.removeFromFavorites(
             event.userId, event.type, event.id);
         emit(FavoritesSuccess('Removed from favorites'));
+
+        // Fetch updated favorites
+        final updatedFavorites =
+            await authRepository.getFavorites(event.userId);
+        emit(FavoritesFetched(updatedFavorites)); // Pass the updated favorites
       } catch (e) {
         emit(
             FavoritesError('Failed to remove from favorites: ${e.toString()}'));
@@ -215,7 +225,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       emit(AuthLoading());
       try {
         final favorites = await authRepository.getFavorites(event.userId);
-        emit(FavoritesFetched(favorites));
+        emit(FavoritesFetched(favorites)); // Pass the favorites directly
       } catch (e) {
         emit(FavoritesError('Failed to fetch favorites: ${e.toString()}'));
       }

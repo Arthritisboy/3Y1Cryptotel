@@ -287,7 +287,7 @@ class AuthDataProvider {
     }
   }
 
-  Future<List<String>> getFavorites(String userId) async {
+  Future<Map<String, List<String>>> getFavorites(String userId) async {
     try {
       final token = await _getToken(); // Get the token
       final response = await http.get(
@@ -296,26 +296,35 @@ class AuthDataProvider {
       );
 
       // Log the response for debugging
-      print(
-          'Response body: ${response.body}'); // Add this line to see the full response
+      print('Response body: ${response.body}');
 
       if (response.statusCode == 200) {
         final data = json.decode(response.body);
 
         // Check if 'data' contains a 'favorite' object
         if (data['data'] != null && data['data']['favorite'] != null) {
-          // Ensure that 'favorite.hotels' is indeed a list
-          if (data['data']['favorite']['hotels'] is List) {
-            // Return the list of hotel IDs
-            return List<String>.from(data['data']['favorite']['hotels']);
-          } else {
-            throw Exception('Favorites is not a list');
+          // Ensure that 'favorite.restaurants' and 'favorite.hotels' are lists
+          List<String> restaurantIds = [];
+          List<String> hotelIds = [];
+
+          if (data['data']['favorite']['restaurants'] is List) {
+            restaurantIds =
+                List<String>.from(data['data']['favorite']['restaurants']);
           }
+
+          if (data['data']['favorite']['hotels'] is List) {
+            hotelIds = List<String>.from(data['data']['favorite']['hotels']);
+          }
+
+          // Return a map with both lists
+          return {
+            'restaurants': restaurantIds,
+            'hotels': hotelIds,
+          };
         } else {
           throw Exception('Favorites data is missing');
         }
       } else {
-        // Log the response body for more information
         print('Failed to load favorites: ${response.body}');
         throw Exception(
             'Failed to load favorites. Status code: ${response.statusCode}');

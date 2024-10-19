@@ -103,12 +103,9 @@ class FavoritesError extends AuthState {
 }
 
 class FavoritesFetched extends AuthState {
-  final List<dynamic> favorites;
+  final Map<String, List<String>> favorites;
 
-  const FavoritesFetched(this.favorites);
-
-  @override
-  List<Object> get props => [favorites];
+  FavoritesFetched(this.favorites);
 }
 
 class FavoritesLoading extends AuthState {}

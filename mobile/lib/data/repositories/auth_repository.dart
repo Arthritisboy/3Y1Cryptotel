@@ -279,7 +279,7 @@ class AuthRepository {
   }
 
   //! Get Favorites
-  Future<List<dynamic>> getFavorites(String userId) {
+  Future<Map<String, List<String>>> getFavorites(String userId) {
     return dataProvider.getFavorites(userId);
   }
 }

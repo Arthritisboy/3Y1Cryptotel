@@ -57,8 +57,9 @@ class _RestaurantState extends State<Restaurant> {
       final favorites =
           await authRepository.getFavorites(userId!); // Await the favorites
       setState(() {
-        isFavorite = favorites.contains(
-            widget.restaurantId); // Check if restaurantId is in favorites
+        // Check if the restaurantId is in the favorites for restaurants
+        isFavorite =
+            favorites['restaurants']?.contains(widget.restaurantId) ?? false;
       });
     }
   }

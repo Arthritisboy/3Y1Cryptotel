@@ -55,8 +55,8 @@ class _HotelScreenState extends State<HotelScreen> {
       final favorites =
           await authRepository.getFavorites(userId!); // Await the favorites
       setState(() {
-        isFavorite = favorites
-            .contains(widget.hotelId); // Check if hotelId is in favorites
+        // Check if the restaurantId is in the favorites for restaurants
+        isFavorite = favorites['hotels']?.contains(widget.hotelId) ?? false;
       });
     }
   }
