@@ -269,21 +269,25 @@ class _HotelInputFieldsState extends State<HotelInputFields> {
   @override
   Widget build(BuildContext context) {
     return BlocListener<BookingBloc, BookingState>(
-      listener: (context, state) {
-        if (state is BookingCreateSuccess) {
-          setState(() {
-            isLoading = false; // Hide loading spinner
-          });
-          _showBookingSuccessDialog(context);
-        } else if (state is BookingFailure) {
-          setState(() {
-            isLoading = false; // Hide loading spinner
-          });
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Failed to create booking: ${state.error}')),
-          );
-        }
-      },
+  listener: (context, state) {
+    if (state is BookingCreateSuccess) {
+      setState(() {
+        isLoading = false;
+      });
+      _showBookingSuccessDialog(context);
+    } else if (state is BookingFailure) {
+      setState(() {
+        isLoading = false;
+      });
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Failed to create booking: ${state.error}')),
+      );
+    } else if (state is BookingLoading) {
+      setState(() {
+        isLoading = true; // Start loading spinner
+      });
+    }
+  },
       child: Column(
         children: [
           Row(
