@@ -1,4 +1,3 @@
-// booking_bloc.dart
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hotel_flutter/data/repositories/booking_repository.dart';
 import 'package:hotel_flutter/logic/bloc/booking/booking_event.dart';
@@ -16,12 +15,12 @@ class BookingBloc extends Bloc<BookingEvent, BookingState> {
 
   Future<void> _onFetchBookings(
       FetchBookings event, Emitter<BookingState> emit) async {
-    emit(BookingLoading()); // Emit loading state
+    emit(BookingLoading());
     try {
       final bookings = await bookingRepository.fetchBookings(event.userId);
-      emit(BookingSuccess(bookings: bookings)); // Emit success with bookings
+      emit(BookingSuccess(bookings: bookings));
     } catch (e) {
-      emit(BookingFailure(error: e.toString())); // Emit failure with error
+      emit(BookingFailure(error: e.toString()));
     }
   }
 
@@ -29,12 +28,9 @@ class BookingBloc extends Bloc<BookingEvent, BookingState> {
       CreateBooking event, Emitter<BookingState> emit) async {
     emit(BookingLoading());
     try {
-      await bookingRepository.createBooking(event.booking, event.userId);
-
-      // Fetch updated bookings after creation
-      final bookings = await bookingRepository.fetchBookings(event.userId);
-      emit(BookingSuccess(
-          bookings: bookings)); // Emit success with updated bookings
+      final booking =
+          await bookingRepository.createBooking(event.booking, event.userId);
+      emit(BookingCreateSuccess(booking: booking));
     } catch (e) {
       emit(BookingFailure(error: e.toString()));
     }
@@ -54,18 +50,12 @@ class BookingBloc extends Bloc<BookingEvent, BookingState> {
     }
   }
 
-  //! Delete Booking Handler
   Future<void> _onDeleteBooking(
       DeleteBooking event, Emitter<BookingState> emit) async {
     emit(BookingLoading());
     try {
-      // Call the repository method with bookingId and bookingType
       await bookingRepository.deleteBooking(event.bookingId);
-
-      // Fetch updated bookings after deletion
-      final bookings = await bookingRepository.fetchBookings(event.userId);
-      emit(BookingSuccess(
-          bookings: bookings)); // Emit success with updated bookings
+      emit(BookingDeleteSuccess());
     } catch (e) {
       emit(BookingFailure(error: e.toString()));
     }

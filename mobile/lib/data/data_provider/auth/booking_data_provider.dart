@@ -27,7 +27,6 @@ class BookingDataProvider {
     if (response.statusCode == 200) {
       final List<dynamic> bookingsJson =
           jsonDecode(response.body)['data']['bookings'];
-      print('Bookings fetched: $bookingsJson');
       return bookingsJson.map((json) => BookingModel.fromJson(json)).toList();
     } else {
       final errorResponse = json.decode(response.body);
@@ -91,7 +90,7 @@ class BookingDataProvider {
     }
   }
 
-//! Delete a Booking and update availability based on booking type
+  //! Delete a Booking
   Future<void> deleteBooking(String bookingId) async {
     final token = await storage.read(key: 'jwt');
 
@@ -103,20 +102,12 @@ class BookingDataProvider {
       Uri.parse('$baseUrl/$bookingId'),
       headers: {
         'Authorization': 'Bearer $token',
-        'Content-Type': 'application/json',
       },
     );
 
-    if (response.statusCode == 204) {
-      // Booking deleted successfully, no further action needed on success.
-      print('Booking deleted successfully');
-    } else if (response.statusCode == 404) {
-      // Handle booking not found error
-      throw Exception('Booking not found');
-    } else {
-      // Handle other errors
-      final errorResponse = jsonDecode(response.body);
-      final errorMessage =
+    if (response.statusCode != 204) {
+      final errorResponse = json.decode(response.body);
+      String errorMessage =
           errorResponse['message'] ?? 'Failed to delete booking';
       throw Exception(errorMessage);
     }
