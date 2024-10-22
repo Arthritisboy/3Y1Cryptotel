@@ -95,7 +95,7 @@ class CryptoWalletHeader extends StatelessWidget {
               ),
               const SizedBox(height: 20.0),
               // CryptoNavigation Widget Added Below the Address Section
-              const CryptoNavigation(),
+              // const CryptoNavigation(),
             ],
           ),
           Positioned(

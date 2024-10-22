@@ -151,25 +151,20 @@ class _TabScreenState extends State<TabScreen> {
 
   Future<void> _onRefresh() async {
     setState(() {
-      _isLoading = true; // Start shimmer loading
+      _isLoading = true; // Start loading
     });
 
-    // Fetch user, hotel, and restaurant data
+    // Check if userId is not null before dispatching
     if (userId != null) {
-      // Fetch user data
       context.read<AuthBloc>().add(GetUserEvent(userId!));
-
-      // Fetch hotels and restaurants
-      context.read<HotelBloc>().add(FetchHotelsEvent());
-      context.read<RestaurantBloc>().add(FetchRestaurantsEvent());
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('User ID is null. Please log in again.')),
+      );
     }
 
-    // Simulate some delay to showcase the shimmer effect
-    await Future.delayed(Duration(seconds: 2));
-
-    setState(() {
-      _isLoading = false; // Stop shimmer loading
-    });
+    // Optionally fetch all users, but make sure it doesn't conflict
+    await _fetchAllUsers();
   }
 
   @override
