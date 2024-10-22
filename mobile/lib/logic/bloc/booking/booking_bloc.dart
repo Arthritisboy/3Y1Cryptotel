@@ -25,13 +25,16 @@ class BookingBloc extends Bloc<BookingEvent, BookingState> {
     }
   }
 
-   Future<void> _onCreateBooking(
+  Future<void> _onCreateBooking(
       CreateBooking event, Emitter<BookingState> emit) async {
     emit(BookingLoading());
     try {
-      final booking =
-          await bookingRepository.createBooking(event.booking, event.userId);
-      emit(BookingCreateSuccess(booking: booking));
+      await bookingRepository.createBooking(event.booking, event.userId);
+
+      // Fetch updated bookings after creation
+      final bookings = await bookingRepository.fetchBookings(event.userId);
+      emit(BookingSuccess(
+          bookings: bookings)); // Emit success with updated bookings
     } catch (e) {
       emit(BookingFailure(error: e.toString()));
     }
