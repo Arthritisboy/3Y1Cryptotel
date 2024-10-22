@@ -62,6 +62,8 @@ class _TabScreenState extends State<TabScreen> {
     'Bergamu Hotel'
         'Bedbox',
   ];
+
+  //test push
   List<String> restaurantSuggestion = [
     'Matutina’s Gerry’s Seafood House',
     'Cabalen'
@@ -148,27 +150,27 @@ class _TabScreenState extends State<TabScreen> {
   }
 
   Future<void> _onRefresh() async {
-  setState(() {
-    _isLoading = true; // Start shimmer loading
-  });
+    setState(() {
+      _isLoading = true; // Start shimmer loading
+    });
 
-  // Fetch user, hotel, and restaurant data
-  if (userId != null) {
-    // Fetch user data
-    context.read<AuthBloc>().add(GetUserEvent(userId!));
+    // Fetch user, hotel, and restaurant data
+    if (userId != null) {
+      // Fetch user data
+      context.read<AuthBloc>().add(GetUserEvent(userId!));
 
-    // Fetch hotels and restaurants
-    context.read<HotelBloc>().add(FetchHotelsEvent());
-    context.read<RestaurantBloc>().add(FetchRestaurantsEvent());
+      // Fetch hotels and restaurants
+      context.read<HotelBloc>().add(FetchHotelsEvent());
+      context.read<RestaurantBloc>().add(FetchRestaurantsEvent());
+    }
+
+    // Simulate some delay to showcase the shimmer effect
+    await Future.delayed(Duration(seconds: 2));
+
+    setState(() {
+      _isLoading = false; // Stop shimmer loading
+    });
   }
-
-  // Simulate some delay to showcase the shimmer effect
-  await Future.delayed(Duration(seconds: 2));
-
-  setState(() {
-    _isLoading = false; // Stop shimmer loading
-  });
-}
 
   @override
   Widget build(BuildContext context) {
