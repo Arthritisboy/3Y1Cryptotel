@@ -30,11 +30,6 @@ class BookingBloc extends Bloc<BookingEvent, BookingState> {
     emit(BookingLoading());
     try {
       await bookingRepository.createBooking(event.booking, event.userId);
-
-      // Fetch updated bookings after creation
-      final bookings = await bookingRepository.fetchBookings(event.userId);
-      emit(BookingSuccess(
-          bookings: bookings)); // Emit success with updated bookings
     } catch (e) {
       emit(BookingFailure(error: e.toString()));
     }
