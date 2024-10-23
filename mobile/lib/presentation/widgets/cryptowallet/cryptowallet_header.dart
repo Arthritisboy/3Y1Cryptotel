@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'crypto_navigation.dart'; // Import the CryptoNavigation widget
+// Import the CryptoNavigation widget
 
 class CryptoWalletHeader extends StatelessWidget {
   final VoidCallback onWalletUpdated;

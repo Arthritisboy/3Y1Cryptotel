@@ -1,7 +1,6 @@
 import 'package:hotel_flutter/data/data_provider/auth/admin_data_provider.dart';
 import 'package:hotel_flutter/data/model/admin/admin_model.dart';
 import 'package:hotel_flutter/data/model/hotel/create_room_model.dart';
-import 'package:hotel_flutter/data/model/hotel/room_model.dart';
 
 class AdminRepository {
   final AdminDataProvider adminDataProvider;

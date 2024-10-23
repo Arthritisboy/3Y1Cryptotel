@@ -30,7 +30,7 @@ import 'package:hotel_flutter/presentation/widgets/shimmer_loading/tab/shimmer_b
 import 'package:hotel_flutter/presentation/widgets/shimmer_loading/tab/shimmer_card_widget.dart';
 
 class TabScreen extends StatefulWidget {
-  TabScreen({super.key});
+  const TabScreen({super.key});
 
   @override
   State<TabScreen> createState() => _TabScreenState();

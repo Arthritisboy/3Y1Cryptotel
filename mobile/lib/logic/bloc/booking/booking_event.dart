@@ -43,5 +43,5 @@ class DeleteBooking extends BookingEvent {
   final String bookingId;
   final String userId;
 
-  DeleteBooking({required this.bookingId, required this.userId});
+  const DeleteBooking({required this.bookingId, required this.userId});
 }

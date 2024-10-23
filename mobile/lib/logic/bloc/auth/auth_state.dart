@@ -105,7 +105,7 @@ class FavoritesError extends AuthState {
 class FavoritesFetched extends AuthState {
   final Map<String, List<String>> favorites;
 
-  FavoritesFetched(this.favorites);
+  const FavoritesFetched(this.favorites);
 }
 
 class FavoritesLoading extends AuthState {}
