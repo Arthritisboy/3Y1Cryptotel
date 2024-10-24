@@ -1,10 +1,8 @@
 import 'package:equatable/equatable.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:hotel_flutter/data/model/hotel/rating_model.dart';
-import 'package:logging/logging.dart';
 
 class RestaurantModel extends Equatable {
-  final Logger _logger = Logger('RestaurantModel');
   final String id;
   final String name;
   final String location;
