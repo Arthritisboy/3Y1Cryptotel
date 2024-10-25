@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hotel_flutter/data/model/booking/booking_model.dart';
 import 'package:hotel_flutter/logic/bloc/auth/auth_bloc.dart';
 import 'package:hotel_flutter/logic/bloc/auth/auth_event.dart';
+import 'package:hotel_flutter/logic/bloc/auth/auth_state.dart';
 import 'package:hotel_flutter/logic/bloc/booking/booking_bloc.dart';
 import 'package:hotel_flutter/logic/bloc/booking/booking_event.dart';
 import 'package:hotel_flutter/logic/bloc/booking/booking_state.dart';
@@ -48,14 +49,39 @@ class _AdminScreenState extends State<AdminScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocListener<BookingBloc, BookingState>(
-      listener: (context, state) {
-        if (state is BookingSuccess) {
-          print('Successfully fetched bookings: ${state.bookings}');
-        } else if (state is BookingFailure) {
-          print('Error fetching bookings: ${state.error}');
-        }
-      },
+    return MultiBlocListener(
+      listeners: [
+        // Listener for BookingBloc
+        BlocListener<BookingBloc, BookingState>(
+          listener: (context, state) {
+            if (state is BookingSuccess) {
+              print('Successfully fetched bookings: ${state.bookings}');
+            } else if (state is BookingFailure) {
+              print('Error fetching bookings: ${state.error}');
+            }
+          },
+        ),
+        // Listener for AuthBloc to handle logout
+        BlocListener<AuthBloc, AuthState>(
+          listener: (context, state) {
+            if (state is AuthSuccess) {
+              Navigator.of(context).pushReplacementNamed('/login');
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: const Text(
+                    'Logged out successfully!',
+                    style: TextStyle(
+                        color: Colors.white), // Ensures text is readable
+                  ),
+                  duration: const Duration(seconds: 2),
+                  backgroundColor:
+                      Colors.green, // Set the background color to green
+                ),
+              );
+            }
+          },
+        ),
+      ],
       child: DefaultTabController(
         length: 4,
         child: Scaffold(
@@ -86,17 +112,18 @@ class _AdminScreenState extends State<AdminScreen> {
                 ],
               ),
               Positioned(
-                top: 250, // Adjust this value based on your layout
-                right: 16, // Adjust this value for desired spacing
+                top: 250,
+                right: 16,
                 child: BlocBuilder<BookingBloc, BookingState>(
                   builder: (context, state) {
                     return FloatingActionButton(
-                      onPressed: _fetchBookings, // Refresh button action
+                      onPressed: _fetchBookings,
                       backgroundColor: const Color(0xFF1C3473),
                       child: state is BookingLoading
                           ? const CircularProgressIndicator(
                               valueColor: AlwaysStoppedAnimation<Color>(
-                                  Color.fromARGB(255, 82, 27, 27)),
+                                Color.fromARGB(255, 82, 27, 27),
+                              ),
                             )
                           : const Icon(Icons.refresh, color: Colors.white),
                     );
@@ -191,10 +218,6 @@ class _AdminScreenState extends State<AdminScreen> {
                     'Check-in: ${DateFormat.yMMMd().format(booking.checkInDate)}'),
                 Text(
                     'Check-out: ${DateFormat.yMMMd().format(booking.checkOutDate)}'),
-                // IconButton(
-                //   icon: const Icon(Icons.delete, color: Colors.red),
-                //   onPressed: () => _deleteBooking(booking.id!),
-                // ), // Delete button
               ],
             ),
           ),
