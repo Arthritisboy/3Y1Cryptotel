@@ -5,6 +5,7 @@ import 'package:hotel_flutter/data/model/admin/admin_model.dart';
 import 'package:hotel_flutter/logic/bloc/admin/admin_bloc.dart';
 import 'package:hotel_flutter/logic/bloc/admin/admin_event.dart';
 import 'package:hotel_flutter/logic/bloc/admin/admin_state.dart';
+import 'package:hotel_flutter/presentation/widgets/utils_widget/custom_dialog.dart';
 import 'package:image_picker/image_picker.dart';
 
 class RestaurantFormScreen extends StatefulWidget {
@@ -60,6 +61,14 @@ class _RestaurantFormScreenState extends State<RestaurantFormScreen> {
     return null;
   }
 
+  bool _isValidCapacity(String capacity) {
+    return int.tryParse(capacity) != null;
+  }
+
+  bool _isValidPrice(String price) {
+    return int.tryParse(price) != null;
+  }
+
   String? _validateConfirmPassword(String? value) {
     if (value != _managerPasswordController.text) {
       return 'Passwords do not match';
@@ -67,9 +76,66 @@ class _RestaurantFormScreenState extends State<RestaurantFormScreen> {
     return null;
   }
 
+  bool _isValidPassword(String password) {
+    return password.length > 9;
+  }
+
+  bool _isValidPhoneNumber(String phoneNumber) {
+    return phoneNumber.length > 10;
+  }
+
+  bool _isValidEmail(String email) {
+    return email.contains('@gmail');
+  }
+
   // Create Restaurant - Dispatch Event
   void _createRestaurant() {
     if (_formKey.currentState?.validate() ?? false) {
+      if (!_isValidPrice(_priceController.text.trim())) {
+        _showCustomDialog(
+          context,
+          'Invalid Price',
+          'Price per meal must be a valid number.',
+        );
+        return;
+      }
+
+      if (!_isValidCapacity(_capacityController.text.trim())) {
+        _showCustomDialog(
+          context,
+          'Invalid Capacity',
+          'Capacity must be a valid number.',
+        );
+        return;
+      }
+
+      if (!_isValidPassword(_managerPasswordController.text.trim())) {
+        _showCustomDialog(
+          context,
+          'Invalid Password',
+          'Password must be longer than 9 characters.',
+        );
+        return;
+      }
+
+      if (!_isValidPhoneNumber(_managerPhoneNumberController.text.trim())) {
+        _showCustomDialog(
+          context,
+          'Invalid Phone Number',
+          'Phone number must be longer than 10 characters.',
+        );
+        return;
+      }
+
+      if (!_isValidEmail(_managerEmailController.text.trim())) {
+        _showCustomDialog(
+          context,
+          'Invalid Email',
+          'Email must contain @gmail.',
+        );
+        return;
+      }
+
       if (_selectedImage == null) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Please upload an image')),
@@ -77,19 +143,20 @@ class _RestaurantFormScreenState extends State<RestaurantFormScreen> {
         return;
       }
 
+      // Create and dispatch event if validations pass
       final adminModel = AdminModel(
-        name: _nameController.text,
-        location: _locationController.text,
-        openingHours: _openingHoursController.text,
-        price: int.parse(_priceController.text),
-        capacity: int.parse(_capacityController.text),
-        walletAddress: _walletAddressController.text,
-        managerFirstName: _managerFirstNameController.text,
-        managerLastName: _managerLastNameController.text,
-        managerEmail: _managerEmailController.text,
-        managerPhoneNumber: _managerPhoneNumberController.text,
-        managerPassword: _managerPasswordController.text,
-        managerConfirmPassword: _confirmPasswordController.text,
+        name: _nameController.text.trim(),
+        location: _locationController.text.trim(),
+        openingHours: _openingHoursController.text.trim(),
+        price: int.parse(_priceController.text.trim()),
+        capacity: int.parse(_capacityController.text.trim()),
+        walletAddress: _walletAddressController.text.trim(),
+        managerFirstName: _managerFirstNameController.text.trim(),
+        managerLastName: _managerLastNameController.text.trim(),
+        managerEmail: _managerEmailController.text.trim(),
+        managerPhoneNumber: _managerPhoneNumberController.text.trim(),
+        managerPassword: _managerPasswordController.text.trim(),
+        managerConfirmPassword: _confirmPasswordController.text.trim(),
         managerGender: _selectedGender,
         image: _selectedImage!,
       );
@@ -199,6 +266,25 @@ class _RestaurantFormScreenState extends State<RestaurantFormScreen> {
     );
   }
 
+  void _showCustomDialog(
+      BuildContext context, String title, String description) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return CustomDialog(
+          title: title,
+          description: description,
+          buttonText: 'Close',
+          onButtonPressed: () {
+            Navigator.of(context).pop(); // Close the dialog
+          },
+          secondButtonText: '',
+          onSecondButtonPressed: () {},
+        );
+      },
+    );
+  }
+
   // Header
   Widget _buildHeader() {
     return Row(
@@ -215,7 +301,6 @@ class _RestaurantFormScreenState extends State<RestaurantFormScreen> {
     );
   }
 
-  // Text Field
   Widget _buildTextField(String label, TextEditingController controller,
       {TextInputType keyboardType = TextInputType.text}) {
     return TextFormField(
@@ -249,13 +334,12 @@ class _RestaurantFormScreenState extends State<RestaurantFormScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text('Upload Restaurant Image', style: TextStyle(fontSize: 16)),
+        const Text('Upload Hotel Image', style: TextStyle(fontSize: 16)),
         const SizedBox(height: 10),
         _selectedImage != null
             ? Image.file(
                 _selectedImage!,
                 height: 150,
-                width: double.infinity,
                 fit: BoxFit.cover,
               )
             : Container(
@@ -268,7 +352,7 @@ class _RestaurantFormScreenState extends State<RestaurantFormScreen> {
         ElevatedButton(
           onPressed: _pickImage,
           style: ElevatedButton.styleFrom(
-            backgroundColor: const Color(0xFF1C3473),
+            backgroundColor: const Color.fromARGB(255, 29, 53, 115),
           ),
           child: const Text('Pick Image'),
         ),

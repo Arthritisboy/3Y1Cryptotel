@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hotel_flutter/data/model/admin/admin_model.dart';
+import 'package:hotel_flutter/presentation/widgets/utils_widget/custom_dialog.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:hotel_flutter/logic/bloc/admin/admin_bloc.dart';
 import 'package:hotel_flutter/logic/bloc/admin/admin_event.dart';
@@ -57,6 +58,18 @@ class _HotelFormScreenState extends State<HotelFormScreen> {
     return null;
   }
 
+  bool _isValidPassword(String password) {
+    return password.length > 9;
+  }
+
+  bool _isValidPhoneNumber(String phoneNumber) {
+    return phoneNumber.length > 10;
+  }
+
+  bool _isValidEmail(String email) {
+    return email.contains('@gmail');
+  }
+
   String? _validateConfirmPassword(String? value) {
     if (value != _managerPasswordController.text) {
       return 'Passwords do not match';
@@ -64,30 +77,47 @@ class _HotelFormScreenState extends State<HotelFormScreen> {
     return null;
   }
 
-  // Create Hotel and Dispatch Bloc Event
   void _createHotelAndAdmin() {
     if (_formKey.currentState?.validate() ?? false) {
-      if (_selectedImage == null) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Please upload an image')),
+      // Additional custom validations
+
+      if (!_isValidPassword(_managerPasswordController.text.trim())) {
+        _showCustomDialog(
+          context,
+          'Invalid Password',
+          'Password must be longer than 8 characters.',
         );
         return;
       }
-      // Print all field values to the console
-      print('Hotel Name: ${_nameController.text.trim()}');
-      print('Location: ${_locationController.text.trim()}');
-      print('Opening Hours: ${_openingHoursController.text.trim()}');
-      print('Wallet Address: ${_walletAddressController.text.trim()}');
-      print('Manager Email: ${_managerEmailController.text.trim()}');
-      print('Manager First Name: ${_managerFirstNameController.text.trim()}');
-      print('Manager Last Name: ${_managerLastNameController.text.trim()}');
-      print('Manager Password: ${_managerPasswordController.text.trim()}');
-      print('Confirm Password: ${_confirmPasswordController.text.trim()}');
-      print(
-          'Manager Phone Number: ${_managerPhoneNumberController.text.trim()}');
-      print('Manager Gender: $_selectedGender');
-      print('Selected Image: ${_selectedImage?.path}');
 
+      if (!_isValidPhoneNumber(_managerPhoneNumberController.text.trim())) {
+        _showCustomDialog(
+          context,
+          'Invalid Phone Number',
+          'Phone number must be longer than 10 characters.',
+        );
+        return;
+      }
+
+      if (!_isValidEmail(_managerEmailController.text.trim())) {
+        _showCustomDialog(
+          context,
+          'Invalid Email',
+          'Email must contain @gmail.',
+        );
+        return;
+      }
+
+      if (_selectedImage == null) {
+        _showCustomDialog(
+          context,
+          'Missing Image',
+          'Please upload an image.',
+        );
+        return;
+      }
+
+      // Proceed with the form submission if all validations pass
       final adminModel = AdminModel(
         name: _nameController.text.trim(),
         location: _locationController.text.trim(),
@@ -204,7 +234,13 @@ class _HotelFormScreenState extends State<HotelFormScreen> {
 
                   // Submit Button
                   ElevatedButton(
-                    onPressed: _isLoading ? null : _createHotelAndAdmin,
+                    onPressed: _isLoading
+                        ? null
+                        : () {
+                            if (_formKey.currentState?.validate() ?? false) {
+                              _createHotelAndAdmin();
+                            }
+                          },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: const Color.fromARGB(255, 29, 53, 115),
                     ),
@@ -247,8 +283,10 @@ class _HotelFormScreenState extends State<HotelFormScreen> {
       {TextInputType keyboardType = TextInputType.text}) {
     return TextFormField(
       controller: controller,
-      decoration:
-          InputDecoration(labelText: label, border: OutlineInputBorder()),
+      decoration: InputDecoration(
+        labelText: label,
+        border: const OutlineInputBorder(),
+      ),
       keyboardType: keyboardType,
       validator: (value) =>
           value == null || value.isEmpty ? 'Please enter $label' : null,
@@ -259,9 +297,11 @@ class _HotelFormScreenState extends State<HotelFormScreen> {
       {String? Function(String?)? validator}) {
     return TextFormField(
       controller: controller,
-      decoration:
-          InputDecoration(labelText: label, border: OutlineInputBorder()),
       obscureText: true,
+      decoration: InputDecoration(
+        labelText: label,
+        border: const OutlineInputBorder(),
+      ),
       validator: validator ?? _validatePassword,
     );
   }
@@ -273,7 +313,11 @@ class _HotelFormScreenState extends State<HotelFormScreen> {
         const Text('Upload Hotel Image', style: TextStyle(fontSize: 16)),
         const SizedBox(height: 10),
         _selectedImage != null
-            ? Image.file(_selectedImage!, height: 150, fit: BoxFit.cover)
+            ? Image.file(
+                _selectedImage!,
+                height: 150,
+                fit: BoxFit.cover,
+              )
             : Container(
                 height: 150,
                 width: double.infinity,
@@ -286,7 +330,7 @@ class _HotelFormScreenState extends State<HotelFormScreen> {
           style: ElevatedButton.styleFrom(
             backgroundColor: const Color.fromARGB(255, 29, 53, 115),
           ),
-          child: Text('Pick Image'),
+          child: const Text('Pick Image'),
         ),
       ],
     );
@@ -308,6 +352,25 @@ class _HotelFormScreenState extends State<HotelFormScreen> {
           ),
         ),
       ],
+    );
+  }
+
+  void _showCustomDialog(
+      BuildContext context, String title, String description) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return CustomDialog(
+          title: title,
+          description: description,
+          buttonText: 'Close',
+          onButtonPressed: () {
+            Navigator.of(context).pop(); // Close the dialog
+          },
+          secondButtonText: '',
+          onSecondButtonPressed: () {},
+        );
+      },
     );
   }
 }
