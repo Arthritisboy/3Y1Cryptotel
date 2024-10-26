@@ -53,21 +53,21 @@ class _TabScreenState extends State<TabScreen> {
   List<String> hotelSuggestion = [
     'River Palm Hotel',
     'Monarch Hotel',
-    'Star Plaza Hotel',
+    'Star Plaza',
     'Puerto Del Sol',
-    'The Manaog Hotel',
+    'The Manaoag Hotel',
     'Lenox Hotel',
     'Hotel Monde',
     'Hotel Le Duc',
-    'Bergamu Hotel'
-        'Bedbox',
+    'Bergamu Hotel',
+    'Bedbox',
   ];
 
   //test push
   List<String> restaurantSuggestion = [
-    'Matutina’s Gerry’s Seafood House',
-    'Cabalen'
-        'City De Luxe',
+    'Matutina Gerry’s Seafood House',
+    'Cabalen',
+    'City De Luxe',
     'Hardin sa Paraiso',
     'Sungayan Grill',
     'Pedritos',
@@ -328,17 +328,19 @@ class _TabScreenState extends State<TabScreen> {
       }
     } else if (restaurantSuggestion.contains(suggestion)) {
       final restaurantBloc = context.read<RestaurantBloc>();
-
-      // Dispatch event and wait for the state update.
       restaurantBloc.add(FetchRestaurantsEvent());
 
+      // Wait for Bloc state to update before navigating
       await Future.delayed(Duration.zero);
       final state = restaurantBloc.state;
 
       if (state is RestaurantLoaded) {
         final selectedRestaurant = state.restaurants.firstWhere(
           (restaurant) => restaurant.name == suggestion,
-          orElse: () => state.restaurants[0], // Fallback if not found
+          orElse: () {
+            print('Restaurant not found: $suggestion');
+            return state.restaurants[0]; // Fallback if not found
+          },
         );
 
         final coordinates = await selectedRestaurant.getCoordinates();
@@ -357,6 +359,13 @@ class _TabScreenState extends State<TabScreen> {
               latitude: coordinates[0],
               longitude: coordinates[1],
             ),
+          ),
+        );
+      } else {
+        print('Restaurant state is not loaded: $state');
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Failed to load restaurants. Please try again.'),
           ),
         );
       }
