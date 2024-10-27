@@ -101,6 +101,16 @@ class _SignupFormState extends State<SignupForm> {
                 _isPasswordVisible = !_isPasswordVisible;
               });
             },
+            validator: (value) {
+              value = value?.trim(); // Remove leading and trailing spaces.
+              if (value == null || value.isEmpty) {
+                return 'Please enter your password';
+              }
+              if (value.length <= 8) {
+                return 'Password must be exactly 8 characters long';
+              }
+              return null;
+            },
           ),
           const SizedBox(height: 8),
 

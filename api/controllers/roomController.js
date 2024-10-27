@@ -6,6 +6,7 @@ const Booking = require('../models/Booking');
 const { uploadEveryImage } = require('../middleware/imageUpload');
 const catchAsync = require('../utils/catchAsync');
 const AppError = require('../utils/appError');
+const mongoose = require('mongoose');
 
 // Helper function to calculate and update the average price of a hotel
 const calculateAveragePrice = async (hotelId) => {
@@ -61,12 +62,11 @@ exports.getRoom = catchAsync(async (req, res, next) => {
 
 // Create a room
 exports.createRoom = catchAsync(async (req, res, next) => {
-  const { roomNumber, type, price, capacity, ratingId } = req.body;
+  const { type, price, capacity, ratingId } = req.body; // Removed roomNumber
   const { hotelId } = req.params; // Get hotelId from the route parameters
 
   console.log(
     chalk.blue('Creating room with data:', {
-      roomNumber,
       type,
       price,
       capacity,
@@ -80,7 +80,7 @@ exports.createRoom = catchAsync(async (req, res, next) => {
   // Handle image upload if a file is provided
   if (req.file) {
     try {
-      roomImage = await uploadEveryImage(req, 'room');
+      roomImage = await uploadEveryImage(req, 'room'); // Upload the room image
       console.log(chalk.green('Image uploaded successfully:', roomImage));
     } catch (uploadErr) {
       console.error(chalk.red('Image upload error:', uploadErr));
@@ -109,41 +109,73 @@ exports.createRoom = catchAsync(async (req, res, next) => {
 
   console.log(chalk.green('Found hotel:', hotel.name));
 
-  // Create the room with multiple ratingIds (if provided, otherwise an empty array)
-  const newRoom = await Room.create({
-    roomNumber,
-    roomImage: roomImage || undefined, // Assign image if available
-    type,
-    price,
-    capacity,
-    ratings: ratingId && ratingId.length ? ratingId : [], // Assign multiple ratingIds or an empty array
-  });
+  const session = await mongoose.startSession(); // Start a new session for the transaction
+  session.startTransaction();
 
-  console.log(chalk.green('New room created:', newRoom));
+  try {
+    // 1. Create the room inside the transaction
+    const newRoom = await Room.create(
+      [
+        {
+          roomImage: roomImage || undefined, // Assign image if available
+          type,
+          price,
+          capacity,
+          ratings: ratingId && ratingId.length ? ratingId : [], // Assign ratingIds or an empty array
+        },
+      ],
+      { session },
+    );
 
-  // Add the new room to the hotel's room list
-  hotel.rooms.push(newRoom._id);
-  await hotel.save();
-  console.log(
-    chalk.green('Updated hotel with new room. Current rooms:', hotel.rooms),
-  );
+    console.log(chalk.green('New room created:', newRoom));
 
-  // Calculate and update the average price of the hotel
-  const averagePrice = await calculateAveragePrice(hotelId); // Uncomment to recalculate average price
-  console.log(chalk.green('Updated average price for hotel:', averagePrice));
+    // 2. Add the new room to the hotel's room list
+    hotel.rooms.push(newRoom[0]._id);
+    await hotel.save({ session }); // Save the hotel with the new room
 
-  // Respond with the new room data and the updated average price
-  res.status(201).json({
-    status: 'success',
-    data: {
-      room: newRoom,
-      averagePrice, // Return the newly calculated average price
-    },
-  });
+    // 3. Commit the transaction if everything succeeds
+    await session.commitTransaction();
+    session.endSession();
 
-  console.log(
-    chalk.green('Response sent with new room data and average price.'),
-  );
+    console.log(
+      chalk.green('Updated hotel with new room. Current rooms:', hotel.rooms),
+    );
+
+    // Calculate and update the average price of the hotel
+    const averagePrice = await calculateAveragePrice(hotelId);
+    console.log(chalk.green('Updated average price for hotel:', averagePrice));
+
+    // Respond with the new room data and the updated average price
+    res.status(201).json({
+      status: 'success',
+      data: {
+        room: newRoom[0],
+        averagePrice, // Return the newly calculated average price
+      },
+    });
+
+    console.log(
+      chalk.green('Response sent with new room data and average price.'),
+    );
+  } catch (err) {
+    await session.abortTransaction(); // Rollback the transaction on error
+    session.endSession();
+
+    // Handle MongoDB duplicate key errors (E11000)
+    if (err.code === 11000) {
+      let message = 'Duplicate field error.';
+
+      // Check if the roomImage field caused the error
+      if (err.keyPattern?.roomImage) {
+        message = `The image "${err.keyValue.roomImage}" has already been used for another room. Please upload a different image.`;
+      }
+
+      return next(new AppError(message, 400));
+    }
+
+    console.error('Error creating room:', err);
+    return next(new AppError('Failed to create room.', 500));
+  }
 });
 
 // Update a room by ID
