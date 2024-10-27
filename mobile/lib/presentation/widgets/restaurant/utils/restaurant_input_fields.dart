@@ -255,7 +255,7 @@ class _RestaurantInputFieldsState extends State<RestaurantInputFields> {
   Widget build(BuildContext context) {
     return BlocListener<BookingBloc, BookingState>(
       listener: (context, state) {
-        if (state is BookingCreateSuccess) {
+        if (state is BookingCreatedSuccess) {
           setState(() {
             isLoading = false; // Hide loading spinner
           });

@@ -30,6 +30,9 @@ class BookingCreateSuccess extends BookingState {
   List<Object> get props => [booking];
 }
 
+class BookingCreatedSuccess
+    extends BookingState {} // Specific for CreateBooking
+
 class BookingUpdateSuccess extends BookingState {}
 
 class BookingDeleteSuccess extends BookingState {}

@@ -30,6 +30,7 @@ class BookingBloc extends Bloc<BookingEvent, BookingState> {
     emit(BookingLoading());
     try {
       await bookingRepository.createBooking(event.booking, event.userId);
+      emit(BookingCreatedSuccess());
     } catch (e) {
       emit(BookingFailure(error: e.toString()));
     }
