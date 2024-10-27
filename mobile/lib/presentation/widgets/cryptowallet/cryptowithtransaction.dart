@@ -173,7 +173,7 @@ class _CryptoWithTransactionState extends State<CryptoWithTransaction> {
         IconButton(
           icon: const Icon(Icons.send),
           onPressed: () => widget.sendTransaction(
-              '0xc818CfdA6B36b5569E6e681277b2866956863fAd', '0.001', booking),
+              '0xc818CfdA6B36b5569E6e681277b2866956863fAd', booking.totalPrice.toString(), booking),
         ),
       ],
     );

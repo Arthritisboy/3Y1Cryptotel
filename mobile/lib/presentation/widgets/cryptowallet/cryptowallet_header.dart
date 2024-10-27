@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
-// Import the CryptoNavigation widget
 
-class CryptoWalletHeader extends StatelessWidget {
+class CryptoWalletHeader extends StatefulWidget {
   final VoidCallback onWalletUpdated;
   final VoidCallback onViewTransactionHistory;
   final String walletAddress;
   final String balance;
+  final String tokenBalance;
   final bool isLoading;
 
   const CryptoWalletHeader({
@@ -14,8 +14,22 @@ class CryptoWalletHeader extends StatelessWidget {
     required this.onViewTransactionHistory,
     required this.walletAddress,
     required this.balance,
+    required this.tokenBalance, // Added to hold token balance
     this.isLoading = false,
   });
+
+  @override
+  _CryptoWalletHeaderState createState() => _CryptoWalletHeaderState();
+}
+
+class _CryptoWalletHeaderState extends State<CryptoWalletHeader> {
+  bool isInPesos = true; // Toggle state for balance display
+
+  void toggleBalanceDisplay() {
+    setState(() {
+      isInPesos = !isInPesos;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -26,7 +40,6 @@ class CryptoWalletHeader extends StatelessWidget {
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Header Row
               Row(
                 children: [
                   Image.asset(
@@ -46,7 +59,7 @@ class CryptoWalletHeader extends StatelessWidget {
                   ),
                   const Spacer(),
                   ElevatedButton(
-                    onPressed: isLoading ? null : onWalletUpdated,
+                    onPressed: widget.isLoading ? null : widget.onWalletUpdated,
                     style: ElevatedButton.styleFrom(
                       backgroundColor: const Color(0xFF1C3473),
                       padding: const EdgeInsets.symmetric(
@@ -55,15 +68,14 @@ class CryptoWalletHeader extends StatelessWidget {
                         borderRadius: BorderRadius.circular(8.0),
                       ),
                     ),
-                    child: isLoading
+                    child: widget.isLoading
                         ? const CircularProgressIndicator()
-                        : Text(walletAddress == 'No Address'
+                        : Text(widget.walletAddress == 'No Address'
                             ? 'Connect'
                             : 'Disconnect'),
                   ),
                 ],
               ),
-
               const SizedBox(height: 20.0),
               const Text(
                 'Crypto Wallet',
@@ -74,9 +86,9 @@ class CryptoWalletHeader extends StatelessWidget {
               ),
               const SizedBox(height: 5.0),
               Text(
-                walletAddress.length > 10
-                    ? 'Address: ${walletAddress.substring(0, 6)}...${walletAddress.substring(walletAddress.length - 4)}'
-                    : walletAddress,
+                widget.walletAddress.length > 10
+                    ? 'Address: ${widget.walletAddress.substring(0, 6)}...${widget.walletAddress.substring(widget.walletAddress.length - 4)}'
+                    : widget.walletAddress,
                 style: const TextStyle(
                   fontSize: 14,
                   color: Colors.grey,
@@ -86,43 +98,37 @@ class CryptoWalletHeader extends StatelessWidget {
               Row(
                 children: [
                   Text(
-                    balance == '₱ 0'
-                        ? balance
-                        : '${double.tryParse(balance.split(' ')[0])?.toStringAsFixed(4) ?? '0.0000'} ETH',
+                    isInPesos
+                        ? widget.balance
+                        : '${double.tryParse(widget.tokenBalance.split(' ')[0])?.toStringAsFixed(4) ?? '0.0000'} ETH', // Toggle display
                     style: const TextStyle(
                       fontSize: 40,
                       fontWeight: FontWeight.w400,
                     ),
                   ),
-                  const Spacer(),
+                  // const Spacer(),
+                  AnimatedSwitcher(
+                    duration: const Duration(
+                        milliseconds: 300), // Duration for the animation
+                    child: IconButton(
+                      key:
+                          ValueKey<bool>(isInPesos), // Unique key for animation
+                      icon: Transform.rotate(
+                        angle: isInPesos ? 0 : 0.5, // Rotate based on state
+                        child: const Icon(
+                          Icons.change_circle,
+                          size: 30, // Adjust the size as needed
+                        ),
+                      ),
+                      onPressed: toggleBalanceDisplay,
+                      tooltip: isInPesos ? 'Show in Token' : 'Show in Pesos',
+                    ),
+                  ),
                 ],
               ),
-              const SizedBox(height: 20.0),
-              // Add space for the Special Action button below the Disconnect button
+              // const SizedBox(height: 20.0),
             ],
           ),
-          // Button to view transaction history
-          // Positioned(
-          
-          //   child: Visibility(
-          //     visible: walletAddress != 'No Address', // Show only if connected
-          //     child: ElevatedButton(
-          //       onPressed: () {
-          //         onViewTransactionHistory; // Trigger the method
-          //       },
-          //       style: ElevatedButton.styleFrom(
-          //         backgroundColor: const Color(0xFF1C3473),
-          //         padding: const EdgeInsets.symmetric(
-          //             horizontal: 20.0, vertical: 12.0),
-          //         shape: RoundedRectangleBorder(
-          //           borderRadius: BorderRadius.circular(8.0),
-          //         ),
-          //       ),
-          //       child: const Text('View Transaction Historya'), // Button label
-          //     ),
-          //   ),
-          // ),
-
           Positioned(
             top: 90,
             right: 10,
