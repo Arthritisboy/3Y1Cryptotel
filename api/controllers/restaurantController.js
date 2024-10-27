@@ -4,6 +4,7 @@ const RestaurantRating = require('../models/RestaurantRating');
 const { uploadEveryImage } = require('../middleware/imageUpload');
 const catchAsync = require('../utils/catchAsync');
 const AppError = require('../utils/appError');
+const mongoose = require('mongoose');
 
 // Get a restaurant by ID or all restaurants (with ratings)
 exports.getRestaurant = catchAsync(async (req, res, next) => {
@@ -40,33 +41,32 @@ exports.createRestaurant = catchAsync(async (req, res, next) => {
     managerFirstName,
     managerLastName,
     managerPassword,
-    managerConfirmPassword,
     managerPhoneNumber,
+    managerConfirmPassword,
     managerGender,
     capacity,
   } = req.body;
 
-  // Ensure required fields are provided
+  // Validate required fields
   if (
     !name ||
     !location ||
     !openingHours ||
     !managerEmail ||
-    !managerPassword
+    !managerPassword ||
+    !managerConfirmPassword
   ) {
     return next(new AppError('Missing required fields.', 400));
   }
 
-  // Check if an image is provided
   if (!req.file) {
     return next(new AppError('Restaurant image is required.', 400));
   }
 
   let restaurantImage;
 
-  // Handle restaurant image upload
   try {
-    restaurantImage = await uploadEveryImage(req);
+    restaurantImage = await uploadEveryImage(req, 'restaurant'); // Upload restaurant image
   } catch (uploadErr) {
     return res.status(500).json({
       status: 'error',
@@ -74,6 +74,9 @@ exports.createRestaurant = catchAsync(async (req, res, next) => {
       error: uploadErr.message || uploadErr,
     });
   }
+
+  const session = await mongoose.startSession(); // Start a new session for the transaction
+  session.startTransaction();
 
   try {
     // Convert capacity and price to integers
@@ -86,43 +89,74 @@ exports.createRestaurant = catchAsync(async (req, res, next) => {
       );
     }
 
-    // 1. Create the restaurant
-    const newRestaurant = await Restaurant.create({
-      name,
-      location,
-      openingHours,
-      walletAddress,
-      capacity: parsedCapacity,
-      price: parsedPrice,
-      restaurantImage, // Restaurant image is required
-    });
+    // 1. Create the restaurant inside the transaction
+    const newRestaurant = await Restaurant.create(
+      [
+        {
+          name,
+          location,
+          openingHours,
+          walletAddress,
+          capacity: parsedCapacity,
+          price: parsedPrice,
+          restaurantImage,
+        },
+      ],
+      { session },
+    );
 
-    // 2. Register the manager
+    // 2. Register the manager linked to the restaurant
     const managerData = {
       firstName: managerFirstName,
       lastName: managerLastName,
       email: managerEmail,
       password: managerPassword,
+      confirmPassword: managerConfirmPassword,
       phoneNumber: managerPhoneNumber,
       gender: managerGender,
-      roles: 'manager', // Assign manager role
-      verified: true, // Automatically verify manager
+      roles: 'manager',
+      verified: true,
       hasCompletedOnboarding: true,
-      handleId: newRestaurant._id, // Assign the restaurant ID to manager's handleId
+      handleId: newRestaurant[0]._id, // Reference the restaurant ID
     };
 
-    const newManager = await User.create(managerData);
+    const newManager = await User.create([managerData], { session });
     console.log('Manager created:', newManager);
 
-    // 3. Send success response with restaurant and manager info
+    // 3. Commit the transaction if everything succeeds
+    await session.commitTransaction();
+    session.endSession();
+
+    // Send success response with restaurant and manager info
     res.status(201).json({
       status: 'success',
       data: {
-        restaurant: newRestaurant,
-        manager: newManager,
+        restaurant: newRestaurant[0],
+        manager: newManager[0],
       },
     });
   } catch (err) {
+    await session.abortTransaction(); // Rollback the transaction on error
+    session.endSession();
+
+    // Handle MongoDB duplicate key errors (E11000)
+    if (err.code === 11000) {
+      let message = 'Duplicate field error.';
+
+      // Check which field caused the error
+      if (err.keyPattern?.name) {
+        message = `A restaurant with the name "${err.keyValue.name}" already exists. Please use a different name.`;
+      } else if (err.keyPattern?.location) {
+        message = `A restaurant at the location "${err.keyValue.location}" already exists. Please use a different location.`;
+      } else if (err.keyPattern?.email) {
+        message = `A user with the email "${err.keyValue.email}" already exists. Please use a different email.`;
+      } else if (err.keyPattern?.restaurantImage) {
+        message = `The image "${err.keyValue.restaurantImage}" has already been used for another restaurant. Please upload a different image.`;
+      }
+
+      return next(new AppError(message, 400));
+    }
+
     console.error('Error creating manager or restaurant:', err);
     return next(new AppError('Failed to create manager or restaurant.', 500));
   }
