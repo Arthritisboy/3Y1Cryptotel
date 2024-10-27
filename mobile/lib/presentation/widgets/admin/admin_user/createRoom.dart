@@ -137,15 +137,22 @@ class _CreateRoomState extends State<CreateRoom> {
                 BlocListener<AdminBloc, AdminState>(
                   listener: (context, state) {
                     if (state is AdminSuccess) {
-                      _showCustomDialog(
-                        context,
-                        'Success',
-                        'Room Created Successfully!',
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: const Text('Room Created Successfully!'),
+                          backgroundColor: Colors.green,
+                          duration: const Duration(seconds: 3),
+                        ),
                       );
+
                       setState(() {
                         _isLoading = false;
                       });
-                      Navigator.pop(context);
+
+                      // Delay the navigation pop to allow Snackbar to be visible
+                      Future.delayed(const Duration(seconds: 2), () {
+                        Navigator.pop(context);
+                      });
                     } else if (state is AdminFailure) {
                       _showCustomDialog(
                         context,
