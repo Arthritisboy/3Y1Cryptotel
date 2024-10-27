@@ -180,7 +180,7 @@ class _HotelInputFieldsState extends State<HotelInputFields> {
       return;
     }
 
-// **Same-day booking with 12-hour difference validation**
+    // **Same-day booking with 12-hour difference validation**
     if (arrivalDateTime != null && departureDateTime != null) {
       if (arrivalDateTime.day == departureDateTime.day) {
         Duration timeDifference = departureDateTime.difference(arrivalDateTime);
@@ -269,25 +269,25 @@ class _HotelInputFieldsState extends State<HotelInputFields> {
   @override
   Widget build(BuildContext context) {
     return BlocListener<BookingBloc, BookingState>(
-  listener: (context, state) {
-    if (state is BookingCreateSuccess) {
-      setState(() {
-        isLoading = false;
-      });
-      _showBookingSuccessDialog(context);
-    } else if (state is BookingFailure) {
-      setState(() {
-        isLoading = false;
-      });
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Failed to create booking: ${state.error}')),
-      );
-    } else if (state is BookingLoading) {
-      setState(() {
-        isLoading = true; // Start loading spinner
-      });
-    }
-  },
+      listener: (context, state) {
+        if (state is BookingCreatedSuccess) {
+          setState(() {
+            isLoading = false;
+          });
+          _showBookingSuccessDialog(context);
+        } else if (state is BookingFailure) {
+          setState(() {
+            isLoading = false;
+          });
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Failed to create booking: ${state.error}')),
+          );
+        } else if (state is BookingLoading) {
+          setState(() {
+            isLoading = true; // Start loading spinner
+          });
+        }
+      },
       child: Column(
         children: [
           Row(
