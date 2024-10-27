@@ -135,33 +135,22 @@ exports.createHotel = catchAsync(async (req, res, next) => {
     await session.abortTransaction(); // Rollback the transaction on error
     session.endSession();
 
-    // Handle duplicate key error for hotel name
-    if (err.code === 11000 && err.keyPattern && err.keyPattern.name) {
-      return next(
-        new AppError(
-          `Hotel with the name "${err.keyValue.name}" already exists. Please use a different name.`,
-          400,
-        ),
-      );
-    }
+    // Handle MongoDB duplicate key errors (E11000)
+    if (err.code === 11000) {
+      let message = 'Duplicate field error.';
 
-    // Handle duplicate email error for the manager
-    if (err.code === 11000 && err.keyPattern?.email) {
-      return next(
-        new AppError(
-          `A user with the email "${err.keyValue.email}" already exists. Please use a different email.`,
-          400,
-        ),
-      );
-    }
-    // Handle duplicate hotel location error
-    if (err.code === 11000 && err.keyPattern?.location) {
-      return next(
-        new AppError(
-          `A hotel at the location "${err.keyValue.location}" already exists. Please use a different location.`,
-          400,
-        ),
-      );
+      // Check which field caused the error
+      if (err.keyPattern?.name) {
+        message = `A hotel with the name "${err.keyValue.name}" already exists. Please use a different name.`;
+      } else if (err.keyPattern?.location) {
+        message = `A hotel at the location "${err.keyValue.location}" already exists. Please use a different location.`;
+      } else if (err.keyPattern?.email) {
+        message = `A user with the email "${err.keyValue.email}" already exists. Please use a different email.`;
+      } else if (err.keyPattern?.hotelImage) {
+        message = `The image "${err.keyValue.hotelImage}" has already been used for another hotel. Please upload a different image.`;
+      }
+
+      return next(new AppError(message, 400));
     }
 
     console.error('Error creating manager or hotel:', err);
