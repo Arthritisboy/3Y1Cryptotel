@@ -6,6 +6,7 @@ const hotelSchema = new mongoose.Schema({
   name: {
     type: String,
     required: true,
+    unique: true,
   },
   averageRating: {
     type: Number,
@@ -21,11 +22,11 @@ const hotelSchema = new mongoose.Schema({
   },
   openingHours: {
     type: String,
-    required: true, // example "7:30 Am to 4:30 Pm" I make it simpler rather than using complicated type: Date
+    required: true,
   },
   hotelImage: {
     type: String,
-    required: true, // similar user profile
+    required: true,
   },
   // contactNumber: { will add this later I kinda forgot to git pull
   //   type: String,

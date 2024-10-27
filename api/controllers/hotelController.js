@@ -75,7 +75,7 @@ exports.createHotel = catchAsync(async (req, res, next) => {
 
   // Handle hotel image upload
   try {
-    hotelImage = await uploadEveryImage(req);
+    hotelImage = await uploadEveryImage(req, 'hotel');
   } catch (uploadErr) {
     return res.status(500).json({
       status: 'error',
