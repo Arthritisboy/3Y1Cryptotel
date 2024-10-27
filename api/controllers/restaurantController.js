@@ -145,7 +145,7 @@ exports.updateRestaurant = catchAsync(async (req, res, next) => {
   // Handle image upload if a file is provided
   if (req.file) {
     try {
-      restaurantImage = await uploadEveryImage(req);
+      restaurantImage = await uploadEveryImage(req, 'restaurant');
       console.log('Restaurant image updated:', restaurantImage);
       req.body.restaurantImage = restaurantImage; // Add image to update body
     } catch (uploadErr) {
