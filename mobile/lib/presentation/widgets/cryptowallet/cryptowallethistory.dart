@@ -1,5 +1,6 @@
-import 'package:flutter/material.dart';
 import 'dart:math';
+
+import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
 class Cryptowallethistory extends StatelessWidget {
@@ -50,14 +51,24 @@ class Cryptowallethistory extends StatelessWidget {
                   bool isTokenTransfer = tx['to'].toLowerCase() !=
                       '0x0000000000000000000000000000000000000000';
 
-                  String tokenName = isTokenTransfer
-                      ? (tx['tokenName'] ?? 'Unknown Token')
-                      : 'Ether';
+                  // Define a map to hold common token symbols and their full names
+                  Map<String, String> tokenFullNames = {
+                    'ETH': 'Ethereum',
+                    'BTC': 'Bitcoin',
+                    'USDT': 'Tether',
+                    'BNB': 'Binance Coin',
+                    // Add other tokens as needed
+                  };
                   String tokenSymbol =
                       isTokenTransfer ? (tx['tokenSymbol'] ?? 'ETH') : 'ETH';
-                  String valueDisplay = isTokenTransfer
-                      ? '${valueInEther.toStringAsFixed(4)} $tokenSymbol'
-                      : '${valueInEther.toStringAsFixed(4)} ETH';
+                  debugPrint(tokenSymbol);
+                  String tokenName = isTokenTransfer
+                      ? tokenFullNames[tokenSymbol] ??
+                          (tx['tokenName'] ?? 'Unknown Token')
+                      : 'Ethereum'; // Default to 'Ethereum' if it’s not a token transfer
+
+                  String valueDisplay =
+                      '${valueInEther.toStringAsFixed(4)} $tokenSymbol';
 
                   return Padding(
                     padding: const EdgeInsets.symmetric(vertical: 8.0),
