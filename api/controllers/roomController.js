@@ -62,12 +62,13 @@ exports.getRoom = catchAsync(async (req, res, next) => {
 
 // Create a room
 exports.createRoom = catchAsync(async (req, res, next) => {
-  const { type, price, capacity, ratingId } = req.body; // Removed roomNumber
+  const { type, price, capacity, ratingId, roomNumber } = req.body; // Removed roomNumber
   const { hotelId } = req.params; // Get hotelId from the route parameters
 
   console.log(
     chalk.blue('Creating room with data:', {
       type,
+      roomNumber,
       price,
       capacity,
       ratingId,
@@ -119,6 +120,7 @@ exports.createRoom = catchAsync(async (req, res, next) => {
         {
           roomImage: roomImage || undefined, // Assign image if available
           type,
+          roomNumber,
           price,
           capacity,
           ratings: ratingId && ratingId.length ? ratingId : [], // Assign ratingIds or an empty array
