@@ -8,6 +8,7 @@ import 'package:hotel_flutter/data/model/booking/booking_model.dart';
 import 'package:hotel_flutter/logic/bloc/booking/booking_bloc.dart';
 import 'package:hotel_flutter/logic/bloc/booking/booking_event.dart';
 import 'package:hotel_flutter/logic/bloc/booking/booking_state.dart';
+import 'package:hotel_flutter/presentation/screens/homeScreens/tab_screen.dart';
 import 'package:hotel_flutter/presentation/widgets/cryptowallet/cryptowallet_header.dart';
 import 'package:hotel_flutter/presentation/widgets/cryptowallet/cryptowallet_transactions.dart';
 import 'package:hotel_flutter/presentation/widgets/cryptowallet/wallet_manager.dart';
@@ -31,6 +32,8 @@ class _CryptoWalletState extends State<CryptoWallet> {
   String balance = '₱ 0';
   ReownAppKitModal? _appKitModal;
   bool isLoading = false;
+  // State variables for navigation
+  int _activeIndex = 0;
 
   // Boolean to control which view to display
   bool showTransactionHistory = false;
@@ -243,7 +246,13 @@ class _CryptoWalletState extends State<CryptoWallet> {
     } else {
       debugPrint('No wallet connected');
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('No wallet connected')),
+        SnackBar(
+          content: const Text(
+            'No wallet connected',
+            style: TextStyle(color: Colors.white), // Text color (optional)
+          ),
+          backgroundColor: const Color(0xFF1C3473), // Custom background color
+        ),
       );
     }
   }
@@ -404,6 +413,12 @@ class _CryptoWalletState extends State<CryptoWallet> {
     }
   }
 
+  void _setActiveIndex(int index) {
+    setState(() {
+      _activeIndex = index;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -421,55 +436,71 @@ class _CryptoWalletState extends State<CryptoWallet> {
             const SizedBox(height: 20),
 
             // Toggle button to switch between views
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                ElevatedButton(
-                  onPressed: () {
-                    setState(() {
-                      showTransactionHistory = false; // Show Transactions
-                    });
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor:
-                        showTransactionHistory ? Colors.grey : Colors.blue,
-                  ),
-                  child: const Text('Transactions'),
+            Center(
+              child: Container(
+                padding: const EdgeInsets.all(8.0),
+                decoration: BoxDecoration(
+                  color: Colors.grey.shade300,
+                  borderRadius: BorderRadius.circular(40.0),
                 ),
-                const SizedBox(width: 10),
-                ElevatedButton(
-                  onPressed: () async {
-                    if (!showTransactionHistory) {
-                      await onViewTransactionHistory(context);
-                    }
-                    setState(() {
-                      showTransactionHistory = true; // Show History
-                    });
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor:
-                        showTransactionHistory ? Colors.blue : Colors.grey,
-                  ),
-                  child: const Text('History'),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    _buildNavItem(
+                      index: 0,
+                      icon: Icons.payment,
+                      label: 'Transactions',
+                      onTap: () {
+                        setState(() {
+                          showTransactionHistory = false; // Show Transactions
+                        });
+                      },
+                    ),
+                    const SizedBox(width: 8.0),
+                    _buildNavItem(
+                      index: 1,
+                      icon: Icons.history,
+                      label: 'History',
+                      onTap: () async {
+                        if (!showTransactionHistory) {
+                          await onViewTransactionHistory(context);
+                        }
+                        setState(() {
+                          showTransactionHistory = true; // Show History
+                        });
+                      },
+                    ),
+                  ],
                 ),
-              ],
+              ),
             ),
             const SizedBox(height: 20),
 
             // Conditionally show either CryptoWalletTransactions or Cryptowallethistory
             Expanded(
               child: showTransactionHistory
-                  ? Cryptowallethistory(
-                      transactions: transactions,
-                      walletAddress: walletAddress,
-                    )
+                  ? transactions.isNotEmpty
+                      ? Cryptowallethistory(
+                          transactions: transactions,
+                          walletAddress: walletAddress,
+                        )
+                      : _buildCenteredMessage(
+                          'assets/images/transaction_history.png',
+                          'No Transactions Found',
+                          'No transactions found or you did not book yet.',
+                        )
                   : BlocBuilder<BookingBloc, BookingState>(
                       builder: (context, state) {
                         if (state is BookingLoading) {
                           return const Center(
-                              child: CircularProgressIndicator());
+                            child: CircularProgressIndicator(),
+                          );
                         } else if (state is BookingFailure) {
-                          return Center(child: Text('Error: ${state.error}'));
+                          return _buildCenteredMessage(
+                            'assets/images/icons/transaction_history.png',
+                            'Error',
+                            'An error occurred: ${state.error}',
+                          );
                         } else if (state is BookingSuccess) {
                           final acceptedBookings = state.bookings
                               .where((booking) =>
@@ -484,12 +515,108 @@ class _CryptoWalletState extends State<CryptoWallet> {
                           );
                         }
                         return const Center(
-                            child: Text('No bookings available.'));
+                          child: Text('No bookings available.'),
+                        );
                       },
                     ),
             ),
           ],
         ),
+      ),
+    );
+  }
+
+  // Helper method to build navigation items
+  Widget _buildNavItem({
+    required int index,
+    required IconData icon,
+    required String label,
+    required VoidCallback onTap,
+  }) {
+    final bool isActive = (showTransactionHistory && index == 1) ||
+        (!showTransactionHistory && index == 0);
+
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 12.0),
+        decoration: BoxDecoration(
+          color: isActive ? const Color(0xFF1C3473) : Colors.transparent,
+          borderRadius: BorderRadius.circular(30.0),
+        ),
+        child: Row(
+          children: [
+            Icon(
+              icon,
+              size: 20.0,
+              color: isActive ? Colors.white : Colors.black,
+            ),
+            const SizedBox(width: 6.0),
+            Text(
+              label,
+              style: TextStyle(
+                fontSize: 14.0,
+                color: isActive ? Colors.white : Colors.black,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  // Helper method to build a centered message with an image
+  Widget _buildCenteredMessage(String imagePath, String title, String message) {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Image.asset(
+            'assets/images/icons/transaction_history.png',
+            width: 150.0,
+            height: 150.0,
+            fit: BoxFit.contain,
+          ),
+          const SizedBox(height: 20),
+          Text(
+            title,
+            style: const TextStyle(
+              fontSize: 24,
+              fontWeight: FontWeight.bold,
+              color: Colors.black,
+            ),
+          ),
+          Padding(
+            padding: EdgeInsets.symmetric(horizontal: 20),
+            child: Text(
+              message,
+              textAlign: TextAlign.center,
+              style: TextStyle(fontSize: 16, color: Colors.grey),
+            ),
+          ),
+          const SizedBox(height: 20),
+          ElevatedButton(
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => TabScreen()),
+              );
+            },
+            style: ElevatedButton.styleFrom(
+              backgroundColor: const Color(0xFF1C3473),
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 24.0, vertical: 12.0),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(8.0),
+              ),
+              textStyle: const TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            child: const Text("Book Now"),
+          ),
+        ],
       ),
     );
   }

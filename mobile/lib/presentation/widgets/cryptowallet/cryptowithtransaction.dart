@@ -60,7 +60,7 @@ class _CryptoWithTransactionState extends State<CryptoWithTransaction> {
         String? displayImage = booking.hotelImage?.isNotEmpty == true
             ? booking.hotelImage
             : booking.restaurantImage;
-        
+
         return Padding(
           padding: const EdgeInsets.all(12.0),
           child: Card(
