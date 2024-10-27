@@ -6,8 +6,15 @@ const restaurant = new mongoose.Schema({
     required: true,
     unique: true,
   },
+  location: {
+    type: String,
+    required: true,
+    unique: true,
+  },
   restaurantImage: {
     type: String,
+    required: true,
+    unique: true,
   },
   averageRating: {
     type: Number,
@@ -16,12 +23,6 @@ const restaurant = new mongoose.Schema({
   price: {
     type: Number,
     required: true,
-  },
-  //test
-  location: {
-    type: String,
-    required: true,
-    unique: true,
   },
   openingHours: {
     type: String,

@@ -1,7 +1,6 @@
 const User = require('../models/User');
 const Hotel = require('../models/Hotel');
 const Room = require('../models/Room');
-const Booking = require('../models/Booking');
 const { uploadEveryImage } = require('../middleware/imageUpload');
 const catchAsync = require('../utils/catchAsync');
 const AppError = require('../utils/appError');
