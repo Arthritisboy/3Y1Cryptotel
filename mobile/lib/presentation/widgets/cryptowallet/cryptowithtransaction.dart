@@ -210,8 +210,8 @@ class _CryptoWithTransactionState extends State<CryptoWithTransaction> {
       children: [
         Image.asset(
           'assets/images/others/wallet.jpg',
-          width: 200.0,
-          height: 200.0,
+          width: 150.0,
+          height: 150.0,
           fit: BoxFit.contain,
         ),
         const SizedBox(height: 20),
