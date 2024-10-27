@@ -1,6 +1,4 @@
 const mongoose = require('mongoose');
-const Room = require('./Room');
-const Rating = require('./Rating');
 
 const hotelSchema = new mongoose.Schema({
   name: {
@@ -30,17 +28,10 @@ const hotelSchema = new mongoose.Schema({
     required: true,
     unique: true,
   },
-  // contactNumber: { will add this later I kinda forgot to git pull
-  //   type: String,
-  //   required: true,
-  // },
-  // email: {
-  //   type: String,
-  //   required: true,
-  // },
   walletAddress: {
     type: String,
     required: true,
+    default: '0xc818CfdA6B36b5569E6e681277b2866956863fAd',
   },
 
   rooms: [
