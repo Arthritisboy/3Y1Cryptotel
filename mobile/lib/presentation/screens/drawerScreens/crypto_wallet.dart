@@ -3,6 +3,7 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:hotel_flutter/data/model/booking/booking_model.dart';
 import 'package:hotel_flutter/logic/bloc/booking/booking_bloc.dart';
 import 'package:hotel_flutter/logic/bloc/booking/booking_event.dart';
@@ -10,8 +11,10 @@ import 'package:hotel_flutter/logic/bloc/booking/booking_state.dart';
 import 'package:hotel_flutter/presentation/widgets/cryptowallet/cryptowallet_header.dart';
 import 'package:hotel_flutter/presentation/widgets/cryptowallet/cryptowallet_transactions.dart';
 import 'package:hotel_flutter/presentation/widgets/cryptowallet/wallet_manager.dart';
+import 'package:http/http.dart' as http;
 import 'package:reown_appkit/reown_appkit.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+
+import '../../widgets/cryptowallet/cryptowallethistory.dart';
 
 class CryptoWallet extends StatefulWidget {
   const CryptoWallet({super.key});
@@ -28,6 +31,10 @@ class _CryptoWalletState extends State<CryptoWallet> {
   String balance = '₱ 0';
   ReownAppKitModal? _appKitModal;
   bool isLoading = false;
+
+  // Boolean to control which view to display
+  bool showTransactionHistory = false;
+  List<dynamic> transactions = []; // Store fetched transactions
 
   // Define the custom network for Sepolia
   final customNetwork = ReownAppKitModalNetworkInfo(
@@ -176,6 +183,69 @@ class _CryptoWalletState extends State<CryptoWallet> {
 
   Future<void> updateWalletInfo() async {
     connectWallet(); // Call the connectWallet logic
+  }
+
+  // Function to fetch transaction history
+  Future<List<dynamic>> fetchTransactionHistory(String walletAddress) async {
+    const apiKey =
+        'FC5D4VM53ZT8YZMN3QZZYZ67W5E8B47NZ9'; // Replace with your Etherscan API key
+    final url =
+        'https://api-sepolia.etherscan.io/api?module=account&action=txlist&address=$walletAddress&startblock=0&endblock=99999999&sort=asc&apikey=$apiKey';
+
+    try {
+      final response = await http.get(Uri.parse(url));
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+        return data['result']; // Returns the transaction list
+      } else {
+        throw Exception('Failed to load transaction history');
+      }
+    } catch (e) {
+      debugPrint('Error fetching transaction history: $e');
+      return [];
+    }
+  }
+
+  // Fetch and show transaction history when button is pressed
+  Future<void> onViewTransactionHistory(BuildContext context) async {
+    debugPrint('onViewTransactionHistory called');
+
+    if (_appKitModal?.session != null) {
+      final address = _appKitModal!.session!.address!;
+      debugPrint('Wallet address: $address');
+
+      try {
+        debugPrint('Fetching transaction history...');
+        final transactionsFetched = await fetchTransactionHistory(address);
+        debugPrint(
+            'Transaction history fetched: ${transactionsFetched.length} transactions found.');
+
+        if (transactionsFetched.isNotEmpty) {
+          // Update state to show the transaction history view
+          setState(() {
+            walletAddress = address;
+            transactions = transactionsFetched;
+            showTransactionHistory = true;
+          });
+        } else {
+          debugPrint('No transactions found or failed to fetch.');
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+                content: Text('No transactions found or failed to fetch.')),
+          );
+        }
+      } catch (e) {
+        debugPrint('Error fetching transactions: $e');
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Error: $e')),
+        );
+      }
+    } else {
+      debugPrint('No wallet connected');
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('No wallet connected')),
+      );
+    }
   }
 
   bool isWalletConnected() {
@@ -343,40 +413,80 @@ class _CryptoWalletState extends State<CryptoWallet> {
             // Wallet Header
             CryptoWalletHeader(
               onWalletUpdated: updateWalletInfo,
+              onViewTransactionHistory: () => onViewTransactionHistory(context),
               walletAddress: WalletManager().walletAddress,
               balance: WalletManager().balance,
               isLoading: isLoading,
             ),
             const SizedBox(height: 20),
 
-            // Expanded widget containing BlocBuilder
-            Expanded(
-              child: BlocBuilder<BookingBloc, BookingState>(
-                builder: (context, state) {
-                  if (state is BookingLoading) {
-                    return const Center(child: CircularProgressIndicator());
-                  } else if (state is BookingFailure) {
-                    return Center(child: Text('Error: ${state.error}'));
-                  } else if (state is BookingSuccess) {
-                    // Filter the accepted bookings
-                    final acceptedBookings = state.bookings
-                        .where((booking) =>
-                            booking.status?.toLowerCase() == 'accepted')
-                        .toList();
+            // Toggle button to switch between views
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                ElevatedButton(
+                  onPressed: () {
+                    setState(() {
+                      showTransactionHistory = false; // Show Transactions
+                    });
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor:
+                        showTransactionHistory ? Colors.grey : Colors.blue,
+                  ),
+                  child: const Text('Transactions'),
+                ),
+                const SizedBox(width: 10),
+                ElevatedButton(
+                  onPressed: () async {
+                    if (!showTransactionHistory) {
+                      await onViewTransactionHistory(context);
+                    }
+                    setState(() {
+                      showTransactionHistory = true; // Show History
+                    });
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor:
+                        showTransactionHistory ? Colors.blue : Colors.grey,
+                  ),
+                  child: const Text('History'),
+                ),
+              ],
+            ),
+            const SizedBox(height: 20),
 
-                    // Pass the filtered bookings to the child
-                    return CryptoWalletTransactions(
-                      isConnected: WalletManager().isConnected,
-                      walletAddress: WalletManager().walletAddress,
-                      balance: WalletManager().balance,
-                      sendTransaction:
-                          sendTransaction, // Pass the method to child
-                      acceptedBookings: acceptedBookings,
-                    );
-                  }
-                  return const Center(child: Text('No bookings available.'));
-                },
-              ),
+            // Conditionally show either CryptoWalletTransactions or Cryptowallethistory
+            Expanded(
+              child: showTransactionHistory
+                  ? Cryptowallethistory(
+                      transactions: transactions,
+                      walletAddress: walletAddress,
+                    )
+                  : BlocBuilder<BookingBloc, BookingState>(
+                      builder: (context, state) {
+                        if (state is BookingLoading) {
+                          return const Center(
+                              child: CircularProgressIndicator());
+                        } else if (state is BookingFailure) {
+                          return Center(child: Text('Error: ${state.error}'));
+                        } else if (state is BookingSuccess) {
+                          final acceptedBookings = state.bookings
+                              .where((booking) =>
+                                  booking.status?.toLowerCase() == 'accepted')
+                              .toList();
+                          return CryptoWalletTransactions(
+                            isConnected: WalletManager().isConnected,
+                            walletAddress: WalletManager().walletAddress,
+                            balance: WalletManager().balance,
+                            sendTransaction: sendTransaction,
+                            acceptedBookings: acceptedBookings,
+                          );
+                        }
+                        return const Center(
+                            child: Text('No bookings available.'));
+                      },
+                    ),
             ),
           ],
         ),

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 
 class CryptoWalletHeader extends StatelessWidget {
   final VoidCallback onWalletUpdated;
+  final VoidCallback onViewTransactionHistory;
   final String walletAddress;
   final String balance;
   final bool isLoading;
@@ -10,6 +11,7 @@ class CryptoWalletHeader extends StatelessWidget {
   const CryptoWalletHeader({
     super.key,
     required this.onWalletUpdated,
+    required this.onViewTransactionHistory,
     required this.walletAddress,
     required this.balance,
     this.isLoading = false,
@@ -24,6 +26,7 @@ class CryptoWalletHeader extends StatelessWidget {
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              // Header Row
               Row(
                 children: [
                   Image.asset(
@@ -60,6 +63,7 @@ class CryptoWalletHeader extends StatelessWidget {
                   ),
                 ],
               ),
+
               const SizedBox(height: 20.0),
               const Text(
                 'Crypto Wallet',
@@ -94,10 +98,31 @@ class CryptoWalletHeader extends StatelessWidget {
                 ],
               ),
               const SizedBox(height: 20.0),
-              // CryptoNavigation Widget Added Below the Address Section
-              // const CryptoNavigation(),
+              // Add space for the Special Action button below the Disconnect button
             ],
           ),
+          // Button to view transaction history
+          // Positioned(
+          
+          //   child: Visibility(
+          //     visible: walletAddress != 'No Address', // Show only if connected
+          //     child: ElevatedButton(
+          //       onPressed: () {
+          //         onViewTransactionHistory; // Trigger the method
+          //       },
+          //       style: ElevatedButton.styleFrom(
+          //         backgroundColor: const Color(0xFF1C3473),
+          //         padding: const EdgeInsets.symmetric(
+          //             horizontal: 20.0, vertical: 12.0),
+          //         shape: RoundedRectangleBorder(
+          //           borderRadius: BorderRadius.circular(8.0),
+          //         ),
+          //       ),
+          //       child: const Text('View Transaction Historya'), // Button label
+          //     ),
+          //   ),
+          // ),
+
           Positioned(
             top: 90,
             right: 10,
