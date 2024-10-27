@@ -30,6 +30,7 @@
     "multer": "^1.4.5-lts.1",
     "nodemailer": "^6.9.15",
     "prettier": "^3.3.3",
+    "uuid": "^10.0.0",
     "xss-clean": "^0.1.4"
   },
   "devDependencies": {
