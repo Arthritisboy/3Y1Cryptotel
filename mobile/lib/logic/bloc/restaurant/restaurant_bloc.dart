@@ -29,7 +29,8 @@ class RestaurantBloc extends Bloc<RestaurantEvent, RestaurantState> {
       allRestaurants = restaurants; // Cache the list for search
 
       // Fetch coordinates for all hotels asynchronously
-      await Future.wait(allRestaurants.map((hotel) => hotel.getCoordinates()));
+      await Future.wait(
+          allRestaurants.map((restaurant) => restaurant.getCoordinates()));
       emit(RestaurantLoaded(restaurants));
     } catch (e) {
       emit(RestaurantError('Failed to load restaurants: ${e.toString()}'));
@@ -53,15 +54,18 @@ class RestaurantBloc extends Bloc<RestaurantEvent, RestaurantState> {
   //! Search restaurants based on query
   void _onSearchRestaurants(
       SearchRestaurantsEvent event, Emitter<RestaurantState> emit) {
+    print('Searching for restaurants: ${event.query}'); // Debugging
     final query = event.query.trim().toLowerCase();
 
-    // Filter restaurants matching the search query
     final filteredRestaurants = allRestaurants.where((restaurant) {
       final name = restaurant.name.toLowerCase();
       final location = restaurant.location.toLowerCase();
       return name.contains(query) || location.contains(query);
     }).toList();
 
-    emit(RestaurantLoaded(filteredRestaurants)); // Emit the filtered list
+    print(
+        'Found ${filteredRestaurants.length} matching restaurants'); // Debugging
+
+    emit(RestaurantLoaded(filteredRestaurants));
   }
 }

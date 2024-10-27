@@ -328,48 +328,69 @@ class _TabScreenState extends State<TabScreen> {
       }
     } else if (restaurantSuggestion.contains(suggestion)) {
       final restaurantBloc = context.read<RestaurantBloc>();
-      restaurantBloc.add(FetchRestaurantsEvent());
 
-      // Wait for Bloc state to update before navigating
-      await Future.delayed(Duration.zero);
-      final state = restaurantBloc.state;
-
-      if (state is RestaurantLoaded) {
-        final selectedRestaurant = state.restaurants.firstWhere(
-          (restaurant) => restaurant.name == suggestion,
-          orElse: () {
-            print('Restaurant not found: $suggestion');
-            return state.restaurants[0]; // Fallback if not found
-          },
-        );
-
-        final coordinates = await selectedRestaurant.getCoordinates();
-
-        Navigator.of(context).push(
-          MaterialPageRoute(
-            builder: (context) => Restaurant(
-              restaurantId: selectedRestaurant.id,
-              restaurantName: selectedRestaurant.name,
-              capacity: selectedRestaurant.capacity,
-              restaurantImage: selectedRestaurant.restaurantImage,
-              rating: selectedRestaurant.averageRating,
-              price: selectedRestaurant.price,
-              location: selectedRestaurant.location,
-              time: selectedRestaurant.openingHours,
-              latitude: coordinates[0],
-              longitude: coordinates[1],
-            ),
-          ),
-        );
-      } else {
-        print('Restaurant state is not loaded: $state');
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Failed to load restaurants. Please try again.'),
-          ),
-        );
+      // Dispatch the event to fetch restaurants if not already loaded
+      if (restaurantBloc.state is! RestaurantLoaded) {
+        restaurantBloc.add(FetchRestaurantsEvent());
       }
+
+      // Wait for the RestaurantLoaded state before proceeding
+      restaurantBloc.stream
+          .firstWhere((state) => state is RestaurantLoaded)
+          .then(
+        (state) async {
+          if (state is RestaurantLoaded) {
+            // Filter restaurants based on the suggestion
+            final filteredRestaurant = state.restaurants.firstWhere(
+              (restaurant) =>
+                  restaurant.name.toLowerCase() == suggestion.toLowerCase(),
+              orElse: () {
+                print('Restaurant not found: $suggestion');
+                return state.restaurants[0];
+                ; // Graceful handling if not found
+              },
+            );
+
+            if (filteredRestaurant != null) {
+              // Get the coordinates of the restaurant
+              final coordinates = await filteredRestaurant.getCoordinates();
+
+              // Navigate to the Restaurant details screen
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (context) => Restaurant(
+                    capacity: filteredRestaurant.capacity,
+                    restaurantId: filteredRestaurant.id,
+                    restaurantName: filteredRestaurant.name,
+                    restaurantImage: filteredRestaurant.restaurantImage,
+                    rating: filteredRestaurant.averageRating,
+                    price: filteredRestaurant.price,
+                    location: filteredRestaurant.location,
+                    time: filteredRestaurant.openingHours,
+                    latitude: coordinates[0],
+                    longitude: coordinates[1],
+                  ),
+                ),
+              );
+            } else {
+              _showSnackBar(context, 'Restaurant not found.');
+            }
+          }
+        },
+      ).catchError((error) {
+        print('Error fetching restaurant: $error');
+        _showSnackBar(context, 'Failed to load restaurants. Please try again.');
+      });
     }
+  }
+
+  // Helper function to show a Snackbar for error handling
+  void _showSnackBar(BuildContext context, String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(message),
+      ),
+    );
   }
 
   void _onRemoveSuggestion(String suggestion) {

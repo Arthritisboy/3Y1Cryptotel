@@ -583,8 +583,8 @@ class _CryptoWalletState extends State<CryptoWallet> {
           children: [
             Image.asset(
               'assets/images/icons/transaction_history.png',
-              width: 150.0,
-              height: 150.0,
+              width: 120.0,
+              height: 120.0,
               fit: BoxFit.contain,
             ),
             const SizedBox(height: 20),

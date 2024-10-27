@@ -111,55 +111,64 @@ class MapScreen extends StatelessWidget {
     required String name,
     required double averagePrice,
   }) {
-    return Row(
-      mainAxisSize: MainAxisSize.min,
-      mainAxisAlignment: MainAxisAlignment.center,
-      crossAxisAlignment: CrossAxisAlignment.center,
-      children: [
-        // Circular image with fixed size
-        ClipOval(
-          child: Image.network(
-            imageUrl,
-            width: 40, // Fixed width for consistency
-            height: 40, // Fixed height for consistency
-            fit: BoxFit.cover,
-            errorBuilder: (context, error, stackTrace) {
-              return const Icon(
-                Icons.broken_image,
-                size: 40,
-              );
-            },
+    return Container(
+      padding: const EdgeInsets.all(8.0),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        mainAxisAlignment: MainAxisAlignment.center,
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          // Circular image with a placeholder in case of error
+          ClipOval(
+            child: Image.network(
+              imageUrl,
+              width: 40, // Slightly smaller size
+              height: 40,
+              fit: BoxFit.cover,
+              errorBuilder: (context, error, stackTrace) {
+                return Container(
+                  width: 40,
+                  height: 40,
+                  color: Colors.grey[300],
+                  child: const Icon(
+                    Icons.broken_image,
+                    size: 20,
+                    color: Colors.grey,
+                  ),
+                );
+              },
+            ),
           ),
-        ),
-        const SizedBox(width: 8),
-        Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            SizedBox(
-              width: 100,
-              child: Text(
-                name,
-                style: const TextStyle(
-                  fontSize: 14,
-                  fontWeight: FontWeight.bold,
-                  color: Color.fromARGB(255, 29, 53, 115),
+          const SizedBox(width: 8), // Add space between image and text
+          Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              SizedBox(
+                width: 80, // Max width to prevent overflow
+                child: Text(
+                  name,
+                  style: const TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.bold,
+                    color: Color(0xFF1C3473),
+                  ),
+                  overflow: TextOverflow.ellipsis, // Handle overflow gracefully
+                  maxLines: 1,
                 ),
-                overflow: TextOverflow.ellipsis,
-                maxLines: 1,
               ),
-            ),
-            const SizedBox(height: 2),
-            Text(
-              '\u20B1${averagePrice.toStringAsFixed(2)}',
-              style: const TextStyle(
-                fontSize: 12,
-                color: Color.fromARGB(255, 29, 53, 115),
+              const SizedBox(height: 4), // Space between texts
+              Text(
+                '\u20B1${averagePrice.toStringAsFixed(2)}',
+                style: const TextStyle(
+                  fontSize: 12,
+                  color: Color(0xFF1C3473),
+                ),
               ),
-            ),
-          ],
-        ),
-      ],
+            ],
+          ),
+        ],
+      ),
     );
   }
 }
