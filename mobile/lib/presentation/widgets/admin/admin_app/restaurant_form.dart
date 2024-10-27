@@ -93,57 +93,39 @@ class _RestaurantFormScreenState extends State<RestaurantFormScreen> {
     if (_formKey.currentState?.validate() ?? false) {
       if (!_isValidPrice(_priceController.text.trim())) {
         _showCustomDialog(
-          context,
-          'Invalid Price',
-          'Price per meal must be a valid number.',
-        );
+            context, 'Invalid Price', 'Price must be a valid number.');
         return;
       }
 
       if (!_isValidCapacity(_capacityController.text.trim())) {
         _showCustomDialog(
-          context,
-          'Invalid Capacity',
-          'Capacity must be a valid number.',
-        );
+            context, 'Invalid Capacity', 'Capacity must be a valid number.');
         return;
       }
 
       if (!_isValidPassword(_managerPasswordController.text.trim())) {
-        _showCustomDialog(
-          context,
-          'Invalid Password',
-          'Password must be longer than 9 characters.',
-        );
+        _showCustomDialog(context, 'Invalid Password',
+            'Password must be longer than 9 characters.');
         return;
       }
 
       if (!_isValidPhoneNumber(_managerPhoneNumberController.text.trim())) {
-        _showCustomDialog(
-          context,
-          'Invalid Phone Number',
-          'Phone number must be longer than 10 characters.',
-        );
+        _showCustomDialog(context, 'Invalid Phone Number',
+            'Phone number must be longer than 10 characters.');
         return;
       }
 
       if (!_isValidEmail(_managerEmailController.text.trim())) {
         _showCustomDialog(
-          context,
-          'Invalid Email',
-          'Email must contain @gmail.',
-        );
+            context, 'Invalid Email', 'Email must contain @gmail.');
         return;
       }
 
       if (_selectedImage == null) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Please upload an image')),
-        );
+        _showCustomDialog(context, 'Missing Image', 'Please upload an image.');
         return;
       }
 
-      // Create and dispatch event if validations pass
       final adminModel = AdminModel(
         name: _nameController.text.trim(),
         location: _locationController.text.trim(),
@@ -170,23 +152,14 @@ class _RestaurantFormScreenState extends State<RestaurantFormScreen> {
     return BlocListener<AdminBloc, AdminState>(
       listener: (context, state) {
         if (state is AdminLoading) {
-          setState(() {
-            _isLoading = true;
-          });
+          setState(() => _isLoading = true);
         } else if (state is AdminSuccess) {
-          setState(() {
-            _isLoading = false;
-          });
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text(state.message)),
-          );
+          setState(() => _isLoading = false);
+          ScaffoldMessenger.of(context)
+              .showSnackBar(SnackBar(content: Text(state.message)));
         } else if (state is AdminFailure) {
-          setState(() {
-            _isLoading = false;
-          });
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text(state.error)),
-          );
+          setState(() => _isLoading = false);
+          _showCustomDialog(context, 'Error', state.error);
         }
       },
       child: Scaffold(
@@ -213,10 +186,9 @@ class _RestaurantFormScreenState extends State<RestaurantFormScreen> {
                   const SizedBox(height: 20),
                   _buildTextField('Wallet Address', _walletAddressController),
                   const SizedBox(height: 20),
-                  const Text(
-                    'Manager Account Information',
-                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                  ),
+                  const Text('Manager Account Information',
+                      style:
+                          TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
                   const SizedBox(height: 20),
                   _buildTextField(
                       'Manager First Name', _managerFirstNameController),
@@ -242,19 +214,15 @@ class _RestaurantFormScreenState extends State<RestaurantFormScreen> {
                   _buildImagePicker(),
                   const SizedBox(height: 30),
                   ElevatedButton(
-                    onPressed: _isLoading ? null : () => _createRestaurant(),
+                    onPressed: _isLoading ? null : _createRestaurant,
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xFF1C3473),
-                    ),
+                        backgroundColor: const Color(0xFF1C3473)),
                     child: _isLoading
                         ? const SizedBox(
                             width: 20,
                             height: 20,
                             child: CircularProgressIndicator(
-                              color: Colors.white,
-                              strokeWidth: 2.0,
-                            ),
-                          )
+                                color: Colors.white, strokeWidth: 2.0))
                         : const Text('Create Restaurant'),
                   ),
                 ],
@@ -266,37 +234,14 @@ class _RestaurantFormScreenState extends State<RestaurantFormScreen> {
     );
   }
 
-  void _showCustomDialog(
-      BuildContext context, String title, String description) {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return CustomDialog(
-          title: title,
-          description: description,
-          buttonText: 'Close',
-          onButtonPressed: () {
-            Navigator.of(context).pop(); // Close the dialog
-          },
-          secondButtonText: '',
-          onSecondButtonPressed: () {},
-        );
-      },
-    );
-  }
-
-  // Header
   Widget _buildHeader() {
     return Row(
       children: [
         IconButton(
-          icon: const Icon(Icons.arrow_back),
-          onPressed: () => Navigator.pop(context),
-        ),
-        const Text(
-          'Create Restaurant',
-          style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-        ),
+            icon: const Icon(Icons.arrow_back),
+            onPressed: () => Navigator.pop(context)),
+        const Text('Create Restaurant',
+            style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
       ],
     );
   }
@@ -305,36 +250,32 @@ class _RestaurantFormScreenState extends State<RestaurantFormScreen> {
       {TextInputType keyboardType = TextInputType.text}) {
     return TextFormField(
       controller: controller,
-      decoration: InputDecoration(
-        labelText: label,
-        border: const OutlineInputBorder(),
-      ),
+      decoration:
+          InputDecoration(labelText: label, border: const OutlineInputBorder()),
       keyboardType: keyboardType,
       validator: (value) =>
           value == null || value.isEmpty ? 'Please enter $label' : null,
     );
   }
 
-  // Password Field
   Widget _buildPasswordField(String label, TextEditingController controller,
       {String? Function(String?)? validator}) {
     return TextFormField(
       controller: controller,
+      obscureText: true,
       decoration: InputDecoration(
         labelText: label,
         border: const OutlineInputBorder(),
       ),
-      obscureText: true,
       validator: validator ?? _validatePassword,
     );
   }
 
-  // Image Picker
   Widget _buildImagePicker() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text('Upload Hotel Image', style: TextStyle(fontSize: 16)),
+        const Text('Upload Restaurant Image', style: TextStyle(fontSize: 16)),
         const SizedBox(height: 10),
         _selectedImage != null
             ? Image.file(
@@ -360,7 +301,6 @@ class _RestaurantFormScreenState extends State<RestaurantFormScreen> {
     );
   }
 
-  // Gender Selector
   Widget _buildGenderSelector() {
     return Row(
       children: [
@@ -377,6 +317,24 @@ class _RestaurantFormScreenState extends State<RestaurantFormScreen> {
           ),
         ),
       ],
+    );
+  }
+
+  void _showCustomDialog(
+      BuildContext context, String title, String description) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return CustomDialog(
+          title: title,
+          description: description,
+          buttonText: 'Close',
+          onButtonPressed: () {
+            Navigator.of(context).pop(); // Close the dialog
+          },
+          onSecondButtonPressed: () {},
+        );
+      },
     );
   }
 }

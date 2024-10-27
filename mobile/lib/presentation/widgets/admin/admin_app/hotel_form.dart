@@ -79,8 +79,6 @@ class _HotelFormScreenState extends State<HotelFormScreen> {
 
   void _createHotelAndAdmin() {
     if (_formKey.currentState?.validate() ?? false) {
-      // Additional custom validations
-
       if (!_isValidPassword(_managerPasswordController.text.trim())) {
         _showCustomDialog(
           context,
@@ -117,7 +115,6 @@ class _HotelFormScreenState extends State<HotelFormScreen> {
         return;
       }
 
-      // Proceed with the form submission if all validations pass
       final adminModel = AdminModel(
         name: _nameController.text.trim(),
         location: _locationController.text.trim(),
@@ -156,109 +153,77 @@ class _HotelFormScreenState extends State<HotelFormScreen> {
               setState(() => _selectedImage = null);
             } else if (state is AdminFailure) {
               setState(() => _isLoading = false);
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text(state.error)),
+              _showCustomDialog(
+                context,
+                'Error',
+                state.error, // Display the error message in the custom dialog
               );
             }
           },
-          child: Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Form(
-              key: _formKey,
-              child: ListView(
-                children: [
-                  _buildHeader(),
-                  const SizedBox(height: 20),
+          child: _buildFormContent(),
+        ),
+      ),
+    );
+  }
 
-                  // Hotel Name Field
-                  _buildTextField('Hotel Name', _nameController),
-                  const SizedBox(height: 20),
-
-                  // Location Field
-                  _buildTextField('Location', _locationController),
-                  const SizedBox(height: 20),
-
-                  // Opening Hours Field
-                  _buildTextField('Opening Hours', _openingHoursController),
-                  const SizedBox(height: 20),
-
-                  // Wallet Address Field
-                  _buildTextField('Wallet Address', _walletAddressController),
-                  const SizedBox(height: 20),
-
-                  // Manager Info Section
-                  const Text(
-                    'Manager Account Information',
-                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                  ),
-                  const SizedBox(height: 20),
-
-                  // Manager First Name Field
-                  _buildTextField(
-                      'Manager First Name', _managerFirstNameController),
-                  const SizedBox(height: 20),
-
-                  // Manager Last Name Field
-                  _buildTextField(
-                      'Manager Last Name', _managerLastNameController),
-                  const SizedBox(height: 20),
-
-                  // Manager Email Field
-                  _buildTextField('Manager Email', _managerEmailController,
-                      keyboardType: TextInputType.emailAddress),
-                  const SizedBox(height: 20),
-
-                  // Manager Password Field
-                  _buildPasswordField(
-                      'Manager Password', _managerPasswordController),
-                  const SizedBox(height: 20),
-
-                  // Confirm Password Field
-                  _buildPasswordField(
-                      'Confirm Password', _confirmPasswordController,
-                      validator: _validateConfirmPassword),
-                  const SizedBox(height: 20),
-
-                  // Manager Phone Number Field
-                  _buildTextField(
-                      'Manager Phone Number', _managerPhoneNumberController),
-                  const SizedBox(height: 20),
-
-                  // Gender Selector
-                  _buildGenderSelector(),
-                  const SizedBox(height: 30),
-
-                  // Image Upload Section
-                  _buildImagePicker(),
-                  const SizedBox(height: 20),
-
-                  // Submit Button
-                  ElevatedButton(
-                    onPressed: _isLoading
-                        ? null
-                        : () {
-                            if (_formKey.currentState?.validate() ?? false) {
-                              _createHotelAndAdmin();
-                            }
-                          },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color.fromARGB(255, 29, 53, 115),
-                    ),
-                    child: _isLoading
-                        ? const SizedBox(
-                            width: 20,
-                            height: 20,
-                            child: CircularProgressIndicator(
-                              color: Colors.white,
-                              strokeWidth: 2.0,
-                            ),
-                          )
-                        : const Text('Create'),
-                  ),
-                ],
-              ),
+  Widget _buildFormContent() {
+    return Padding(
+      padding: const EdgeInsets.all(16.0),
+      child: Form(
+        key: _formKey,
+        child: ListView(
+          children: [
+            _buildHeader(),
+            const SizedBox(height: 20),
+            _buildTextField('Hotel Name', _nameController),
+            const SizedBox(height: 20),
+            _buildTextField('Location', _locationController),
+            const SizedBox(height: 20),
+            _buildTextField('Opening Hours', _openingHoursController),
+            const SizedBox(height: 20),
+            _buildTextField('Wallet Address', _walletAddressController),
+            const SizedBox(height: 20),
+            const Text(
+              'Manager Account Information',
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
-          ),
+            const SizedBox(height: 20),
+            _buildTextField('Manager First Name', _managerFirstNameController),
+            const SizedBox(height: 20),
+            _buildTextField('Manager Last Name', _managerLastNameController),
+            const SizedBox(height: 20),
+            _buildTextField('Manager Email', _managerEmailController,
+                keyboardType: TextInputType.emailAddress),
+            const SizedBox(height: 20),
+            _buildPasswordField('Manager Password', _managerPasswordController),
+            const SizedBox(height: 20),
+            _buildPasswordField('Confirm Password', _confirmPasswordController,
+                validator: _validateConfirmPassword),
+            const SizedBox(height: 20),
+            _buildTextField(
+                'Manager Phone Number', _managerPhoneNumberController),
+            const SizedBox(height: 20),
+            _buildGenderSelector(),
+            const SizedBox(height: 30),
+            _buildImagePicker(),
+            const SizedBox(height: 20),
+            ElevatedButton(
+              onPressed: _isLoading ? null : _createHotelAndAdmin,
+              style: ElevatedButton.styleFrom(
+                backgroundColor: const Color.fromARGB(255, 29, 53, 115),
+              ),
+              child: _isLoading
+                  ? const SizedBox(
+                      width: 20,
+                      height: 20,
+                      child: CircularProgressIndicator(
+                        color: Colors.white,
+                        strokeWidth: 2.0,
+                      ),
+                    )
+                  : const Text('Create'),
+            ),
+          ],
         ),
       ),
     );

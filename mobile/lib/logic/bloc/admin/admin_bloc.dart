@@ -21,7 +21,7 @@ class AdminBloc extends Bloc<AdminEvent, AdminState> {
       final response = await adminRepository.createHotel(event.adminModel);
       emit(AdminSuccess('Hotel created successfully!'));
     } catch (e) {
-      emit(AdminFailure('Failed to create hotel: ${e.toString()}'));
+      emit(AdminFailure(e.toString()));
     }
   }
 
