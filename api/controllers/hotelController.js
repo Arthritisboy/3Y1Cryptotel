@@ -5,6 +5,7 @@ const Booking = require('../models/Booking');
 const { uploadEveryImage } = require('../middleware/imageUpload');
 const catchAsync = require('../utils/catchAsync');
 const AppError = require('../utils/appError');
+const mongoose = require('mongoose'); // Import mongoose for transactions
 
 // Get a hotel by ID or all hotels (with rooms)
 exports.getHotel = catchAsync(async (req, res, next) => {
@@ -54,7 +55,6 @@ exports.createHotel = catchAsync(async (req, res, next) => {
     managerGender,
   } = req.body;
 
-  // Ensure required fields are provided
   if (
     !name ||
     !location ||
@@ -66,14 +66,12 @@ exports.createHotel = catchAsync(async (req, res, next) => {
     return next(new AppError('Missing required fields.', 400));
   }
 
-  // Check if an image is provided
   if (!req.file) {
     return next(new AppError('Hotel image is required.', 400));
   }
 
   let hotelImage;
 
-  // Handle hotel image upload
   try {
     hotelImage = await uploadEveryImage(req, 'hotel');
   } catch (uploadErr) {
@@ -84,17 +82,25 @@ exports.createHotel = catchAsync(async (req, res, next) => {
     });
   }
 
-  try {
-    // 1. Create the hotel
-    const newHotel = await Hotel.create({
-      name,
-      location,
-      openingHours,
-      walletAddress,
-      hotelImage, // Hotel image is now required
-    });
+  const session = await mongoose.startSession(); // Start a new session for the transaction
+  session.startTransaction();
 
-    // 2. Register the manager
+  try {
+    // 1. Create the hotel inside the transaction
+    const newHotel = await Hotel.create(
+      [
+        {
+          name,
+          location,
+          openingHours,
+          walletAddress,
+          hotelImage,
+        },
+      ],
+      { session },
+    );
+
+    // 2. Register the manager linked to the hotel
     const managerData = {
       firstName: managerFirstName,
       lastName: managerLastName,
@@ -107,21 +113,57 @@ exports.createHotel = catchAsync(async (req, res, next) => {
       verified: true,
       codeExpires: undefined,
       hasCompletedOnboarding: true,
-      handleId: newHotel._id,
+      handleId: newHotel[0]._id, // Reference the created hotel ID
     };
 
-    const newManager = await User.create(managerData);
+    const newManager = await User.create([managerData], { session });
     console.log('Manager created:', newManager);
 
-    // 3. Send success response with hotel and manager info
+    // 3. Commit the transaction if everything succeeds
+    await session.commitTransaction();
+    session.endSession();
+
+    // Send success response with hotel and manager info
     res.status(201).json({
       status: 'success',
       data: {
-        hotel: newHotel,
-        manager: newManager,
+        hotel: newHotel[0],
+        manager: newManager[0],
       },
     });
   } catch (err) {
+    await session.abortTransaction(); // Rollback the transaction on error
+    session.endSession();
+
+    // Handle duplicate key error for hotel name
+    if (err.code === 11000 && err.keyPattern && err.keyPattern.name) {
+      return next(
+        new AppError(
+          `Hotel with the name "${err.keyValue.name}" already exists. Please use a different name.`,
+          400,
+        ),
+      );
+    }
+
+    // Handle duplicate email error for the manager
+    if (err.code === 11000 && err.keyPattern?.email) {
+      return next(
+        new AppError(
+          `A user with the email "${err.keyValue.email}" already exists. Please use a different email.`,
+          400,
+        ),
+      );
+    }
+    // Handle duplicate hotel location error
+    if (err.code === 11000 && err.keyPattern?.location) {
+      return next(
+        new AppError(
+          `A hotel at the location "${err.keyValue.location}" already exists. Please use a different location.`,
+          400,
+        ),
+      );
+    }
+
     console.error('Error creating manager or hotel:', err);
     return next(new AppError('Failed to create manager or hotel.', 500));
   }

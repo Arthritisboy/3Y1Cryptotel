@@ -19,6 +19,7 @@ const hotelSchema = new mongoose.Schema({
   location: {
     type: String,
     required: true,
+    unique: true,
   },
   openingHours: {
     type: String,
@@ -27,6 +28,7 @@ const hotelSchema = new mongoose.Schema({
   hotelImage: {
     type: String,
     required: true,
+    unique: true,
   },
   // contactNumber: { will add this later I kinda forgot to git pull
   //   type: String,
