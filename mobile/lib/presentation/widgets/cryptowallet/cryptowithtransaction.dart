@@ -4,6 +4,8 @@ import 'package:hotel_flutter/data/model/booking/booking_model.dart';
 import 'package:hotel_flutter/presentation/screens/homeScreens/tab_screen.dart';
 import 'package:intl/intl.dart';
 
+import 'crypto_navigation.dart'; // Import the CryptoNavigation widget
+
 class CryptoWithTransaction extends StatefulWidget {
   final bool isConnected;
   final String walletAddress;
@@ -44,7 +46,6 @@ class _CryptoWithTransactionState extends State<CryptoWithTransaction> {
     if (widget.acceptedBookings.isEmpty) {
       return _buildNoTransactionView();
     }
-
     return ListView.builder(
       itemCount: widget.acceptedBookings.length,
       itemBuilder: (context, index) {
@@ -59,7 +60,7 @@ class _CryptoWithTransactionState extends State<CryptoWithTransaction> {
         String? displayImage = booking.hotelImage?.isNotEmpty == true
             ? booking.hotelImage
             : booking.restaurantImage;
-
+        
         return Padding(
           padding: const EdgeInsets.all(12.0),
           child: Card(
