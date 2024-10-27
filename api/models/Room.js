@@ -8,6 +8,7 @@ const roomSchema = new mongoose.Schema({
   roomImage: {
     type: String,
     unique: true,
+    required: true,
   },
   type: {
     type: String,
