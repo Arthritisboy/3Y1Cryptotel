@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hotel_flutter/data/model/admin/admin_model.dart';
+import 'package:hotel_flutter/presentation/widgets/utils_widget/custom_dialog.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:hotel_flutter/logic/bloc/admin/admin_bloc.dart';
 import 'package:hotel_flutter/logic/bloc/admin/admin_event.dart';
@@ -57,6 +58,18 @@ class _HotelFormScreenState extends State<HotelFormScreen> {
     return null;
   }
 
+  bool _isValidPassword(String password) {
+    return password.length > 9;
+  }
+
+  bool _isValidPhoneNumber(String phoneNumber) {
+    return phoneNumber.length > 10;
+  }
+
+  bool _isValidEmail(String email) {
+    return email.contains('@gmail');
+  }
+
   String? _validateConfirmPassword(String? value) {
     if (value != _managerPasswordController.text) {
       return 'Passwords do not match';
@@ -64,29 +77,43 @@ class _HotelFormScreenState extends State<HotelFormScreen> {
     return null;
   }
 
-  // Create Hotel and Dispatch Bloc Event
   void _createHotelAndAdmin() {
     if (_formKey.currentState?.validate() ?? false) {
-      if (_selectedImage == null) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Please upload an image')),
+      if (!_isValidPassword(_managerPasswordController.text.trim())) {
+        _showCustomDialog(
+          context,
+          'Invalid Password',
+          'Password must be longer than 8 characters.',
         );
         return;
       }
-      // Print all field values to the console
-      print('Hotel Name: ${_nameController.text.trim()}');
-      print('Location: ${_locationController.text.trim()}');
-      print('Opening Hours: ${_openingHoursController.text.trim()}');
-      print('Wallet Address: ${_walletAddressController.text.trim()}');
-      print('Manager Email: ${_managerEmailController.text.trim()}');
-      print('Manager First Name: ${_managerFirstNameController.text.trim()}');
-      print('Manager Last Name: ${_managerLastNameController.text.trim()}');
-      print('Manager Password: ${_managerPasswordController.text.trim()}');
-      print('Confirm Password: ${_confirmPasswordController.text.trim()}');
-      print(
-          'Manager Phone Number: ${_managerPhoneNumberController.text.trim()}');
-      print('Manager Gender: $_selectedGender');
-      print('Selected Image: ${_selectedImage?.path}');
+
+      if (!_isValidPhoneNumber(_managerPhoneNumberController.text.trim())) {
+        _showCustomDialog(
+          context,
+          'Invalid Phone Number',
+          'Phone number must be longer than 10 characters.',
+        );
+        return;
+      }
+
+      if (!_isValidEmail(_managerEmailController.text.trim())) {
+        _showCustomDialog(
+          context,
+          'Invalid Email',
+          'Email must contain @gmail.',
+        );
+        return;
+      }
+
+      if (_selectedImage == null) {
+        _showCustomDialog(
+          context,
+          'Missing Image',
+          'Please upload an image.',
+        );
+        return;
+      }
 
       final adminModel = AdminModel(
         name: _nameController.text.trim(),
@@ -126,103 +153,77 @@ class _HotelFormScreenState extends State<HotelFormScreen> {
               setState(() => _selectedImage = null);
             } else if (state is AdminFailure) {
               setState(() => _isLoading = false);
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text(state.error)),
+              _showCustomDialog(
+                context,
+                'Error',
+                state.error, // Display the error message in the custom dialog
               );
             }
           },
-          child: Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Form(
-              key: _formKey,
-              child: ListView(
-                children: [
-                  _buildHeader(),
-                  const SizedBox(height: 20),
+          child: _buildFormContent(),
+        ),
+      ),
+    );
+  }
 
-                  // Hotel Name Field
-                  _buildTextField('Hotel Name', _nameController),
-                  const SizedBox(height: 20),
-
-                  // Location Field
-                  _buildTextField('Location', _locationController),
-                  const SizedBox(height: 20),
-
-                  // Opening Hours Field
-                  _buildTextField('Opening Hours', _openingHoursController),
-                  const SizedBox(height: 20),
-
-                  // Wallet Address Field
-                  _buildTextField('Wallet Address', _walletAddressController),
-                  const SizedBox(height: 20),
-
-                  // Manager Info Section
-                  const Text(
-                    'Manager Account Information',
-                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                  ),
-                  const SizedBox(height: 20),
-
-                  // Manager First Name Field
-                  _buildTextField(
-                      'Manager First Name', _managerFirstNameController),
-                  const SizedBox(height: 20),
-
-                  // Manager Last Name Field
-                  _buildTextField(
-                      'Manager Last Name', _managerLastNameController),
-                  const SizedBox(height: 20),
-
-                  // Manager Email Field
-                  _buildTextField('Manager Email', _managerEmailController,
-                      keyboardType: TextInputType.emailAddress),
-                  const SizedBox(height: 20),
-
-                  // Manager Password Field
-                  _buildPasswordField(
-                      'Manager Password', _managerPasswordController),
-                  const SizedBox(height: 20),
-
-                  // Confirm Password Field
-                  _buildPasswordField(
-                      'Confirm Password', _confirmPasswordController,
-                      validator: _validateConfirmPassword),
-                  const SizedBox(height: 20),
-
-                  // Manager Phone Number Field
-                  _buildTextField(
-                      'Manager Phone Number', _managerPhoneNumberController),
-                  const SizedBox(height: 20),
-
-                  // Gender Selector
-                  _buildGenderSelector(),
-                  const SizedBox(height: 30),
-
-                  // Image Upload Section
-                  _buildImagePicker(),
-                  const SizedBox(height: 20),
-
-                  // Submit Button
-                  ElevatedButton(
-                    onPressed: _isLoading ? null : _createHotelAndAdmin,
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color.fromARGB(255, 29, 53, 115),
-                    ),
-                    child: _isLoading
-                        ? const SizedBox(
-                            width: 20,
-                            height: 20,
-                            child: CircularProgressIndicator(
-                              color: Colors.white,
-                              strokeWidth: 2.0,
-                            ),
-                          )
-                        : const Text('Create'),
-                  ),
-                ],
-              ),
+  Widget _buildFormContent() {
+    return Padding(
+      padding: const EdgeInsets.all(16.0),
+      child: Form(
+        key: _formKey,
+        child: ListView(
+          children: [
+            _buildHeader(),
+            const SizedBox(height: 20),
+            _buildTextField('Hotel Name', _nameController),
+            const SizedBox(height: 20),
+            _buildTextField('Location', _locationController),
+            const SizedBox(height: 20),
+            _buildTextField('Opening Hours', _openingHoursController),
+            const SizedBox(height: 20),
+            _buildTextField('Wallet Address', _walletAddressController),
+            const SizedBox(height: 20),
+            const Text(
+              'Manager Account Information',
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
-          ),
+            const SizedBox(height: 20),
+            _buildTextField('Manager First Name', _managerFirstNameController),
+            const SizedBox(height: 20),
+            _buildTextField('Manager Last Name', _managerLastNameController),
+            const SizedBox(height: 20),
+            _buildTextField('Manager Email', _managerEmailController,
+                keyboardType: TextInputType.emailAddress),
+            const SizedBox(height: 20),
+            _buildPasswordField('Manager Password', _managerPasswordController),
+            const SizedBox(height: 20),
+            _buildPasswordField('Confirm Password', _confirmPasswordController,
+                validator: _validateConfirmPassword),
+            const SizedBox(height: 20),
+            _buildTextField(
+                'Manager Phone Number', _managerPhoneNumberController),
+            const SizedBox(height: 20),
+            _buildGenderSelector(),
+            const SizedBox(height: 30),
+            _buildImagePicker(),
+            const SizedBox(height: 20),
+            ElevatedButton(
+              onPressed: _isLoading ? null : _createHotelAndAdmin,
+              style: ElevatedButton.styleFrom(
+                backgroundColor: const Color.fromARGB(255, 29, 53, 115),
+              ),
+              child: _isLoading
+                  ? const SizedBox(
+                      width: 20,
+                      height: 20,
+                      child: CircularProgressIndicator(
+                        color: Colors.white,
+                        strokeWidth: 2.0,
+                      ),
+                    )
+                  : const Text('Create'),
+            ),
+          ],
         ),
       ),
     );
@@ -247,8 +248,10 @@ class _HotelFormScreenState extends State<HotelFormScreen> {
       {TextInputType keyboardType = TextInputType.text}) {
     return TextFormField(
       controller: controller,
-      decoration:
-          InputDecoration(labelText: label, border: OutlineInputBorder()),
+      decoration: InputDecoration(
+        labelText: label,
+        border: const OutlineInputBorder(),
+      ),
       keyboardType: keyboardType,
       validator: (value) =>
           value == null || value.isEmpty ? 'Please enter $label' : null,
@@ -259,9 +262,11 @@ class _HotelFormScreenState extends State<HotelFormScreen> {
       {String? Function(String?)? validator}) {
     return TextFormField(
       controller: controller,
-      decoration:
-          InputDecoration(labelText: label, border: OutlineInputBorder()),
       obscureText: true,
+      decoration: InputDecoration(
+        labelText: label,
+        border: const OutlineInputBorder(),
+      ),
       validator: validator ?? _validatePassword,
     );
   }
@@ -273,7 +278,11 @@ class _HotelFormScreenState extends State<HotelFormScreen> {
         const Text('Upload Hotel Image', style: TextStyle(fontSize: 16)),
         const SizedBox(height: 10),
         _selectedImage != null
-            ? Image.file(_selectedImage!, height: 150, fit: BoxFit.cover)
+            ? Image.file(
+                _selectedImage!,
+                height: 150,
+                fit: BoxFit.cover,
+              )
             : Container(
                 height: 150,
                 width: double.infinity,
@@ -286,7 +295,7 @@ class _HotelFormScreenState extends State<HotelFormScreen> {
           style: ElevatedButton.styleFrom(
             backgroundColor: const Color.fromARGB(255, 29, 53, 115),
           ),
-          child: Text('Pick Image'),
+          child: const Text('Pick Image'),
         ),
       ],
     );
@@ -308,6 +317,25 @@ class _HotelFormScreenState extends State<HotelFormScreen> {
           ),
         ),
       ],
+    );
+  }
+
+  void _showCustomDialog(
+      BuildContext context, String title, String description) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return CustomDialog(
+          title: title,
+          description: description,
+          buttonText: 'Close',
+          onButtonPressed: () {
+            Navigator.of(context).pop(); // Close the dialog
+          },
+          secondButtonText: '',
+          onSecondButtonPressed: () {},
+        );
+      },
     );
   }
 }

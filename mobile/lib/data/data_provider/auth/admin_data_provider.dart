@@ -19,18 +19,11 @@ class AdminDataProvider {
       return responseData;
     } else {
       final errorMessage = responseData['message'] ?? 'Request failed';
-      print('Error: $errorMessage'); // Log error message
       throw Exception(errorMessage);
     }
   }
 
   // Helper: Build HTTP Headers with Authorization
-  Map<String, String> _buildHeaders(String token) {
-    return {
-      'Authorization': 'Bearer $token',
-      'Content-Type': 'application/json',
-    };
-  }
 
   Future<Map<String, dynamic>> createHotel({
     required String name,
@@ -90,7 +83,6 @@ class AdminDataProvider {
 
       return await _handleResponse(httpResponse);
     } catch (e) {
-      print('Error creating hotel: $e');
       rethrow;
     }
   }

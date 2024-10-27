@@ -4,6 +4,8 @@ const dotenv = require('dotenv');
 const cors = require('cors');
 const bodyParser = require('body-parser');
 // const { NotFoundError } = require('./errors');
+const Restaurant = require('./models/Restaurant'); // Import Restaurant model
+
 //! connectDB
 const connectToDatabase = require('./database/connection');
 
@@ -112,6 +114,11 @@ const port = process.env.PORT || 3000;
 const start = async () => {
   try {
     await connectToDatabase();
+    // Sync indexes for the Restaurant model
+    await Restaurant.syncIndexes()
+      .then(() => console.log('Restaurant indexes synced.'))
+      .catch((err) => console.error('Error syncing indexes:', err));
+
     app.listen(port, () =>
       console.log(`Server is listening on port ${port}...`),
     );

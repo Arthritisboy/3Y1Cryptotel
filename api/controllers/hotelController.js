@@ -1,10 +1,10 @@
 const User = require('../models/User');
 const Hotel = require('../models/Hotel');
 const Room = require('../models/Room');
-const Booking = require('../models/Booking');
 const { uploadEveryImage } = require('../middleware/imageUpload');
 const catchAsync = require('../utils/catchAsync');
 const AppError = require('../utils/appError');
+const mongoose = require('mongoose'); // Import mongoose for transactions
 
 // Get a hotel by ID or all hotels (with rooms)
 exports.getHotel = catchAsync(async (req, res, next) => {
@@ -54,7 +54,6 @@ exports.createHotel = catchAsync(async (req, res, next) => {
     managerGender,
   } = req.body;
 
-  // Ensure required fields are provided
   if (
     !name ||
     !location ||
@@ -66,16 +65,14 @@ exports.createHotel = catchAsync(async (req, res, next) => {
     return next(new AppError('Missing required fields.', 400));
   }
 
-  // Check if an image is provided
   if (!req.file) {
     return next(new AppError('Hotel image is required.', 400));
   }
 
   let hotelImage;
 
-  // Handle hotel image upload
   try {
-    hotelImage = await uploadEveryImage(req);
+    hotelImage = await uploadEveryImage(req, 'hotel');
   } catch (uploadErr) {
     return res.status(500).json({
       status: 'error',
@@ -84,17 +81,25 @@ exports.createHotel = catchAsync(async (req, res, next) => {
     });
   }
 
-  try {
-    // 1. Create the hotel
-    const newHotel = await Hotel.create({
-      name,
-      location,
-      openingHours,
-      walletAddress,
-      hotelImage, // Hotel image is now required
-    });
+  const session = await mongoose.startSession(); // Start a new session for the transaction
+  session.startTransaction();
 
-    // 2. Register the manager
+  try {
+    // 1. Create the hotel inside the transaction
+    const newHotel = await Hotel.create(
+      [
+        {
+          name,
+          location,
+          openingHours,
+          walletAddress,
+          hotelImage,
+        },
+      ],
+      { session },
+    );
+
+    // 2. Register the manager linked to the hotel
     const managerData = {
       firstName: managerFirstName,
       lastName: managerLastName,
@@ -107,21 +112,46 @@ exports.createHotel = catchAsync(async (req, res, next) => {
       verified: true,
       codeExpires: undefined,
       hasCompletedOnboarding: true,
-      handleId: newHotel._id,
+      handleId: newHotel[0]._id, // Reference the created hotel ID
     };
 
-    const newManager = await User.create(managerData);
+    const newManager = await User.create([managerData], { session });
     console.log('Manager created:', newManager);
 
-    // 3. Send success response with hotel and manager info
+    // 3. Commit the transaction if everything succeeds
+    await session.commitTransaction();
+    session.endSession();
+
+    // Send success response with hotel and manager info
     res.status(201).json({
       status: 'success',
       data: {
-        hotel: newHotel,
-        manager: newManager,
+        hotel: newHotel[0],
+        manager: newManager[0],
       },
     });
   } catch (err) {
+    await session.abortTransaction(); // Rollback the transaction on error
+    session.endSession();
+
+    // Handle MongoDB duplicate key errors (E11000)
+    if (err.code === 11000) {
+      let message = 'Duplicate field error.';
+
+      // Check which field caused the error
+      if (err.keyPattern?.name) {
+        message = `A hotel with the name "${err.keyValue.name}" already exists. Please use a different name.`;
+      } else if (err.keyPattern?.location) {
+        message = `A hotel at the location "${err.keyValue.location}" already exists. Please use a different location.`;
+      } else if (err.keyPattern?.email) {
+        message = `A user with the email "${err.keyValue.email}" already exists. Please use a different email.`;
+      } else if (err.keyPattern?.hotelImage) {
+        message = `The image "${err.keyValue.hotelImage}" has already been used for another hotel. Please upload a different image.`;
+      }
+
+      return next(new AppError(message, 400));
+    }
+
     console.error('Error creating manager or hotel:', err);
     return next(new AppError('Failed to create manager or hotel.', 500));
   }

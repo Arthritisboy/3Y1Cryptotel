@@ -53,21 +53,21 @@ class _TabScreenState extends State<TabScreen> {
   List<String> hotelSuggestion = [
     'River Palm Hotel',
     'Monarch Hotel',
-    'Star Plaza Hotel',
+    'Star Plaza',
     'Puerto Del Sol',
-    'The Manaog Hotel',
+    'The Manaoag Hotel',
     'Lenox Hotel',
     'Hotel Monde',
     'Hotel Le Duc',
-    'Bergamu Hotel'
-        'Bedbox',
+    'Bergamu Hotel',
+    'Bedbox',
   ];
 
   //test push
   List<String> restaurantSuggestion = [
-    'Matutina’s Gerry’s Seafood House',
-    'Cabalen'
-        'City De Luxe',
+    'Matutina Gerry’s Seafood House',
+    'Cabalen',
+    'City De Luxe',
     'Hardin sa Paraiso',
     'Sungayan Grill',
     'Pedritos',
@@ -287,85 +287,88 @@ class _TabScreenState extends State<TabScreen> {
     );
   }
 
-  void _onSelectSuggestion(String suggestion) {
+  void _onSelectSuggestion(String suggestion) async {
     setState(() {
       _searchQuery = suggestion;
     });
 
-    // Check if the suggestion is a hotel or a restaurant
     if (hotelSuggestion.contains(suggestion)) {
-      // Fetch the list of hotels using BLoC
       final hotelBloc = context.read<HotelBloc>();
-      hotelBloc.add(FetchHotelsEvent()); // Ensure the list is updated
 
-      // Use a delayed Future to wait for state update
-      Future.delayed(Duration.zero, () {
-        final state = hotelBloc.state; // Get the current state
+      // Dispatch event and wait for the state update.
+      hotelBloc.add(FetchHotelsEvent());
 
-        if (state is HotelLoaded) {
-          // Find the index of the hotel suggestion
-          int index = hotelSuggestion.indexOf(suggestion);
-          HotelModel selectedHotel = state.hotels[index]; // Get the hotel model
+      // Await the state change before navigating.
+      await Future.delayed(Duration.zero);
+      final state = hotelBloc.state;
 
-          // Get coordinates for the selected hotel
-          selectedHotel.getCoordinates().then((coordinates) {
-            // Navigate to the HotelScreen with the selected hotel data
-            Navigator.of(context).push(
-              MaterialPageRoute(
-                builder: (context) => HotelScreen(
-                  hotelId: selectedHotel.id,
-                  hotelImage: selectedHotel.hotelImage,
-                  hotelName: selectedHotel.name,
-                  rating: selectedHotel.averageRating,
-                  price: selectedHotel.averagePrice,
-                  location: selectedHotel.location,
-                  time: selectedHotel.openingHours,
-                  latitude: coordinates[0], // Use the retrieved coordinates
-                  longitude: coordinates[1], // Use the retrieved coordinates
-                ),
-              ),
-            );
-          });
-        }
-      });
+      if (state is HotelLoaded) {
+        final selectedHotel = state.hotels.firstWhere(
+          (hotel) => hotel.name == suggestion,
+          orElse: () => state.hotels[0], // Fallback if not found
+        );
+
+        final coordinates = await selectedHotel.getCoordinates();
+
+        Navigator.of(context).push(
+          MaterialPageRoute(
+            builder: (context) => HotelScreen(
+              hotelId: selectedHotel.id,
+              hotelImage: selectedHotel.hotelImage,
+              hotelName: selectedHotel.name,
+              rating: selectedHotel.averageRating,
+              price: selectedHotel.averagePrice,
+              location: selectedHotel.location,
+              time: selectedHotel.openingHours,
+              latitude: coordinates[0],
+              longitude: coordinates[1],
+            ),
+          ),
+        );
+      }
     } else if (restaurantSuggestion.contains(suggestion)) {
-      // Fetch the list of restaurants using BLoC
       final restaurantBloc = context.read<RestaurantBloc>();
-      restaurantBloc.add(FetchRestaurantsEvent()); // Ensure the list is updated
+      restaurantBloc.add(FetchRestaurantsEvent());
 
-      // Use a delayed Future to wait for state update
-      Future.delayed(Duration.zero, () {
-        final state = restaurantBloc.state; // Get the current state
+      // Wait for Bloc state to update before navigating
+      await Future.delayed(Duration.zero);
+      final state = restaurantBloc.state;
 
-        if (state is RestaurantLoaded) {
-          // Find the index of the restaurant suggestion
-          int index = restaurantSuggestion.indexOf(suggestion);
-          RestaurantModel selectedRestaurant =
-              state.restaurants[index]; // Get the restaurant model
+      if (state is RestaurantLoaded) {
+        final selectedRestaurant = state.restaurants.firstWhere(
+          (restaurant) => restaurant.name == suggestion,
+          orElse: () {
+            print('Restaurant not found: $suggestion');
+            return state.restaurants[0]; // Fallback if not found
+          },
+        );
 
-          // Get coordinates for the selected restaurant
-          selectedRestaurant.getCoordinates().then((coordinates) {
-            // Navigate to the RestaurantScreen with the selected restaurant data
-            Navigator.of(context).push(
-              MaterialPageRoute(
-                builder: (context) => Restaurant(
-                  restaurantId: selectedRestaurant.id,
-                  restaurantName: selectedRestaurant.name,
-                  capacity: selectedRestaurant
-                      .capacity, // Assuming capacity is part of the model
-                  restaurantImage: selectedRestaurant.restaurantImage,
-                  rating: selectedRestaurant.averageRating,
-                  price: selectedRestaurant.price,
-                  location: selectedRestaurant.location,
-                  time: selectedRestaurant.openingHours,
-                  latitude: coordinates[0], // Use the retrieved coordinates
-                  longitude: coordinates[1], // Use the retrieved coordinates
-                ),
-              ),
-            );
-          });
-        }
-      });
+        final coordinates = await selectedRestaurant.getCoordinates();
+
+        Navigator.of(context).push(
+          MaterialPageRoute(
+            builder: (context) => Restaurant(
+              restaurantId: selectedRestaurant.id,
+              restaurantName: selectedRestaurant.name,
+              capacity: selectedRestaurant.capacity,
+              restaurantImage: selectedRestaurant.restaurantImage,
+              rating: selectedRestaurant.averageRating,
+              price: selectedRestaurant.price,
+              location: selectedRestaurant.location,
+              time: selectedRestaurant.openingHours,
+              latitude: coordinates[0],
+              longitude: coordinates[1],
+            ),
+          ),
+        );
+      } else {
+        print('Restaurant state is not loaded: $state');
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Failed to load restaurants. Please try again.'),
+          ),
+        );
+      }
     }
   }
 

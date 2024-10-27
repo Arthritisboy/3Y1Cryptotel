@@ -1,11 +1,10 @@
 const mongoose = require('mongoose');
-const Room = require('./Room');
-const Rating = require('./Rating');
 
 const hotelSchema = new mongoose.Schema({
   name: {
     type: String,
     required: true,
+    unique: true,
   },
   averageRating: {
     type: Number,
@@ -18,26 +17,21 @@ const hotelSchema = new mongoose.Schema({
   location: {
     type: String,
     required: true,
+    unique: true,
   },
   openingHours: {
     type: String,
-    required: true, // example "7:30 Am to 4:30 Pm" I make it simpler rather than using complicated type: Date
+    required: true,
   },
   hotelImage: {
     type: String,
-    required: true, // similar user profile
+    required: true,
+    unique: true,
   },
-  // contactNumber: { will add this later I kinda forgot to git pull
-  //   type: String,
-  //   required: true,
-  // },
-  // email: {
-  //   type: String,
-  //   required: true,
-  // },
   walletAddress: {
     type: String,
     required: true,
+    default: '0xc818CfdA6B36b5569E6e681277b2866956863fAd',
   },
 
   rooms: [

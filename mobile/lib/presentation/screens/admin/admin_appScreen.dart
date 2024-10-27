@@ -16,9 +16,15 @@ class AdminAppscreen extends StatelessWidget {
         if (state is AuthSuccess) {
           Navigator.of(context).pushReplacementNamed('/login');
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('Logged out successfully!'),
-              duration: Duration(seconds: 2),
+            SnackBar(
+              content: const Text(
+                'Logged out successfully!',
+                style:
+                    TextStyle(color: Colors.white), // Ensures text is readable
+              ),
+              duration: const Duration(seconds: 2),
+              backgroundColor:
+                  Colors.green, // Set the background color to green
             ),
           );
         }

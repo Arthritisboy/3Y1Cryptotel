@@ -1,5 +1,5 @@
 const User = require('../models/User');
-const { uploadProfileImage } = require('../middleware/imageUpload');
+const { uploadEveryImage } = require('../middleware/imageUpload');
 const catchAsync = require('../utils/catchAsync');
 const AppError = require('../utils/appError');
 const { promisify } = require('util');
@@ -30,16 +30,17 @@ const createSendToken = (user, statusCode, res, additionalData = {}) => {
 
 // ** Register Controller
 exports.register = catchAsync(async (req, res, next) => {
-  let profile = undefined;
+  let profile;
 
   if (req.file) {
     try {
-      profile = await uploadProfileImage(req);
+      profile = await uploadEveryImage(req);
     } catch (uploadErr) {
+      console.error('Image upload failed:', uploadErr); // Log full error for debugging
       return res.status(500).json({
         status: 'error',
         message: 'Image upload failed',
-        error: uploadErr,
+        error: uploadErr.message || uploadErr, // Ensure we get the error message
       });
     }
   }
@@ -87,6 +88,7 @@ exports.register = catchAsync(async (req, res, next) => {
       subject: 'Verification Code',
       message,
     });
+
     res.status(201).json({
       status: 'success',
       message: 'User registered! Verification code sent to email.',
