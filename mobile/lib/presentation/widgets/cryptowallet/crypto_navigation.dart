@@ -18,7 +18,8 @@
 //     });
 
 //     // Navigate to the appropriate screen based on the active index
-//     if (index == 1) { // History tab
+//     if (index == 1) {
+//       // History tab
 //       Navigator.push(
 //         context,
 //         MaterialPageRoute(builder: (context) => const Cryptowallethistory()),
