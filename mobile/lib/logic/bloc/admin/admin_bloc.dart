@@ -34,7 +34,7 @@ class AdminBloc extends Bloc<AdminEvent, AdminState> {
       final response = await adminRepository.createRestaurant(event.adminModel);
       emit(AdminSuccess('Restaurant created successfully!'));
     } catch (e) {
-      emit(AdminFailure('Failed to create restaurant: ${e.toString()}'));
+      emit(AdminFailure(e.toString()));
     }
   }
 
