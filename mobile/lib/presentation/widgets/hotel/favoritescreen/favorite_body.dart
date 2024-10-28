@@ -116,7 +116,27 @@ class FavoriteBody extends StatelessWidget {
         final favorite = favorites[index];
         return Card(
           child: ListTile(
-            leading: Image.network(favorite.imageUrl),
+            leading: ClipRRect(
+              borderRadius:
+                  BorderRadius.circular(8.0), // Optional: adds rounded corners
+              child: Image.network(
+                favorite.imageUrl,
+                width: 60.0, // Set a fixed width for the image
+                height: 60.0, // Set a fixed height for the image
+                fit: BoxFit
+                    .cover, // Ensures the image covers the designated area
+                errorBuilder: (context, error, stackTrace) {
+                  return Container(
+                    width: 60.0,
+                    height: 60.0,
+                    color: Colors
+                        .grey, // Fallback color in case of image load failure
+                    child: const Icon(
+                        Icons.error), // Optional: shows an error icon
+                  );
+                },
+              ),
+            ),
             title: Text(
               favorite.name,
               style: const TextStyle(color: Colors.black),
