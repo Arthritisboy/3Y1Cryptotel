@@ -29,10 +29,10 @@ const sendEmail = async (options) => {
 
       message = `
         <div style="font-family: Arial, sans-serif; margin: 0; padding: 20px; background-color: #f4f4f4;">
-          <table style="border: 2px solid #4CAF50; border-radius: 5px; padding: 10px; max-width: 600px; margin: auto; border-collapse: collapse; background-color: #ffffff;">
+          <table style="border: 2px solid #1C3473; border-radius: 5px; padding: 10px; max-width: 600px; margin: auto; border-collapse: collapse; background-color: #ffffff;">
             <tr>
               <td style="padding: 10px; text-align: center;">
-                <h2 style="color: #4CAF50;">Booking Confirmation</h2>
+                <h2 style="color: #1C3473;">Booking Confirmation</h2>
                 <p style="font-size: 16px;">Dear ${fullName},</p>
                 <p>Thank you for booking with us. Your booking details are as follows:</p>
                 <ul>
@@ -62,10 +62,10 @@ const sendEmail = async (options) => {
 
       message = `
         <div style="font-family: Arial, sans-serif; margin: 0; padding: 20px; background-color: #f4f4f4;">
-          <table style="border: 2px solid #4CAF50; border-radius: 5px; padding: 10px; max-width: 600px; margin: auto; border-collapse: collapse; background-color: #ffffff;">
+          <table style="border: 2px solid #1C3473; border-radius: 5px; padding: 10px; max-width: 600px; margin: auto; border-collapse: collapse; background-color: #ffffff;">
             <tr>
               <td style="padding: 10px; text-align: center;">
-                <h2 style="color: #4CAF50;">Restaurant Booking Confirmation</h2>
+                <h2 style="color: #1C3473;">Restaurant Booking Confirmation</h2>
                 <p style="font-size: 16px;">Dear ${fullName},</p>
                 <p>Thank you for booking a table with us. Your booking details are as follows:</p>
                 <ul>
@@ -86,30 +86,32 @@ const sendEmail = async (options) => {
 
   // Email Verification Template
   if (options.type === 'verification') {
-    console.log(options.verificationCode);
     message = `
       <div style="font-family: Arial, sans-serif; margin: 0; padding: 20px; background-color: #f4f4f4;">
-        <table style="border: 2px solid #4CAF50; border-radius: 5px; padding: 10px; max-width: 600px; margin: auto; border-collapse: collapse; background-color: #ffffff;">
+        <table style="border: 2px solid #1C3473; border-radius: 5px; padding: 10px; max-width: 600px; margin: auto; border-collapse: collapse; background-color: #ffffff;">
           <tr>
             <td style="padding: 10px; text-align: center;">
-              <h2 style="color: #4CAF50;">Email Verification</h2>
+              <h2 style="color: #1C3473;">Email Verification</h2>
               <p style="font-size: 16px;">Your verification code is:</p>
-              <strong style="font-size: 20px; display: inline-block; padding: 10px; border: 2px solid #4CAF50; border-radius: 5px;">${options.verificationCode}</strong>
+              <strong style="font-size: 20px; display: inline-block; padding: 10px; border: 2px solid #1C3473; border-radius: 5px;">${options.verificationCode}</strong>
               <br>
               <p>This code is valid for 10 minutes.</p>
             </td>
           </tr>
         </table>
       </div>`;
-  } else if (options.type === 'reset') {
+  }
+
+  // Password Reset Email Template
+  else if (options.type === 'reset') {
     message = `
       <div style="font-family: Arial, sans-serif; margin: 0; padding: 20px; background-color: #f4f4f4;">
-        <table style="border: 2px solid #4CAF50; border-radius: 5px; padding: 10px; max-width: 600px; margin: auto; border-collapse: collapse; background-color: #ffffff;">
+        <table style="border: 2px solid #1C3473; border-radius: 5px; padding: 10px; max-width: 600px; margin: auto; border-collapse: collapse; background-color: #ffffff;">
           <tr>
             <td style="padding: 10px; text-align: center;">
-              <h2 style="color: #4CAF50;">Password Reset</h2>
+              <h2 style="color: #1C3473;">Password Reset</h2>
               <p style="font-size: 16px;">If you forgot your password, paste this code:</p>
-              <strong style="font-size: 20px; display: inline-block; padding: 10px; border: 2px solid #4CAF50; border-radius: 5px;">${options.resetToken}</strong>
+              <strong style="font-size: 20px; display: inline-block; padding: 10px; border: 2px solid #1C3473; border-radius: 5px;">${options.resetToken}</strong>
               <br>
               <p>If you didn't forget your password, please ignore this email!</p>
             </td>
