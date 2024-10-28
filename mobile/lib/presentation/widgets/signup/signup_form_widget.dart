@@ -47,12 +47,30 @@ class _SignupFormState extends State<SignupForm> {
             label: 'First Name',
             hint: 'Enter your first name',
             controller: _firstNameController,
+            validator: (value) {
+              if (value == null || value.isEmpty) {
+                return 'Please enter your first name';
+              }
+              if (value.length <= 3) {
+                return 'First name must be less than 3 characters';
+              }
+              return null;
+            },
           ),
           const SizedBox(height: 8),
           CustomTextFormField(
             label: 'Last Name',
             hint: 'Enter your last name',
             controller: _lastNameController,
+            validator: (value) {
+              if (value == null || value.isEmpty) {
+                return 'Please enter your last name';
+              }
+              if (value.length <= 3) {
+                return 'Last name must be less than 3 characters';
+              }
+              return null;
+            },
           ),
           const SizedBox(height: 8),
 
@@ -64,6 +82,12 @@ class _SignupFormState extends State<SignupForm> {
             validator: (value) {
               if (value == null || value.isEmpty) {
                 return 'Please enter your contact number';
+              }
+              if (value.length <= 10) {
+                return 'Contact number must be less than 10 digits';
+              }
+              if (!RegExp(r'^[0-9]+$').hasMatch(value)) {
+                return 'Please enter a valid number';
               }
               return null;
             },
@@ -83,6 +107,12 @@ class _SignupFormState extends State<SignupForm> {
             validator: (value) {
               if (value == null || value.isEmpty) {
                 return 'Please enter your email';
+              }
+              if (!value.contains('@gmail')) {
+                return 'Email must be a Gmail address';
+              }
+              if (!RegExp(r'^[\w-\.]+@gmail\.com$').hasMatch(value)) {
+                return 'Please enter a valid Gmail address';
               }
               return null;
             },
