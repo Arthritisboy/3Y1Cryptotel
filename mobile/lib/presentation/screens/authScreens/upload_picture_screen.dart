@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:hotel_flutter/logic/bloc/auth/auth_event.dart';
+import 'package:hotel_flutter/presentation/widgets/utils_widget/custom_dialog.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:hotel_flutter/data/model/auth/signup_model.dart';
 import 'package:hotel_flutter/logic/bloc/auth/auth_bloc.dart';
@@ -252,5 +253,26 @@ class _UploadPictureScreenState extends State<UploadPictureScreen> {
     setState(() {
       _isSigningUp = false; // Hide loading state after sign-up is complete
     });
+  }
+
+  void _showErrorDialog(BuildContext context, String errorMessage) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return CustomDialog(
+          title: 'Error',
+          description: errorMessage,
+          buttonText: 'Retry',
+          secondButtonText: 'Cancel',
+          onButtonPressed: () {
+            Navigator.of(context)
+                .pop(); // Close dialog and retry logic if needed
+          },
+          onSecondButtonPressed: () {
+            Navigator.of(context).pop(); // Just close the dialog
+          },
+        );
+      },
+    );
   }
 }

@@ -29,27 +29,27 @@ const createSendToken = (user, statusCode, res, additionalData = {}) => {
 };
 
 // ** Register Controller
+// ** Register Controller
 exports.register = catchAsync(async (req, res, next) => {
   let profile;
 
+  // Handle image upload if provided
   if (req.file) {
     try {
       profile = await uploadEveryImage(req);
     } catch (uploadErr) {
-      console.error('Image upload failed:', uploadErr); // Log full error for debugging
-      return res.status(500).json({
-        status: 'error',
-        message: 'Image upload failed',
-        error: uploadErr.message || uploadErr, // Ensure we get the error message
-      });
+      console.error('Image upload failed:', uploadErr);
+      return next(new AppError('Image upload failed. Please try again.', 500));
     }
   }
 
+  // Validate role input
   const validRoles = ['user', 'admin', 'manager'];
   if (!validRoles.includes(req.body.roles)) {
     return next(new AppError('Invalid role provided.', 400));
   }
 
+  // Prepare user data for registration
   const userData = {
     firstName: req.body.firstName,
     lastName: req.body.lastName,
@@ -70,18 +70,33 @@ exports.register = catchAsync(async (req, res, next) => {
         : undefined,
   };
 
-  const newUser = await User.create(userData);
+  // Attempt to create the new user
+  let newUser;
+  try {
+    newUser = await User.create(userData);
+  } catch (err) {
+    // Handle MongoDB duplicate key error (E11000)
+    if (err.code === 11000 && err.keyPattern.email) {
+      return next(
+        new AppError(
+          `A user with email ${err.keyValue.email} already exists.`,
+          400,
+        ),
+      );
+    }
+    console.error('User creation failed:', err); // Log full error for debugging
+    return next(new AppError('Registration failed. Please try again.', 500));
+  }
 
   console.warn('New user created:', newUser);
 
+  // Generate verification code
   const verificationCode = newUser.createVerificationCode();
-  console.log(newUser);
-  console.log(verificationCode);
-
   await newUser.save({ validateBeforeSave: false });
 
   const message = `Your verification code is: ${verificationCode}. This code is valid for 10 minutes.`;
 
+  // Send verification email
   try {
     await sendEmail({
       email: newUser.email,
@@ -94,7 +109,8 @@ exports.register = catchAsync(async (req, res, next) => {
       message: 'User registered! Verification code sent to email.',
       verificationCode,
     });
-  } catch (error) {
+  } catch (emailError) {
+    console.error('Failed to send email:', emailError);
     newUser.verificationCode = undefined;
     newUser.codeExpires = undefined;
     await newUser.save({ validateBeforeSave: false });
