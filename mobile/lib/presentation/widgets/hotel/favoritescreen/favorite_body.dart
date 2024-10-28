@@ -23,36 +23,7 @@ class FavoriteBody extends StatelessWidget {
     return Expanded(
       child: Column(
         children: [
-          Padding(
-            padding: const EdgeInsets.only(left: 16.0, top: 16.0),
-            child: Row(
-              children: [
-                Flexible(
-                  flex: 1,
-                  child: IconButton(
-                    icon: const Icon(Icons.arrow_back),
-                    onPressed: () {
-                      Navigator.pop(context); // Navigate back
-                    },
-                  ),
-                ),
-                Flexible(
-                  flex: 3,
-                  child: Center(
-                    child: const Text(
-                      'Favorites',
-                      style:
-                          TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-                    ),
-                  ),
-                ),
-                Flexible(
-                  flex: 1,
-                  child: Container(), // Empty space to keep layout symmetrical
-                ),
-              ],
-            ),
-          ),
+          _buildHeader(context),
           Expanded(
             child: BlocBuilder<FavoriteBloc, FavoriteState>(
               builder: (context, state) {
@@ -61,9 +32,9 @@ class FavoriteBody extends StatelessWidget {
                 } else if (state is FavoritesFetched) {
                   return _buildFavoriteList(context, state.favorites);
                 } else if (state is FavoriteError) {
-                  return Center(child: Text('Error: ${state.error}'));
+                  return _buildNoFavoritesMessage();
                 }
-                return Container(); // For initial state
+                return _buildNoFavoritesMessage(); // Show message when there's no initial state
               },
             ),
           ),
@@ -72,8 +43,73 @@ class FavoriteBody extends StatelessWidget {
     );
   }
 
+  Widget _buildHeader(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.only(left: 16.0, top: 16.0),
+      child: Row(
+        children: [
+          Flexible(
+            flex: 1,
+            child: IconButton(
+              icon: const Icon(Icons.arrow_back),
+              onPressed: () {
+                Navigator.pop(context);
+              },
+            ),
+          ),
+          Flexible(
+            flex: 3,
+            child: Center(
+              child: const Text(
+                'Favorites',
+                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+              ),
+            ),
+          ),
+          Flexible(
+            flex: 1,
+            child: Container(),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildNoFavoritesMessage() {
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(
+              Icons.favorite_border,
+              size: 80.0,
+              color: Colors.grey,
+            ),
+            const SizedBox(height: 20),
+            const Text(
+              'No favorites yet!',
+              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 10),
+            const Text(
+              'Add some hotels or restaurants to your favorites. \n \n If you think this is an error, Scroll down to refresh',
+              textAlign: TextAlign.center,
+              style: TextStyle(fontSize: 16, color: Colors.grey),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
   Widget _buildFavoriteList(
       BuildContext context, List<FavoriteItem> favorites) {
+    if (favorites.isEmpty) {
+      return _buildNoFavoritesMessage(); // Return message if the list is empty
+    }
+
     return ListView.builder(
       itemCount: favorites.length,
       itemBuilder: (context, index) {
@@ -90,7 +126,7 @@ class FavoriteBody extends StatelessWidget {
               style: const TextStyle(color: Colors.black),
             ),
             onTap: () {
-              _navigateToFavorite(context, favorite); // Handle navigation
+              _navigateToFavorite(context, favorite);
             },
           ),
         );
@@ -98,27 +134,19 @@ class FavoriteBody extends StatelessWidget {
     );
   }
 
-  // Method to handle navigation based on favorite type
   void _navigateToFavorite(BuildContext context, FavoriteItem favorite) {
     if (favorite.type == 'hotel') {
-      // Assuming FavoriteItem has a type property to distinguish hotel and restaurant
-      // Fetch the hotel data (you might want to adjust based on your implementation)
       final hotelBloc = context.read<HotelBloc>();
-      hotelBloc.add(FetchHotelsEvent()); // Ensure the list is updated
+      hotelBloc.add(FetchHotelsEvent());
 
       Future.delayed(Duration.zero, () {
-        final state = hotelBloc.state; // Get the current state
+        final state = hotelBloc.state;
 
         if (state is HotelLoaded) {
-          // Find the index of the favorite hotel
           int index = state.hotels.indexWhere((h) => h.id == favorite.id);
           if (index != -1) {
-            // Get the hotel model
             HotelModel selectedHotel = state.hotels[index];
-
-            // Get coordinates for the selected hotel
             selectedHotel.getCoordinates().then((coordinates) {
-              // Navigate to the HotelScreen with the selected hotel data
               Navigator.of(context).push(
                 MaterialPageRoute(
                   builder: (context) => HotelScreen(
@@ -129,8 +157,8 @@ class FavoriteBody extends StatelessWidget {
                     price: selectedHotel.averagePrice,
                     location: selectedHotel.location,
                     time: selectedHotel.openingHours,
-                    latitude: coordinates[0], // Use the retrieved coordinates
-                    longitude: coordinates[1], // Use the retrieved coordinates
+                    latitude: coordinates[0],
+                    longitude: coordinates[1],
                   ),
                 ),
               );
@@ -139,38 +167,30 @@ class FavoriteBody extends StatelessWidget {
         }
       });
     } else if (favorite.type == 'restaurant') {
-      // Assuming FavoriteItem has a type property to distinguish hotel and restaurant
-      // Fetch the restaurant data (you might want to adjust based on your implementation)
       final restaurantBloc = context.read<RestaurantBloc>();
-      restaurantBloc.add(FetchRestaurantsEvent()); // Ensure the list is updated
+      restaurantBloc.add(FetchRestaurantsEvent());
 
       Future.delayed(Duration.zero, () {
-        final state = restaurantBloc.state; // Get the current state
+        final state = restaurantBloc.state;
 
         if (state is RestaurantLoaded) {
-          // Find the index of the favorite restaurant
           int index = state.restaurants.indexWhere((r) => r.id == favorite.id);
           if (index != -1) {
-            // Get the restaurant model
             RestaurantModel selectedRestaurant = state.restaurants[index];
-
-            // Get coordinates for the selected restaurant
             selectedRestaurant.getCoordinates().then((coordinates) {
-              // Navigate to the RestaurantScreen with the selected restaurant data
               Navigator.of(context).push(
                 MaterialPageRoute(
                   builder: (context) => Restaurant(
                     restaurantId: selectedRestaurant.id,
                     restaurantName: selectedRestaurant.name,
-                    capacity: selectedRestaurant
-                        .capacity, // Assuming capacity is part of the model
+                    capacity: selectedRestaurant.capacity,
                     restaurantImage: selectedRestaurant.restaurantImage,
                     rating: selectedRestaurant.averageRating,
                     price: selectedRestaurant.price,
                     location: selectedRestaurant.location,
                     time: selectedRestaurant.openingHours,
-                    latitude: coordinates[0], // Use the retrieved coordinates
-                    longitude: coordinates[1], // Use the retrieved coordinates
+                    latitude: coordinates[0],
+                    longitude: coordinates[1],
                   ),
                 ),
               );
@@ -181,13 +201,12 @@ class FavoriteBody extends StatelessWidget {
     }
   }
 
-  // Shimmer Loading Effect for Cards
   Widget _buildShimmerLoadingEffect() {
     return Shimmer.fromColors(
       baseColor: Colors.grey[300]!,
       highlightColor: Colors.grey[100]!,
       child: ListView.builder(
-        itemCount: 5, // Placeholder for loading items
+        itemCount: 5,
         itemBuilder: (context, index) {
           return Padding(
             padding:
