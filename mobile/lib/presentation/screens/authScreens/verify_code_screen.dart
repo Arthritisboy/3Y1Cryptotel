@@ -22,19 +22,6 @@ class _VerificationCodeScreenState extends State<VerificationCodeScreen> {
   late Timer _timer;
   int _remainingSeconds = 600; // 10 minutes = 600 seconds
 
-  String _getFriendlyErrorMessage(String error) {
-    switch (error) {
-      case 'User not found':
-        return 'We couldn\'t find a user with that email. Please check and try again.';
-      case 'Invalid verification code':
-        return 'The verification code you entered is invalid. Please try again.';
-      case 'Network error':
-        return 'Please check your internet connection and try again.';
-      default:
-        return 'Something went wrong. Please try again later.';
-    }
-  }
-
   @override
   void initState() {
     super.initState();
@@ -101,7 +88,7 @@ class _VerificationCodeScreenState extends State<VerificationCodeScreen> {
                   });
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(
-                      content: Text(_getFriendlyErrorMessage(state.error)),
+                      content: Text((state.error)),
                       backgroundColor: Colors.red,
                     ),
                   );

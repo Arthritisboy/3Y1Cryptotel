@@ -31,7 +31,7 @@ class AuthRepository {
       final data = await dataProvider.register(signUpModel, profilePicture);
       return UserModel.fromJson(data);
     } catch (e) {
-      throw Exception('Failed to register: ${e.toString()}');
+      throw Exception(e.toString());
     }
   }
 
@@ -190,7 +190,7 @@ class AuthRepository {
     try {
       await dataProvider.verifyUser(email, code);
     } catch (e) {
-      throw Exception('Verification failed: ${e.toString()}');
+      throw Exception(e.toString());
     }
   }
 

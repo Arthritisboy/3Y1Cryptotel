@@ -19,7 +19,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         );
         emit(Authenticated(user));
       } catch (e) {
-        emit(AuthError('Registration failed: ${e.toString()}'));
+        emit(AuthError(e.toString()));
       }
     });
 
@@ -158,7 +158,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         await authRepository.verifyUser(event.email, event.code);
         emit(const AuthSuccessVerification('Verification successful!'));
       } catch (e) {
-        emit(AuthError('Verification failed: ${e.toString()}'));
+        emit(AuthError(e.toString()));
       }
     });
 
