@@ -49,9 +49,9 @@ class _UploadPictureScreenState extends State<UploadPictureScreen> {
           setState(() {
             _isSigningUp = true; // Show loading state
           });
-        } else if (state is AuthSuccess) {
+        } else if (state is Authenticated) {
           setState(() {
-            _isSigningUp = false; // Hide loading state
+            _isSigningUp = false;
           });
 
           // Navigate to verification screen after successful sign-up
