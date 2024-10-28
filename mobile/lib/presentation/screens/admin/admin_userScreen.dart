@@ -12,6 +12,7 @@ import 'package:hotel_flutter/presentation/widgets/admin/admin_user/createRoom.d
 import '../../widgets/admin/admin_header.dart';
 import '../../widgets/admin/admin_modal.dart';
 import 'package:intl/intl.dart';
+import 'package:hotel_flutter/presentation/widgets/admin/admin_user/booking_card_widget.dart';
 import 'dart:async';
 
 class AdminScreen extends StatefulWidget {
@@ -182,45 +183,15 @@ class _AdminScreenState extends State<AdminScreen> {
       itemCount: bookings.length,
       itemBuilder: (context, index) {
         final booking = bookings[index];
-        final venueName = booking.hotelName?.isNotEmpty == true
-            ? 'Hotel: ${booking.hotelName}'
-            : 'Restaurant: ${booking.restaurantName ?? ''}';
-        final venueDetail = booking.hotelName?.isNotEmpty == true
-            ? 'Room: ${booking.roomName ?? 'N/A'}'
-            : 'Table Number: ${booking.tableNumber ?? 'N/A'}';
 
-        return Card(
-          margin: const EdgeInsets.all(8.0),
-          child: InkWell(
-            onTap: () {
-              showDialog(
-                context: context,
-                builder: (_) => AdminModal(booking: booking, userId: handleId!),
-              );
-            },
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Padding(
-                  padding: const EdgeInsets.all(10.0),
-                  child: Text(
-                    'Status: ${booking.status}',
-                    style: const TextStyle(
-                      fontWeight: FontWeight.bold,
-                      color: Colors.black,
-                    ),
-                  ),
-                ),
-                Text('User: ${booking.fullName}'),
-                Text('Venue: $venueName'),
-                Text(venueDetail),
-                Text(
-                    'Check-in: ${DateFormat.yMMMd().format(booking.checkInDate)}'),
-                Text(
-                    'Check-out: ${DateFormat.yMMMd().format(booking.checkOutDate)}'),
-              ],
-            ),
-          ),
+        return BookingCard(
+          booking: booking,
+          onDetailsPressed: () {
+            showDialog(
+              context: context,
+              builder: (_) => AdminModal(booking: booking, userId: handleId!),
+            );
+          },
         );
       },
     );
