@@ -4,8 +4,6 @@ import 'package:hotel_flutter/data/model/booking/booking_model.dart';
 import 'package:hotel_flutter/presentation/screens/homeScreens/tab_screen.dart';
 import 'package:intl/intl.dart';
 
-import 'crypto_navigation.dart'; // Import the CryptoNavigation widget
-
 class CryptoWithTransaction extends StatefulWidget {
   final bool isConnected;
   final String walletAddress;
@@ -173,7 +171,10 @@ class _CryptoWithTransactionState extends State<CryptoWithTransaction> {
         IconButton(
           icon: const Icon(Icons.send),
           onPressed: () => widget.sendTransaction(
-              '0xc818CfdA6B36b5569E6e681277b2866956863fAd', booking.totalPrice.toString(), booking),
+            '0xc818CfdA6B36b5569E6e681277b2866956863fAd',
+            booking.totalPrice == 0 ? '450' : booking.totalPrice.toString(),
+            booking,
+          ),
         ),
       ],
     );
