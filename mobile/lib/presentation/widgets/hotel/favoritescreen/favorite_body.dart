@@ -156,68 +156,93 @@ class FavoriteBody extends StatelessWidget {
 
   void _navigateToFavorite(BuildContext context, FavoriteItem favorite) {
     if (favorite.type == 'hotel') {
-      final hotelBloc = context.read<HotelBloc>();
-      hotelBloc.add(FetchHotelsEvent());
-
-      Future.delayed(Duration.zero, () {
-        final state = hotelBloc.state;
-
-        if (state is HotelLoaded) {
-          int index = state.hotels.indexWhere((h) => h.id == favorite.id);
-          if (index != -1) {
-            HotelModel selectedHotel = state.hotels[index];
-            selectedHotel.getCoordinates().then((coordinates) {
-              Navigator.of(context).push(
-                MaterialPageRoute(
-                  builder: (context) => HotelScreen(
-                    hotelId: selectedHotel.id,
-                    hotelImage: selectedHotel.hotelImage,
-                    hotelName: selectedHotel.name,
-                    rating: selectedHotel.averageRating,
-                    price: selectedHotel.averagePrice,
-                    location: selectedHotel.location,
-                    time: selectedHotel.openingHours,
-                    latitude: coordinates[0],
-                    longitude: coordinates[1],
-                  ),
-                ),
-              );
-            });
-          }
-        }
-      });
+      _navigateToHotel(context, favorite);
     } else if (favorite.type == 'restaurant') {
-      final restaurantBloc = context.read<RestaurantBloc>();
+      _navigateToRestaurant(context, favorite);
+    }
+  }
+
+  void _navigateToHotel(BuildContext context, FavoriteItem favorite) async {
+    final hotelBloc = context.read<HotelBloc>();
+
+    // Dispatch the event to fetch hotels if not already loaded
+    if (hotelBloc.state is! HotelLoaded) {
+      hotelBloc.add(FetchHotelsEvent());
+    }
+
+    // Wait for the HotelLoaded state before proceeding
+    final state = await hotelBloc.stream
+        .firstWhere((state) => state is HotelLoaded || state is HotelError);
+
+    if (state is HotelLoaded) {
+      int index = state.hotels.indexWhere((h) => h.id == favorite.id);
+      if (index != -1) {
+        HotelModel selectedHotel = state.hotels[index];
+        final coordinates = await selectedHotel.getCoordinates();
+
+        Navigator.of(context).push(
+          MaterialPageRoute(
+            builder: (context) => HotelScreen(
+              hotelId: selectedHotel.id,
+              hotelImage: selectedHotel.hotelImage,
+              hotelName: selectedHotel.name,
+              rating: selectedHotel.averageRating,
+              price: selectedHotel.averagePrice,
+              location: selectedHotel.location,
+              time: selectedHotel.openingHours,
+              latitude: coordinates[0],
+              longitude: coordinates[1],
+            ),
+          ),
+        );
+      } else {
+        debugPrint('Hotel not found.');
+      }
+    } else if (state is HotelError) {
+      debugPrint('Failed to load hotels. Please try again.');
+    }
+  }
+
+  void _navigateToRestaurant(
+      BuildContext context, FavoriteItem favorite) async {
+    final restaurantBloc = context.read<RestaurantBloc>();
+
+    // Dispatch the event to fetch restaurants if not already loaded
+    if (restaurantBloc.state is! RestaurantLoaded) {
       restaurantBloc.add(FetchRestaurantsEvent());
+    }
 
-      Future.delayed(Duration.zero, () {
-        final state = restaurantBloc.state;
+    // Wait for the RestaurantLoaded state before proceeding
+    final state = await restaurantBloc.stream.firstWhere(
+        (state) => state is RestaurantLoaded || state is RestaurantError);
 
-        if (state is RestaurantLoaded) {
-          int index = state.restaurants.indexWhere((r) => r.id == favorite.id);
-          if (index != -1) {
-            RestaurantModel selectedRestaurant = state.restaurants[index];
-            selectedRestaurant.getCoordinates().then((coordinates) {
-              Navigator.of(context).push(
-                MaterialPageRoute(
-                  builder: (context) => Restaurant(
-                    restaurantId: selectedRestaurant.id,
-                    restaurantName: selectedRestaurant.name,
-                    capacity: selectedRestaurant.capacity,
-                    restaurantImage: selectedRestaurant.restaurantImage,
-                    rating: selectedRestaurant.averageRating,
-                    price: selectedRestaurant.price,
-                    location: selectedRestaurant.location,
-                    time: selectedRestaurant.openingHours,
-                    latitude: coordinates[0],
-                    longitude: coordinates[1],
-                  ),
-                ),
-              );
-            });
-          }
-        }
-      });
+    if (state is RestaurantLoaded) {
+      int index = state.restaurants.indexWhere((r) => r.id == favorite.id);
+      if (index != -1) {
+        RestaurantModel selectedRestaurant = state.restaurants[index];
+        final coordinates = await selectedRestaurant.getCoordinates();
+
+        Navigator.of(context).push(
+          MaterialPageRoute(
+            builder: (context) => Restaurant(
+              restaurantId: selectedRestaurant.id,
+              restaurantName: selectedRestaurant.name,
+              capacity: selectedRestaurant.capacity,
+              restaurantImage: selectedRestaurant.restaurantImage,
+              rating: selectedRestaurant.averageRating,
+              price: selectedRestaurant.price,
+              location: selectedRestaurant.location,
+              time: selectedRestaurant.openingHours,
+              latitude: coordinates[0],
+              longitude: coordinates[1],
+            ),
+          ),
+        );
+      } else {
+        debugPrint('Restaurant not found.');
+      }
+    } else if (state is RestaurantError) {
+      debugPrint('Failed to load restaurants, please try again.');
     }
   }
 
