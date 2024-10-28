@@ -13,6 +13,7 @@ import 'package:hotel_flutter/presentation/widgets/cryptowallet/cryptowallet_hea
 import 'package:hotel_flutter/presentation/widgets/cryptowallet/cryptowallet_transactions.dart';
 import 'package:hotel_flutter/presentation/widgets/cryptowallet/wallet_manager.dart';
 import 'package:http/http.dart' as http;
+import 'package:intl/intl.dart';
 import 'package:reown_appkit/reown_appkit.dart';
 
 import '../../widgets/cryptowallet/cryptowallethistory.dart';
@@ -32,7 +33,7 @@ class _CryptoWalletState extends State<CryptoWallet> {
   String balance = '₱ 0';
   ReownAppKitModal? _appKitModal;
   bool isLoading = false;
-  // State variables for navigation
+  double conversionRate = 144237.32;
   int _activeIndex = 0;
 
   // Boolean to control which view to display
@@ -119,7 +120,13 @@ class _CryptoWalletState extends State<CryptoWallet> {
         if (_appKitModal!.session != null) {
           debugPrint(
               'Current wallet address: ${_appKitModal!.session!.address}');
-          updateWalletAddress();
+
+          // Check if balanceNotifier has a valid value before updating wallet address
+          if (_appKitModal!.balanceNotifier.value.isNotEmpty) {
+            updateWalletAddress();
+          } else {
+            debugPrint('Balance is empty; skipping update.');
+          }
         } else {
           debugPrint('Session is null after initialization.');
         }
@@ -128,30 +135,50 @@ class _CryptoWalletState extends State<CryptoWallet> {
       debugPrint('Error during appKitModal initialization: $e');
     }
 
+    // Add a listener to update wallet address on balance changes
     _appKitModal?.addListener(() {
-      updateWalletAddress();
+      if (_appKitModal?.balanceNotifier.value != null &&
+          _appKitModal!.balanceNotifier.value.isNotEmpty) {
+        updateWalletAddress();
+      } else {
+        debugPrint('Listener triggered, but balance is empty or null.');
+      }
     });
 
     setState(() {});
   }
 
-  void updateWalletAddress() {
-    if (!mounted) return;
-    setState(() {
-      if (_appKitModal?.session != null) {
-        WalletManager().walletAddress =
-            _appKitModal!.session!.address ?? 'No Address';
-        WalletManager().balance = _appKitModal!.balanceNotifier.value.isEmpty
-            ? '₱ 0'
-            : _appKitModal!.balanceNotifier.value;
-        WalletManager().isConnected = true; // Set connected state
-      } else {
-        WalletManager().reset(); // Reset wallet info
-      }
-      debugPrint('Wallet address updated: ${WalletManager().walletAddress}');
-      debugPrint('Balance updated: ${WalletManager().balance}');
-    });
-  }
+void updateWalletAddress() {
+  if (!mounted) return;
+
+  setState(() {
+    if (_appKitModal?.session != null) {
+      WalletManager().walletAddress =
+          _appKitModal!.session!.address ?? 'No Address';
+
+      // Attempt to clean the balance value by removing non-numeric characters
+      String balanceString = _appKitModal!.balanceNotifier.value
+          .replaceAll(RegExp(r'[^0-9.]'), '');
+
+      // Parse the cleaned balance to double, or default to zero if parsing fails
+      double ethBalance = double.tryParse(balanceString) ?? 0.0;
+      double pesoBalance = ethBalance * conversionRate; // Convert ETH to PHP
+
+      // Format the peso balance with commas
+      String formattedPesoBalance = NumberFormat('#,##0.00').format(pesoBalance);
+
+      WalletManager().balance = '₱ $formattedPesoBalance';
+      WalletManager().isConnected = true; // Set connected state
+      WalletManager().tokenBalance = _appKitModal!.balanceNotifier.value;
+    } else {
+      WalletManager().reset(); // Reset wallet info
+    }
+
+    debugPrint('Wallet address updated: ${WalletManager().walletAddress}');
+    debugPrint('Balance updated: ${WalletManager().balance}');
+  });
+}
+
 
   Future<void> connectWallet() async {
     // Change here
@@ -246,13 +273,7 @@ class _CryptoWalletState extends State<CryptoWallet> {
     } else {
       debugPrint('No wallet connected');
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: const Text(
-            'No wallet connected',
-            style: TextStyle(color: Colors.white), // Text color (optional)
-          ),
-          backgroundColor: const Color(0xFF1C3473), // Custom background color
-        ),
+        const SnackBar(content: Text('No wallet connected')),
       );
     }
   }
@@ -263,7 +284,9 @@ class _CryptoWalletState extends State<CryptoWallet> {
   }
 
   Future<void> sendTransaction(
-      String receiver, String amount, BookingModel booking) async {
+      String receiver, String totalPrice, BookingModel booking) async {
+    String amount = (double.parse(totalPrice) / conversionRate).toString();
+
     if (!isWalletConnected()) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Please connect your wallet first')),
@@ -379,7 +402,7 @@ class _CryptoWalletState extends State<CryptoWallet> {
           amountInWei, // Amount in Wei
         ],
       );
-      debugPrint('Debug Transaction: Transaction request result: $result');
+     debugPrint('Debug Transaction: Transaction request result: $result');
 
       final updatedBooking = booking.copyWith(status: 'done');
 
@@ -431,6 +454,7 @@ class _CryptoWalletState extends State<CryptoWallet> {
               onViewTransactionHistory: () => onViewTransactionHistory(context),
               walletAddress: WalletManager().walletAddress,
               balance: WalletManager().balance,
+              tokenBalance: WalletManager().tokenBalance,
               isLoading: isLoading,
             ),
             const SizedBox(height: 20),
