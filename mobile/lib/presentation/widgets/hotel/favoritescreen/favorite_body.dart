@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hotel_flutter/logic/bloc/favorite/favorite_bloc.dart';
+import 'package:hotel_flutter/logic/bloc/favorite/favorite_event.dart';
 import 'package:hotel_flutter/logic/bloc/favorite/favorite_state.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:hotel_flutter/data/model/favorite/favorite_item_model.dart';
@@ -14,6 +15,7 @@ import 'package:hotel_flutter/logic/bloc/restaurant/restaurant_event.dart';
 import 'package:hotel_flutter/logic/bloc/restaurant/restaurant_state.dart';
 import 'package:hotel_flutter/data/model/hotel/hotel_model.dart';
 import 'package:hotel_flutter/data/model/restaurant/restaurant_model.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class FavoriteBody extends StatelessWidget {
   const FavoriteBody({super.key});
@@ -110,47 +112,54 @@ class FavoriteBody extends StatelessWidget {
       return _buildNoFavoritesMessage(); // Return message if the list is empty
     }
 
-    return ListView.builder(
-      itemCount: favorites.length,
-      itemBuilder: (context, index) {
-        final favorite = favorites[index];
-        return Card(
-          child: ListTile(
-            leading: ClipRRect(
-              borderRadius:
-                  BorderRadius.circular(8.0), // Optional: adds rounded corners
-              child: Image.network(
-                favorite.imageUrl,
-                width: 60.0, // Set a fixed width for the image
-                height: 60.0, // Set a fixed height for the image
-                fit: BoxFit
-                    .cover, // Ensures the image covers the designated area
-                errorBuilder: (context, error, stackTrace) {
-                  return Container(
-                    width: 60.0,
-                    height: 60.0,
-                    color: Colors
-                        .grey, // Fallback color in case of image load failure
-                    child: const Icon(
-                        Icons.error), // Optional: shows an error icon
-                  );
-                },
-              ),
-            ),
-            title: Text(
-              favorite.name,
-              style: const TextStyle(color: Colors.black),
-            ),
-            subtitle: Text(
-              favorite.location,
-              style: const TextStyle(color: Colors.black),
-            ),
-            onTap: () {
-              _navigateToFavorite(context, favorite);
-            },
-          ),
-        );
+    return RefreshIndicator(
+      onRefresh: () async {
+        SharedPreferences prefs = await SharedPreferences.getInstance();
+        context.read<FavoriteBloc>().add(FetchFavoritesEvent(
+            prefs.getString('userId') ?? '')); // Trigger fetch event
       },
+      child: ListView.builder(
+        itemCount: favorites.length,
+        itemBuilder: (context, index) {
+          final favorite = favorites[index];
+          return Card(
+            child: ListTile(
+              leading: ClipRRect(
+                borderRadius: BorderRadius.circular(
+                    8.0), // Optional: adds rounded corners
+                child: Image.network(
+                  favorite.imageUrl,
+                  width: 60.0, // Set a fixed width for the image
+                  height: 60.0, // Set a fixed height for the image
+                  fit: BoxFit
+                      .cover, // Ensures the image covers the designated area
+                  errorBuilder: (context, error, stackTrace) {
+                    return Container(
+                      width: 60.0,
+                      height: 60.0,
+                      color: Colors
+                          .grey, // Fallback color in case of image load failure
+                      child: const Icon(
+                          Icons.error), // Optional: shows an error icon
+                    );
+                  },
+                ),
+              ),
+              title: Text(
+                favorite.name,
+                style: const TextStyle(color: Colors.black),
+              ),
+              subtitle: Text(
+                favorite.location,
+                style: const TextStyle(color: Colors.black),
+              ),
+              onTap: () {
+                _navigateToFavorite(context, favorite);
+              },
+            ),
+          );
+        },
+      ),
     );
   }
 
