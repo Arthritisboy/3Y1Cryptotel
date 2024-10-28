@@ -51,7 +51,7 @@ class _SignupFormState extends State<SignupForm> {
               if (value == null || value.isEmpty) {
                 return 'Please enter your first name';
               }
-              if (value.length <= 3) {
+              if (value.length < 3) {
                 return 'First name must be less than 3 characters';
               }
               return null;
@@ -66,7 +66,7 @@ class _SignupFormState extends State<SignupForm> {
               if (value == null || value.isEmpty) {
                 return 'Please enter your last name';
               }
-              if (value.length <= 3) {
+              if (value.length < 3) {
                 return 'Last name must be less than 3 characters';
               }
               return null;
