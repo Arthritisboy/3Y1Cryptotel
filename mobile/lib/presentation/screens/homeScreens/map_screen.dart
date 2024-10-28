@@ -35,7 +35,10 @@ class MapScreen extends StatelessWidget {
             builder: (context, restaurantState) {
               if (hotelState is HotelLoading ||
                   restaurantState is RestaurantLoading) {
-                return const Center(child: CircularProgressIndicator());
+                return Padding(
+                  padding: const EdgeInsets.only(top: 200),
+                  child: const Center(child: CircularProgressIndicator()),
+                );
               } else if (hotelState is HotelLoaded &&
                   restaurantState is RestaurantLoaded) {
                 return _buildHotelAndRestaurantMap(
