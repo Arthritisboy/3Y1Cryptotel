@@ -81,16 +81,110 @@ exports.createContactMessage = catchAsync(async (req, res, next) => {
       email: 'edfersmedenilla6@gmail.com',
       subject: `New ${type === 'contact' ? 'Contact' : 'Feedback'} Message`,
       message: adminMessageContent.messageContent,
-      html: `<p>${adminMessageContent.messageContent}</p>`,
+      html: `
+    <html>
+      <head>
+        <style>
+          body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            padding: 20px;
+          }
+          .email-container {
+            background-color: #ffffff;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+          }
+          .email-header {
+            font-size: 18px;
+            font-weight: bold;
+            color: #333;
+          }
+          .email-body {
+            font-size: 16px;
+            color: #555;
+            margin-top: 10px;
+          }
+          .footer {
+            font-size: 14px;
+            color: #888;
+            margin-top: 20px;
+          }
+        </style>
+      </head>
+      <body>
+        <div class="email-container">
+          <div class="email-header">New ${type === 'contact' ? 'Contact' : 'Feedback'} Message</div>
+          <div class="email-body">
+            <p><strong>Full Name:</strong> ${fullName}</p>
+            <p><strong>Email:</strong> ${email}</p>
+            <p><strong>Address:</strong> ${address}</p>
+            <p><strong>Message:</strong> ${message}</p>
+          </div>
+          <div class="footer">
+            <p>This message was sent to you from your website.</p>
+          </div>
+        </div>
+      </body>
+    </html>
+  `,
     });
 
     // Send email to the user
     await sendEmail({
       type: 'contact',
-      email: email, // The user's email
-      subject: `${type === 'contact' ? 'Contact' : 'Feedback'} Message Received`,
-      message: userMessageContent.messageContent,
-      html: `<p>${userMessageContent.messageContent}</p>`,
+      email: 'edfersmedenilla6@gmail.com',
+      subject: `New ${type === 'contact' ? 'Contact' : 'Feedback'} Message`,
+      message: adminMessageContent.messageContent,
+      html: `
+        <html>
+          <head>
+            <style>
+              body {
+                font-family: Arial, sans-serif;
+                background-color: #f4f4f4;
+                padding: 20px;
+              }
+              .email-container {
+                background-color: #ffffff;
+                border-radius: 8px;
+                padding: 20px;
+                box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+              }
+              .email-header {
+                font-size: 18px;
+                font-weight: bold;
+                color: #333;
+              }
+              .email-body {
+                font-size: 16px;
+                color: #555;
+                margin-top: 10px;
+              }
+              .footer {
+                font-size: 14px;
+                color: #888;
+                margin-top: 20px;
+              }
+            </style>
+          </head>
+          <body>
+            <div class="email-container">
+              <div class="email-header">New ${type === 'contact' ? 'Contact' : 'Feedback'} Message</div>
+              <div class="email-body">
+                <p><strong>Full Name:</strong> ${fullName}</p>
+                <p><strong>Email:</strong> ${email}</p>
+                <p><strong>Address:</strong> ${address}</p>
+                <p><strong>Message:</strong> ${message}</p>
+              </div>
+              <div class="footer">
+                <p>This message was sent to you from your website.</p>
+              </div>
+            </div>
+          </body>
+        </html>
+      `,
     });
 
     res.status(200).json({
