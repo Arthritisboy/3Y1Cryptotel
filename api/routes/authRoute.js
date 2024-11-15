@@ -33,4 +33,6 @@ router.patch(
   authController.updatePassword,
 );
 
+router.post('/contact', authController.createContactMessage);
+
 module.exports = router;
