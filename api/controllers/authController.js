@@ -28,7 +28,86 @@ const createSendToken = (user, statusCode, res, additionalData = {}) => {
   });
 };
 
-// ** Register Controller
+// Controller to handle the POST request for contact form submission
+// createContactMessage route
+exports.createContactMessage = catchAsync(async (req, res, next) => {
+  const { fullName, email, address, message, type } = req.body;
+
+  // Validate input data
+  if (!fullName || !email || !address || !message || !type) {
+    return next(
+      new AppError('Please provide all required fields including type.', 400),
+    );
+  }
+
+  // Construct messages based on the 'type'
+  let adminMessageContent, userMessageContent;
+
+  if (type === 'contact') {
+    adminMessageContent = {
+      fullName,
+      email,
+      address,
+      messageContent: `A new contact message was received from ${fullName} at ${address}: ${message}`,
+    };
+
+    userMessageContent = {
+      fullName,
+      address,
+      messageContent: `Dear ${fullName}, we have received your message: ${message}`,
+    };
+  } else if (type === 'feedback') {
+    adminMessageContent = {
+      fullName,
+      email,
+      address,
+      messageContent: `New feedback received from ${fullName} at ${address}: ${message}`,
+    };
+
+    userMessageContent = {
+      fullName,
+      address,
+      messageContent: `Dear ${fullName}, thank you for your feedback: ${message}`,
+    };
+  } else {
+    return next(new AppError('Invalid message type provided.', 400));
+  }
+
+  // Send emails to admin and user
+  try {
+    // Send email to admin
+    await sendEmail({
+      type: 'contact',
+      email: 'edfersmedenilla6@gmail.com',
+      subject: `New ${type === 'contact' ? 'Contact' : 'Feedback'} Message`,
+      message: adminMessageContent.messageContent,
+      html: `<p>${adminMessageContent.messageContent}</p>`,
+    });
+
+    // Send email to the user
+    await sendEmail({
+      type: 'contact',
+      email: email, // The user's email
+      subject: `${type === 'contact' ? 'Contact' : 'Feedback'} Message Received`,
+      message: userMessageContent.messageContent,
+      html: `<p>${userMessageContent.messageContent}</p>`,
+    });
+
+    res.status(200).json({
+      status: 'success',
+      message: 'Your message has been sent successfully.',
+    });
+  } catch (error) {
+    console.error('Error sending email:', error);
+    return next(
+      new AppError(
+        'There was an error sending your message. Please try again later.',
+        500,
+      ),
+    );
+  }
+});
+
 // ** Register Controller
 exports.register = catchAsync(async (req, res, next) => {
   let profile;
