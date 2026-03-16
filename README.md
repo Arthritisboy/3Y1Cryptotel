@@ -8,15 +8,15 @@ A modern hotel reservation platform that enables seamless bookings with secure c
 
 ## Team 👥
 
-![Team Photo](./assets/team-photo.png)
-
 | Name | Role |
 |------|------|
 | Ang, Jaydeebryann | Full-Stack |
 | Flores, Lance Kian F. | Full-Stack |
 | Reyes, Christer Dale M. | Backend Developer |
-| Centino, Jem Harold S. | UI Designer |
-| Borje, Janylle A. | Front-end |
+| Centino, Jem Harold S. | Frontend-Developer and UI/UX Designer |
+| Borje, Janylle A. | UI/UX Designer |
+
+<img src="mobile/assets/images/others/avenger-team.jpg" alt="Team Photo" width="300" height="auto"/>
 
 
 ## Project structure 🗂️
@@ -94,4 +94,6 @@ Notes:
 * The API contains a `vercel.json` and can be deployed to platforms like Vercel for serverless hosting (or to any Node hosting).
 * The Flutter app can be built for Android/iOS or published to app stores.
 
+## License 📝
 
+This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
